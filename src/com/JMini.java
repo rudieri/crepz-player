@@ -247,7 +247,7 @@ public class JMini extends javax.swing.JDialog {
     }
 
     /**Faz o efeito de MouseEntered (circula o icone)
-    @param Componente circular que vocï¿½ quer circular.
+    @param Componente circular que você quer circular.
      */
     public void objetoRollOver(JLabel c) {
         Icon aux = c.getIcon();
@@ -258,9 +258,9 @@ public class JMini extends javax.swing.JDialog {
          c.getGraphics().drawRect(2, 3, aux.getIconWidth(), aux.getIconHeight());
     }
 
-    /**Deixa o JMini visivel ou nï¿½o
-    @param b boolean que indica se a janela ï¿½ estarï¿½ visivel.
-    @param e MouseEvent ï¿½ usado apenas quando o SO nï¿½o for Windows
+    /**Deixa o JMini visivel ou não
+    @param b boolean que indica se a janela é estará visivel.
+    @param e MouseEvent é usado apenas quando o SO não for Windows
      */
     public void setVisible(boolean b, MouseEvent e) {
         if (!super.isVisible()) {
@@ -351,9 +351,9 @@ public class JMini extends javax.swing.JDialog {
         jSlider_vol = new javax.swing.JSlider();
 
         jMenu1.setMnemonic('v');
-        jMenu1.setText("VisualizaÃ§Ãµes");
+        jMenu1.setText("Visualizações");
 
-        jCheckBox_top.setText("Sempre VisÃ­vel");
+        jCheckBox_top.setText("Sempre Visível");
         jCheckBox_top.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jCheckBox_topStateChanged(evt);
@@ -380,9 +380,9 @@ public class JMini extends javax.swing.JDialog {
         jPopupMenu1.add(jMenu1);
 
         jMenu2.setMnemonic('o');
-        jMenu2.setText("OpÃ§Ãµes");
+        jMenu2.setText("Opções");
 
-        jMenu3.setText("BalanÃ§o");
+        jMenu3.setText("Balanço");
         jMenu3.addMenuListener(new javax.swing.event.MenuListener() {
             public void menuCanceled(javax.swing.event.MenuEvent evt) {
             }
@@ -476,7 +476,7 @@ public class JMini extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         setIconImage(null);
         setMinimumSize(new java.awt.Dimension(100, 30));
         setUndecorated(true);
@@ -541,7 +541,7 @@ public class JMini extends javax.swing.JDialog {
         jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Tempo.setMaximum(1000);
         jSlider_Tempo.setToolTipText("");
-        jSlider_Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jSlider_Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jSlider_Tempo.setMinimumSize(new java.awt.Dimension(36, 14));
         jSlider_Tempo.setPreferredSize(new java.awt.Dimension(180, 14));
 
@@ -567,8 +567,8 @@ public class JMini extends javax.swing.JDialog {
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 1, 0));
 
         jLabel_popup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/c_menu.png"))); // NOI18N
-        jLabel_popup.setToolTipText("Menu de opÃ§Ãµes");
-        jLabel_popup.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel_popup.setToolTipText("Menu de opções");
+        jLabel_popup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel_popup.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_popupMouseClicked(evt);
@@ -578,7 +578,7 @@ public class JMini extends javax.swing.JDialog {
 
         jLabel_Playlist.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/playlist.gif"))); // NOI18N
         jLabel_Playlist.setToolTipText("Playlist");
-        jLabel_Playlist.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel_Playlist.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel_Playlist.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_PlaylistMouseClicked(evt);
@@ -588,7 +588,7 @@ public class JMini extends javax.swing.JDialog {
 
         jLabel_lib.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/biblioteca.png"))); // NOI18N
         jLabel_lib.setToolTipText("Biblioteca");
-        jLabel_lib.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel_lib.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel_lib.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_libMouseClicked(evt);
@@ -597,8 +597,8 @@ public class JMini extends javax.swing.JDialog {
         jPanel3.add(jLabel_lib);
 
         jLabel_top.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/c_top_off.png"))); // NOI18N
-        jLabel_top.setToolTipText("Sempre VisÃ­vel");
-        jLabel_top.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel_top.setToolTipText("Sempre Visível");
+        jLabel_top.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel_top.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_topMouseClicked(evt);
@@ -606,10 +606,10 @@ public class JMini extends javax.swing.JDialog {
         });
         jPanel3.add(jLabel_top);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 8));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/x.png"))); // NOI18N
         jLabel1.setToolTipText("Ocultar");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel1MouseClicked(evt);
@@ -632,7 +632,7 @@ public class JMini extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel4.add(jPanel2, gridBagConstraints);
 
-        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 1));
 
@@ -640,7 +640,7 @@ public class JMini extends javax.swing.JDialog {
         jButton_Play.setText("Tocar");
         jButton_Play.setToolTipText("Tocar");
         jButton_Play.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButton_Play.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton_Play.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton_Play.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jButton_PlayMouseWheelMoved(evt);
@@ -669,7 +669,7 @@ public class JMini extends javax.swing.JDialog {
 
         jButton_Stop.setText("Parar");
         jButton_Stop.setToolTipText("Parar");
-        jButton_Stop.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton_Stop.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton_Stop.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jButton_StopMouseWheelMoved(evt);
@@ -698,7 +698,7 @@ public class JMini extends javax.swing.JDialog {
 
         jButton_Ant.setText("Voltar");
         jButton_Ant.setToolTipText("Voltar");
-        jButton_Ant.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton_Ant.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton_Ant.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jButton_AntMouseWheelMoved(evt);
@@ -725,9 +725,9 @@ public class JMini extends javax.swing.JDialog {
         });
         jPanel1.add(jButton_Ant);
 
-        jButton_Next.setText("AvanÃ§ar");
-        jButton_Next.setToolTipText("AvanÃ§ar");
-        jButton_Next.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton_Next.setText("Avançar");
+        jButton_Next.setToolTipText("Avançar");
+        jButton_Next.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton_Next.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jButton_NextMouseWheelMoved(evt);
@@ -755,8 +755,8 @@ public class JMini extends javax.swing.JDialog {
         jPanel1.add(jButton_Next);
 
         jToggleButton1.setText("Random");
-        jToggleButton1.setToolTipText("AleatÃ³rio");
-        jToggleButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jToggleButton1.setToolTipText("Aleatório");
+        jToggleButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jToggleButton1.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jToggleButton1MouseWheelMoved(evt);
@@ -813,7 +813,7 @@ public class JMini extends javax.swing.JDialog {
 
         jSlider_vol.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_vol.setToolTipText("Volume");
-        jSlider_vol.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jSlider_vol.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jSlider_vol.setPreferredSize(new java.awt.Dimension(100, 23));
 
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider_vol, org.jdesktop.beansbinding.ELProperty.create("${value}"), jSlider_vol, org.jdesktop.beansbinding.BeanProperty.create("value"));
