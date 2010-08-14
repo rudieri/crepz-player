@@ -957,7 +957,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuDeContexto.add(jCIMenuFechar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Crepz Player 1.0");
+        setTitle("Crepz Player Beta");
         setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
