@@ -849,15 +849,13 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jCIMenuFechar = new javax.swing.JMenuItem();
         GrupoSpiner = new javax.swing.ButtonGroup();
         jPanel17 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         jLabel_bib = new javax.swing.JLabel();
         jLabel_Playlist = new javax.swing.JLabel();
         jLabel_Edit = new javax.swing.JLabel();
         jLabel_Minimizar = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jPanel15 = new javax.swing.JPanel();
-        jLabel_Musica = new javax.swing.JLabel();
         jPanel14 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
@@ -874,6 +872,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jPanel9 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jSlider_Tempo = new javax.swing.JSlider();
+        jPanel15 = new javax.swing.JPanel();
+        jLabel_Musica = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jButton_Play = new javax.swing.JLabel();
         jButton_Stop = new javax.swing.JLabel();
@@ -974,6 +974,14 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jPanel17.setBackground(new java.awt.Color(255, 255, 255));
         jPanel17.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/help/img/help.PNG"))); // NOI18N
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+        jPanel17.add(jLabel1);
+
         jLabel_bib.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/biblioteca.png"))); // NOI18N
         jLabel_bib.setToolTipText("Biblioteca");
         jLabel_bib.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1010,14 +1018,6 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         });
         jPanel17.add(jLabel_Minimizar);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/help/img/help.PNG"))); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
-            }
-        });
-        jPanel17.add(jLabel1);
-
         getContentPane().add(jPanel17, java.awt.BorderLayout.PAGE_START);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -1044,12 +1044,6 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel15.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel15.setPreferredSize(new java.awt.Dimension(397, 30));
-        jPanel15.add(jLabel_Musica);
-
-        jPanel3.add(jPanel15);
 
         jPanel14.setBackground(new java.awt.Color(255, 255, 255));
         jPanel14.setLayout(new javax.swing.BoxLayout(jPanel14, javax.swing.BoxLayout.X_AXIS));
@@ -1127,9 +1121,9 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         });
         jPanel4.add(jSlider_Tempo, java.awt.BorderLayout.CENTER);
 
-        jPanel1.add(jPanel4);
-
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        jPanel15.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel15.setPreferredSize(new java.awt.Dimension(397, 30));
+        jPanel15.add(jLabel_Musica);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setMinimumSize(new java.awt.Dimension(248, 35));
@@ -1276,7 +1270,13 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jPanel2.add(jPanel16);
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
+        jPanel15.add(jPanel2);
+
+        jPanel4.add(jPanel15, java.awt.BorderLayout.PAGE_END);
+
+        jPanel1.add(jPanel4);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         jMenuBar1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1382,7 +1382,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         setJMenuBar(jMenuBar1);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-398)/2, (screenSize.height-231)/2, 398, 231);
+        setBounds((screenSize.width-398)/2, (screenSize.height-198)/2, 398, 198);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
