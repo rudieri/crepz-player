@@ -866,6 +866,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jLabel_freq = new javax.swing.JLabel();
         jPanel13 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jLabel_tempoTotal = new javax.swing.JLabel();
@@ -1077,6 +1078,10 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
         jPanel6.setPreferredSize(new java.awt.Dimension(132, 120));
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+
+        jLabel2.setText("moo");
+        jPanel6.add(jLabel2);
+
         jPanel14.add(jPanel6);
 
         jPanel7.setLayout(new javax.swing.BoxLayout(jPanel7, javax.swing.BoxLayout.Y_AXIS));
@@ -1808,6 +1813,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private javax.swing.JMenu jCMenuReproduz;
     private javax.swing.JMenu jCMenuVisual;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel_Edit;
     private javax.swing.JLabel jLabel_Minimizar;
     private javax.swing.JLabel jLabel_Musica;
