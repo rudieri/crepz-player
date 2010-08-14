@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Timer;
@@ -101,59 +102,28 @@ public class JMini extends javax.swing.JDialog {
     /**Atualiza o icone Play
     @param Icone a ser colocado.
      */
+    MouseAdapter maPopUp = new MouseAdapter() {
+         @Override
+         public void mouseReleased(MouseEvent e) {
+             super.mouseReleased(e);
+             if (e.getButton() == MouseEvent.BUTTON3) {
+                 showMenu(e);
+             }
+        }
+        @Override
+         public void mousePressed(MouseEvent e){
+            super.mousePressed(e);
+             if(e.getButton()==MouseEvent.BUTTON1){
+                 ondeEstou(e);
+             }
+         }
+    };
+    MouseMotionAdapter moPopUp = new MouseMotionAdapter() {};
+
     private void startEvents() {
-        jButton_Stop.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                showMenu(e);
-            }
-        });
-
-        jButton_Next.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                showMenu(e);
-            }
-        });
-
-        jButton_Ant.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                showMenu(e);
-            }
-        });
-
-        jButton_Play.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                showMenu(e);
-            }
-        });
-        jToggleButton1.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                showMenu(e);
-            }
-        });
-
-        jToggle_Repete.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                showMenu(e);
-            }
-        });
+        for(int i=0; i<jPanel1.getComponentCount(); i++){
+            jPanel1.getComponent(i).addMouseListener(maPopUp);
+        }
 
         lib.addWindowListener(new WindowAdapter() {
 
@@ -294,9 +264,7 @@ public class JMini extends javax.swing.JDialog {
     }
 
     private void showMenu(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            jPopupMenu1.show(e.getComponent(), e.getX(), e.getY());
-        }
+        jPopupMenu1.show(e.getComponent(), e.getX(), e.getY());
     }
 
     public void atualizaTempo(int t) {
@@ -653,9 +621,6 @@ public class JMini extends javax.swing.JDialog {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jButton_PlayMousePressed(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseReleased(evt);
             }
@@ -681,9 +646,6 @@ public class JMini extends javax.swing.JDialog {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jButton_StopMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jButton_StopMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton_StopMouseReleased(evt);
@@ -711,9 +673,6 @@ public class JMini extends javax.swing.JDialog {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jButton_AntMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jButton_AntMousePressed(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton_AntMouseReleased(evt);
             }
@@ -739,9 +698,6 @@ public class JMini extends javax.swing.JDialog {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jButton_NextMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jButton_NextMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton_NextMouseReleased(evt);
@@ -769,9 +725,6 @@ public class JMini extends javax.swing.JDialog {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jToggleButton1MouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jToggleButton1MousePressed(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jToggleButton1MouseReleased(evt);
             }
@@ -796,9 +749,6 @@ public class JMini extends javax.swing.JDialog {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jToggle_RepeteMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jToggle_RepeteMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jToggle_RepeteMouseReleased(evt);
@@ -877,11 +827,6 @@ public class JMini extends javax.swing.JDialog {
         vouParaOnde(evt);
     }//GEN-LAST:event_formMouseDragged
 
-    private void jButton_PlayMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMousePressed
-
-        ondeEstou(evt);
-    }//GEN-LAST:event_jButton_PlayMousePressed
-
     private void jButton_PlayMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseReleased
 
         if (!(thisX != this.getX() || thisY != this.getY())) {
@@ -896,11 +841,6 @@ public class JMini extends javax.swing.JDialog {
 
         vouParaOnde(evt);
     }//GEN-LAST:event_jButton_PlayMouseDragged
-
-    private void jButton_StopMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMousePressed
-
-        ondeEstou(evt);
-    }//GEN-LAST:event_jButton_StopMousePressed
 
     private void jButton_StopMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseReleased
 
@@ -953,11 +893,6 @@ public class JMini extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jToggleButton1MouseReleased
 
-    private void jButton_AntMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMousePressed
-
-        ondeEstou(evt);
-    }//GEN-LAST:event_jButton_AntMousePressed
-
     private void jButton_AntMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseDragged
 
         vouParaOnde(evt);
@@ -967,16 +902,6 @@ public class JMini extends javax.swing.JDialog {
 
         vouParaOnde(evt);
     }//GEN-LAST:event_jButton_NextMouseDragged
-
-    private void jButton_NextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_NextMousePressed
-
-        ondeEstou(evt);
-    }//GEN-LAST:event_jButton_NextMousePressed
-
-    private void jToggleButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MousePressed
-
-        ondeEstou(evt);
-    }//GEN-LAST:event_jToggleButton1MousePressed
 
     private void jToggleButton1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseDragged
 
@@ -1148,10 +1073,6 @@ public class JMini extends javax.swing.JDialog {
     private void jToggle_RepeteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseExited
         evt.getComponent().repaint();
     }//GEN-LAST:event_jToggle_RepeteMouseExited
-
-    private void jToggle_RepeteMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMousePressed
-        ondeEstou(evt);
-    }//GEN-LAST:event_jToggle_RepeteMousePressed
 
     private void jToggle_RepeteMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseReleased
         if (!(thisX != this.getX() || thisY != this.getY())) {
