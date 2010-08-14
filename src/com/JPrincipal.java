@@ -856,6 +856,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jLabel_Minimizar = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
+        jPanel15 = new javax.swing.JPanel();
+        jLabel_Musica = new javax.swing.JLabel();
         jPanel14 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
@@ -872,8 +874,6 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jPanel9 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jSlider_Tempo = new javax.swing.JSlider();
-        jPanel15 = new javax.swing.JPanel();
-        jLabel_Musica = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jButton_Play = new javax.swing.JLabel();
         jButton_Stop = new javax.swing.JLabel();
@@ -957,7 +957,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuDeContexto.add(jCIMenuFechar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Crepz Player Beta");
+        setTitle("Crepz Player 1.0");
         setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1045,6 +1045,12 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
 
+        jPanel15.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel15.setPreferredSize(new java.awt.Dimension(397, 30));
+        jPanel15.add(jLabel_Musica);
+
+        jPanel3.add(jPanel15);
+
         jPanel14.setBackground(new java.awt.Color(255, 255, 255));
         jPanel14.setLayout(new javax.swing.BoxLayout(jPanel14, javax.swing.BoxLayout.X_AXIS));
 
@@ -1121,9 +1127,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         });
         jPanel4.add(jSlider_Tempo, java.awt.BorderLayout.CENTER);
 
-        jPanel15.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel15.setPreferredSize(new java.awt.Dimension(397, 30));
-        jPanel15.add(jLabel_Musica);
+        jPanel1.add(jPanel4);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setMinimumSize(new java.awt.Dimension(248, 35));
@@ -1270,11 +1274,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jPanel2.add(jPanel16);
 
-        jPanel15.add(jPanel2);
-
-        jPanel4.add(jPanel15, java.awt.BorderLayout.PAGE_END);
-
-        jPanel1.add(jPanel4);
+        jPanel1.add(jPanel2);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -1382,7 +1382,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         setJMenuBar(jMenuBar1);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-398)/2, (screenSize.height-198)/2, 398, 198);
+        setBounds((screenSize.width-398)/2, (screenSize.height-240)/2, 398, 240);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
