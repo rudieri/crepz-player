@@ -55,12 +55,14 @@ public class JSobre extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Crepz Player Sobre");
+        setTitle("Crepz Player 1.0 Sobre");
         setBackground(new java.awt.Color(0, 0, 0));
         setMinimumSize(new java.awt.Dimension(302, 420));
         setResizable(false);
@@ -120,6 +122,17 @@ public class JSobre extends javax.swing.JFrame {
 
         jPanel2.add(jPanel7);
 
+        jPanel9.setBackground(new java.awt.Color(0, 0, 0));
+        jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 1));
+
+        jLabel6.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("https://code.google.com/p/crepz-player/");
+        jLabel6.setOpaque(true);
+        jPanel9.add(jLabel6);
+
+        jPanel2.add(jPanel9);
+
         jPanel8.setBackground(new java.awt.Color(0, 0, 0));
         jPanel8.setLayout(new java.awt.BorderLayout());
         jPanel2.add(jPanel8);
@@ -170,6 +183,7 @@ public class JSobre extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -178,6 +192,7 @@ public class JSobre extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     // End of variables declaration//GEN-END:variables
 
 }
