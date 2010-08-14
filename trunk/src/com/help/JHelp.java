@@ -50,7 +50,7 @@ public class JHelp extends javax.swing.JFrame {
         }
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Crepz Player HELP!");
+        setTitle("Crepz Player Beta");
 
         jScrollPane1.setViewportView(jEditorPane1);
 
