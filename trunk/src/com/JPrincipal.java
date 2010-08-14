@@ -50,7 +50,7 @@ import javax.swing.JFrame;
  */
 /**
  *
- * @author Crepz Player
+ * @author manchini
  */
 public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListener {
 
@@ -59,7 +59,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     BasicPlayer player = new BasicPlayer();
     // BasicPlayer is a BasicController.
     BasicController tocador = (BasicController) player;
-    //Configuraï¿½ï¿½es salvas
+    //Configurações salvas
     private Musica musica;
     File in = null;
     Long total = new Long(1);
@@ -766,7 +766,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 //        }
 //        int prop = maximo / minimo;
 //        if (minimo < 17 && maximo < 20) {
-//            System.out.println("padrï¿½o");
+//            System.out.println("padrão");
 //            return new ImageIcon(im.getScaledInstance(im.getWidth(), im.getHeight(), Image.SCALE_SMOOTH));
 //        } else {
 //            if (im.getWidth() == minimo) {
@@ -849,11 +849,11 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jCIMenuFechar = new javax.swing.JMenuItem();
         GrupoSpiner = new javax.swing.ButtonGroup();
         jPanel17 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel_bib = new javax.swing.JLabel();
         jLabel_Playlist = new javax.swing.JLabel();
         jLabel_Edit = new javax.swing.JLabel();
         jLabel_Minimizar = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel15 = new javax.swing.JPanel();
@@ -898,7 +898,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
 
-        jCMenuReproduz.setText("ReproduÃ§Ã£o");
+        jCMenuReproduz.setText("Reprodução");
 
         jCIMenuPlay.setText("Tocar");
         jCIMenuPlay.addActionListener(new java.awt.event.ActionListener() {
@@ -918,7 +918,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jMenuDeContexto.add(jCMenuReproduz);
 
-        jCMenuVisual.setText("VisualizaÃ§Ã£o");
+        jCMenuVisual.setText("Visualização");
 
         jCCheckBarraTitulos.setSelected(true);
         jCCheckBarraTitulos.setText("Mostrar barra de titulos");
@@ -957,7 +957,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuDeContexto.add(jCIMenuFechar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Crepz Player 1.0");
+        setTitle("Crepz Player");
         setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -973,14 +973,6 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jPanel17.setBackground(new java.awt.Color(255, 255, 255));
         jPanel17.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/help/img/help.PNG"))); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
-            }
-        });
-        jPanel17.add(jLabel1);
 
         jLabel_bib.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/biblioteca.png"))); // NOI18N
         jLabel_bib.setToolTipText("Biblioteca");
@@ -1017,6 +1009,14 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
             }
         });
         jPanel17.add(jLabel_Minimizar);
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/help/img/help.PNG"))); // NOI18N
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+        jPanel17.add(jLabel1);
 
         getContentPane().add(jPanel17, java.awt.BorderLayout.PAGE_START);
 
@@ -1129,6 +1129,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jPanel1.add(jPanel4);
 
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setMinimumSize(new java.awt.Dimension(248, 35));
         jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1151,11 +1153,11 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseClicked(evt);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_PlayMouseExited(evt);
-            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_PlayMouseExited(evt);
             }
         });
         jPanel2.add(jButton_Play);
@@ -1258,7 +1260,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jSlider_Balanco.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Balanco.setMinimum(-100);
-        jSlider_Balanco.setToolTipText("balanÃ§o");
+        jSlider_Balanco.setToolTipText("balanço");
         jSlider_Balanco.setValue(0);
         jSlider_Balanco.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -1274,9 +1276,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jPanel2.add(jPanel16);
 
-        jPanel1.add(jPanel2);
-
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
         jMenuBar1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1369,7 +1369,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         });
         jMenu3.add(jMenuItem5);
 
-        jMenuItem7.setText("Restaurar ConfiguraÃ§Ã£o Original");
+        jMenuItem7.setText("Restaurar Configuração Original");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -1382,7 +1382,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         setJMenuBar(jMenuBar1);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-398)/2, (screenSize.height-240)/2, 398, 240);
+        setBounds((screenSize.width-398)/2, (screenSize.height-231)/2, 398, 231);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
@@ -1722,7 +1722,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Isso limparï¿½ a biblioteca e a playlist.\nO Crepz Player serï¿½ fechado.\n Estï¿½ certo disso ??") == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(this, "Isso limpará a biblioteca e a playlist.\nO Crepz Player será fechado.\n Está certo disso ??") == JOptionPane.YES_OPTION) {
             try {
                 BD.hadukem();
                 super.setVisible(false);
