@@ -50,7 +50,7 @@ import javax.swing.JFrame;
  */
 /**
  *
- * @author manchini
+ * @author Crepz Player
  */
 public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListener {
 
@@ -59,7 +59,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     BasicPlayer player = new BasicPlayer();
     // BasicPlayer is a BasicController.
     BasicController tocador = (BasicController) player;
-    //Configurações salvas
+    //Configuraï¿½ï¿½es salvas
     private Musica musica;
     File in = null;
     Long total = new Long(1);
@@ -766,7 +766,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 //        }
 //        int prop = maximo / minimo;
 //        if (minimo < 17 && maximo < 20) {
-//            System.out.println("padrão");
+//            System.out.println("padrï¿½o");
 //            return new ImageIcon(im.getScaledInstance(im.getWidth(), im.getHeight(), Image.SCALE_SMOOTH));
 //        } else {
 //            if (im.getWidth() == minimo) {
@@ -898,7 +898,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
 
-        jCMenuReproduz.setText("Reprodução");
+        jCMenuReproduz.setText("Reproduï¿½ï¿½o");
 
         jCIMenuPlay.setText("Tocar");
         jCIMenuPlay.addActionListener(new java.awt.event.ActionListener() {
@@ -918,7 +918,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jMenuDeContexto.add(jCMenuReproduz);
 
-        jCMenuVisual.setText("Visualização");
+        jCMenuVisual.setText("Visualizaï¿½ï¿½o");
 
         jCCheckBarraTitulos.setSelected(true);
         jCCheckBarraTitulos.setText("Mostrar barra de titulos");
@@ -1260,7 +1260,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jSlider_Balanco.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Balanco.setMinimum(-100);
-        jSlider_Balanco.setToolTipText("balanço");
+        jSlider_Balanco.setToolTipText("balanï¿½o");
         jSlider_Balanco.setValue(0);
         jSlider_Balanco.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -1369,7 +1369,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         });
         jMenu3.add(jMenuItem5);
 
-        jMenuItem7.setText("Restaurar Configuração Original");
+        jMenuItem7.setText("Restaurar Configuraï¿½ï¿½o Original");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -1722,7 +1722,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Isso limpará a biblioteca e a playlist.\nO Crepz Player será fechado.\n Está certo disso ??") == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(this, "Isso limparï¿½ a biblioteca e a playlist.\nO Crepz Player serï¿½ fechado.\n Estï¿½ certo disso ??") == JOptionPane.YES_OPTION) {
             try {
                 BD.hadukem();
                 super.setVisible(false);
