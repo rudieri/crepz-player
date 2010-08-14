@@ -898,7 +898,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
 
-        jCMenuReproduz.setText("Reprodu��o");
+        jCMenuReproduz.setText("Reprodução");
 
         jCIMenuPlay.setText("Tocar");
         jCIMenuPlay.addActionListener(new java.awt.event.ActionListener() {
@@ -918,7 +918,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jMenuDeContexto.add(jCMenuReproduz);
 
-        jCMenuVisual.setText("Visualiza��o");
+        jCMenuVisual.setText("Visualização");
 
         jCCheckBarraTitulos.setSelected(true);
         jCCheckBarraTitulos.setText("Mostrar barra de titulos");
@@ -957,7 +957,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuDeContexto.add(jCIMenuFechar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Crepz Player");
+        setTitle("Crepz Player 1.0");
         setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1153,11 +1153,11 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_PlayMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_PlayMouseEntered(evt);
             }
         });
         jPanel2.add(jButton_Play);
@@ -1260,7 +1260,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
         jSlider_Balanco.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Balanco.setMinimum(-100);
-        jSlider_Balanco.setToolTipText("balan�o");
+        jSlider_Balanco.setToolTipText("balanço");
         jSlider_Balanco.setValue(0);
         jSlider_Balanco.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -1369,7 +1369,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         });
         jMenu3.add(jMenuItem5);
 
-        jMenuItem7.setText("Restaurar Configura��o Original");
+        jMenuItem7.setText("Restaurar Configuração Original");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
