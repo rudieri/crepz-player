@@ -957,7 +957,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuDeContexto.add(jCIMenuFechar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Crepz Player");
+        setTitle("Crepz Player 1.0");
         setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1153,11 +1153,11 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_PlayMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton_PlayMouseEntered(evt);
             }
         });
         jPanel2.add(jButton_Play);
