@@ -49,11 +49,11 @@ public class JBiBlioteca extends javax.swing.JDialog {
         this.principal = principal;
         jProgressBar.setVisible(false);
         jPanelFiltrar.setVisible(false);
-        if (jCheckBox_capa.isSelected()) {
-            atualizarTabelaCapa();
-        } else {
-            atualizarTabelaLista();
-        }
+//        if (jCheckBox_capa.isSelected()) {
+//            atualizarTabelaCapa();
+//        } else {
+//            atualizarTabelaLista();
+//        }
 
     }
     public JBiBlioteca(JMini mini, JPrincipal principal){
@@ -64,11 +64,11 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jProgressBar.setVisible(false);
         jPanelFiltrar.setVisible(false);
 
-        if (jCheckBox_capa.isSelected()) {
-            atualizarTabelaCapa();
-        } else {
-            atualizarTabelaLista();
-        }
+//        if (jCheckBox_capa.isSelected()) {
+//            atualizarTabelaCapa();
+//        } else {
+//            atualizarTabelaLista();
+//        }
     }
     public void setVisible(boolean b, boolean a){
         super.setVisible(b);
@@ -218,9 +218,9 @@ public class JBiBlioteca extends javax.swing.JDialog {
                 jTable.changeSelection(0, 0, false, false);
             }
 
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao Filtrar");
+        } catch (Exception ex) {           
             ex.printStackTrace();
+             JOptionPane.showMessageDialog(this, "Erro ao Filtrar");
         }
     }
 

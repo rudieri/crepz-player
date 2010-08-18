@@ -6,10 +6,15 @@ package com.conexao;
 
 import com.utils.FileUtils;
 import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -18,12 +23,12 @@ import javax.swing.JOptionPane;
  * @author manchini
  */
 public class BD {
-
+    private static BancoServer server;
     private Connection conn;
     private Statement st;
     private String local = new File("").getAbsolutePath();
     private String banco = "BD";
-    private String URL = "jdbc:hsqldb:file:";
+    private String URL = "jdbc:hsqldb:hsql://localhost/";
     private String user = "sa";
     private String senha = "";
     private static boolean primeiraVez = true;
@@ -37,19 +42,19 @@ public class BD {
     }
 
     private String getArquivosBanco() {
-        String ret = null;
-        if (new File(new File("").getAbsoluteFile() + "/" + banco + ".properties").exists()) {
-            ret = new File("").getAbsoluteFile() + "/" + banco;
-        } else if (new File(new File("").getAbsoluteFile() + "/dist/" + banco + ".properties").exists()) {
-            ret = new File("").getAbsoluteFile() + "/dist/" + banco;
-
-        } else if (new File(new File("").getAbsolutePath().replace("dist", "") + "/" + banco + ".properties").exists()) {
-            ret = new File("").getAbsolutePath().replace("dist", "") + "/" + banco;
-        }
-
-        if(ret == null){
-            ret = new File("").getAbsolutePath()+"/"+banco;
-        }
+        String ret = banco;
+//        if (new File(new File("").getAbsoluteFile() + "/" + banco + ".properties").exists()) {
+//            ret = new File("").getAbsoluteFile() + "/" + banco;
+//        } else if (new File(new File("").getAbsoluteFile() + "/dist/" + banco + ".properties").exists()) {
+//            ret = new File("").getAbsoluteFile() + "/dist/" + banco;
+//
+//        } else if (new File(new File("").getAbsolutePath().replace("dist", "") + "/" + banco + ".properties").exists()) {
+//            ret = new File("").getAbsolutePath().replace("dist", "") + "/" + banco;
+//        }
+//
+//        if(ret == null){
+//            ret = new File("").getAbsolutePath()+"/"+banco;
+//        }
 
 //        System.out.println("BANCO: ---- "+ret);
         return ret;
@@ -69,19 +74,22 @@ public class BD {
 
     public Connection getConexao() throws SQLException {
         try {
-
             Class.forName("org.hsqldb.jdbcDriver");
             conn = DriverManager.getConnection(URL + getArquivosBanco(), user, senha);
             System.out.println("Conectado com: " + URL + getArquivosBanco());
-            testarTabelas(conn);
-            return conn;
-        } catch (ClassNotFoundException ex) {
-            testarTabelas(conn);
-            throw new SQLException(ex);
+            testarTabelas(conn);            
+        } catch (Exception ex) {
+            testarTabelas(conn);            
         }
+        return conn;
     }
 
-    public void testarTabelas(Connection con) {
+    public void testarTabelas(Connection con) throws SQLException {
+        if(con==null && (server == null || !server.ativo)){
+            server = new BancoServer("BD");
+            con = getConexao();
+        }
+
         if (primeiraVez) {
             primeiraVez = false;
              if(System.getProperty("java.runtime.name").toString().indexOf("OpenJDK") > -1)
@@ -122,5 +130,9 @@ public class BD {
         if(!script.delete()){
             System.out.println("Não deu pra excluir o BD.script");
         }
+    }
+
+    public static void fecharBD(){
+        server.stop();
     }
 }

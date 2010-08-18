@@ -9,6 +9,7 @@ import com.JBiBlioteca;
 import com.JMini;
 import com.JPlayList;
 import com.JPrincipal;
+import com.conexao.BD;
 import com.conexao.Transacao;
 import com.musica.Musica;
 import com.musica.MusicaBD;
@@ -83,6 +84,7 @@ public class GerenciadorConfig {
             t.rollback();
             Logger.getLogger(GerenciadorConfig.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
+            BD.fecharBD();
             ag.setVisible(false);
         }
 

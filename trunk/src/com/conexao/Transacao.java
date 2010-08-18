@@ -23,7 +23,7 @@ public class Transacao {
     /** Método que inicia a transação. */
     public void begin() throws Exception {
         conn = new BD().getConexao();
-        conn.setAutoCommit(false);
+        conn.setAutoCommit(true);
         stmt = conn.createStatement();
 
     }
@@ -32,8 +32,7 @@ public class Transacao {
     public void commit() throws Exception {
         conn.commit();
 //        conn.close();
-        conn.createStatement().execute("SHUTDOWN");
-        conn = null;
+//        conn.createStatement().execute("SHUTDOWN");
     }
 
     /** Método que realiza o rollback na transação. */
@@ -41,7 +40,6 @@ public class Transacao {
         try {
             conn.rollback();
             conn.close();
-            conn = null;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
