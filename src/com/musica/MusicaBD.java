@@ -189,23 +189,31 @@ public class MusicaBD {
         SQL sql = new SQL();
         sql.add("SELECT * ");
         sql.add("FROM " + TBL);
-        sql.add("WHERE 1=1");
+        sql.add("WHERE");
+        int c = 0;
 
         if (filtro.getNome() != null && !filtro.getNome().equals("")) {
-            sql.add("AND UCASE (nome) like :nome");
+            sql.add("UCASE (nome) like :nome");
             sql.setParam("nome", filtro.getNome().toUpperCase() + "%");
+            c++;
         }
         if (filtro.getAutor() != null && !filtro.getAutor().equals("")) {
-            sql.add("AND UCASE (autor) like :autor");
+            sql.add("OR UCASE (autor) like :autor");
             sql.setParam("autor", filtro.getAutor().toUpperCase() + "%");
+            c++;
         }
         if (filtro.getAlbum() != null && !filtro.getAlbum().equals("")) {
-            sql.add("AND UCASE (album) like :album");
+            sql.add("OR UCASE (album) like :album");
             sql.setParam("album", filtro.getAlbum().toUpperCase() + "%");
+            c++;
         }
         if(filtro.getGenero()!=null && ! filtro.getGenero().equals("")){
-            sql.add("AND UCASE (genero) like :genero");
+            sql.add("OR UCASE (genero) like :genero");
             sql.setParam("genero", filtro.getGenero().toUpperCase()+"%");
+            c++;
+        }
+        if(c==0){
+            sql.add("1=1");
         }
         sql.add("ORDER BY nome ");
 
@@ -242,19 +250,25 @@ public class MusicaBD {
         SQL sql = new SQL();
         sql.add("SELECT "+agrupar+" as agrup , count(*) as m, max(img) as capa");
         sql.add("FROM " + TBL);
-        sql.add("WHERE 1=1");
-
+        sql.add("WHERE ");
+        int c = 0;
         if (filtro.getNome() != null && !filtro.getNome().equals("")) {
-            sql.add("AND UCASE (nome) like :nome");
+            sql.add("UCASE (nome) like :nome");
             sql.setParam("nome", filtro.getNome().toUpperCase() + "%");
+            c++;
         }
         if (filtro.getAutor() != null && !filtro.getAutor().equals("")) {
-            sql.add("AND UCASE (autor) like :autor");
+            sql.add("OR UCASE (autor) like :autor");
             sql.setParam("autor", filtro.getAutor().toUpperCase() + "%");
+            c++;
         }
         if (filtro.getAlbum() != null && !filtro.getAlbum().equals("")) {
-            sql.add("AND UCASE (album) like :album");
+            sql.add("OR UCASE (album) like :album");
             sql.setParam("album", filtro.getAlbum().toUpperCase() + "%");
+            c++;
+        }
+         if(c==0){
+            sql.add("1=1");
         }
 
         sql.add("GROUP BY "+agrupar);
