@@ -12,17 +12,18 @@
 package com.help;
 
 import com.JPrincipal;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 /**
  *
  * @author manchini
  */
-public class JSobre extends javax.swing.JFrame {
+public class JSobre extends javax.swing.JDialog {
 
     /** Creates new form Aguarde */
-    public JSobre() {
-
+    public JSobre(JFrame parent) {
+        super(parent, false);
         initComponents();
         jPanel2.setOpaque(true);
         jPanel1.setOpaque(true);
@@ -159,7 +160,7 @@ public class JSobre extends javax.swing.JFrame {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new JSobre().setVisible(true);
+                new JSobre(new JFrame()).setVisible(true);
             }
         });
     }

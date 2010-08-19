@@ -20,6 +20,7 @@ import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.MusicaSC;
 import com.utils.DiretorioUtils;
+import java.awt.event.KeyEvent;
 
 /*
  * To change this template, choose Tools | Templates
@@ -44,7 +45,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     String genero = "";
 
     public JBiBlioteca(JPrincipal principal) {
-        super(principal, true);
+        super(principal, false);
         initComponents();
         this.principal = principal;
         jProgressBar.setVisible(false);
@@ -122,8 +123,8 @@ public class JBiBlioteca extends javax.swing.JDialog {
             // Filtro...
             MusicaSC filtro = new MusicaSC();
             // if (jPanelFiltrar.isVisible()) {
-            filtro.setNome(jTextField_Nome.getText());
-            filtro.setAutor(jTextField_Autor.getText());
+            filtro.setNome(jTextField_Album.getText());
+            filtro.setAutor(jTextField_Album.getText());
             filtro.setAlbum(jTextField_Album.getText());
             filtro.setGenero(genero);
 //            } else {
@@ -195,8 +196,8 @@ public class JBiBlioteca extends javax.swing.JDialog {
             MusicaSC filtro = new MusicaSC();
             if (jPanelFiltrar.isVisible()) {
                 genero="";
-                filtro.setNome(jTextField_Nome.getText());
-                filtro.setAutor(jTextField_Autor.getText());
+                filtro.setNome(jTextField_Album.getText());
+                filtro.setAutor(jTextField_Album.getText());
                 filtro.setAlbum(jTextField_Album.getText());
             } else {
                resetText();
@@ -272,8 +273,8 @@ public class JBiBlioteca extends javax.swing.JDialog {
 
     public void resetText() {
         jTextField_Album.setText("");
-        jTextField_Autor.setText("");
-        jTextField_Nome.setText("");
+        jTextField_Album.requestFocus();
+
         genero = "";
     }
 
@@ -287,12 +288,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanelFiltrar = new javax.swing.JPanel();
-        jPanel_Nome2 = new javax.swing.JPanel();
-        jLabel_Nome2 = new javax.swing.JLabel();
-        jTextField_Nome = new javax.swing.JTextField();
-        jPanel_Nome3 = new javax.swing.JPanel();
-        jLabel_Nome3 = new javax.swing.JLabel();
-        jTextField_Autor = new javax.swing.JTextField();
         jPanel_Nome4 = new javax.swing.JPanel();
         jLabel_Nome4 = new javax.swing.JLabel();
         jTextField_Album = new javax.swing.JTextField();
@@ -335,48 +330,14 @@ public class JBiBlioteca extends javax.swing.JDialog {
             }
         });
 
-        jPanelFiltrar.setPreferredSize(new java.awt.Dimension(400, 100));
+        jPanelFiltrar.setPreferredSize(new java.awt.Dimension(400, 40));
         jPanelFiltrar.setLayout(new javax.swing.BoxLayout(jPanelFiltrar, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel_Nome2.setPreferredSize(new java.awt.Dimension(376, 35));
-        jPanel_Nome2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 1));
-
-        jLabel_Nome2.setFont(new java.awt.Font("Dialog", 0, 11));
-        jLabel_Nome2.setText("Nome:");
-        jLabel_Nome2.setMaximumSize(new java.awt.Dimension(60, 16));
-        jLabel_Nome2.setMinimumSize(new java.awt.Dimension(60, 16));
-        jLabel_Nome2.setPreferredSize(new java.awt.Dimension(70, 16));
-        jPanel_Nome2.add(jLabel_Nome2);
-
-        jTextField_Nome.setMaximumSize(new java.awt.Dimension(300, 20));
-        jTextField_Nome.setMinimumSize(new java.awt.Dimension(300, 20));
-        jTextField_Nome.setPreferredSize(new java.awt.Dimension(276, 25));
-        jPanel_Nome2.add(jTextField_Nome);
-
-        jPanelFiltrar.add(jPanel_Nome2);
-
-        jPanel_Nome3.setPreferredSize(new java.awt.Dimension(376, 35));
-        jPanel_Nome3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 1));
-
-        jLabel_Nome3.setFont(new java.awt.Font("Dialog", 0, 11));
-        jLabel_Nome3.setText("Autor:");
-        jLabel_Nome3.setMaximumSize(new java.awt.Dimension(60, 16));
-        jLabel_Nome3.setMinimumSize(new java.awt.Dimension(60, 16));
-        jLabel_Nome3.setPreferredSize(new java.awt.Dimension(70, 16));
-        jPanel_Nome3.add(jLabel_Nome3);
-
-        jTextField_Autor.setMaximumSize(new java.awt.Dimension(300, 20));
-        jTextField_Autor.setMinimumSize(new java.awt.Dimension(300, 20));
-        jTextField_Autor.setPreferredSize(new java.awt.Dimension(276, 25));
-        jPanel_Nome3.add(jTextField_Autor);
-
-        jPanelFiltrar.add(jPanel_Nome3);
 
         jPanel_Nome4.setPreferredSize(new java.awt.Dimension(376, 35));
         jPanel_Nome4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 1));
 
         jLabel_Nome4.setFont(new java.awt.Font("Dialog", 0, 11));
-        jLabel_Nome4.setText("Album:");
+        jLabel_Nome4.setText("Filtro:");
         jLabel_Nome4.setMaximumSize(new java.awt.Dimension(60, 16));
         jLabel_Nome4.setMinimumSize(new java.awt.Dimension(60, 16));
         jLabel_Nome4.setPreferredSize(new java.awt.Dimension(70, 16));
@@ -385,12 +346,21 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jTextField_Album.setMaximumSize(new java.awt.Dimension(300, 20));
         jTextField_Album.setMinimumSize(new java.awt.Dimension(300, 20));
         jTextField_Album.setPreferredSize(new java.awt.Dimension(276, 25));
+        jTextField_Album.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextField_AlbumFocusGained(evt);
+            }
+        });
+        jTextField_Album.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextField_AlbumKeyPressed(evt);
+            }
+        });
         jPanel_Nome4.add(jTextField_Album);
 
         jButton_PK4.setText("OK");
         jButton_PK4.setToolTipText("Carrega a listagem");
         jButton_PK4.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jButton_PK4.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton_PK4.setMaximumSize(new java.awt.Dimension(22, 20));
         jButton_PK4.setMinimumSize(new java.awt.Dimension(22, 20));
         jButton_PK4.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -586,22 +556,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         setBounds((screenSize.width-495)/2, (screenSize.height-419)/2, 495, 419);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton_PK4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_PK4ActionPerformed
-        if (jCheckBox_capa.isSelected()) {
-            atualizarTabelaCapa();
-        } else {
-            atualizarTabelaLista();
-        }
-    }//GEN-LAST:event_jButton_PK4ActionPerformed
-
-    private void jButton_PK4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jButton_PK4FocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton_PK4FocusGained
-
-    private void jButton_PK4FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jButton_PK4FocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton_PK4FocusLost
-
     private void jScrollPaneFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jScrollPaneFocusGained
         jTable.requestFocus();
         jTable.changeSelection(0, 0, false, false);
@@ -614,7 +568,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
                 if (jCheckBox_capa.isSelected()) {
                     JCapa j = (JCapa) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getSelectedColumn());
                     if (jComboBox_Agrupar.getSelectedItem().equals("Autor")) {
-                        jTextField_Autor.setText(j.getTXT());
+                        jTextField_Album.setText(j.getTXT());
                     }
                     if (jComboBox_Agrupar.getSelectedItem().equals("Album")) {
                         jTextField_Album.setText(j.getTXT());
@@ -658,7 +612,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
             if (jCheckBox_capa.isSelected()) {
                 JCapa j = (JCapa) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getSelectedColumn());
                 if (jComboBox_Agrupar.getSelectedItem().equals("Autor")) {
-                    jTextField_Autor.setText(j.getTXT());
+                    jTextField_Album.setText(j.getTXT());
                 }
                 if (jComboBox_Agrupar.getSelectedItem().equals("Album")) {
                     jTextField_Album.setText(j.getTXT());
@@ -711,6 +665,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
 //                atualizarTabelaLista();
 //            }
         }
+        jTextField_Album.requestFocus();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
@@ -766,6 +721,31 @@ public class JBiBlioteca extends javax.swing.JDialog {
 
     }//GEN-LAST:event_formWindowClosing
 
+    private void jTextField_AlbumKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_AlbumKeyPressed
+    if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+        jButton_PK4ActionPerformed(null);
+    }//GEN-LAST:event_jTextField_AlbumKeyPressed
+
+    private void jButton_PK4FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jButton_PK4FocusLost
+        // TODO add your handling code here:
+}//GEN-LAST:event_jButton_PK4FocusLost
+
+    private void jButton_PK4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jButton_PK4FocusGained
+        // TODO add your handling code here:
+}//GEN-LAST:event_jButton_PK4FocusGained
+
+    private void jButton_PK4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_PK4ActionPerformed
+        if (jCheckBox_capa.isSelected()) {
+            atualizarTabelaCapa();
+        } else {
+            atualizarTabelaLista();
+        }
+}//GEN-LAST:event_jButton_PK4ActionPerformed
+
+    private void jTextField_AlbumFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_AlbumFocusGained
+        jTextField_Album.selectAll();
+    }//GEN-LAST:event_jTextField_AlbumFocusGained
+
     /**
      * @param args the command line arguments
      */
@@ -797,8 +777,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel_Nome2;
-    private javax.swing.JLabel jLabel_Nome3;
     private javax.swing.JLabel jLabel_Nome4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
@@ -816,15 +794,11 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JPanel jPanelFiltrar;
-    private javax.swing.JPanel jPanel_Nome2;
-    private javax.swing.JPanel jPanel_Nome3;
     private javax.swing.JPanel jPanel_Nome4;
     private javax.swing.JProgressBar jProgressBar;
     private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JTable jTable;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField_Album;
-    private javax.swing.JTextField jTextField_Autor;
-    private javax.swing.JTextField jTextField_Nome;
     // End of variables declaration//GEN-END:variables
 }

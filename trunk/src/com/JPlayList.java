@@ -59,7 +59,7 @@ public class JPlayList extends javax.swing.JDialog {
     int IdAberto = -1;
 
     public JPlayList(java.awt.Frame parent, boolean modal, JPrincipal principal) {
-        super(parent, modal);
+        super(principal, modal);
         initComponents();
         this.principal = principal;
         setResizable(false);

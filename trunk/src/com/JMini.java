@@ -41,15 +41,15 @@ public class JMini extends javax.swing.JDialog {
     private int thisY;
     private Timer th;
     Timer tarefa = new Timer();
-    private int estado=0;
+    private int estado = 0;
 
-    public JMini(java.awt.Frame parent, boolean modal, JPrincipal jprincipal, JPlayList pl, JBiBlioteca bl) {
+    public JMini(java.awt.Frame parent, boolean modal, JPrincipal principal, JPlayList pl, JBiBlioteca bl) {
         super(parent, modal);
-        th=new Timer(true);
+        th = new Timer(true);
         initComponents();
-        this.principal = jprincipal;
+        this.principal = principal;
         this.playList = pl;
-        lib = new JBiBlioteca(this, principal);
+        lib = bl;
         //  this.lib=bl;
         startEvents();
 
@@ -98,30 +98,32 @@ public class JMini extends javax.swing.JDialog {
             jLabel_top.setIcon(principal.topOff);
         }
     }
-
     /**Atualiza o icone Play
     @param Icone a ser colocado.
      */
     MouseAdapter maPopUp = new MouseAdapter() {
-         @Override
-         public void mouseReleased(MouseEvent e) {
-             super.mouseReleased(e);
-             if (e.getButton() == MouseEvent.BUTTON3) {
-                 showMenu(e);
-             }
-        }
+
         @Override
-         public void mousePressed(MouseEvent e){
+        public void mouseReleased(MouseEvent e) {
+            super.mouseReleased(e);
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                showMenu(e);
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
             super.mousePressed(e);
-             if(e.getButton()==MouseEvent.BUTTON1){
-                 ondeEstou(e);
-             }
-         }
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                ondeEstou(e);
+            }
+        }
     };
-    MouseMotionAdapter moPopUp = new MouseMotionAdapter() {};
+    MouseMotionAdapter moPopUp = new MouseMotionAdapter() {
+    };
 
     private void startEvents() {
-        for(int i=0; i<jPanel1.getComponentCount(); i++){
+        for (int i = 0; i < jPanel1.getComponentCount(); i++) {
             jPanel1.getComponent(i).addMouseListener(maPopUp);
         }
 
@@ -143,12 +145,12 @@ public class JMini extends javax.swing.JDialog {
                 setTop(jCheckBox_top.isSelected());
             }
         });
-        MouseAdapter mal=new MouseAdapter() {
+        MouseAdapter mal = new MouseAdapter() {
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
-                   objetoRollOver2((JLabel)e.getComponent());
+                objetoRollOver2((JLabel) e.getComponent());
             }
 
             @Override
@@ -156,8 +158,6 @@ public class JMini extends javax.swing.JDialog {
                 super.mouseExited(e);
                 e.getComponent().repaint();
             }
-            
-        
         };
         jLabel_Playlist.addMouseListener(mal);
         jLabel_lib.addMouseListener(mal);
@@ -188,9 +188,9 @@ public class JMini extends javax.swing.JDialog {
 
     private void vouParaOnde(MouseEvent e) {
         estado++;
-        if(estado==5){
+        if (estado == 5) {
             this.setLocation(e.getXOnScreen() - initX, e.getYOnScreen() - initY);
-            estado=0;
+            estado = 0;
         }
     }
 
@@ -223,9 +223,10 @@ public class JMini extends javax.swing.JDialog {
         Icon aux = c.getIcon();
         c.getGraphics().drawOval(2, 3, aux.getIconWidth(), aux.getIconHeight());
     }
-    public void objetoRollOver2(JLabel c){
-         Icon aux = c.getIcon();
-         c.getGraphics().drawRect(2, 3, aux.getIconWidth(), aux.getIconHeight());
+
+    public void objetoRollOver2(JLabel c) {
+        Icon aux = c.getIcon();
+        c.getGraphics().drawRect(2, 3, aux.getIconWidth(), aux.getIconHeight());
     }
 
     /**Deixa o JMini visivel ou não
@@ -813,8 +814,9 @@ public class JMini extends javax.swing.JDialog {
     }//GEN-LAST:event_formMouseExited
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        if(evt.getButton()==1)
-        setVisible(false);
+        if (evt.getButton() == 1) {
+            setVisible(false);
+        }
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
@@ -1168,18 +1170,18 @@ public class JMini extends javax.swing.JDialog {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jLabel_PlaylistMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_PlaylistMouseClicked
-              if (evt.getButton() == MouseEvent.BUTTON1) {
-        playList.setVisible(true);
-        jCheckBox_list.setSelected(true);
-           }
+        if (evt.getButton() == MouseEvent.BUTTON1) {
+            playList.setVisible(true);
+            jCheckBox_list.setSelected(true);
+        }
 }//GEN-LAST:event_jLabel_PlaylistMouseClicked
 
     private void jLabel_libMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_libMouseClicked
-               if (evt.getButton() == MouseEvent.BUTTON1) {
+        if (evt.getButton() == MouseEvent.BUTTON1) {
 
-                lib.setVisible(true);
-                jCheckBox_lib.setSelected(true);
-               }
+            lib.setVisible(true);
+            jCheckBox_lib.setSelected(true);
+        }
 }//GEN-LAST:event_jLabel_libMouseClicked
 
     private void jLabel_popupMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_popupMouseClicked
@@ -1196,12 +1198,12 @@ public class JMini extends javax.swing.JDialog {
 
     private void jCheckBox_topStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jCheckBox_topStateChanged
         // TODO add your handling code here:
-          setAlwaysOnTop(jCheckBox_top.isSelected());
-           if (isAlwaysOnTop()) {
-                jLabel_top.setIcon(principal.topOn);
-            } else {
-                jLabel_top.setIcon(principal.topOff);
-            }
+        setAlwaysOnTop(jCheckBox_top.isSelected());
+        if (isAlwaysOnTop()) {
+            jLabel_top.setIcon(principal.topOn);
+        } else {
+            jLabel_top.setIcon(principal.topOff);
+        }
     }//GEN-LAST:event_jCheckBox_topStateChanged
 
     private void jMenu3MenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_jMenu3MenuSelected

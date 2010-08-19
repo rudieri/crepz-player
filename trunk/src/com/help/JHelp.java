@@ -13,16 +13,17 @@ package com.help;
 import com.JPrincipal;
 import java.io.File;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 
 /**
  *
  * @author manchini
  */
-public class JHelp extends javax.swing.JFrame {
+public class JHelp extends javax.swing.JDialog {
 
     /** Creates new form JHelp */
-    public JHelp() {
-
+    public JHelp(JFrame parent) {
+        super(parent,false);
         initComponents();
         try{
         JPrincipal.aguarde.intro();
@@ -67,7 +68,7 @@ public class JHelp extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new JHelp().setVisible(true);
+                new JHelp(new JFrame()).setVisible(true);
             }
         });
     }
