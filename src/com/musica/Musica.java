@@ -278,6 +278,10 @@ public class Musica {
     }
 
     private void setGenero(int genre) {
+        if(genre>=generos.length || genre<0){
+            genero="";
+            return;
+        }
         try {
             genero = generos[genre];
         } catch (Exception b) {
