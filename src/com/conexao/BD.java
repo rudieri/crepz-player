@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
  * @author manchini
  */
 public class BD {
+
     private static BancoServer server;
     private Connection conn;
     private Statement st;
@@ -43,28 +44,28 @@ public class BD {
 
     private String getArquivosBanco() {
         String ret = banco;
-//        if (new File(new File("").getAbsoluteFile() + "/" + banco + ".properties").exists()) {
-//            ret = new File("").getAbsoluteFile() + "/" + banco;
-//        } else if (new File(new File("").getAbsoluteFile() + "/dist/" + banco + ".properties").exists()) {
-//            ret = new File("").getAbsoluteFile() + "/dist/" + banco;
-//
-//        } else if (new File(new File("").getAbsolutePath().replace("dist", "") + "/" + banco + ".properties").exists()) {
-//            ret = new File("").getAbsolutePath().replace("dist", "") + "/" + banco;
-//        }
-//
-//        if(ret == null){
-//            ret = new File("").getAbsolutePath()+"/"+banco;
-//        }
+        if (new File(new File("").getAbsoluteFile() + "/" + banco + ".properties").exists()) {
+            ret = new File("").getAbsoluteFile() + "/" + banco;
+        } else if (new File(new File("").getAbsoluteFile() + "/dist/" + banco + ".properties").exists()) {
+            ret = new File("").getAbsoluteFile() + "/dist/" + banco;
 
-//        System.out.println("BANCO: ---- "+ret);
+        } else if (new File(new File("").getAbsolutePath().replace("dist", "") + "/" + banco + ".properties").exists()) {
+            ret = new File("").getAbsolutePath().replace("dist", "") + "/" + banco;
+        }
+
+        if (ret == null) {
+            ret = new File("").getAbsolutePath() + "/" + banco;
+        }
+
+        System.out.println("BANCO: ---- " + ret);
         return ret;
     }
 
     public Statement getStatement() throws SQLException {
         try {
             Class.forName("org.hsqldb.jdbcDriver");
-            conn = DriverManager.getConnection(URL + getArquivosBanco(), user, senha);
-            System.out.println("Conectado com: " + URL + getArquivosBanco());
+            conn = DriverManager.getConnection(URL + banco, user, senha);
+            System.out.println("Conectado com: " + URL + banco);
             return conn.createStatement();
         } catch (ClassNotFoundException ex) {
             testarTabelas(conn);
@@ -75,41 +76,36 @@ public class BD {
     public Connection getConexao() throws SQLException {
         try {
             Class.forName("org.hsqldb.jdbcDriver");
-            conn = DriverManager.getConnection(URL + getArquivosBanco(), user, senha);
-            System.out.println("Conectado com: " + URL + getArquivosBanco());
-            testarTabelas(conn);            
+            conn = DriverManager.getConnection(URL + banco, user, senha);
+            System.out.println("Conectado com: " + URL + banco);
+            testarTabelas(conn);
         } catch (Exception ex) {
-            testarTabelas(conn);            
+            testarTabelas(conn);
         }
         return conn;
     }
 
     public void testarTabelas(Connection con) throws SQLException {
-        if(con==null && (server == null || !server.ativo)){
+        if (con == null && (server == null || !server.ativo)) {
             server = new BancoServer("BD");
             con = getConexao();
         }
 
         if (primeiraVez) {
             primeiraVez = false;
-             if(System.getProperty("java.runtime.name").toString().indexOf("OpenJDK") > -1)
+            if (System.getProperty("java.runtime.name").toString().indexOf("OpenJDK") > -1) {
                 JOptionPane.showMessageDialog(new JDialog(), "Sua Versão JAVA pode não ser compativel.", "DANGER", JOptionPane.ERROR_MESSAGE);
-            
+            }
+
             System.out.println("Primeira Vez Testa Tabelas");
             try {
                 Statement st = con.createStatement();
                 st.execute("select * from musica limit 1");
             } catch (Exception e) {
                 //Se Deu erro pq não tem as tabelas
-                if(e.getMessage().equals("user lacks privilege or object not found: MUSICA")){
-                    try {                       
-                        //dai cria
-                        Statement st = con.createStatement();
-                        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/config/config.sql").toURI())).toString());
-                        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/musica.sql").toURI())).toString());
-                        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playlist/playlist.sql").toURI())).toString());
-                        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playmusica/playmusica.sql").toURI())).toString());
-
+                if (e.getMessage().equals("user lacks privilege or object not found: MUSICA")) {
+                    try {
+                        criaTabelas(con);
                     } catch (Exception ex) {
                         System.out.println("Crepz Fatal.");
                         ex.printStackTrace();
@@ -119,20 +115,36 @@ public class BD {
         }
     }
 
-    public static void hadukem(){
-        String banco = new BD().getArquivosBanco();
-        File properties = new File(banco+".properties");
-        if(!properties.delete()){
-            System.out.println("Não deu pra excluir o BD.properties");
-        }
-
-        File script = new File(banco+".script");
-        if(!script.delete()){
-            System.out.println("Não deu pra excluir o BD.script");
+    public static void hadukem() {
+        try {
+            String banco = new BD().getArquivosBanco();
+            File properties = new File(banco + ".properties");
+            if (!properties.delete()) {
+                System.out.println("Não deu pra excluir o BD.properties");
+            }
+            BD bd = new BD();
+            bd.criaTabelas(bd.getConexao());
+            File script = new File(banco + ".script");
+            if (!script.delete()) {
+                System.out.println("Não deu pra excluir o BD.script");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(BD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static void fecharBD(){
+    public void criaTabelas(Connection conn) throws Exception {
+        //dai cria
+        Statement st = conn.createStatement();
+        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/config/config.sql").toURI())).toString());
+        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/musica.sql").toURI())).toString());
+        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playlist/playlist.sql").toURI())).toString());
+        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playmusica/playmusica.sql").toURI())).toString());
+        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/configuracao/configuracao.sql").toURI())).toString());
+
+    }
+
+    public static void fecharBD() {
         server.stop();
     }
 }
