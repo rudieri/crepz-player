@@ -2,6 +2,7 @@ package com;
 
 import com.conexao.BD;
 import com.config.GerenciadorConfig;
+import com.configuracao.JConfiguracao;
 import com.help.JHelp;
 import com.help.JSobre;
 import java.awt.Image;
@@ -69,7 +70,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private TrayIcon trayIcon;
     private JBiBlioteca biblioteca = new JBiBlioteca(this);
     private JPlayList playList = new JPlayList(this, false, this);
-    final JMini jmini = new JMini(this, false, this, playList, biblioteca);
+    private JMini jmini = new JMini(this, false, this, playList, biblioteca);
     GerenciadorConfig _conf = new GerenciadorConfig(this, playList, biblioteca, jmini);
 
     public JPrincipal() {
@@ -893,6 +894,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem8 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
@@ -1349,6 +1351,15 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         });
         jMenu2.add(jMenuItem2);
 
+        jMenuItem8.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, 0));
+        jMenuItem8.setText("Configurações");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem8);
+
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Sobre");
@@ -1536,7 +1547,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        new JHelp().setVisible(true);
+        new JHelp(this).setVisible(true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jButton_PlayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseClicked
@@ -1711,13 +1722,13 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }//GEN-LAST:event_jLabel_MinimizarMouseClicked
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        new JSobre().setVisible(true);
+        new JSobre(this).setVisible(true);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            new JHelp().setVisible(true);
+            new JHelp(this).setVisible(true);
         }
     }//GEN-LAST:event_jLabel1MouseClicked
 
@@ -1744,6 +1755,10 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
             }
         }
     }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+       new JConfiguracao(this, true).setVisible(true);
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1829,6 +1844,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem_Arquivo;
     private javax.swing.JMenuItem jMenuItem_Arquivo1;
     private javax.swing.JPanel jPanel1;
