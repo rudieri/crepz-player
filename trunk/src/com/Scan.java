@@ -29,12 +29,18 @@ import javax.swing.ImageIcon;
  */
 public class Scan {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, Exception {
       //  Thread.sleep(500);
-        Scan scan = new Scan();
+        Scan scan = new Scan(5);
         scan.start(5);
         scan.iconeTray();
+    }
 
+    public Scan(int tempo){
+        this.start(tempo);
+    }
+    public void setPastas(ArrayList pastas){
+        this.pastas = pastas;
     }
 
     class taskScan extends TimerTask {
@@ -51,10 +57,8 @@ public class Scan {
         }
     }
 
-    public void start(int tempo) throws InterruptedException {
-        t = new Transacao();
-        addFolder(teste);
-        addFolder(new File("/media/0A7CC6CC7CC6B1AD/Documents and Settings/Raoli S. Wagner/Desktop/Tudo/DVD"));
+    private void start(int tempo)  {
+        t = new Transacao(); 
         try {
             t.begin();
         } catch (Exception ex) {

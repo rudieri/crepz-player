@@ -11,5 +11,7 @@ package com.configuracao;
  */
 public class ConfiguracaoSC {
 
+    public String parteChave;
+
 
 }

@@ -8,17 +8,23 @@
  *
  * Created on 19/08/2010, 21:17:54
  */
-
 package com.configuracao;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author manchini
  */
 public class JConfiguracao extends javax.swing.JDialog {
+
+    private JFileChooser jFileChooser = new JFileChooser();
 
     /** Creates new form JConfiguracao */
     public JConfiguracao(java.awt.Frame parent, boolean modal) {
@@ -27,33 +33,101 @@ public class JConfiguracao extends javax.swing.JDialog {
         setTela();
     }
 
-    private void setTela(){
+    private void setTela() {
         try {
-           HashMap<String,String> lista = ConfiguracaoBD.listar(new ConfiguracaoSC());
-           jCheckBox_teste.setSelected(lista.get("teste") == null?false:Boolean.parseBoolean(lista.get("teste").toString()));
+            HashMap<String, String> lista = ConfiguracaoBD.listar(new ConfiguracaoSC());
+            jCheckBox_teste.setSelected(lista.get("teste") == null ? false : Boolean.parseBoolean(lista.get("teste").toString()));
+            setTabelaPastas(lista);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void setDadosBanco(){
-        HashMap<String,String> lista = new HashMap<String, String>();
+    private void setTabelaPastas(HashMap<String, String> lista) {
+        int c = 1;
+        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+        tm.setRowCount(0);
+        String pastaMonitorada = "pastaMonitorada";
+        Set chaves = lista.keySet();
+        for (int i = 0; i < chaves.toArray().length; i++) {
+            if (lista.get(pastaMonitorada + c) != null) {
+                Object[] linha = new Object[1];
+                linha[0] = lista.get(pastaMonitorada + c);
+                tm.addRow(linha);
+            }
+            c++;
+        }
+    }
+
+    private File telaAbrirArquivo() throws Exception {
+
+        // restringe a amostra a diretorios apenas
+        jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        jFileChooser.setDialogTitle("Abrir Pasta");
+
+        int res = jFileChooser.showOpenDialog(null);
+
+        if (res == JFileChooser.APPROVE_OPTION) {
+            jTextField_Jpasta.setText(jFileChooser.getSelectedFile().getAbsolutePath());
+            return jFileChooser.getSelectedFile();
+        }
+        return null;
+//        else {
+//            throw new Exception("Voce nao selecionou nenhum diretorio.");
+//        }
+    }
+
+    private void addTablePastas() {
+        try {
+            telaAbrirArquivo();
+            if (jTextField_Jpasta.getText().equals("")) {
+                return;
+            }
+            DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+            tm.addRow(new Object[]{jTextField_Jpasta.getText()});
+            jTextField_Jpasta.setText("");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void setDadosBancoPasta(HashMap<String, String> lista) {
+        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+        String pastaMonitorada = "pastaMonitorada";
+        try {
+            ConfiguracaoBD.excluirChavesQueComecam(pastaMonitorada);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        int c = 1;
+        for (int i = 0; i < tm.getRowCount(); i++) {
+            String pasta = (String) tm.getValueAt(i, 0);
+            if (pasta != null && !pasta.trim().equals("")) {
+                lista.put(pastaMonitorada + (c), pasta);
+                c++;
+            }
+        }
+    }
+
+    private void setDadosBanco() {
+        HashMap<String, String> lista = new HashMap<String, String>();
         lista.put("teste", String.valueOf(jCheckBox_teste.isSelected()));
+        setDadosBancoPasta(lista);
 
         Set chaves = lista.keySet();
-        for(int i =0; i < chaves.toArray().length;i++){
-            try{
-            Configuracao conf = new Configuracao();
-            conf.setChave(chaves.toArray()[i].toString());
-            Boolean existe = ConfiguracaoBD.carregar(conf);
-            conf.setValor(lista.get(chaves.toArray()[i]));
-            if(existe){
-                ConfiguracaoBD.alterar(conf);
-            }else{
-                ConfiguracaoBD.incluir(conf);
-            }
+        for (int i = 0; i < chaves.toArray().length; i++) {
+            try {
+                Configuracao conf = new Configuracao();
+                conf.setChave(chaves.toArray()[i].toString());
+                Boolean existe = ConfiguracaoBD.carregar(conf);
+                conf.setValor(lista.get(chaves.toArray()[i]));
+                if (existe) {
+                    ConfiguracaoBD.alterar(conf);
+                } else {
+                    ConfiguracaoBD.incluir(conf);
+                }
 
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 System.out.println("Erro ao Salvar Configuracao");
                 ex.printStackTrace();
             }
@@ -61,8 +135,6 @@ public class JConfiguracao extends javax.swing.JDialog {
         }
 
     }
-
-
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -84,7 +156,12 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel_Avancada = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jTextField_Jpasta = new javax.swing.JTextField();
+        jButton_ADD = new javax.swing.JButton();
+        jButton_ADD1 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable_pastas = new javax.swing.JTable();
         jPanel_Avancada1 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -106,7 +183,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel4.setPreferredSize(new java.awt.Dimension(400, 25));
 
-        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13));
         jLabel2.setText("Configurações");
         jPanel4.add(jLabel2);
 
@@ -135,15 +212,70 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel3.setText("Avançado:");
+        jLabel3.setText("Pasta:");
         jPanel5.add(jLabel3);
+
+        jTextField_Jpasta.setEditable(false);
+        jTextField_Jpasta.setEnabled(false);
+        jTextField_Jpasta.setPreferredSize(new java.awt.Dimension(250, 30));
+        jPanel5.add(jTextField_Jpasta);
+
+        jButton_ADD.setText("ADD");
+        jButton_ADD.setPreferredSize(new java.awt.Dimension(60, 30));
+        jButton_ADD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_ADDActionPerformed(evt);
+            }
+        });
+        jPanel5.add(jButton_ADD);
+
+        jButton_ADD1.setText("DEL");
+        jButton_ADD1.setPreferredSize(new java.awt.Dimension(60, 30));
+        jButton_ADD1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_ADD1ActionPerformed(evt);
+            }
+        });
+        jPanel5.add(jButton_ADD1);
 
         jPanel_Avancada.add(jPanel5);
 
         jPanel6.setLayout(new java.awt.BorderLayout());
+
+        jTable_pastas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Pasta"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_pastas.setRowHeight(22);
+        jScrollPane1.setViewportView(jTable_pastas);
+
+        jPanel6.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
         jPanel_Avancada.add(jPanel6);
 
-        jTabbedPane1.addTab("Avançada", jPanel_Avancada);
+        jTabbedPane1.addTab("Monitorar Pastas", jPanel_Avancada);
 
         jPanel_Avancada1.setLayout(new javax.swing.BoxLayout(jPanel_Avancada1, javax.swing.BoxLayout.Y_AXIS));
 
@@ -196,17 +328,27 @@ public class JConfiguracao extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowClosing
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       setDadosBanco();
+        setDadosBanco();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton_ADDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ADDActionPerformed
+        addTablePastas();
+}//GEN-LAST:event_jButton_ADDActionPerformed
+
+    private void jButton_ADD1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ADD1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_ADD1ActionPerformed
+
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 JConfiguracao dialog = new JConfiguracao(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);
                     }
@@ -215,9 +357,10 @@ public class JConfiguracao extends javax.swing.JDialog {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton_ADD;
+    private javax.swing.JButton jButton_ADD1;
     private javax.swing.JCheckBox jCheckBox_teste;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -238,7 +381,9 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel_Avancada1;
     private javax.swing.JPanel jPanel_Avancada2;
     private javax.swing.JPanel jPanel_Geral;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTable jTable_pastas;
+    private javax.swing.JTextField jTextField_Jpasta;
     // End of variables declaration//GEN-END:variables
-
 }
