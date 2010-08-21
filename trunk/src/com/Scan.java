@@ -7,13 +7,6 @@ package com;
 import com.conexao.SQL;
 import com.conexao.Transacao;
 import com.musica.Musica;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -21,7 +14,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 
 /**
  *
@@ -33,7 +25,7 @@ public class Scan {
       //  Thread.sleep(500);
         Scan scan = new Scan(5);
         scan.start(5);
-        scan.iconeTray();
+      
     }
 
     public Scan(int tempo){
@@ -47,13 +39,13 @@ public class Scan {
 
         @Override
         public void run() {
-            trace("oi");
+            trace("Começando comparação!");
 
             for(int i=0; i<pastas.size(); i++){
                 atualiza();
                 verifica((File)pastas.get(i), t);
             }
-
+            tScan=null;
         }
     }
 
@@ -65,9 +57,10 @@ public class Scan {
             Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
         }
         tempo=tempo*60000;
-        Timer tScan = new Timer();
-        tScan.schedule(new taskScan(), 0, tempo);
-
+        if(tScan==null){
+            tScan = new Timer();
+            tScan.schedule(new taskScan(), 0, tempo);
+        }
     }
     public void addFolder(File f){
         pastas.add(f);
@@ -88,15 +81,13 @@ public class Scan {
             if(end.getAbsolutePath().indexOf(".mp3")==-1){
                 return;
             }
-           
-            //  for(int i=0; i<end ; i++){
+
             if (musicas.indexOf(end.getAbsolutePath()) == -1) {
 
                 Musica.addFiles(end, t);
             } else {
                 trace("já tem!");
             }
-            //    }
         }
 
 
@@ -114,65 +105,10 @@ public class Scan {
                 Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
             }
     }
-    private void iconeTray() {
-        try {
-            if (SystemTray.isSupported()) {
-                tray = SystemTray.getSystemTray();
-                //    setBandeija(true);
-                Image image = new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage();
-                ActionListener listener1 = new ActionListener() {
-
-                    public void actionPerformed(ActionEvent e) {
-                        //   someTray();
-                    }
-                };
-                ActionListener listener2 = new ActionListener() {
-
-                    public void actionPerformed(ActionEvent e) {
-                        //   sair();
-                        System.exit(0);
-                    }
-                };
-
-                PopupMenu popup = new PopupMenu();
-                MenuItem item1 = new MenuItem("Restaurar");
-                MenuItem item2 = new MenuItem("Sair");
-                item1.addActionListener(listener1);
-                item2.addActionListener(listener2);
-                popup.add(item1);
-                popup.add(item2);
-
-
-                trayIcon = new TrayIcon(image, "Jar jar Player", popup);
-                trayIcon.setImageAutoSize(true);
-
-                try {
-                    tray.add(trayIcon);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
-                new Thread(new Runnable() {
-
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }).start();
-
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-    private SystemTray tray;
-    private TrayIcon trayIcon;
+   
+    
     private Transacao t;
+      Timer tScan;
     ArrayList musicas;
     ArrayList pastas = new ArrayList();
     File teste = new File("/home/rudieri/Música");
