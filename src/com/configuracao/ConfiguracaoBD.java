@@ -2,6 +2,7 @@ package com.configuracao;
 
 import com.conexao.SQL;
 import com.conexao.Transacao;
+import java.io.File;
 import java.sql.*;
 import java.util.*;
 
@@ -100,6 +101,16 @@ public class ConfiguracaoBD {
         return t.executeUpdate(sql.getSql());
     }
 
+    public static int excluirChavesQueComecam(String chave, Transacao t) throws Exception {
+        SQL sql = new SQL();
+        sql.add("DELETE FROM " + TBL);
+        sql.add("WHERE chave like :chave");
+
+        sql.setParam("chave", chave + "%");
+
+        return t.executeUpdate(sql.getSql());
+    }
+
     /**
      * Método que carrega o objeto Musica pelo ID.
      *
@@ -134,7 +145,7 @@ public class ConfiguracaoBD {
      * @param filtro Contendo o filtro.
      * @param t Contendo a transação.
      * @return ArrayList Contendo uma lista de Musicas. */
-    public static HashMap<String,String> listar(ConfiguracaoSC filtro, Transacao t) throws Exception {
+    public static HashMap<String, String> listar(ConfiguracaoSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
             throw new Exception(" - Filtro não informado.");
         }
@@ -145,17 +156,22 @@ public class ConfiguracaoBD {
         sql.add("FROM " + TBL);
         sql.add("WHERE 1=1");
 
-            ResultSet rs = t.executeQuery(sql.getSql());
-            try {
-                HashMap<String,String> lista = new HashMap<String,String> ();
-                while (rs.next()) {
-                    lista.put(rs.getString("chave"), rs.getString("valor"));
-                }
-                return lista;
-            } finally {
-                rs.close();
+        if (filtro.parteChave != null) {
+            sql.add("AND chave like :chave");
+            sql.setParam("chave", filtro.parteChave + "%");
+        }
+
+        ResultSet rs = t.executeQuery(sql.getSql());
+        try {
+            HashMap<String, String> lista = new HashMap<String, String>();
+            while (rs.next()) {
+                lista.put(rs.getString("chave"), rs.getString("valor"));
             }
-        
+            return lista;
+        } finally {
+            rs.close();
+        }
+
     }
 
     /*#########################################
@@ -221,7 +237,19 @@ public class ConfiguracaoBD {
         }
     }
 
- 
+    public static int excluirChavesQueComecam(String chave) throws Exception {
+        Transacao t = new Transacao();
+        try {
+            t.begin();
+            int r = excluirChavesQueComecam(chave, t);
+            t.commit();
+            return r;
+        } catch (Exception ex) {
+            t.rollback();
+            throw ex;
+        }
+    }
+
     /**
      * Método que carrega o objeto Musica pelo ID.
      *
@@ -245,16 +273,38 @@ public class ConfiguracaoBD {
     /** Método que retorna uma lista de Musicas de acordo com o filtro.
      * @param filtro Contendo o filtro.
      * @return ArrayList Contendo uma lista de Musicas. */
-    public static HashMap<String,String> listar(ConfiguracaoSC filtro) throws Exception {
+    public static HashMap<String, String> listar(ConfiguracaoSC filtro) throws Exception {
         Transacao t = new Transacao();
         try {
             t.begin();
-            HashMap<String,String> r = listar(filtro, t);
+            HashMap<String, String> r = listar(filtro, t);
             t.commit();
             return r;
         } catch (Exception ex) {
             t.rollback();
             throw ex;
         }
+    }
+
+    public static ArrayList<File> listarPastas() {
+        Transacao t = new Transacao();
+        ArrayList<File> pastas = new ArrayList<File>();
+        try {
+            t.begin();
+            ConfiguracaoSC filtro = new ConfiguracaoSC();
+            filtro.parteChave = "pastaMonitorada";
+            HashMap<String, String> lista = listar(filtro, t);
+            Set chaves = lista.keySet();
+
+            for (int i = 0; i < chaves.toArray().length; i++) {
+                pastas.add(new File(lista.get(chaves.toArray()[i])));
+            }
+            t.commit();
+
+        } catch (Exception ex) {
+            t.rollback();
+            ex.printStackTrace();
+        }
+        return pastas;
     }
 }

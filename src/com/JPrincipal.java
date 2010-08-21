@@ -2,6 +2,8 @@ package com;
 
 import com.conexao.BD;
 import com.config.GerenciadorConfig;
+import com.configuracao.ConfiguracaoBD;
+import com.configuracao.ConfiguracaoSC;
 import com.configuracao.JConfiguracao;
 import com.help.JHelp;
 import com.help.JSobre;
@@ -72,6 +74,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private JPlayList playList = new JPlayList(this, false, this);
     private JMini jmini = new JMini(this, false, this, playList, biblioteca);
     GerenciadorConfig _conf = new GerenciadorConfig(this, playList, biblioteca, jmini);
+    private Scan scan ;
 
     public JPrincipal() {
         initComponents();
@@ -90,6 +93,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         playList.setRepetir(repeat);
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
         playList.posicionar();
+        scan = new Scan(1);
+        scan.setPastas(ConfiguracaoBD.listarPastas());
 
         inicializaIcones();
 
@@ -754,6 +759,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }
 
     public void sair() {
+        tocando2 = tocando;
+         stopeFinalite();
         setConf();
         System.exit(0);
     }
@@ -828,6 +835,14 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         playList.salvarPlaylistAtual();
         _conf.setAllValores();
 
+    }
+
+    public void stopeFinalite(){
+        try {
+            player.stop();
+        } catch (BasicPlayerException ex) {
+            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -1691,7 +1706,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-        setConf();
+        sair();
     }//GEN-LAST:event_formWindowClosing
 
     private void jLabel_bibMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_bibMouseClicked
@@ -1758,6 +1773,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
        new JConfiguracao(this, true).setVisible(true);
+       scan.setPastas(ConfiguracaoBD.listarPastas());
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     /**
@@ -1872,6 +1888,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     // End of variables declaration//GEN-END:variables
     DefaultBoundedRangeModel md = new DefaultBoundedRangeModel();
     Timer tarefa;
+    public boolean tocando2 = false;
     boolean tocando = false;
     boolean paused = false;
     boolean ajust = false;

@@ -18,6 +18,7 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 
 /**
  *
@@ -43,7 +44,6 @@ public class GerenciadorConfig {
         // tela de aguarde (passa muito rápido, nem da tempo de ver)
         final Aguarde ag = new Aguarde();
         new Thread(new Runnable() {
-
             public void run() {
                 pr.setVisible(false);
                 ag.setVisible(true);
@@ -57,15 +57,17 @@ public class GerenciadorConfig {
             //Inicia a transação
             t.begin();
             //ATENÇÃO! APENAS O PRIMEIRO incluir DEVE MANDAR O PARAMETRO reset COMO true
-            ConfigBD.incluir("tocando", String.valueOf(pr.getTocando()), true, t);
+            ConfigBD.incluir("tocando", String.valueOf(pr.tocando2), true, t);
             ConfigBD.incluir("pause", String.valueOf(pr.getPause()), false, t);
             if (pr.getMusica() != null) {
                 ConfigBD.incluir("musica", pr.getMusica().getId().toString(), false, t);
             } else {
                 ConfigBD.incluir("musica", "", false, t);
-            }
+            }          
+
             ConfigBD.incluir("tempo", String.valueOf(pr.getTempo()), false, t);
             ConfigBD.incluir("volume", String.valueOf(pr.getVolume()), false, t);
+            pr.setVolume(0);
             ConfigBD.incluir("pan", String.valueOf(pr.getBalanco()), false, t);
             if (pl.getId() != -1) {
                 ConfigBD.incluir("playList", String.valueOf(pl.getId()), false, t);
@@ -77,8 +79,11 @@ public class GerenciadorConfig {
             ConfigBD.incluir("bandeja", String.valueOf(pr.isBandeija()), false, t);
             ConfigBD.incluir("miniPosicao", String.valueOf((int) mini.getLocal().getX() + "X" + (int) mini.getLocal().getY()), false, t);
             ConfigBD.incluir("minitop", String.valueOf(mini.getTop()), false, t);
+            
            //salva o que foi mudado
             t.commit();
+             BD.fecharBD();            
+            
 
         } catch (Exception ex) {
             t.rollback();
@@ -123,6 +128,7 @@ public class GerenciadorConfig {
 
             if (list.get("volume") != null) {
                 setVolume(Integer.parseInt((String) list.get("volume")));
+
             }
             if (list.get("pan") != null) {
                 setPan(Integer.parseInt((String) list.get("pan")));
@@ -136,7 +142,7 @@ public class GerenciadorConfig {
             }
             if (list.get("minitop") != null) {
                 setTop(Boolean.parseBoolean((String) list.get("minitop")));
-            }
+            }           
 
         } catch (Exception ex) {
             Logger.getLogger(GerenciadorConfig.class.getName()).log(Level.SEVERE, null, ex);

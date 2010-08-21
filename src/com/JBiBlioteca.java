@@ -49,7 +49,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
         initComponents();
         this.principal = principal;
         jProgressBar.setVisible(false);
-        jPanelFiltrar.setVisible(false);
+        jPanelFiltrar.setVisible(true);
 //        if (jCheckBox_capa.isSelected()) {
 //            atualizarTabelaCapa();
 //        } else {

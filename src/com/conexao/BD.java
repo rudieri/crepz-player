@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 public class BD {
 
     private static BancoServer server;
+    private static boolean naoAbremais = false;
     private Connection conn;
     private Statement st;
     private String local = new File("").getAbsolutePath();
@@ -86,6 +87,8 @@ public class BD {
     }
 
     public void testarTabelas(Connection con) throws SQLException {
+        if(naoAbremais)
+            return;
         if (con == null && (server == null || !server.ativo)) {
             server = new BancoServer("BD");
             con = getConexao();
@@ -146,5 +149,12 @@ public class BD {
 
     public static void fecharBD() {
         server.stop();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(BD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        naoAbremais = true;
+
     }
 }
