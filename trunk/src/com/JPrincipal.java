@@ -3,7 +3,9 @@ package com;
 import com.conexao.BD;
 import com.config.GerenciadorConfig;
 import com.configuracao.Centro;
+import com.configuracao.Configuracao;
 import com.configuracao.ConfiguracaoBD;
+import com.configuracao.ConfiguracaoSC;
 import com.configuracao.JConfiguracao;
 import com.help.JHelp;
 import com.help.JSobre;
@@ -96,6 +98,11 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         playList.posicionar();
         scan = new Scan(_center.retorna("TempoAtualizar"));
         scan.setPastas(ConfiguracaoBD.listarPastas());
+        try {
+            Configuracao.setConfiguracoes(ConfiguracaoBD.listar(new ConfiguracaoSC()));
+        } catch (Exception ex) {
+            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         inicializaIcones();
 

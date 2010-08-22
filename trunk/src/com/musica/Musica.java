@@ -5,6 +5,8 @@
 package com.musica;
 
 import com.conexao.Transacao;
+import com.configuracao.Configuracao;
+import com.utils.BuscaGoogle;
 import java.io.File;
 import javax.swing.JProgressBar;
 import org.farng.mp3.MP3File;
@@ -228,11 +230,26 @@ public class Musica {
     }
 
     public static Musica addFiles(File dir, Transacao t) {
-          Musica m = new Musica();
+        Musica m = new Musica();
         if (dir.getName().toLowerCase().indexOf(".mp3") != -1) {
             try {
+                dir = new File(dir.getAbsolutePath());
                 MP3File mp3 = new MP3File(dir.getAbsolutePath().replace("\\\\", "/").replace("\\", "/").trim());
                 m.setCaminho(dir.getAbsolutePath());
+                if (Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("organizadorPastas").toString())) {
+                    getMusica(m, mp3, dir);
+                    String dest = Configuracao.getConfiguracoes().get("organizadorDestino") + "/" + removeCaracteresEsp(m.getAutor()) + "/" + removeCaracteresEsp(m.getAlbum()) + "/";
+                    File destino = new File(dest);
+                    destino.mkdirs();
+                    destino = new File(destino.getAbsolutePath()+"/"+dir.getName());
+                    mp3 = null;
+                    if (dir.renameTo(destino)) {
+                        dir = destino;
+                    }
+                    mp3 = new MP3File(dir.getAbsolutePath().replace("\\\\", "/").replace("\\", "/").trim());
+                    m.setCaminho(dir.getAbsolutePath());
+
+                }
 
                 System.out.println("---------------------\n" + dir.getName());
                 if (MusicaBD.existe(m, t)) {
@@ -244,6 +261,11 @@ public class Musica {
                     MusicaBD.incluir(m, t);
                 }
 
+                if(Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("downloadCapas").toString()) && (m.getImg()==null || m.getImg().equals(""))){
+                    m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
+                    MusicaBD.alterar(m, t);
+                }
+
             } catch (Exception e) {
                 System.out.println("Erro ao importar arquivos");
                 e.printStackTrace();
@@ -251,7 +273,7 @@ public class Musica {
         } else {
             System.out.println(dir.getName().toLowerCase() + " Não é MP3");
         }
-          return m;
+        return m;
     }
 
     public static String getImagemDir(File dir) {
@@ -278,8 +300,8 @@ public class Musica {
     }
 
     private void setGenero(int genre) {
-        if(genre>=generos.length || genre<0){
-            genero="";
+        if (genre >= generos.length || genre < 0) {
+            genero = "";
             return;
         }
         try {
@@ -304,5 +326,15 @@ public class Musica {
 
     public int getNumero() {
         return number;
+    }
+
+    public static String removeCaracteresEsp(String st) {
+        String ret = st;
+        ret = ret.replace("/", "").replace("ÿ", "");
+        ret = ret.replace("|", "").replace("þ", "");
+        ret = ret.replace("|", "").replace("þ", "");
+        ret = ret.replace(" ", "_");
+
+        return ret;
     }
 }

@@ -13,6 +13,8 @@ package com.configuracao;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 
@@ -35,6 +37,12 @@ public class JConfiguracao extends javax.swing.JDialog {
         try {
             HashMap<String, String> lista = ConfiguracaoBD.listar(new ConfiguracaoSC());
             jCheckBox_teste.setSelected(lista.get("teste") == null ? false : Boolean.parseBoolean(lista.get("teste").toString()));
+            
+            //Aba Organizador
+            jCheckBox_Organizador.setSelected(lista.get("organizadorPastas") == null ? false : Boolean.parseBoolean(lista.get("organizadorPastas").toString()));
+            jTextField_DestinoOrg.setText(lista.get("organizadorDestino") == null?"":lista.get("organizadorDestino").toString());
+            jCheckBox_DownloadCapa.setSelected(lista.get("downloadCapas") == null ? false : Boolean.parseBoolean(lista.get("downloadCapas").toString()));
+
             setTabelaPastas(lista);
             Object ob = Integer.parseInt(lista.get("TempoAtualizar"));
             jSpinner1.setValue(ob);
@@ -113,6 +121,11 @@ public class JConfiguracao extends javax.swing.JDialog {
         HashMap<String, String> lista = new HashMap<String, String>();
         lista.put("teste", String.valueOf(jCheckBox_teste.isSelected()));
         lista.put("TempoAtualizar", jSpinner1.getValue().toString());
+
+        lista.put("organizadorPastas", String.valueOf(jCheckBox_Organizador.isSelected()));
+        lista.put("organizadorDestino", jTextField_DestinoOrg.getText());
+        lista.put("downloadCapas", String.valueOf(jCheckBox_DownloadCapa.isSelected()));
+
         setDadosBancoPasta(lista);
 
         Set chaves = lista.keySet();
@@ -167,14 +180,20 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jSpinner1 = new javax.swing.JSpinner();
-        jPanel_Avancada1 = new javax.swing.JPanel();
+        jPanel_Organizador = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jPanel8 = new javax.swing.JPanel();
-        jPanel_Avancada2 = new javax.swing.JPanel();
+        jCheckBox_Organizador = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        jTextField_DestinoOrg = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
         jPanel10 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        jCheckBox_DownloadCapa = new javax.swing.JCheckBox();
+        jPanel8 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jPanel11 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
 
@@ -188,7 +207,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel4.setPreferredSize(new java.awt.Dimension(400, 25));
 
-        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13));
+        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jLabel2.setText("Configurações");
         jPanel4.add(jLabel2);
 
@@ -291,10 +310,9 @@ public class JConfiguracao extends javax.swing.JDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,33 +327,66 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("Monitorar Pastas", jPanel_Avancada);
 
-        jPanel_Avancada1.setLayout(new javax.swing.BoxLayout(jPanel_Avancada1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel_Organizador.setLayout(new javax.swing.BoxLayout(jPanel_Organizador, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel4.setText("Avançado:");
+        jLabel4.setText("Ativar Organizador:");
+        jLabel4.setPreferredSize(new java.awt.Dimension(130, 17));
         jPanel7.add(jLabel4);
+        jPanel7.add(jCheckBox_Organizador);
 
-        jPanel_Avancada1.add(jPanel7);
-
-        jPanel8.setLayout(new java.awt.BorderLayout());
-        jPanel_Avancada1.add(jPanel8);
-
-        jTabbedPane1.addTab("Fodastica", jPanel_Avancada1);
-
-        jPanel_Avancada2.setLayout(new javax.swing.BoxLayout(jPanel_Avancada2, javax.swing.BoxLayout.Y_AXIS));
+        jPanel_Organizador.add(jPanel7);
 
         jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel5.setText("Avançado:");
+        jLabel5.setText("Destino:");
+        jLabel5.setPreferredSize(new java.awt.Dimension(125, 17));
         jPanel9.add(jLabel5);
 
-        jPanel_Avancada2.add(jPanel9);
+        jTextField_DestinoOrg.setEditable(false);
+        jTextField_DestinoOrg.setEnabled(false);
+        jTextField_DestinoOrg.setPreferredSize(new java.awt.Dimension(250, 30));
+        jPanel9.add(jTextField_DestinoOrg);
 
-        jPanel10.setLayout(new java.awt.BorderLayout());
-        jPanel_Avancada2.add(jPanel10);
+        jButton2.setText("...");
+        jButton2.setOpaque(true);
+        jButton2.setPreferredSize(new java.awt.Dimension(30, 30));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel9.add(jButton2);
 
-        jTabbedPane1.addTab("Oo'", jPanel_Avancada2);
+        jPanel_Organizador.add(jPanel9);
+
+        jPanel10.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel7.setText("Donwload de Capas:");
+        jLabel7.setPreferredSize(new java.awt.Dimension(130, 17));
+        jPanel10.add(jLabel7);
+        jPanel10.add(jCheckBox_DownloadCapa);
+
+        jPanel_Organizador.add(jPanel10);
+
+        jPanel8.setLayout(new java.awt.BorderLayout());
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setEditable(false);
+        jTextArea1.setLineWrap(true);
+        jTextArea1.setRows(5);
+        jTextArea1.setText("O modo organizador ativado, o sitema ao ler uma musica ira organiza-la na pasta de destino, mais as pastas\n         Artista\n         Album\nCom download de capa ativo o sistema ira buscar uma capa, para o álbum caso o mesmo não tenha");
+        jTextArea1.setAutoscrolls(true);
+        jTextArea1.setEnabled(false);
+        jTextArea1.setFocusable(false);
+        jScrollPane2.setViewportView(jTextArea1);
+
+        jPanel8.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        jPanel_Organizador.add(jPanel8);
+
+        jTabbedPane1.addTab("Organizador", jPanel_Organizador);
 
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
@@ -356,11 +407,21 @@ public class JConfiguracao extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        setDadosBanco();
+        try {
+            setDadosBanco();
+            Configuracao.setConfiguracoes(ConfiguracaoBD.listar(new ConfiguracaoSC()));
+        } catch (Exception ex) {
+            Logger.getLogger(JConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_formWindowClosing
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        setDadosBanco();
+         try {
+            setDadosBanco();
+            Configuracao.setConfiguracoes(ConfiguracaoBD.listar(new ConfiguracaoSC()));
+        } catch (Exception ex) {
+            Logger.getLogger(JConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton_ADDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ADDActionPerformed
@@ -370,6 +431,18 @@ public class JConfiguracao extends javax.swing.JDialog {
     private void jButton_ADD1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ADD1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton_ADD1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       // restringe a amostra a diretorios apenas
+        jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        jFileChooser.setDialogTitle("Abrir Pasta");
+
+        int res = jFileChooser.showOpenDialog(null);
+
+        if (res == JFileChooser.APPROVE_OPTION) 
+            jTextField_DestinoOrg.setText(jFileChooser.getSelectedFile().getAbsolutePath());
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -391,8 +464,11 @@ public class JConfiguracao extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton_ADD;
     private javax.swing.JButton jButton_ADD1;
+    private javax.swing.JCheckBox jCheckBox_DownloadCapa;
+    private javax.swing.JCheckBox jCheckBox_Organizador;
     private javax.swing.JCheckBox jCheckBox_teste;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -400,6 +476,7 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -413,13 +490,15 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JPanel jPanel_Avancada;
-    private javax.swing.JPanel jPanel_Avancada1;
-    private javax.swing.JPanel jPanel_Avancada2;
     private javax.swing.JPanel jPanel_Geral;
+    private javax.swing.JPanel jPanel_Organizador;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable_pastas;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField jTextField_DestinoOrg;
     private javax.swing.JTextField jTextField_Jpasta;
     // End of variables declaration//GEN-END:variables
 }
