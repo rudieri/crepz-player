@@ -3,6 +3,7 @@ package com;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -10,8 +11,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JViewport;
 import javax.swing.border.BevelBorder;
 
 
@@ -39,25 +43,20 @@ public class JMini extends javax.swing.JDialog {
     private int initY;
     private int thisX;
     private int thisY;
-    private Timer th;
     Timer tarefa = new Timer();
     private int estado = 0;
+    private int xVisivel = 0;
+//    JViewport jv = new JViewport();
 
     public JMini(java.awt.Frame parent, boolean modal, JPrincipal principal, JPlayList pl, JBiBlioteca bl) {
         super(parent, modal);
-        th = new Timer(true);
         initComponents();
         this.principal = principal;
         this.playList = pl;
         lib = bl;
         //  this.lib=bl;
         startEvents();
-
-
-
-        //System.out.println(jLabel1.getX()+jLabel1.getWidth());
-        //System.out.println(jLabel1.getX());
-
+//        letreiro();
 
     }
 
@@ -98,10 +97,7 @@ public class JMini extends javax.swing.JDialog {
             jLabel_top.setIcon(principal.topOff);
         }
     }
-    /**Atualiza o icone Play
-    @param Icone a ser colocado.
-     */
-    MouseAdapter maPopUp = new MouseAdapter() {
+    MouseAdapter mouseAdapterPopUp = new MouseAdapter() {
 
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -118,13 +114,39 @@ public class JMini extends javax.swing.JDialog {
                 ondeEstou(e);
             }
         }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            super.mouseEntered(e);
+            if (e.getComponent() instanceof JLabel) {
+
+                objetoRollOver((JLabel) e.getComponent());
+            }
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            super.mouseExited(e);
+            e.getComponent().repaint();
+        }
     };
-    MouseMotionAdapter moPopUp = new MouseMotionAdapter() {
+    MouseMotionAdapter mouseMotionPopUp = new MouseMotionAdapter() {
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            super.mouseDragged(e);
+            vouParaOnde(e);
+        }
     };
 
     private void startEvents() {
         for (int i = 0; i < jPanel1.getComponentCount(); i++) {
-            jPanel1.getComponent(i).addMouseListener(maPopUp);
+            jPanel1.getComponent(i).addMouseListener(mouseAdapterPopUp);
+            jPanel1.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
+        }
+        for (int i = 0; i < jPanel3.getComponentCount(); i++) {
+            jPanel3.getComponent(i).addMouseListener(mouseAdapterPopUp);
+            jPanel3.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
         }
 
         lib.addWindowListener(new WindowAdapter() {
@@ -145,26 +167,38 @@ public class JMini extends javax.swing.JDialog {
                 setTop(jCheckBox_top.isSelected());
             }
         });
-        MouseAdapter mal = new MouseAdapter() {
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                objetoRollOver2((JLabel) e.getComponent());
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                e.getComponent().repaint();
-            }
-        };
-        jLabel_Playlist.addMouseListener(mal);
-        jLabel_lib.addMouseListener(mal);
-        jLabel_popup.addMouseListener(mal);
-        jLabel_top.addMouseListener(mal);
+//        
     }
-
+//    private void letreiro(){
+//
+//        new Thread(new Runnable() {
+//            public void run() {
+//
+////                for(int i=-jLabelNomeMusica.getWidth();i<2*jLabelNomeMusica.getWidth();i++){
+//                int i=0;//- jLabelNomeMusica.getWidth()/2;
+//
+//                while(true){
+//                    i++;
+//                    jv.scrollRectToVisible(new Rectangle(i, 0, 100, 20));
+//                    //System.out.println(i);
+//                    if(i>jLabelNomeMusica.getWidth()/2){
+//                        i=-jLabelNomeMusica.getWidth()/2;
+//                        System.out.println("--------------------- " + i);
+//                    }
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException ex) {
+//                        Logger.getLogger(JMini.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                    //setNomeMusica (jLabelNomeMusica.getText());
+//                }
+//
+//            }
+//        }).start();
+//    }
+    /**Atualiza o icone Play
+    @param Icone a ser colocado.
+     */
     public void setPlayIcon(Icon ic) {
         jButton_Play.setIcon(ic);
     }
@@ -179,6 +213,12 @@ public class JMini extends javax.swing.JDialog {
 
     public boolean getTop() {
         return isAlwaysOnTop();
+    }
+
+    public void setNomeMusica(String n) {
+        jLabelNomeMusica.setText(n);
+//        jv.add(jLabelNomeMusica);
+//        jScrollPane1.setViewport(jv);
     }
 
     public void setTop(boolean b) {
@@ -221,7 +261,10 @@ public class JMini extends javax.swing.JDialog {
      */
     public void objetoRollOver(JLabel c) {
         Icon aux = c.getIcon();
-        c.getGraphics().drawOval(2, 3, aux.getIconWidth(), aux.getIconHeight());
+
+        if (aux.getIconWidth() > 15) {
+            c.getGraphics().drawOval(2, 3, aux.getIconWidth(), aux.getIconHeight());
+        }
     }
 
     public void objetoRollOver2(JLabel c) {
@@ -246,14 +289,6 @@ public class JMini extends javax.swing.JDialog {
             } else {
                 jToggle_Repete.setIcon(principal.resizeIcons(principal.bf_repeatOffIcon));
             }
-
-//            if (!System.getProperty("sun.desktop").equalsIgnoreCase("windows")) {
-//                if (e.getYOnScreen() < 300) {
-//                    this.setLocation(e.getXOnScreen() - this.getWidth() / 2, e.getYOnScreen() + 13);
-//                } else {
-//                    this.setLocation(e.getXOnScreen() - this.getWidth() / 2, e.getYOnScreen() - this.getHeight() - 13);
-//                }
-//            }
         }
 
         jSlider_vol.setPreferredSize(new Dimension(jSlider_vol.getWidth(), jButton_Play.getHeight()));
@@ -284,22 +319,22 @@ public class JMini extends javax.swing.JDialog {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jPopupMenu1 = new javax.swing.JPopupMenu();
-        jMenu1 = new javax.swing.JMenu();
+        jMenuVisualizacoes = new javax.swing.JMenu();
         jCheckBox_top = new javax.swing.JCheckBoxMenuItem();
         jCheckBox_lib = new javax.swing.JCheckBoxMenuItem();
         jCheckBox_list = new javax.swing.JCheckBoxMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        jMenuBalanco = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
         jRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
         jRadioButtonMenuItem2 = new javax.swing.JRadioButtonMenuItem();
         jRadioButtonMenuItem3 = new javax.swing.JRadioButtonMenuItem();
         jRadioButtonMenuItem4 = new javax.swing.JRadioButtonMenuItem();
         jRadioButtonMenuItem5 = new javax.swing.JRadioButtonMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuRestaura = new javax.swing.JMenuItem();
         jMenu_Ocult = new javax.swing.JMenuItem();
         jMenu_exit = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuCancelar = new javax.swing.JMenuItem();
         buttonGrou_Balanco = new javax.swing.ButtonGroup();
         jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -318,9 +353,12 @@ public class JMini extends javax.swing.JDialog {
         jToggleButton1 = new javax.swing.JLabel();
         jToggle_Repete = new javax.swing.JLabel();
         jSlider_vol = new javax.swing.JSlider();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jLabelNomeMusica = new javax.swing.JTextArea();
 
-        jMenu1.setMnemonic('v');
-        jMenu1.setText("Visualizações");
+        jMenuVisualizacoes.setMnemonic('v');
+        jMenuVisualizacoes.setText("Visualizações");
 
         jCheckBox_top.setText("Sempre Visível");
         jCheckBox_top.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -328,7 +366,7 @@ public class JMini extends javax.swing.JDialog {
                 jCheckBox_topStateChanged(evt);
             }
         });
-        jMenu1.add(jCheckBox_top);
+        jMenuVisualizacoes.add(jCheckBox_top);
 
         jCheckBox_lib.setText("Mostrar Biblioteca");
         jCheckBox_lib.addActionListener(new java.awt.event.ActionListener() {
@@ -336,7 +374,7 @@ public class JMini extends javax.swing.JDialog {
                 jCheckBox_libActionPerformed(evt);
             }
         });
-        jMenu1.add(jCheckBox_lib);
+        jMenuVisualizacoes.add(jCheckBox_lib);
 
         jCheckBox_list.setText("Mostrar PlayList");
         jCheckBox_list.addActionListener(new java.awt.event.ActionListener() {
@@ -344,12 +382,12 @@ public class JMini extends javax.swing.JDialog {
                 jCheckBox_listActionPerformed(evt);
             }
         });
-        jMenu1.add(jCheckBox_list);
+        jMenuVisualizacoes.add(jCheckBox_list);
 
-        jPopupMenu1.add(jMenu1);
+        jPopupMenu1.add(jMenuVisualizacoes);
 
-        jMenu2.setMnemonic('o');
-        jMenu2.setText("Opções");
+        jMenuBalanco.setMnemonic('o');
+        jMenuBalanco.setText("Opções");
 
         jMenu3.setText("Balanço");
         jMenu3.addMenuListener(new javax.swing.event.MenuListener() {
@@ -407,18 +445,18 @@ public class JMini extends javax.swing.JDialog {
         });
         jMenu3.add(jRadioButtonMenuItem5);
 
-        jMenu2.add(jMenu3);
+        jMenuBalanco.add(jMenu3);
 
-        jPopupMenu1.add(jMenu2);
+        jPopupMenu1.add(jMenuBalanco);
 
-        jMenuItem2.setMnemonic('r');
-        jMenuItem2.setText("Restaurar");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        jMenuRestaura.setMnemonic('r');
+        jMenuRestaura.setText("Restaurar");
+        jMenuRestaura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                jMenuRestauraActionPerformed(evt);
             }
         });
-        jPopupMenu1.add(jMenuItem2);
+        jPopupMenu1.add(jMenuRestaura);
 
         jMenu_Ocult.setMnemonic('m');
         jMenu_Ocult.setText("Ocultar-me");
@@ -439,15 +477,20 @@ public class JMini extends javax.swing.JDialog {
         jPopupMenu1.add(jMenu_exit);
         jPopupMenu1.add(jSeparator1);
 
-        jMenuItem1.setMnemonic('c');
-        jMenuItem1.setText("Cancelar");
-        jPopupMenu1.add(jMenuItem1);
+        jMenuCancelar.setMnemonic('c');
+        jMenuCancelar.setText("Cancelar");
+        jMenuCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuCancelarActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuCancelar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(51, 51, 51));
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImage(null);
-        setMinimumSize(new java.awt.Dimension(100, 30));
+        setMinimumSize(new java.awt.Dimension(100, 40));
         setUndecorated(true);
         addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -455,9 +498,6 @@ public class JMini extends javax.swing.JDialog {
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 formMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                formMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 formMousePressed(evt);
@@ -510,7 +550,7 @@ public class JMini extends javax.swing.JDialog {
         jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Tempo.setMaximum(1000);
         jSlider_Tempo.setToolTipText("");
-        jSlider_Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jSlider_Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jSlider_Tempo.setMinimumSize(new java.awt.Dimension(36, 14));
         jSlider_Tempo.setPreferredSize(new java.awt.Dimension(180, 14));
 
@@ -537,7 +577,7 @@ public class JMini extends javax.swing.JDialog {
 
         jLabel_popup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/c_menu.png"))); // NOI18N
         jLabel_popup.setToolTipText("Menu de opções");
-        jLabel_popup.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel_popup.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel_popup.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_popupMouseClicked(evt);
@@ -547,7 +587,7 @@ public class JMini extends javax.swing.JDialog {
 
         jLabel_Playlist.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/playlist.gif"))); // NOI18N
         jLabel_Playlist.setToolTipText("Playlist");
-        jLabel_Playlist.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel_Playlist.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel_Playlist.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_PlaylistMouseClicked(evt);
@@ -557,7 +597,7 @@ public class JMini extends javax.swing.JDialog {
 
         jLabel_lib.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/biblioteca.png"))); // NOI18N
         jLabel_lib.setToolTipText("Biblioteca");
-        jLabel_lib.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel_lib.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel_lib.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_libMouseClicked(evt);
@@ -567,7 +607,7 @@ public class JMini extends javax.swing.JDialog {
 
         jLabel_top.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/c_top_off.png"))); // NOI18N
         jLabel_top.setToolTipText("Sempre Visível");
-        jLabel_top.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel_top.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel_top.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_topMouseClicked(evt);
@@ -575,10 +615,10 @@ public class JMini extends javax.swing.JDialog {
         });
         jPanel3.add(jLabel_top);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 8));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/x.png"))); // NOI18N
         jLabel1.setToolTipText("Ocultar");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel1MouseClicked(evt);
@@ -597,11 +637,10 @@ public class JMini extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel4.add(jPanel2, gridBagConstraints);
 
-        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 1));
 
@@ -609,130 +648,75 @@ public class JMini extends javax.swing.JDialog {
         jButton_Play.setText("Tocar");
         jButton_Play.setToolTipText("Tocar");
         jButton_Play.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jButton_Play.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton_Play.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton_Play.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jButton_PlayMouseWheelMoved(evt);
             }
         });
         jButton_Play.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_PlayMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_PlayMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseReleased(evt);
-            }
-        });
-        jButton_Play.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jButton_PlayMouseDragged(evt);
             }
         });
         jPanel1.add(jButton_Play);
 
         jButton_Stop.setText("Parar");
         jButton_Stop.setToolTipText("Parar");
-        jButton_Stop.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton_Stop.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton_Stop.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jButton_StopMouseWheelMoved(evt);
             }
         });
         jButton_Stop.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_StopMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_StopMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton_StopMouseReleased(evt);
-            }
-        });
-        jButton_Stop.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jButton_StopMouseDragged(evt);
             }
         });
         jPanel1.add(jButton_Stop);
 
         jButton_Ant.setText("Voltar");
         jButton_Ant.setToolTipText("Voltar");
-        jButton_Ant.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton_Ant.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton_Ant.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jButton_AntMouseWheelMoved(evt);
             }
         });
         jButton_Ant.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_AntMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_AntMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton_AntMouseReleased(evt);
-            }
-        });
-        jButton_Ant.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jButton_AntMouseDragged(evt);
             }
         });
         jPanel1.add(jButton_Ant);
 
         jButton_Next.setText("Avançar");
         jButton_Next.setToolTipText("Avançar");
-        jButton_Next.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton_Next.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton_Next.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jButton_NextMouseWheelMoved(evt);
             }
         });
         jButton_Next.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton_NextMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_NextMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jButton_NextMouseReleased(evt);
-            }
-        });
-        jButton_Next.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jButton_NextMouseDragged(evt);
             }
         });
         jPanel1.add(jButton_Next);
 
         jToggleButton1.setText("Random");
         jToggleButton1.setToolTipText("Aleatório");
-        jToggleButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jToggleButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jToggleButton1.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jToggleButton1MouseWheelMoved(evt);
             }
         });
         jToggleButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jToggleButton1MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jToggleButton1MouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jToggleButton1MouseReleased(evt);
-            }
-        });
-        jToggleButton1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jToggleButton1MouseDragged(evt);
             }
         });
         jPanel1.add(jToggleButton1);
@@ -745,26 +729,15 @@ public class JMini extends javax.swing.JDialog {
             }
         });
         jToggle_Repete.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jToggle_RepeteMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jToggle_RepeteMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jToggle_RepeteMouseReleased(evt);
-            }
-        });
-        jToggle_Repete.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jToggle_RepeteMouseDragged(evt);
             }
         });
         jPanel1.add(jToggle_Repete);
 
         jSlider_vol.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_vol.setToolTipText("Volume");
-        jSlider_vol.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jSlider_vol.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jSlider_vol.setPreferredSize(new java.awt.Dimension(100, 23));
 
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider_vol, org.jdesktop.beansbinding.ELProperty.create("${value}"), jSlider_vol, org.jdesktop.beansbinding.BeanProperty.create("value"));
@@ -796,8 +769,43 @@ public class JMini extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = java.awt.GridBagConstraints.RELATIVE;
         jPanel4.add(jPanel1, gridBagConstraints);
+
+        jPanel5.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane1.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+
+        jLabelNomeMusica.setColumns(26);
+        jLabelNomeMusica.setEditable(false);
+        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabelNomeMusica.setRows(1);
+        jLabelNomeMusica.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        jLabelNomeMusica.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
+        jLabelNomeMusica.setDropMode(javax.swing.DropMode.INSERT);
+        jLabelNomeMusica.setFocusable(false);
+        jLabelNomeMusica.setRequestFocusEnabled(false);
+        jLabelNomeMusica.setVerifyInputWhenFocusTarget(false);
+        jLabelNomeMusica.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabelNomeMusicaMousePressed(evt);
+            }
+        });
+        jLabelNomeMusica.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                jLabelNomeMusicaMouseDragged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jLabelNomeMusica);
+
+        jPanel5.add(jScrollPane1, java.awt.BorderLayout.LINE_END);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        jPanel4.add(jPanel5, gridBagConstraints);
 
         getContentPane().add(jPanel4);
 
@@ -809,9 +817,6 @@ public class JMini extends javax.swing.JDialog {
     private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
 //       setVisible(false);
     }//GEN-LAST:event_formMouseMoved
-
-    private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
-    }//GEN-LAST:event_formMouseExited
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         if (evt.getButton() == 1) {
@@ -838,12 +843,6 @@ public class JMini extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jButton_PlayMouseReleased
 
-    private void jButton_PlayMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseDragged
-
-
-        vouParaOnde(evt);
-    }//GEN-LAST:event_jButton_PlayMouseDragged
-
     private void jButton_StopMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseReleased
 
         if (!(thisX != this.getX() || thisY != this.getY())) {
@@ -852,11 +851,6 @@ public class JMini extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_jButton_StopMouseReleased
-
-    private void jButton_StopMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseDragged
-
-        vouParaOnde(evt);
-    }//GEN-LAST:event_jButton_StopMouseDragged
 
     private void jButton_AntMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseReleased
 
@@ -894,21 +888,6 @@ public class JMini extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_jToggleButton1MouseReleased
-
-    private void jButton_AntMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseDragged
-
-        vouParaOnde(evt);
-    }//GEN-LAST:event_jButton_AntMouseDragged
-
-    private void jButton_NextMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_NextMouseDragged
-
-        vouParaOnde(evt);
-    }//GEN-LAST:event_jButton_NextMouseDragged
-
-    private void jToggleButton1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseDragged
-
-        vouParaOnde(evt);
-    }//GEN-LAST:event_jToggleButton1MouseDragged
 
     private void jSlider_volMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_volMouseWheelMoved
         jSlider_vol.setValue(jSlider_vol.getValue() - evt.getWheelRotation());
@@ -1006,58 +985,6 @@ public class JMini extends javax.swing.JDialog {
         jSlider_vol.setValue(jSlider_vol.getValue() - evt.getWheelRotation());
     }//GEN-LAST:event_jToggleButton1MouseWheelMoved
 
-    private void jButton_PlayMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseEntered
-        // TODO add your handling code here:
-        // jButton_Play.setIcon(principal.playIcon_Roll);
-        objetoRollOver(jButton_Play);
-    }//GEN-LAST:event_jButton_PlayMouseEntered
-
-    private void jButton_PlayMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseExited
-        // TODO add your handling code here:
-        evt.getComponent().repaint();
-    }//GEN-LAST:event_jButton_PlayMouseExited
-
-    private void jButton_StopMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseEntered
-        // TODO add your handling code here:
-        objetoRollOver(jButton_Stop);
-    }//GEN-LAST:event_jButton_StopMouseEntered
-
-    private void jButton_StopMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseExited
-        // TODO add your handling code here:
-        evt.getComponent().repaint();
-
-    }//GEN-LAST:event_jButton_StopMouseExited
-
-    private void jButton_AntMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseEntered
-        // TODO add your handling code here:
-        objetoRollOver(jButton_Ant);
-    }//GEN-LAST:event_jButton_AntMouseEntered
-
-    private void jButton_AntMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseExited
-        // TODO add your handling code here:
-        evt.getComponent().repaint();
-    }//GEN-LAST:event_jButton_AntMouseExited
-
-    private void jButton_NextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_NextMouseEntered
-        // TODO add your handling code here:
-        objetoRollOver(jButton_Next);
-    }//GEN-LAST:event_jButton_NextMouseEntered
-
-    private void jButton_NextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_NextMouseExited
-        // TODO add your handling code here:
-        evt.getComponent().repaint();
-    }//GEN-LAST:event_jButton_NextMouseExited
-
-    private void jToggleButton1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseEntered
-        // TODO add your handling code here:
-        objetoRollOver(jToggleButton1);
-    }//GEN-LAST:event_jToggleButton1MouseEntered
-
-    private void jToggleButton1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseExited
-        // TODO add your handling code here:
-        evt.getComponent().repaint();
-    }//GEN-LAST:event_jToggleButton1MouseExited
-
     private void jLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseEntered
         // TODO add your handling code here:
         jLabel1.getGraphics().drawRect(0, 0, jLabel1.getWidth() - 1, jLabel1.getHeight() - 1);
@@ -1067,14 +994,6 @@ public class JMini extends javax.swing.JDialog {
     private void jLabel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseExited
         evt.getComponent().repaint();
     }//GEN-LAST:event_jLabel1MouseExited
-
-    private void jToggle_RepeteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseEntered
-        objetoRollOver(jToggle_Repete);
-    }//GEN-LAST:event_jToggle_RepeteMouseEntered
-
-    private void jToggle_RepeteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseExited
-        evt.getComponent().repaint();
-    }//GEN-LAST:event_jToggle_RepeteMouseExited
 
     private void jToggle_RepeteMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseReleased
         if (!(thisX != this.getX() || thisY != this.getY())) {
@@ -1089,11 +1008,6 @@ public class JMini extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_jToggle_RepeteMouseReleased
-
-    private void jToggle_RepeteMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseDragged
-        // TODO add your handling code here:
-        vouParaOnde(evt);
-    }//GEN-LAST:event_jToggle_RepeteMouseDragged
 
     private void jToggle_RepeteMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseWheelMoved
         jSlider_vol.setValue(jSlider_vol.getValue() - evt.getWheelRotation());
@@ -1165,9 +1079,9 @@ public class JMini extends javax.swing.JDialog {
         setVisible(false);
     }//GEN-LAST:event_jMenu_OcultActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void jMenuRestauraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuRestauraActionPerformed
         principal.someTray();
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_jMenuRestauraActionPerformed
 
     private void jLabel_PlaylistMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_PlaylistMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON1) {
@@ -1210,6 +1124,31 @@ public class JMini extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenu3MenuSelected
 
+    private void jMenuCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuCancelarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuCancelarActionPerformed
+
+    private void jLabelNomeMusicaMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelNomeMusicaMouseDragged
+        // TODO add your handling code here:
+//        estado++;
+//        if (estado == 3) {
+//            if (evt.getXOnScreen() < initX) {
+//                xVisivel--;
+//            }
+//            if (evt.getXOnScreen() > initX) {
+//                xVisivel++;
+//            }
+//            System.out.println(xVisivel);
+//         //   jv.scrollRectToVisible(new Rectangle(xVisivel, 0, 100, 20));
+//            estado = 0;
+//        }
+    }//GEN-LAST:event_jLabelNomeMusicaMouseDragged
+
+    private void jLabelNomeMusicaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelNomeMusicaMousePressed
+        // TODO add your handling code here:
+//        initX = evt.getXOnScreen();
+    }//GEN-LAST:event_jLabelNomeMusicaMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -1237,27 +1176,30 @@ public class JMini extends javax.swing.JDialog {
     private javax.swing.JCheckBoxMenuItem jCheckBox_list;
     private javax.swing.JCheckBoxMenuItem jCheckBox_top;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextArea jLabelNomeMusica;
     private javax.swing.JLabel jLabel_Playlist;
     private javax.swing.JLabel jLabel_lib;
     private javax.swing.JLabel jLabel_popup;
     private javax.swing.JLabel jLabel_top;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenu jMenuBalanco;
+    private javax.swing.JMenuItem jMenuCancelar;
+    private javax.swing.JMenuItem jMenuRestaura;
+    private javax.swing.JMenu jMenuVisualizacoes;
     private javax.swing.JMenuItem jMenu_Ocult;
     private javax.swing.JMenuItem jMenu_exit;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem1;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem2;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem3;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem4;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSlider jSlider_Tempo;
     private javax.swing.JSlider jSlider_vol;
