@@ -5,6 +5,8 @@
 
 package com.configuracao;
 
+import java.util.HashMap;
+
 /**
  *
  * @author -moNGe_
@@ -12,6 +14,9 @@ package com.configuracao;
 public class Configuracao {
     private String chave;
     private String valor;
+
+    //Configuracoes
+    private static HashMap<String, String> configuracoes;
 
     /**
      * @return the chave
@@ -39,6 +44,20 @@ public class Configuracao {
      */
     public void setValor(String valor) {
         this.valor = valor;
+    }
+
+        /**
+     * @return the configuracoes
+     */
+    public static HashMap<String, String> getConfiguracoes() {
+        return configuracoes;
+    }
+
+    /**
+     * @param aConfiguracoes the configuracoes to set
+     */
+    public static void setConfiguracoes(HashMap<String, String> aConfiguracoes) {
+        configuracoes = aConfiguracoes;
     }
 
 
