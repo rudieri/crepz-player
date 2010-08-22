@@ -4,7 +4,6 @@
  */
 package com.config;
 
-import com.Aguarde;
 import com.JBiBlioteca;
 import com.JMini;
 import com.JPlayList;
@@ -38,16 +37,7 @@ public class GerenciadorConfig {
 
     /**Grava as todas configurações que estão sendo usadas pelo Player*/
     public void setAllValores() {
-        // tela de aguarde (passa muito rápido, nem da tempo de ver)
-//        final Aguarde ag = new Aguarde();
-//        new Thread(new Runnable() {
-//            public void run() {
-                pr.setVisible(false);
-//                ag.setVisible(true);
-//                ag.setAlwaysOnTop(true);
-//                ag.fechar();
-//            }
-//        }).start();
+        pr.setVisible(false);
         //Cria uma transação com o banco
         Transacao t = new Transacao();
         try {
@@ -161,7 +151,6 @@ public class GerenciadorConfig {
             } else {
                 pr.apenasAbrir(m, t);
             }
-            System.out.println("Qual é a tua!");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -174,7 +163,6 @@ public class GerenciadorConfig {
             MusicaBD.carregar(m);
             pr.setMusica(m);
             pr.apenasAbrir(m, 0l);
-            System.out.println("Qual é a tua!");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

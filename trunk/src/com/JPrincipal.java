@@ -4,7 +4,6 @@ import com.conexao.BD;
 import com.config.GerenciadorConfig;
 import com.configuracao.Centro;
 import com.configuracao.ConfiguracaoBD;
-import com.configuracao.ConfiguracaoSC;
 import com.configuracao.JConfiguracao;
 import com.help.JHelp;
 import com.help.JSobre;
@@ -429,7 +428,14 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jLabel_bit.setText(String.valueOf((Integer) properties.get("mp3.bitrate.nominal.bps") / 1000) + " Kbps");
         jLabel_freq.setText(String.valueOf((Integer) properties.get("mp3.frequency.hz") / 1000) + " Mhz");
         jLabel_Musica.setText(properties.get("title") + " " + properties.get("author") + " " + properties.get("album"));
-
+        if(jLabel_Musica.getText().trim().equalsIgnoreCase("") || jLabel_Musica.getText().trim().equalsIgnoreCase("null null null")){
+            try {
+                jLabel_Musica.setText(getMusica().getNome());
+            } catch (Exception ex) {
+                Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        jmini.setNomeMusica(jLabel_Musica.getText());
 
     }
 
@@ -1479,7 +1485,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
     private void jCIMenuFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuFecharActionPerformed
         // TODO add your handling code here:
-        System.exit(0);
+      sair();
     }//GEN-LAST:event_jCIMenuFecharActionPerformed
 
     private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed

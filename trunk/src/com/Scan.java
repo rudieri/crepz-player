@@ -21,12 +21,6 @@ import java.util.logging.Logger;
  */
 public class Scan {
 
-    public static void main(String[] args) throws InterruptedException, Exception {
-      //  Thread.sleep(500);
-        Scan scan = new Scan(5);
-        scan.start(5);
-      
-    }
 
     public Scan(Object tempo){
         if(tempo==null){
