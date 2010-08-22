@@ -16,9 +16,6 @@ import com.musica.MusicaBD;
 import com.playlist.JPlaylists;
 import java.awt.Point;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 
 /**
  *
@@ -42,15 +39,15 @@ public class GerenciadorConfig {
     /**Grava as todas configurações que estão sendo usadas pelo Player*/
     public void setAllValores() {
         // tela de aguarde (passa muito rápido, nem da tempo de ver)
-        final Aguarde ag = new Aguarde();
-        new Thread(new Runnable() {
-            public void run() {
+//        final Aguarde ag = new Aguarde();
+//        new Thread(new Runnable() {
+//            public void run() {
                 pr.setVisible(false);
-                ag.setVisible(true);
-                ag.setAlwaysOnTop(true);
-                ag.fechar();
-            }
-        }).start();
+//                ag.setVisible(true);
+//                ag.setAlwaysOnTop(true);
+//                ag.fechar();
+//            }
+//        }).start();
         //Cria uma transação com o banco
         Transacao t = new Transacao();
         try {
@@ -58,7 +55,7 @@ public class GerenciadorConfig {
             t.begin();
             //ATENÇÃO! APENAS O PRIMEIRO incluir DEVE MANDAR O PARAMETRO reset COMO true
             ConfigBD.incluir("tocando", String.valueOf(pr.tocando2), true, t);
-            ConfigBD.incluir("pause", String.valueOf(pr.getPause()), false, t);
+            ConfigBD.incluir("pause", String.valueOf(pr.paused2), false, t);
             if (pr.getMusica() != null) {
                 ConfigBD.incluir("musica", pr.getMusica().getId().toString(), false, t);
             } else {
@@ -87,10 +84,10 @@ public class GerenciadorConfig {
 
         } catch (Exception ex) {
             t.rollback();
-            Logger.getLogger(GerenciadorConfig.class.getName()).log(Level.SEVERE, null, ex);
+           ex.printStackTrace();
         } finally {
             BD.fecharBD();
-            ag.setVisible(false);
+//            ag.setVisible(false);
         }
 
     }
@@ -145,7 +142,7 @@ public class GerenciadorConfig {
             }           
 
         } catch (Exception ex) {
-            Logger.getLogger(GerenciadorConfig.class.getName()).log(Level.SEVERE, null, ex);
+           ex.printStackTrace();
         }
     }
 

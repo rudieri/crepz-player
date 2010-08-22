@@ -13,8 +13,6 @@ package com.configuracao;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 
@@ -38,6 +36,8 @@ public class JConfiguracao extends javax.swing.JDialog {
             HashMap<String, String> lista = ConfiguracaoBD.listar(new ConfiguracaoSC());
             jCheckBox_teste.setSelected(lista.get("teste") == null ? false : Boolean.parseBoolean(lista.get("teste").toString()));
             setTabelaPastas(lista);
+            Object ob = Integer.parseInt(lista.get("TempoAtualizar"));
+            jSpinner1.setValue(ob);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -112,6 +112,7 @@ public class JConfiguracao extends javax.swing.JDialog {
     private void setDadosBanco() {
         HashMap<String, String> lista = new HashMap<String, String>();
         lista.put("teste", String.valueOf(jCheckBox_teste.isSelected()));
+        lista.put("TempoAtualizar", jSpinner1.getValue().toString());
         setDadosBancoPasta(lista);
 
         Set chaves = lista.keySet();
@@ -154,14 +155,18 @@ public class JConfiguracao extends javax.swing.JDialog {
         jCheckBox_teste = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         jPanel_Avancada = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField_Jpasta = new javax.swing.JTextField();
-        jButton_ADD = new javax.swing.JButton();
-        jButton_ADD1 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable_pastas = new javax.swing.JTable();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel12 = new javax.swing.JPanel();
+        jButton_ADD1 = new javax.swing.JButton();
+        jButton_ADD = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField_Jpasta = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jSpinner1 = new javax.swing.JSpinner();
         jPanel_Avancada1 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -210,37 +215,10 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel_Avancada.setLayout(new javax.swing.BoxLayout(jPanel_Avancada, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        jLabel3.setText("Pasta:");
-        jPanel5.add(jLabel3);
-
-        jTextField_Jpasta.setEditable(false);
-        jTextField_Jpasta.setEnabled(false);
-        jTextField_Jpasta.setPreferredSize(new java.awt.Dimension(250, 30));
-        jPanel5.add(jTextField_Jpasta);
-
-        jButton_ADD.setText("ADD");
-        jButton_ADD.setPreferredSize(new java.awt.Dimension(60, 30));
-        jButton_ADD.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_ADDActionPerformed(evt);
-            }
-        });
-        jPanel5.add(jButton_ADD);
-
-        jButton_ADD1.setText("DEL");
-        jButton_ADD1.setPreferredSize(new java.awt.Dimension(60, 30));
-        jButton_ADD1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_ADD1ActionPerformed(evt);
-            }
-        });
-        jPanel5.add(jButton_ADD1);
-
-        jPanel_Avancada.add(jPanel5);
-
+        jPanel6.setPreferredSize(new java.awt.Dimension(452, 300));
         jPanel6.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(452, 300));
 
         jTable_pastas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -274,6 +252,60 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel6.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jPanel_Avancada.add(jPanel6);
+
+        jButton_ADD1.setText("DEL");
+        jButton_ADD1.setPreferredSize(new java.awt.Dimension(60, 30));
+        jButton_ADD1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_ADD1ActionPerformed(evt);
+            }
+        });
+        jPanel12.add(jButton_ADD1);
+
+        jButton_ADD.setText("ADD");
+        jButton_ADD.setPreferredSize(new java.awt.Dimension(60, 30));
+        jButton_ADD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_ADDActionPerformed(evt);
+            }
+        });
+        jPanel12.add(jButton_ADD);
+
+        jLabel3.setText("Pasta:");
+        jPanel12.add(jLabel3);
+
+        jTextField_Jpasta.setEditable(false);
+        jTextField_Jpasta.setEnabled(false);
+        jTextField_Jpasta.setPreferredSize(new java.awt.Dimension(250, 30));
+        jPanel12.add(jTextField_Jpasta);
+
+        jLabel6.setText("Tempo de Repetição");
+        jPanel1.add(jLabel6);
+
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(30, 30, 120, 15));
+        jPanel1.add(jSpinner1);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jPanel_Avancada.add(jPanel5);
 
         jTabbedPane1.addTab("Monitorar Pastas", jPanel_Avancada);
 
@@ -320,7 +352,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         getContentPane().add(jPanel11, java.awt.BorderLayout.PAGE_END);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-443)/2, (screenSize.height-374)/2, 443, 374);
+        setBounds((screenSize.width-497)/2, (screenSize.height-425)/2, 497, 425);
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -367,8 +399,11 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -382,6 +417,7 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel_Avancada2;
     private javax.swing.JPanel jPanel_Geral;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable_pastas;
     private javax.swing.JTextField jTextField_Jpasta;

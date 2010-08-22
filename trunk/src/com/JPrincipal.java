@@ -2,6 +2,7 @@ package com;
 
 import com.conexao.BD;
 import com.config.GerenciadorConfig;
+import com.configuracao.Centro;
 import com.configuracao.ConfiguracaoBD;
 import com.configuracao.ConfiguracaoSC;
 import com.configuracao.JConfiguracao;
@@ -74,6 +75,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private JPlayList playList = new JPlayList(this, false, this);
     private JMini jmini = new JMini(this, false, this, playList, biblioteca);
     GerenciadorConfig _conf = new GerenciadorConfig(this, playList, biblioteca, jmini);
+    Centro _center = new Centro();
     private Scan scan ;
 
     public JPrincipal() {
@@ -93,7 +95,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         playList.setRepetir(repeat);
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
         playList.posicionar();
-        scan = new Scan(1);
+        scan = new Scan(_center.retorna("TempoAtualizar"));
         scan.setPastas(ConfiguracaoBD.listarPastas());
 
         inicializaIcones();
@@ -729,9 +731,14 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }
 
     public void inicializaIcones() {
-        if (getPause() && getTocando()) {
-            jButton_Play.setIcon(pauseIcon); 
-        } else {
+        //Estado inicial do botão (está Stop);
+        jButton_Play.setIcon(playIcon);
+        //Se tiver tocando
+        if(getTocando()){
+             jButton_Play.setIcon(pauseIcon);
+        }
+        //Se tiver pause
+        if (getPause() ){
            jButton_Play.setIcon(playIcon);
         }
         jButton_Stop.setIcon(stopIcon);
@@ -760,7 +767,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
     public void sair() {
         tocando2 = tocando;
-         stopeFinalite();
+        paused2 = paused;
+        stopeFinalite();
         setConf();
         System.exit(0);
     }
@@ -1889,6 +1897,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     DefaultBoundedRangeModel md = new DefaultBoundedRangeModel();
     Timer tarefa;
     public boolean tocando2 = false;
+    public boolean paused2 = false;
     boolean tocando = false;
     boolean paused = false;
     boolean ajust = false;

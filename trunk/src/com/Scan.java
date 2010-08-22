@@ -28,8 +28,11 @@ public class Scan {
       
     }
 
-    public Scan(int tempo){
-        this.start(tempo);
+    public Scan(Object tempo){
+        if(tempo==null){
+            tempo=30;
+        }
+        this.start(Integer.parseInt(tempo.toString()));
     }
     public void setPastas(ArrayList pastas){
         this.pastas = pastas;

@@ -147,7 +147,7 @@ public class ConfiguracaoBD {
      * @return ArrayList Contendo uma lista de Musicas. */
     public static HashMap<String, String> listar(ConfiguracaoSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
-            throw new Exception(" - Filtro não informado.");
+             throw new Exception(" - Filtro não informado.");
         }
 
 
