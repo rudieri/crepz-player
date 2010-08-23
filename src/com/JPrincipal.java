@@ -496,7 +496,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                 break;
             case BasicPlayerEvent.PLAYING:
                 if (trayIcon != null && !tocando) {
-                    trayIcon.displayMessage("Tocando \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
+                   // trayIcon.displayMessage("Tocando \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
                 }
                 tocando = true;
                 paused = false;
@@ -681,7 +681,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                     public void run() {
                         try {
                             Thread.sleep(500);
-                            trayIcon.displayMessage("Tocancdo \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
+                         //   trayIcon.displayMessage("Tocancdo \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
                         } catch (InterruptedException ex) {
                             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                         }

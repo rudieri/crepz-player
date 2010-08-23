@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import com.musica.ModelReadOnly;
@@ -30,6 +31,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import javax.swing.JFileChooser;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import org.farng.mp3.MP3File;
 
@@ -68,9 +70,11 @@ public class JPlayList extends javax.swing.JDialog {
         jLabel2.setToolTipText("Salvar internamente");
         jLabel3.setText("");
         jLabel3.setToolTipText("Salvar como Arquivo");
+         jTextEntrada.setVisible(false);
 //        pack();
         initTabelaLista();
         atualizarTabelaLista();
+
 
     }
 
@@ -174,7 +178,15 @@ public class JPlayList extends javax.swing.JDialog {
                 jTable.changeSelection(0, 0, false, false);
             }
             t.commit();
+            ListSelectionModel modeloDeSelecao = jTable.getSelectionModel();
+            modeloDeSelecao.addListSelectionListener(new ListSelectionListener() {
+
+                public void valueChanged(ListSelectionEvent e) {
+                    jTable.scrollRectToVisible(jTable.getCellRect(jTable.getSelectedRow(), 0, false));
+                }
+            });
             setTitle(jTextField_NomePlayList.getText());
+
         } catch (Exception ex) {
             t.rollback();
             JOptionPane.showMessageDialog(this, "Erro ao Filtrar");
@@ -213,6 +225,7 @@ public class JPlayList extends javax.swing.JDialog {
                     } else {
                         tocar((Musica) jTable.getModel().getValueAt(mAtual + 1, jTable.getColumnCount()));
                         jTable.setRowSelectionInterval(mAtual + 1, mAtual + 1);
+
                     }
 
                 }
@@ -243,6 +256,7 @@ public class JPlayList extends javax.swing.JDialog {
                         tocar((Musica) faltamTocar.remove(random));
                         for (int i = 0; i < jTable.getRowCount(); i++) {
                             if (((Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount())).getCaminho().equals(principal.getMusica().getCaminho())) {
+
                                 jTable.setRowSelectionInterval(i, i);
                             }
                         }
@@ -485,6 +499,18 @@ public class JPlayList extends javax.swing.JDialog {
 
     }
 
+    public void filtraTexto(int code){
+
+        jTextEntrada.setVisible(true);
+        repaint();
+       // jPanel6.repaint();
+        //jPanel3.repaint();
+        jTextEntrada.requestFocus();
+        jTextEntrada.setText(KeyEvent.getKeyText(code));
+        
+        
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -514,6 +540,7 @@ public class JPlayList extends javax.swing.JDialog {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jToggleButton1 = new javax.swing.JToggleButton();
+        jTextEntrada = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
@@ -634,10 +661,10 @@ public class JPlayList extends javax.swing.JDialog {
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
         jPanel3.setPreferredSize(new java.awt.Dimension(323, 30));
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
+        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.X_AXIS));
 
         jPanel6.setPreferredSize(new java.awt.Dimension(323, 25));
-        jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+        jPanel6.setLayout(new javax.swing.BoxLayout(jPanel6, javax.swing.BoxLayout.LINE_AXIS));
 
         jButton4.setText("+");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -656,13 +683,30 @@ public class JPlayList extends javax.swing.JDialog {
         jPanel6.add(jButton5);
 
         jToggleButton1.setText("Opções da lista");
-        jToggleButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jToggleButton1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jToggleButton1StateChanged(evt);
             }
         });
         jPanel6.add(jToggleButton1);
+
+        jTextEntrada.setText("jTextField1");
+        jTextEntrada.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                jTextEntradaCaretUpdate(evt);
+            }
+        });
+        jTextEntrada.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTextEntradaPropertyChange(evt);
+            }
+        });
+        jTextEntrada.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextEntradaKeyPressed(evt);
+            }
+        });
+        jPanel6.add(jTextEntrada);
 
         jPanel3.add(jPanel6);
 
@@ -774,6 +818,9 @@ public class JPlayList extends javax.swing.JDialog {
                 Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        filtraTexto(evt.getKeyCode());
+        evt.setKeyCode(KeyEvent.VK_UNDEFINED);
+        System.out.println("Code: "+evt.getKeyCode());
 }//GEN-LAST:event_jTableKeyPressed
 
     private void jScrollPaneFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jScrollPaneFocusGained
@@ -855,6 +902,31 @@ public class JPlayList extends javax.swing.JDialog {
         jPanel1.setVisible(jToggleButton1.isSelected());
     }//GEN-LAST:event_jToggleButton1StateChanged
 
+    private void jTextEntradaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextEntradaKeyPressed
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ESCAPE){
+            jTextEntrada.setText("");
+        }
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER) {
+          //  tocar(null);
+        }
+        int aux=evt.getKeyCode();
+//        if(aux>47 && aux<91 || aux>64 && aux<58 || aux>95 && aux<106 ){
+//
+//        }
+        System.out.println("ooooooooo");
+    }//GEN-LAST:event_jTextEntradaKeyPressed
+
+    private void jTextEntradaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTextEntradaPropertyChange
+        // TODO add your handling code here:
+       System.out.println(evt.getPropertyName());
+    }//GEN-LAST:event_jTextEntradaPropertyChange
+
+    private void jTextEntradaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextEntradaCaretUpdate
+        // TODO add your handling code here:
+        System.out.println(evt.getDot());
+    }//GEN-LAST:event_jTextEntradaCaretUpdate
+
     /**
      * @param args the command line arguments
      */
@@ -922,6 +994,7 @@ public class JPlayList extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JTable jTable;
+    private javax.swing.JTextField jTextEntrada;
     private javax.swing.JTextField jTextField_NomePlayList;
     private javax.swing.JToggleButton jToggleButton1;
     // End of variables declaration//GEN-END:variables

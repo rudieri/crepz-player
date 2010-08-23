@@ -141,8 +141,10 @@ public class JMini extends javax.swing.JDialog {
 
     private void startEvents() {
         for (int i = 0; i < jPanel1.getComponentCount(); i++) {
-            jPanel1.getComponent(i).addMouseListener(mouseAdapterPopUp);
-            jPanel1.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
+            if(jPanel1.getComponent(i) instanceof JLabel){
+                jPanel1.getComponent(i).addMouseListener(mouseAdapterPopUp);
+                jPanel1.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
+            }
         }
         for (int i = 0; i < jPanel3.getComponentCount(); i++) {
             jPanel3.getComponent(i).addMouseListener(mouseAdapterPopUp);

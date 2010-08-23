@@ -50,18 +50,21 @@ public class JLista extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(255, 165, 75));
+        setBackground(new java.awt.Color(238, 146, 54));
         setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.darkGray, java.awt.Color.darkGray, java.awt.Color.black, java.awt.Color.black)));
         setForeground(new java.awt.Color(0, 0, 204));
         setLayout(new java.awt.GridLayout(2, 0));
 
-        jLabel1.setBackground(new java.awt.Color(255, 165, 75));
+        jLabel1.setBackground(new java.awt.Color(238, 146, 54));
+        jLabel1.setFont(new java.awt.Font("DejaVu Sans", 1, 11)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(49, 45, 31));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Nome");
+        jLabel1.setText("Nome da musica (se não tiver, aparece o nome do arquivo)");
         add(jLabel1);
 
-        jLabel2.setBackground(new java.awt.Color(255, 165, 75));
-        jLabel2.setText("Artista");
+        jLabel2.setBackground(new java.awt.Color(238, 146, 54));
+        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabel2.setText("Artista que fez ou gravou a musica XD");
         add(jLabel2);
     }// </editor-fold>//GEN-END:initComponents
 
