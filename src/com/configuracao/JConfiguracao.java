@@ -207,7 +207,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel4.setPreferredSize(new java.awt.Dimension(400, 25));
 
-        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13));
         jLabel2.setText("Configurações");
         jPanel4.add(jLabel2);
 
@@ -344,8 +344,6 @@ public class JConfiguracao extends javax.swing.JDialog {
         jLabel5.setPreferredSize(new java.awt.Dimension(125, 17));
         jPanel9.add(jLabel5);
 
-        jTextField_DestinoOrg.setEditable(false);
-        jTextField_DestinoOrg.setEnabled(false);
         jTextField_DestinoOrg.setPreferredSize(new java.awt.Dimension(250, 30));
         jPanel9.add(jTextField_DestinoOrg);
 
@@ -364,7 +362,6 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel10.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         jLabel7.setText("Donwload de Capas:");
-        jLabel7.setPreferredSize(new java.awt.Dimension(130, 17));
         jPanel10.add(jLabel7);
         jPanel10.add(jCheckBox_DownloadCapa);
 
