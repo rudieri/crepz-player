@@ -20,6 +20,7 @@ import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.MusicaSC;
 import com.utils.DiretorioUtils;
+import com.utils.JTrocarImagem;
 import java.awt.event.KeyEvent;
 
 /*
@@ -57,11 +58,12 @@ public class JBiBlioteca extends javax.swing.JDialog {
 //        }
 
     }
-    public JBiBlioteca(JMini mini, JPrincipal principal){
-         super(mini, false);
+
+    public JBiBlioteca(JMini mini, JPrincipal principal) {
+        super(mini, false);
         initComponents();
         this.mini = mini;
-        this.principal=principal;
+        this.principal = principal;
         jProgressBar.setVisible(false);
         jPanelFiltrar.setVisible(false);
 
@@ -71,7 +73,8 @@ public class JBiBlioteca extends javax.swing.JDialog {
 //            atualizarTabelaLista();
 //        }
     }
-    public void setVisible(boolean b, boolean a){
+
+    public void setVisible(boolean b, boolean a) {
         super.setVisible(b);
         super.setAlwaysOnTop(a);
     }
@@ -195,12 +198,12 @@ public class JBiBlioteca extends javax.swing.JDialog {
             // Filtro...
             MusicaSC filtro = new MusicaSC();
             if (jPanelFiltrar.isVisible()) {
-                genero="";
+                genero = "";
                 filtro.setNome(jTextField_Album.getText());
                 filtro.setAutor(jTextField_Album.getText());
                 filtro.setAlbum(jTextField_Album.getText());
             } else {
-               resetText();
+                resetText();
             }
             initTabelaCapa();
             DefaultTableModel ts = (DefaultTableModel) jTable.getModel();
@@ -219,9 +222,9 @@ public class JBiBlioteca extends javax.swing.JDialog {
                 jTable.changeSelection(0, 0, false, false);
             }
 
-        } catch (Exception ex) {           
+        } catch (Exception ex) {
             ex.printStackTrace();
-             JOptionPane.showMessageDialog(this, "Erro ao Filtrar");
+            JOptionPane.showMessageDialog(this, "Erro ao Filtrar");
         }
     }
 
@@ -230,7 +233,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
         // restringe a amostra a diretorios apenas
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         jFileChooser.setDialogTitle("Abrir Pasta");
-        
+
         int res = jFileChooser.showOpenDialog(null);
 
         if (res == JFileChooser.APPROVE_OPTION) {
@@ -320,6 +323,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Crepz Player");
@@ -548,6 +552,15 @@ public class JBiBlioteca extends javax.swing.JDialog {
         });
         jMenu1.add(jMenuItem4);
 
+        jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
+        jMenuItem5.setText("Trocar Capa");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem5);
+
         jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
@@ -608,7 +621,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     }//GEN-LAST:event_jTableKeyPressed
 
     private void jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseClicked
-        if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount()==2) {
+        if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
             if (jCheckBox_capa.isSelected()) {
                 JCapa j = (JCapa) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getSelectedColumn());
                 if (jComboBox_Agrupar.getSelectedItem().equals("Autor")) {
@@ -620,7 +633,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
                 if (jComboBox_Agrupar.getSelectedItem().equals("Genero")) {
                     genero = j.getTXT();
                 }
-                
+
                 jCheckBox_capa.setSelected(false);
                 atualizarTabelaLista();
             } else {
@@ -718,12 +731,12 @@ public class JBiBlioteca extends javax.swing.JDialog {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-
     }//GEN-LAST:event_formWindowClosing
 
     private void jTextField_AlbumKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_AlbumKeyPressed
-    if(evt.getKeyCode() == KeyEvent.VK_ENTER)
-        jButton_PK4ActionPerformed(null);
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            jButton_PK4ActionPerformed(null);
+        }
     }//GEN-LAST:event_jTextField_AlbumKeyPressed
 
     private void jButton_PK4FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jButton_PK4FocusLost
@@ -745,6 +758,20 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private void jTextField_AlbumFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_AlbumFocusGained
         jTextField_Album.selectAll();
     }//GEN-LAST:event_jTextField_AlbumFocusGained
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        if (jTable.getSelectedRow() > -1 && jTable.getSelectedColumn() > -1) {
+            if (jCheckBox_capa.isSelected()) {
+                JCapa capa = (JCapa) jTable.getValueAt(jTable.getSelectedRow(), jTable.getSelectedColumn());
+                jTextField_Album.setText(capa.getTXT());
+                atualizarTabelaLista();
+            }
+            Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
+            new JTrocarImagem(principal, true, m).setVisible(true);
+            jCheckBox_capa.setSelected(true);
+            atualizarTabelaCapa();
+        }
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -784,6 +811,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

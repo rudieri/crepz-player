@@ -10,10 +10,8 @@ import gsearch.Result;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import org.farng.mp3.MP3File;
 
 /**
  *

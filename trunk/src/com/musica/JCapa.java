@@ -1,14 +1,14 @@
 
 package com.musica;
 
+import com.utils.SwapCapa;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 
 /**
@@ -30,15 +30,24 @@ public class JCapa extends javax.swing.JPanel {
             this.qtd = qtd;
             if(!(img==null || img.equals(""))){
                 System.out.println("img: " + img);
-                BufferedImage bf = ImageIO.read(new File(img));
-                jLabel_Img.setIcon(new javax.swing.ImageIcon(bf.getScaledInstance(80, 120, Image.SCALE_SMOOTH)));
+                ImageIcon imgIcon  =null;
+                if(SwapCapa.swap.get(img)!=null){
+                    imgIcon = SwapCapa.swap.get(img);
+                }else{
+                    BufferedImage bf = ImageIO.read(new File(img));
+                    imgIcon = new javax.swing.ImageIcon(bf.getScaledInstance(80, 120, Image.SCALE_SMOOTH));
+                    SwapCapa.swap.put(img, imgIcon);
+                }
+                
+                jLabel_Img.setIcon(imgIcon);
             }
             jLabel_Titulo1.setText(titulo);
             jLabel_Qts.setText("Musicas :" + qtd.toString());
             this.setFocusable(false);
             //        this.setVisible(true);
         }
-        catch (IOException io){
+        catch (Exception io){
+            System.out.println("Erro em :"+img);
             io.printStackTrace();
         }
 
