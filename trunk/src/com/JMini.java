@@ -3,7 +3,6 @@ package com;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -11,11 +10,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JViewport;
 import javax.swing.border.BevelBorder;
 
 
@@ -33,7 +29,7 @@ import javax.swing.border.BevelBorder;
  *
  * @author manchini
  */
-public class JMini extends javax.swing.JDialog {
+public class JMini extends javax.swing.JDialog  {
 
     /** Creates new form treco */
     private JPrincipal principal;
