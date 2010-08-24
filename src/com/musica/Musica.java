@@ -241,10 +241,12 @@ public class Musica {
                     String dest = Configuracao.getConfiguracoes().get("organizadorDestino") + "/" + removeCaracteresEsp(m.getAutor()) + "/" + removeCaracteresEsp(m.getAlbum()) + "/";
                     File destino = new File(dest);
                     destino.mkdirs();
-                    destino = new File(destino.getAbsolutePath()+"/"+dir.getName());
-                    mp3 = null;
-                    if (dir.renameTo(destino)) {
-                        dir = destino;
+                    destino = new File(destino.getAbsolutePath() + "/" + dir.getName());
+                    if (!destino.getAbsolutePath().equals(dir.getAbsolutePath())) {
+                        mp3 = null;
+                        if (dir.renameTo(destino)) {
+                            dir = destino;
+                        }
                     }
                     mp3 = new MP3File(dir.getAbsolutePath().replace("\\\\", "/").replace("\\", "/").trim());
                     m.setCaminho(dir.getAbsolutePath());
@@ -261,7 +263,7 @@ public class Musica {
                     MusicaBD.incluir(m, t);
                 }
 
-                if(Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("downloadCapas").toString()) && (m.getImg()==null || m.getImg().equals(""))){
+                if (Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("downloadCapas").toString()) && (m.getImg() == null || m.getImg().equals(""))) {
                     m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
                     MusicaBD.alterar(m, t);
                 }
