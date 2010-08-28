@@ -10,7 +10,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
@@ -29,7 +32,7 @@ import javax.swing.border.BevelBorder;
  *
  * @author manchini
  */
-public class JMini extends javax.swing.JDialog  {
+public class JMini extends javax.swing.JDialog {
 
     /** Creates new form treco */
     private JPrincipal principal;
@@ -42,8 +45,10 @@ public class JMini extends javax.swing.JDialog  {
     Timer tarefa = new Timer();
     private int estado = 0;
     private int xVisivel = 0;
+    Thread thAnim;
 //    JViewport jv = new JViewport();
 
+    @SuppressWarnings("CallToThreadStartDuringObjectConstruction")
     public JMini(java.awt.Frame parent, boolean modal, JPrincipal principal, JPlayList pl, JBiBlioteca bl) {
         super(parent, modal);
         initComponents();
@@ -52,8 +57,63 @@ public class JMini extends javax.swing.JDialog  {
         lib = bl;
         //  this.lib=bl;
         startEvents();
-//        letreiro();
 
+
+
+    }
+
+    public void startTextAnim() {
+        if (thAnim == null) {
+            thAnim = new Thread(new Runnable() {
+
+                public void run() {
+                    System.out.println("TExTo: " + jLabelNomeMusica.getText());
+                    int cont = 0;
+                    jLabelNomeMusica.setLocation(new Point(cont, jLabelNomeMusica.getY()));
+                    jLabelNomeMusica.updateUI();
+                    int cont2 = jLabelNomeMusica.getX() - jLabelNomeMusicaMask.getWidth();
+                    jLabelNomeMusicaMask.setLocation(new Point(cont2, jLabelNomeMusica.getY()));
+                    int cont3 = jLabelNomeMusicaMask.getX() - jLabelNomeMusicaSombra.getWidth();
+                    jLabelNomeMusicaSombra.setLocation(new Point(cont3, jLabelNomeMusica.getY()));
+                    System.out.println(jLabelNomeMusica.getWidth() + " - " + jLabelNomeMusicaMask.getWidth() + " - " + jLabelNomeMusicaSombra.getWidth());
+                    System.out.println(cont + " - " + cont2 + " - " + cont3);
+                    while (true) {
+                        cont += 1;
+
+                        jLabelNomeMusica.setLocation(new Point(cont, jLabelNomeMusica.getY()));
+                        if (jLabelNomeMusica.getX() + jLabelNomeMusica.getWidth() > 300) {
+                            cont3 = jLabelNomeMusicaMask.getX() - jLabelNomeMusicaSombra.getWidth();
+                        }
+
+                        cont2 += 1;
+                        jLabelNomeMusicaMask.setLocation(new Point(cont2, jLabelNomeMusica.getY()));
+                        if (jLabelNomeMusicaMask.getX() + jLabelNomeMusicaMask.getWidth() > 300) {
+                            cont = jLabelNomeMusicaSombra.getX() - jLabelNomeMusica.getWidth();
+                        }
+                        cont3 += 1;
+                        jLabelNomeMusicaSombra.setLocation(new Point(cont3, jLabelNomeMusica.getY()));
+                        if (jLabelNomeMusicaSombra.getX() + jLabelNomeMusicaSombra.getWidth() > 300) {
+                            cont2 = jLabelNomeMusica.getX() - jLabelNomeMusicaMask.getWidth();
+                        }
+//                               System.out.println(jLabelNomeMusica.getWidth() + " - "+ jLabelNomeMusicaMask.getWidth()+ " - " + jLabelNomeMusicaSombra.getWidth());
+
+                        // System.out.println(cont + " " + cont2);
+
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(JMini.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            });
+            thAnim.start();
+        } else {
+            //if(thAnim.isInterrupted())
+           // thAnim=null;
+         // startTextAnim();
+        }
+        jPanel6.setPreferredSize(new Dimension(280, 30));
     }
 
     /**Coloca os icones nos Jlabels*/
@@ -137,7 +197,7 @@ public class JMini extends javax.swing.JDialog  {
 
     private void startEvents() {
         for (int i = 0; i < jPanel1.getComponentCount(); i++) {
-            if(jPanel1.getComponent(i) instanceof JLabel){
+            if (jPanel1.getComponent(i) instanceof JLabel) {
                 jPanel1.getComponent(i).addMouseListener(mouseAdapterPopUp);
                 jPanel1.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
             }
@@ -167,33 +227,7 @@ public class JMini extends javax.swing.JDialog  {
         });
 //        
     }
-//    private void letreiro(){
-//
-//        new Thread(new Runnable() {
-//            public void run() {
-//
-////                for(int i=-jLabelNomeMusica.getWidth();i<2*jLabelNomeMusica.getWidth();i++){
-//                int i=0;//- jLabelNomeMusica.getWidth()/2;
-//
-//                while(true){
-//                    i++;
-//                    jv.scrollRectToVisible(new Rectangle(i, 0, 100, 20));
-//                    //System.out.println(i);
-//                    if(i>jLabelNomeMusica.getWidth()/2){
-//                        i=-jLabelNomeMusica.getWidth()/2;
-//                        System.out.println("--------------------- " + i);
-//                    }
-//                    try {
-//                        Thread.sleep(100);
-//                    } catch (InterruptedException ex) {
-//                        Logger.getLogger(JMini.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                    //setNomeMusica (jLabelNomeMusica.getText());
-//                }
-//
-//            }
-//        }).start();
-//    }
+
     /**Atualiza o icone Play
     @param Icone a ser colocado.
      */
@@ -214,7 +248,10 @@ public class JMini extends javax.swing.JDialog  {
     }
 
     public void setNomeMusica(String n) {
-        jLabelNomeMusica.setText(n);
+        jLabelNomeMusica.setText(n + " 1 -- ");
+        jLabelNomeMusicaMask.setText(n + " 2 -- ");
+        jLabelNomeMusicaSombra.setText(n + " 3 -- ");
+        startTextAnim();
 //        jv.add(jLabelNomeMusica);
 //        jScrollPane1.setViewport(jv);
     }
@@ -352,8 +389,10 @@ public class JMini extends javax.swing.JDialog  {
         jToggle_Repete = new javax.swing.JLabel();
         jSlider_vol = new javax.swing.JSlider();
         jPanel5 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jLabelNomeMusica = new javax.swing.JTextArea();
+        jPanel6 = new javax.swing.JPanel();
+        jLabelNomeMusica = new javax.swing.JLabel();
+        jLabelNomeMusicaMask = new javax.swing.JLabel();
+        jLabelNomeMusicaSombra = new javax.swing.JLabel();
 
         jMenuVisualizacoes.setMnemonic('v');
         jMenuVisualizacoes.setText("Visualizações");
@@ -769,36 +808,55 @@ public class JMini extends javax.swing.JDialog  {
         gridBagConstraints.gridy = 0;
         jPanel4.add(jPanel1, gridBagConstraints);
 
-        jPanel5.setLayout(new java.awt.BorderLayout());
+        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabelNomeMusica.setText("jLabel2");
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        jScrollPane1.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
+        jLabelNomeMusicaMask.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabelNomeMusicaMask.setText("jLabel2");
 
-        jLabelNomeMusica.setColumns(26);
-        jLabelNomeMusica.setEditable(false);
-        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
-        jLabelNomeMusica.setRows(1);
-        jLabelNomeMusica.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jLabelNomeMusica.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jLabelNomeMusica.setDropMode(javax.swing.DropMode.INSERT);
-        jLabelNomeMusica.setFocusable(false);
-        jLabelNomeMusica.setRequestFocusEnabled(false);
-        jLabelNomeMusica.setVerifyInputWhenFocusTarget(false);
-        jLabelNomeMusica.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabelNomeMusicaMousePressed(evt);
-            }
-        });
-        jLabelNomeMusica.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jLabelNomeMusicaMouseDragged(evt);
-            }
-        });
-        jScrollPane1.setViewportView(jLabelNomeMusica);
+        jLabelNomeMusicaSombra.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabelNomeMusicaSombra.setText("jLabel2");
 
-        jPanel5.add(jScrollPane1, java.awt.BorderLayout.LINE_END);
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jLabelNomeMusica)
+                .addGap(27, 27, 27)
+                .addComponent(jLabelNomeMusicaMask)
+                .addContainerGap(275, Short.MAX_VALUE))
+            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel6Layout.createSequentialGroup()
+                    .addGap(0, 173, Short.MAX_VALUE)
+                    .addComponent(jLabelNomeMusicaSombra)
+                    .addGap(0, 174, Short.MAX_VALUE)))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelNomeMusica)
+                    .addComponent(jLabelNomeMusicaMask)))
+            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel6Layout.createSequentialGroup()
+                    .addGap(0, 2, Short.MAX_VALUE)
+                    .addComponent(jLabelNomeMusicaSombra)
+                    .addGap(0, 3, Short.MAX_VALUE)))
+        );
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1126,27 +1184,6 @@ public class JMini extends javax.swing.JDialog  {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuCancelarActionPerformed
 
-    private void jLabelNomeMusicaMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelNomeMusicaMouseDragged
-        // TODO add your handling code here:
-//        estado++;
-//        if (estado == 3) {
-//            if (evt.getXOnScreen() < initX) {
-//                xVisivel--;
-//            }
-//            if (evt.getXOnScreen() > initX) {
-//                xVisivel++;
-//            }
-//            System.out.println(xVisivel);
-//         //   jv.scrollRectToVisible(new Rectangle(xVisivel, 0, 100, 20));
-//            estado = 0;
-//        }
-    }//GEN-LAST:event_jLabelNomeMusicaMouseDragged
-
-    private void jLabelNomeMusicaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelNomeMusicaMousePressed
-        // TODO add your handling code here:
-//        initX = evt.getXOnScreen();
-    }//GEN-LAST:event_jLabelNomeMusicaMousePressed
-
     /**
      * @param args the command line arguments
      */
@@ -1174,7 +1211,9 @@ public class JMini extends javax.swing.JDialog  {
     private javax.swing.JCheckBoxMenuItem jCheckBox_list;
     private javax.swing.JCheckBoxMenuItem jCheckBox_top;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextArea jLabelNomeMusica;
+    private javax.swing.JLabel jLabelNomeMusica;
+    private javax.swing.JLabel jLabelNomeMusicaMask;
+    private javax.swing.JLabel jLabelNomeMusicaSombra;
     private javax.swing.JLabel jLabel_Playlist;
     private javax.swing.JLabel jLabel_lib;
     private javax.swing.JLabel jLabel_popup;
@@ -1191,13 +1230,13 @@ public class JMini extends javax.swing.JDialog  {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem1;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem2;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem3;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem4;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem5;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSlider jSlider_Tempo;
     public javax.swing.JSlider jSlider_vol;
