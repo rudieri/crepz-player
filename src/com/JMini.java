@@ -774,14 +774,14 @@ public class JMini extends javax.swing.JDialog  {
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        jScrollPane1.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jScrollPane1.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
 
         jLabelNomeMusica.setColumns(26);
         jLabelNomeMusica.setEditable(false);
-        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
         jLabelNomeMusica.setRows(1);
         jLabelNomeMusica.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        jLabelNomeMusica.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
+        jLabelNomeMusica.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabelNomeMusica.setDropMode(javax.swing.DropMode.INSERT);
         jLabelNomeMusica.setFocusable(false);
         jLabelNomeMusica.setRequestFocusEnabled(false);
@@ -1200,7 +1200,7 @@ public class JMini extends javax.swing.JDialog  {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSlider jSlider_Tempo;
-    private javax.swing.JSlider jSlider_vol;
+    public javax.swing.JSlider jSlider_vol;
     private javax.swing.JLabel jToggleButton1;
     private javax.swing.JLabel jToggle_Repete;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
