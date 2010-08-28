@@ -9,6 +9,9 @@ import com.configuracao.ConfiguracaoSC;
 import com.configuracao.JConfiguracao;
 import com.help.JHelp;
 import com.help.JSobre;
+import com.melloware.jintellitype.HotkeyListener;
+import com.melloware.jintellitype.IntellitypeListener;
+import com.melloware.jintellitype.JIntellitype;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -57,7 +60,7 @@ import javax.swing.JFrame;
  *
  * @author manchini
  */
-public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListener {
+public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListener, HotkeyListener, IntellitypeListener {
 
     public static Aguarde aguarde = new Aguarde();
     /** Creates new form NewJFrame */
@@ -68,7 +71,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private Musica musica;
     File in = null;
     Long total = new Long(1);
-    private int estado=0;
+    private int estado = 0;
     private JFileChooser jFileChooser = new JFileChooser();
     private SystemTray tray;
     private TrayIcon trayIcon;
@@ -77,7 +80,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private JMini jmini = new JMini(this, false, this, playList, biblioteca);
     GerenciadorConfig _conf = new GerenciadorConfig(this, playList, biblioteca, jmini);
     Centro _center = new Centro();
-    private Scan scan ;
+    private Scan scan;
+    private int volAnt;
 
     public JPrincipal() {
         initComponents();
@@ -435,7 +439,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jLabel_bit.setText(String.valueOf((Integer) properties.get("mp3.bitrate.nominal.bps") / 1000) + " Kbps");
         jLabel_freq.setText(String.valueOf((Integer) properties.get("mp3.frequency.hz") / 1000) + " Mhz");
         jLabel_Musica.setText(properties.get("title") + " " + properties.get("author") + " " + properties.get("album"));
-        if(jLabel_Musica.getText().trim().equalsIgnoreCase("") || jLabel_Musica.getText().trim().equalsIgnoreCase("null null null")){
+        if (jLabel_Musica.getText().trim().equalsIgnoreCase("") || jLabel_Musica.getText().trim().equalsIgnoreCase("null null null")) {
             try {
                 jLabel_Musica.setText(getMusica().getNome());
             } catch (Exception ex) {
@@ -496,7 +500,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                 break;
             case BasicPlayerEvent.PLAYING:
                 if (trayIcon != null && !tocando) {
-                   // trayIcon.displayMessage("Tocando \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
+                    // trayIcon.displayMessage("Tocando \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
                 }
                 tocando = true;
                 paused = false;
@@ -670,8 +674,9 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                     e.printStackTrace();
                 }
                 this.setVisible(false);
-                if(this.getState() == JFrame.ICONIFIED)
+                if (this.getState() == JFrame.ICONIFIED) {
                     this.setState(JFrame.NORMAL);
+                }
                 this.dispose();
                 jmini.pack();
                 jmini.setVisible(true);
@@ -681,7 +686,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                     public void run() {
                         try {
                             Thread.sleep(500);
-                         //   trayIcon.displayMessage("Tocancdo \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
+                            //   trayIcon.displayMessage("Tocancdo \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
                         } catch (InterruptedException ex) {
                             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -747,12 +752,12 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         //Estado inicial do botão (está Stop);
         jButton_Play.setIcon(playIcon);
         //Se tiver tocando
-        if(getTocando()){
-             jButton_Play.setIcon(pauseIcon);
+        if (getTocando()) {
+            jButton_Play.setIcon(pauseIcon);
         }
         //Se tiver pause
-        if (getPause() ){
-           jButton_Play.setIcon(playIcon);
+        if (getPause()) {
+            jButton_Play.setIcon(playIcon);
         }
         jButton_Stop.setIcon(stopIcon);
         jButton_Next.setIcon(frenteIcon);
@@ -813,6 +818,94 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         return new ImageIcon(im.getScaledInstance(l, a, Image.SCALE_SMOOTH));
     }
 
+    /*
+     * (non-Javadoc)
+     * @see com.melloware.jintellitype.HotkeyListener#onHotKey(int)
+     */
+    public void onHotKey(int aIdentifier) {
+//      output("WM_HOTKEY message received " + Integer.toString(aIdentifier));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see com.melloware.jintellitype.IntellitypeListener#onIntellitype(int)
+     */
+    public void onIntellitype(int aCommand) {
+
+        switch (aCommand) {
+//      case JIntellitype.APPCOMMAND_BROWSER_BACKWARD:
+//            playList.getAnterior();
+//         break;
+////      case JIntellitype.APPCOMMAND_BROWSER_FAVOURITES:
+////            playList.getProxima();
+////         break;
+//      case JIntellitype.APPCOMMAND_BROWSER_FORWARD:
+//          playList.getProxima();
+//         break;
+//      case JIntellitype.APPCOMMAND_BROWSER_HOME:
+//         output("BROWSER_HOME message received " + Integer.toString(aCommand));
+//         break;
+//      case JIntellitype.APPCOMMAND_BROWSER_REFRESH:
+//         output("BROWSER_REFRESH message received " + Integer.toString(aCommand));
+//         break;
+//      case JIntellitype.APPCOMMAND_BROWSER_SEARCH:
+//         output("BROWSER_SEARCH message received " + Integer.toString(aCommand));
+//         break;
+//      case JIntellitype.APPCOMMAND_BROWSER_STOP:
+//         output("BROWSER_STOP message received " + Integer.toString(aCommand));
+//         break;
+//      case JIntellitype.APPCOMMAND_LAUNCH_APP1:
+//         output("LAUNCH_APP1 message received " + Integer.toString(aCommand));
+//         break;
+//      case JIntellitype.APPCOMMAND_LAUNCH_APP2:
+//         output("LAUNCH_APP2 message received " + Integer.toString(aCommand));
+//         break;
+//      case JIntellitype.APPCOMMAND_LAUNCH_MAIL:
+//         output("LAUNCH_MAIL message received " + Integer.toString(aCommand));
+//         break;
+            case JIntellitype.APPCOMMAND_MEDIA_NEXTTRACK:
+                playList.getProxima();
+                break;
+            case JIntellitype.APPCOMMAND_MEDIA_PLAY_PAUSE:
+                tocar();
+                break;
+            case JIntellitype.APPCOMMAND_MEDIA_PREVIOUSTRACK:
+                playList.getAnterior();
+                break;
+            case JIntellitype.APPCOMMAND_MEDIA_STOP:
+                parar();
+                break;
+            case JIntellitype.APPCOMMAND_VOLUME_DOWN:
+                jmini.jSlider_vol.setValue(jSlider_vol.getValue() - 2);
+                break;
+            case JIntellitype.APPCOMMAND_VOLUME_UP:
+                jmini.jSlider_vol.setValue(jSlider_vol.getValue() + 2);
+                break;
+            case JIntellitype.APPCOMMAND_VOLUME_MUTE:
+                if (jmini.jSlider_vol.getValue() > 0) {
+                    volAnt = jmini.jSlider_vol.getValue();
+                    jmini.jSlider_vol.setValue(0);
+                } else {
+                    jmini.jSlider_vol.setValue(volAnt);
+                }
+
+                break;
+//      default:
+//         output("Undefined INTELLITYPE message caught " + Integer.toString(aCommand));
+//         break;
+        }
+    }
+
+    public void initJIntellitype() {
+        try {
+
+            JIntellitype.getInstance().addHotKeyListener(this);
+            JIntellitype.getInstance().addIntellitypeListener(this);
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
@@ -831,9 +924,9 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
     private void vouParaOnde(MouseEvent e) {
         estado++;
-        if(estado==5){
+        if (estado == 5) {
             this.setLocation(e.getXOnScreen() - initX, e.getYOnScreen() - initY);
-            estado=0;
+            estado = 0;
         }
     }
 
@@ -858,7 +951,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
     }
 
-    public void stopeFinalite(){
+    public void stopeFinalite() {
         try {
             player.stop();
         } catch (BasicPlayerException ex) {
@@ -1492,7 +1585,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
     private void jCIMenuFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuFecharActionPerformed
         // TODO add your handling code here:
-      sair();
+        sair();
     }//GEN-LAST:event_jCIMenuFecharActionPerformed
 
     private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed
@@ -1719,7 +1812,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
         // TODO add your handling code here:
 //        if (evt.getNewState() == 1) {
-            iconeTray();
+        iconeTray();
 //            this.setState(0);
 //
 //        }
@@ -1793,8 +1886,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-       new JConfiguracao(this, true).setVisible(true);
-       scan.setPastas(ConfiguracaoBD.listarPastas());
+        new JConfiguracao(this, true).setVisible(true);
+        scan.setPastas(ConfiguracaoBD.listarPastas());
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     /**
@@ -1836,11 +1929,28 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //
 //            public void run() {
-        new JPrincipal().setVisible(true);
+        JPrincipal p = new JPrincipal();
+        p.setVisible(true);
+        if (System.getProperty("os.name").indexOf("Windows") > -1) {
+            if (System.getProperty("sun.arch.data.model").equals("64")) {
+                JIntellitype.setLibraryLocation(p.getClass().getResource("/com/dll/JIntellitype64.dll").getFile());
+            } else {
+                JIntellitype.setLibraryLocation(p.getClass().getResource("/com/dll/JIntellitype.dll").getFile());
+            }
 
+            if (JIntellitype.checkInstanceAlreadyRunning("JIntellitype Test Application")) {
+                System.exit(1);
+            }
+            if (!JIntellitype.isJIntellitypeSupported()) {
+                System.exit(1);
+            }
+            p.initJIntellitype();
+        }
         aguarde.setVisible(false);
 //            }
 //        });

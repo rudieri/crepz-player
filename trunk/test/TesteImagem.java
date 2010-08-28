@@ -24,7 +24,7 @@ public class TesteImagem {
 
         Client c = new Client();
 
-        List<Result> lolcats = c.searchImages("appetite for destruction");
+        List<Result> lolcats = c.searchImages("eu nao sei");
         for (int i = 0; i < lolcats.size(); i++) {
             try {
                 Result rs = lolcats.get(i);
