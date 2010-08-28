@@ -171,7 +171,9 @@ public class Musica {
         m.setCaminho(mp3.getMp3file().getAbsolutePath());
 
         //getID3v2Tag
-        if (mp3.getID3v2Tag() != null) {
+        int cont=0;
+        if (mp3.hasID3v2Tag()) {
+            cont++;
             if (!m.setNome(mp3.getID3v2Tag().getSongTitle())) {
                 m.setNome(file.getName());
             }
@@ -180,10 +182,11 @@ public class Musica {
             m.setAutor(mp3.getID3v2Tag().getLeadArtist());
             m.setGenero(mp3.getID3v2Tag().getSongGenre());
             //   mp3.getID3v1Tag().getSize();
-        } else if (mp3.getID3v1Tag() != null) {
+        }
+        if (mp3.hasID3v1Tag()) {
 
 //        getID3v1
-
+            cont++;
             if (!m.setNome(mp3.getID3v1Tag().getTitle())) {
                 m.setNome(file.getName());
             }
@@ -192,7 +195,8 @@ public class Musica {
             m.setAutor(mp3.getID3v1Tag().getArtist());
             m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
 
-        } else {
+        } 
+        if(cont==0){        
             if (file.getName().indexOf(".mp3") != -1) {
                 System.out.println("*******************************");
 
@@ -236,7 +240,13 @@ public class Musica {
                 dir = new File(dir.getAbsolutePath());
                 MP3File mp3 = new MP3File(dir.getAbsolutePath().replace("\\\\", "/").replace("\\", "/").trim());
                 m.setCaminho(dir.getAbsolutePath());
-                if (Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("organizadorPastas").toString())) {
+                boolean aux;
+                if (Configuracao.getConfiguracoes().get("organizadorPastas") != null) {
+                    aux = Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("organizadorPastas").toString());
+                } else {
+                    aux = false;
+                }
+                if (aux) {
                     getMusica(m, mp3, dir);
                     String dest = Configuracao.getConfiguracoes().get("organizadorDestino") + "/" + removeCaracteresEsp(m.getAutor()) + "/" + removeCaracteresEsp(m.getAlbum()) + "/";
                     File destino = new File(dest);
@@ -262,10 +272,11 @@ public class Musica {
                     getMusica(m, mp3, dir);
                     MusicaBD.incluir(m, t);
                 }
-
-                if (Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("downloadCapas").toString()) && (m.getImg() == null || m.getImg().equals(""))) {
-                    m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
-                    MusicaBD.alterar(m, t);
+                if (Configuracao.getConfiguracoes().get("downloadCapas") != null) {
+                    if (Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("downloadCapas").toString()) && (m.getImg() == null || m.getImg().equals(""))) {
+                        m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
+                        MusicaBD.alterar(m, t);
+                    }
                 }
 
             } catch (Exception e) {

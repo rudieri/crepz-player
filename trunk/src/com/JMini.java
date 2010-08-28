@@ -1,5 +1,6 @@
 package com;
 
+import com.graficos.Testes;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -67,33 +68,50 @@ public class JMini extends javax.swing.JDialog {
             thAnim = new Thread(new Runnable() {
 
                 public void run() {
-                    System.out.println("TExTo: " + jLabelNomeMusica.getText());
+//                    System.out.println("TExTo: " + jLabelNomeMusica.getText());
+//                    int cont3 =200;
+////                    jLabelNomeMusicaSombra.setLocation(new Point(cont3, jLabelNomeMusica.getY()));
+//
+//                    int cont2 = jLabelNomeMusicaSombra.getX() + jLabelNomeMusicaSombra.getWidth();
+////                    jLabelNomeMusicaMask.setLocation(new Point(cont2, jLabelNomeMusica.getY()));
+//
+//                    int cont = jLabelNomeMusicaMask.getX()+jLabelNomeMusicaMask.getWidth();
+////                    jLabelNomeMusica.setLocation(new Point(cont, jLabelNomeMusica.getY()));
                     int cont = 0;
-                    jLabelNomeMusica.setLocation(new Point(cont, jLabelNomeMusica.getY()));
-                    jLabelNomeMusica.updateUI();
-                    int cont2 = jLabelNomeMusica.getX() - jLabelNomeMusicaMask.getWidth();
-                    jLabelNomeMusicaMask.setLocation(new Point(cont2, jLabelNomeMusica.getY()));
-                    int cont3 = jLabelNomeMusicaMask.getX() - jLabelNomeMusicaSombra.getWidth();
-                    jLabelNomeMusicaSombra.setLocation(new Point(cont3, jLabelNomeMusica.getY()));
-                    System.out.println(jLabelNomeMusica.getWidth() + " - " + jLabelNomeMusicaMask.getWidth() + " - " + jLabelNomeMusicaSombra.getWidth());
-                    System.out.println(cont + " - " + cont2 + " - " + cont3);
+                    int cont2 = -100;
+                    int cont3 = -200;
+//                   System.out.println(jLabelNomeMusica.getWidth() + " - " + jLabelNomeMusicaMask.getWidth() + " - " + jLabelNomeMusicaSombra.getWidth());
+//                    System.out.println(cont + " - " + cont2 + " - " + cont3);
                     while (true) {
+
                         cont += 1;
 
                         jLabelNomeMusica.setLocation(new Point(cont, jLabelNomeMusica.getY()));
-                        if (jLabelNomeMusica.getX() + jLabelNomeMusica.getWidth() > 300) {
+                        if (jLabelNomeMusica.getX() + jLabelNomeMusica.getWidth() > 250) {
                             cont3 = jLabelNomeMusicaMask.getX() - jLabelNomeMusicaSombra.getWidth();
                         }
-
+                        if (Testes.hitTest(jLabelNomeMusica, jLabelNomeMusicaMask)) {
+                            System.out.println("woooooow");
+                            cont2 = jLabelNomeMusica.getX() - jLabelNomeMusicaMask.getWidth();
+                        }
+                         if (Testes.hitTest(jLabelNomeMusica, jLabelNomeMusicaSombra)) {
+                            System.out.println("woooooow");
+                            cont3 = jLabelNomeMusicaMask.getX() - jLabelNomeMusicaSombra.getWidth();
+                        }
                         cont2 += 1;
                         jLabelNomeMusicaMask.setLocation(new Point(cont2, jLabelNomeMusica.getY()));
-                        if (jLabelNomeMusicaMask.getX() + jLabelNomeMusicaMask.getWidth() > 300) {
+                        if (jLabelNomeMusicaMask.getX() + jLabelNomeMusicaMask.getWidth() > 250) {
                             cont = jLabelNomeMusicaSombra.getX() - jLabelNomeMusica.getWidth();
                         }
                         cont3 += 1;
                         jLabelNomeMusicaSombra.setLocation(new Point(cont3, jLabelNomeMusica.getY()));
-                        if (jLabelNomeMusicaSombra.getX() + jLabelNomeMusicaSombra.getWidth() > 300) {
+                        if (jLabelNomeMusicaSombra.getX() + jLabelNomeMusicaSombra.getWidth() > 250) {
                             cont2 = jLabelNomeMusica.getX() - jLabelNomeMusicaMask.getWidth();
+                        }
+                        if (!jLabelNomeMusica.isVisible()) {
+                            jLabelNomeMusica.setVisible(true);
+                            jLabelNomeMusicaMask.setVisible(true);
+                            jLabelNomeMusicaSombra.setVisible(true);
                         }
 //                               System.out.println(jLabelNomeMusica.getWidth() + " - "+ jLabelNomeMusicaMask.getWidth()+ " - " + jLabelNomeMusicaSombra.getWidth());
 
@@ -110,8 +128,8 @@ public class JMini extends javax.swing.JDialog {
             thAnim.start();
         } else {
             //if(thAnim.isInterrupted())
-           // thAnim=null;
-         // startTextAnim();
+            // thAnim=null;
+            // startTextAnim();
         }
         jPanel6.setPreferredSize(new Dimension(280, 30));
     }
@@ -248,6 +266,9 @@ public class JMini extends javax.swing.JDialog {
     }
 
     public void setNomeMusica(String n) {
+        jLabelNomeMusica.setVisible(false);
+        jLabelNomeMusicaMask.setVisible(false);
+        jLabelNomeMusicaSombra.setVisible(false);
         jLabelNomeMusica.setText(n + " 1 -- ");
         jLabelNomeMusicaMask.setText(n + " 2 -- ");
         jLabelNomeMusicaSombra.setText(n + " 3 -- ");
@@ -553,7 +574,7 @@ public class JMini extends javax.swing.JDialog {
                 formMouseMoved(evt);
             }
         });
-        getContentPane().setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 1, 3));
+        getContentPane().setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 1, 1));
 
         jPanel4.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204), new java.awt.Color(0, 0, 0), new java.awt.Color(51, 51, 51)), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204), new java.awt.Color(102, 102, 102), new java.awt.Color(153, 153, 153))));
         jPanel4.setForeground(new java.awt.Color(102, 102, 102));
@@ -808,6 +829,8 @@ public class JMini extends javax.swing.JDialog {
         gridBagConstraints.gridy = 0;
         jPanel4.add(jPanel1, gridBagConstraints);
 
+        jPanel5.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+
         jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
         jLabelNomeMusica.setText("jLabel2");
 
@@ -815,7 +838,9 @@ public class JMini extends javax.swing.JDialog {
         jLabelNomeMusicaMask.setText("jLabel2");
 
         jLabelNomeMusicaSombra.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
-        jLabelNomeMusicaSombra.setText("jLabel2");
+        jLabelNomeMusicaSombra.setText("Um nome bem grande");
+        jLabelNomeMusicaSombra.setFocusable(false);
+        jLabelNomeMusicaSombra.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -826,7 +851,7 @@ public class JMini extends javax.swing.JDialog {
                 .addComponent(jLabelNomeMusica)
                 .addGap(27, 27, 27)
                 .addComponent(jLabelNomeMusicaMask)
-                .addContainerGap(275, Short.MAX_VALUE))
+                .addContainerGap(363, Short.MAX_VALUE))
             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel6Layout.createSequentialGroup()
                     .addGap(0, 173, Short.MAX_VALUE)
