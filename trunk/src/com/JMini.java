@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 
 
@@ -94,7 +95,7 @@ public class JMini extends javax.swing.JDialog {
                             System.out.println("woooooow");
                             cont2 = jLabelNomeMusica.getX() - jLabelNomeMusicaMask.getWidth();
                         }
-                         if (Testes.hitTest(jLabelNomeMusica, jLabelNomeMusicaSombra)) {
+                        if (Testes.hitTest(jLabelNomeMusica, jLabelNomeMusicaSombra)) {
                             System.out.println("woooooow");
                             cont3 = jLabelNomeMusicaMask.getX() - jLabelNomeMusicaSombra.getWidth();
                         }
@@ -214,16 +215,16 @@ public class JMini extends javax.swing.JDialog {
     };
 
     private void startEvents() {
-        for (int i = 0; i < jPanel1.getComponentCount(); i++) {
-            if (jPanel1.getComponent(i) instanceof JLabel) {
-                jPanel1.getComponent(i).addMouseListener(mouseAdapterPopUp);
-                jPanel1.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
-            }
-        }
-        for (int i = 0; i < jPanel3.getComponentCount(); i++) {
-            jPanel3.getComponent(i).addMouseListener(mouseAdapterPopUp);
-            jPanel3.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
-        }
+//        for (int i = 0; i < jPanel1.getComponentCount(); i++) {
+//            if (jPanel1.getComponent(i) instanceof JLabel) {
+//                jPanel1.getComponent(i).addMouseListener(mouseAdapterPopUp);
+//                jPanel1.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
+//            }
+//        }
+//        for (int i = 0; i < jPanel3.getComponentCount(); i++) {
+//            jPanel3.getComponent(i).addMouseListener(mouseAdapterPopUp);
+//            jPanel3.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
+//        }
 
         lib.addWindowListener(new WindowAdapter() {
 
@@ -557,6 +558,9 @@ public class JMini extends javax.swing.JDialog {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 formMouseEntered(evt);
             }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                formMouseExited(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 formMousePressed(evt);
             }
@@ -590,6 +594,9 @@ public class JMini extends javax.swing.JDialog {
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jPanel4MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jPanel4MouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jPanel4MousePressed(evt);
@@ -830,14 +837,15 @@ public class JMini extends javax.swing.JDialog {
         jPanel4.add(jPanel1, gridBagConstraints);
 
         jPanel5.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jPanel5.setPreferredSize(new java.awt.Dimension(300, 34));
 
-        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
         jLabelNomeMusica.setText("jLabel2");
 
-        jLabelNomeMusicaMask.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabelNomeMusicaMask.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
         jLabelNomeMusicaMask.setText("jLabel2");
 
-        jLabelNomeMusicaSombra.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jLabelNomeMusicaSombra.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
         jLabelNomeMusicaSombra.setText("Um nome bem grande");
         jLabelNomeMusicaSombra.setFocusable(false);
         jLabelNomeMusicaSombra.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -851,12 +859,9 @@ public class JMini extends javax.swing.JDialog {
                 .addComponent(jLabelNomeMusica)
                 .addGap(27, 27, 27)
                 .addComponent(jLabelNomeMusicaMask)
-                .addContainerGap(363, Short.MAX_VALUE))
-            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel6Layout.createSequentialGroup()
-                    .addGap(0, 173, Short.MAX_VALUE)
-                    .addComponent(jLabelNomeMusicaSombra)
-                    .addGap(0, 174, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelNomeMusicaSombra)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -864,28 +869,29 @@ public class JMini extends javax.swing.JDialog {
                 .addGap(5, 5, 5)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelNomeMusica)
-                    .addComponent(jLabelNomeMusicaMask)))
-            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel6Layout.createSequentialGroup()
-                    .addGap(0, 2, Short.MAX_VALUE)
-                    .addComponent(jLabelNomeMusicaSombra)
-                    .addGap(0, 3, Short.MAX_VALUE)))
+                    .addComponent(jLabelNomeMusicaMask)
+                    .addComponent(jLabelNomeMusicaSombra, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel4.add(jPanel5, gridBagConstraints);
 
         getContentPane().add(jPanel4);
@@ -1011,9 +1017,9 @@ public class JMini extends javax.swing.JDialog {
     }//GEN-LAST:event_jSlider_TempoMouseExited
 
     private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
-        tarefa.cancel();
-        tarefa = new Timer();
-        tarefa.schedule(new tarefaRollOut(), 500);
+//        tarefa.cancel();
+//        tarefa = new Timer();
+//        tarefa.schedule(new tarefaRollOut(), 500);
     }//GEN-LAST:event_formMouseEntered
 
     private void jPanel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseEntered
@@ -1208,6 +1214,26 @@ public class JMini extends javax.swing.JDialog {
     private void jMenuCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuCancelarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuCancelarActionPerformed
+
+    private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
+        // TODO add your handling code here:
+        System.out.println("Hit: " + Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen())));
+        if (!Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen()))) {
+            tarefa.cancel();
+            tarefa = new Timer();
+            tarefa.schedule(new tarefaRollOut(), 500);
+        }
+    }//GEN-LAST:event_formMouseExited
+
+    private void jPanel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseExited
+        // TODO add your handling code here:
+         System.out.println("Hit: " + Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen())));
+        if (!Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen()))) {
+            tarefa.cancel();
+            tarefa = new Timer();
+            tarefa.schedule(new tarefaRollOut(), 500);
+        }
+    }//GEN-LAST:event_jPanel4MouseExited
 
     /**
      * @param args the command line arguments
