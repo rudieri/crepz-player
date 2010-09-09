@@ -6,5 +6,5 @@ playlist SMALLINT NOT NULL
 foreign key references PLAYLIST(id),
 musica SMALLINT NOT NULL
 foreign key references MUSICA(id),
-seq smallint not null);
+seq smallint);
 

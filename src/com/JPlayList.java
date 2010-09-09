@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
@@ -15,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import com.musica.ModelReadOnly;
 import com.musica.Musica;
 import com.musica.MusicaBD;
+import com.musica.MusicaSC;
 import com.playlist.JLista;
 import com.playlist.JPlaylists;
 import com.playlist.PlayListRenderer;
@@ -126,7 +126,7 @@ public class JPlayList extends javax.swing.JDialog {
         jTable.setDefaultRenderer(Object.class, new PlayListRenderer());
         jTable.setBackground(Color.DARK_GRAY);
         jTable.setIntercellSpacing(new Dimension(1, 2));
-        jTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jTable.setShowHorizontalLines(false);
         jTable.setShowVerticalLines(true);
         jTable.setRowSelectionAllowed(true);
@@ -193,7 +193,7 @@ public class JPlayList extends javax.swing.JDialog {
         } catch (Exception ex) {
             t.rollback();
             System.out.println("FUUUUUUUUUUUUUUUUUUUUUUUUUUUu");
-           // JOptionPane.showMessageDialog(this, "Erro ao Filtrar \\õ/");
+            // JOptionPane.showMessageDialog(this, "Erro ao Filtrar \\õ/");
             ex.printStackTrace();
         }
     }
@@ -508,20 +508,35 @@ public class JPlayList extends javax.swing.JDialog {
     }
 
     public void adicionarMusica() {
-        try {
+         Transacao t = new Transacao();
+         try {
             File in = principal.telaAbrirArquivo();
-            Musica m = new Musica();
-            m.setCaminho(in.getCanonicalPath());
-            if (!MusicaBD.existe(m)) {
-                MP3File mp3 = new MP3File(in);
-                Musica.getMusica(m, mp3, in);
-                MusicaBD.incluir(m);
-            }
+           
+            t.begin();
+        
+            Musica m =  Musica.addFiles(in, t);
+            t.commit();
+            trace("ID: " +m.getId());
+            trace("Nome: " +m.getNome());
+            trace("Album: " +m.getAlbum());
+            trace("Caminho: " + m.getCaminho());
+            //trace("ID: " +m.getId());
+            MusicaSC filtro = new MusicaSC();
+            filtro.setCaminho(m.getCaminho().trim());
 
+
+            m=(Musica)MusicaBD.listar(filtro).get(0);
+//
             addPlaylist(m);
+        
+            
         } catch (Exception ex) {
+            t.rollback();
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    private void trace(Object o){
+        System.out.println(o.toString());
     }
 
     public void atualizaIcons() {
@@ -862,10 +877,19 @@ public class JPlayList extends javax.swing.JDialog {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         DefaultTableModel tm = (DefaultTableModel) jTable.getModel();
-        tm.removeRow(jTable.getSelectedRow());
-        Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-        faltamTocar.remove(m);
-        total.remove(m);
+        int selecteds[] = jTable.getSelectedRows();
+        for (int i = selecteds.length - 1; i >= 0; i--) {
+            System.out.println(selecteds[i]);
+
+            Musica m = (Musica) jTable.getModel().getValueAt(selecteds[i], jTable.getColumnCount());
+            faltamTocar.remove(m);
+            pesquisa.remove(m);
+            total.remove(m);
+            tm.removeRow(selecteds[i]);
+        }
+        System.out.println("Array: " + selecteds.toString());
+
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -892,7 +916,7 @@ public class JPlayList extends javax.swing.JDialog {
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
             evt.setKeyCode(KeyEvent.VK_UNDEFINED);
             try {
-                Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
+                Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRows()[0], jTable.getColumnCount());
                 tocar(m);
                 if (jahFoi.indexOf(m) != jahFoi.size() - 1) {
                     jahFoi.add(m);
@@ -902,8 +926,24 @@ public class JPlayList extends javax.swing.JDialog {
                 Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        filtraTexto(evt.getKeyCode());
-        evt.setKeyCode(KeyEvent.VK_UNDEFINED);
+        switch(evt.getKeyCode()){
+            case KeyEvent.VK_DELETE:
+               jButton5ActionPerformed(null);
+               return;
+            case KeyEvent.VK_PAGE_DOWN:
+            case KeyEvent.VK_PAGE_UP:
+            case KeyEvent.VK_END:
+            case KeyEvent.VK_HOME:
+                return;
+
+        }
+        if (evt.getKeyCode() != KeyEvent.VK_SHIFT && evt.getKeyCode() != KeyEvent.VK_CONTROL) {
+            if (!((evt.getKeyCode() == KeyEvent.VK_DOWN || evt.getKeyCode() == KeyEvent.VK_UP) && evt.isShiftDown())) {
+                filtraTexto(evt.getKeyCode());
+                evt.setKeyCode(KeyEvent.VK_UNDEFINED);
+            }
+        }
+
         System.out.println("Code: " + evt.getKeyCode());
 }//GEN-LAST:event_jTableKeyPressed
 
@@ -1019,6 +1059,9 @@ public class JPlayList extends javax.swing.JDialog {
                 }
 
                 break;
+            case KeyEvent.VK_SHIFT:
+                jTable.requestFocus();
+                break;
         }
 
 //        if(aux>47 && aux<91 || aux>64 && aux<58 || aux>95 && aux<106 ){
@@ -1031,21 +1074,23 @@ public class JPlayList extends javax.swing.JDialog {
         // TODO add your handling code here:
         System.out.println(evt.getPropertyName());
     }//GEN-LAST:event_jTextEntradaPropertyChange
-
+    int dot = 0;
     private void jTextEntradaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextEntradaCaretUpdate
-
-        ArrayList<Musica> novaLista = new ArrayList<Musica>();
-        for (Musica m : pesquisa) {
-            if ((m.getNome() + m.getAutor()).toLowerCase().indexOf(jTextEntrada.getText().toLowerCase()) != -1) {
-                novaLista.add(m);
+        if (evt.getDot() != dot) {
+            dot = evt.getDot();
+            ArrayList<Musica> novaLista = new ArrayList<Musica>();
+            for (Musica m : pesquisa) {
+                if ((m.getNome() + m.getAutor()).toLowerCase().indexOf(jTextEntrada.getText().toLowerCase()) != -1) {
+                    novaLista.add(m);
+                }
             }
+            atualizarTabelaLista(novaLista);
+            if (jTable.getRowCount() > 0) {
+                jTable.setRowSelectionInterval(0, 0);
+                //Estou aqui
+            }
+            jTextEntrada.requestFocus();
         }
-        atualizarTabelaLista(novaLista);
-        if (jTable.getRowCount() > 0) {
-            jTable.setRowSelectionInterval(0, 0);
-            //Estou aqui
-        }
-        jTextEntrada.requestFocus();
     }//GEN-LAST:event_jTextEntradaCaretUpdate
 
     /**
@@ -1079,7 +1124,7 @@ public class JPlayList extends javax.swing.JDialog {
     }
 
     public void addPlaylist(Musica m) {
-        System.out.println("mmmm" + m);
+        System.out.println("Musica: " + m);
         Object[] row = new Object[2];
         row[0] = new JLista(m.getNome(), m.getAutor());
         // row[1] = m.getAutor();
