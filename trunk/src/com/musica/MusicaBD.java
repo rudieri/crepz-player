@@ -3,6 +3,8 @@ import com.conexao.SQL;
 import com.conexao.Transacao;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Classe responsável pela persistência de objetos Musica.
@@ -212,6 +214,8 @@ public class MusicaBD {
             sql.setParam("genero", filtro.getGenero().toUpperCase()+"%");
             c++;
         }
+        
+        
         if(c==0){
             sql.add("1=1");
         }
@@ -288,7 +292,35 @@ public class MusicaBD {
             rs.close();
         }
     }
-
+    public Musica pesquisar(String parametro, String valor){
+        SQL sql = new SQL();
+        sql.add("SELECT * ");
+        sql.add("FROM " + TBL);
+        sql.add("WHERE");
+        sql.add(parametro + "=" + valor);
+        Transacao t = new Transacao();
+        Musica musica = new Musica();
+        try {
+            t.begin();
+            ResultSet rs=t.executeQuery(sql.getSql());
+            t.commit();
+            
+            while (rs.next()) {
+             
+                musica.setId(rs.getInt("id"));
+                musica.setCaminho(rs.getString("caminho"));
+                musica.setNome(rs.getString("nome"));
+                musica.setAutor(rs.getString("autor"));
+                musica.setGenero(rs.getString("genero"));
+                musica.setAlbum(rs.getString("album"));
+                musica.setImg(rs.getString("img"));
+                rs.close();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return musica;
+    }
 
 
     /*#########################################

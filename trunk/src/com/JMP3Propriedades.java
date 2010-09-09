@@ -1,6 +1,5 @@
 package com;
 
-
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,9 +8,12 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import com.musica.Musica;
 import com.musica.MusicaBD;
+import java.io.IOException;
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagConstant;
+import org.farng.mp3.TagException;
 import org.farng.mp3.TagOptionSingleton;
+import org.farng.mp3.id3.ID3v1;
 
 /*
  * To change this template, choose Tools | Templates
@@ -50,40 +52,97 @@ public class JMP3Propriedades extends javax.swing.JDialog {
     }
 
     private void setDados() {
+        try {
+            jTextField_Arquivo.setText(mp3File.getMp3file().getAbsolutePath());
+            jTextField_Titulo.setText(mp3File.getID3v1Tag().getTitle());
+            jTextField_Interp.setText(mp3File.getID3v1Tag().getArtist());
+            jTextField_Album.setText(mp3File.getID3v1Tag().getAlbum());
+            jComboBoxGenero.setSelectedIndex(mp3File.getID3v1Tag().getGenre());
 
-        jTextField_Arquivo.setText(mp3File.getMp3file().getAbsolutePath());
-        jTextField_Titulo.setText(mp3File.getID3v1Tag().getTitle());
-        jTextField_Interp.setText(mp3File.getID3v1Tag().getArtist());
-        jTextField_Album.setText(mp3File.getID3v1Tag().getAlbum());
-        jComboBoxGenero.setSelectedIndex(mp3File.getID3v1Tag().getGenre());
+            jTextField_ano.setText(mp3File.getID3v1Tag().getYear());
+            jTextField_Comentario.setText(mp3File.getID3v1Tag().getComment());
+        } catch (Exception ex) {
+            setDadosv2();
+        }
 
-        jTextField_ano.setText(mp3File.getID3v1Tag().getYear());
-        jTextField_Comentario.setText(mp3File.getID3v1Tag().getComment());
+    }
 
+    public void setDadosv2() {
+        try {
+            jTextField_Titulo.setText(mp3File.getID3v2Tag().getSongTitle());
+            jTextField_Interp.setText(mp3File.getID3v2Tag().getLeadArtist());
+            jTextField_Album.setText(mp3File.getID3v2Tag().getAlbumTitle());//(.getText());
+            jComboBoxGenero.setSelectedItem(mp3File.getID3v2Tag().getSongGenre());//.setSongGenre((String) );
+            jTextField_ano.setText(mp3File.getID3v2Tag().getYearReleased());//.getText());
+            jTextField_Comentario.setText(mp3File.getID3v2Tag().getSongComment());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void setMp3File() {
         try {
-            TagOptionSingleton.getInstance().setDefaultSaveMode(TagConstant.MP3_FILE_SAVE_OVERWRITE);
-            mp3File.getID3v1Tag().setTitle(jTextField_Titulo.getText());
-            mp3File.getID3v1Tag().setArtist(jTextField_Interp.getText());
-            mp3File.getID3v1Tag().setAlbum(jTextField_Album.getText());
-            mp3File.getID3v1Tag().setGenre(Integer.valueOf(jComboBoxGenero.getSelectedIndex()).byteValue());
-            mp3File.getID3v1Tag().setYear(jTextField_ano.getText());
-            mp3File.getID3v1Tag().setComment(jTextField_Comentario.getText());
+            if (!mp3File.hasID3v1Tag()) {
+                precisaCriar();
+                return;
+            }
+            try {
+//                TagOptionSingleton.getInstance().setDefaultSaveMode(TagConstant.MP3_FILE_SAVE_OVERWRITE);
+                mp3File.getID3v1Tag().setTitle(jTextField_Titulo.getText());
+                mp3File.getID3v1Tag().setArtist(jTextField_Interp.getText());
+                mp3File.getID3v1Tag().setAlbum(jTextField_Album.getText());
+                mp3File.getID3v1Tag().setGenre(Integer.valueOf(jComboBoxGenero.getSelectedIndex()).byteValue());
+                mp3File.getID3v1Tag().setYear(jTextField_ano.getText());
+                mp3File.getID3v1Tag().setComment(jTextField_Comentario.getText());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
 
-
-
+            try{
             mp3File.getID3v2Tag().setSongTitle(jTextField_Titulo.getText());
             mp3File.getID3v2Tag().setLeadArtist(jTextField_Interp.getText());
             mp3File.getID3v2Tag().setAlbumTitle(jTextField_Album.getText());
             mp3File.getID3v2Tag().setSongGenre((String) jComboBoxGenero.getSelectedItem());
             mp3File.getID3v2Tag().setYearReleased(jTextField_ano.getText());
             mp3File.getID3v2Tag().setSongComment(jTextField_Comentario.getText());
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
             TagOptionSingleton.getInstance().setFilenameTagSave(true);
-            mp3File.save();
+            mp3File.save(TagConstant.MP3_FILE_SAVE_OVERWRITE);
+            alterarMusica();
+           
 
-            Musica m = new Musica();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
+            ex.printStackTrace();
+        }
+    }
+
+    public void precisaCriar() {
+        //  if (mp3File.hasID3v1Tag()) {
+        ID3v1 id = new ID3v1();
+        id.setSongTitle(jTextField_Titulo.getText());
+        id.setAlbumTitle(jTextField_Album.getText());
+        id.setLeadArtist(jTextField_Interp.getText());
+        // id.setSongGenre((String)(jComboBoxGenero.getSelectedItem()));
+        id.setYearReleased(jTextField_ano.getText());
+        id.setSongComment(jTextField_Comentario.getText());
+        mp3File.setID3v1Tag(id);
+        alterarMusica();
+        try {
+            mp3File.save(TagConstant.MP3_FILE_SAVE_APPEND);
+            // }
+        } catch (IOException ex) {
+            Logger.getLogger(JMP3Propriedades.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TagException ex) {
+            Logger.getLogger(JMP3Propriedades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void alterarMusica(){
+        try{
+        Musica m = new Musica();
             m.setCaminho(mp3File.getMp3file().getAbsolutePath());
             if (MusicaBD.existe(m)) {
                 Musica.getMusica(m, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
@@ -92,13 +151,12 @@ public class JMP3Propriedades extends javax.swing.JDialog {
                 Musica.getMusica(m, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
                 MusicaBD.incluir(m);
             }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
-            ex.printStackTrace();
+        }
+        catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
+              ex.printStackTrace();
         }
     }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
