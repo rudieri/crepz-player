@@ -630,7 +630,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                 popup.add(item2);
 
 
-                trayIcon = new TrayIcon(image, "Jar jar Player", popup);
+                trayIcon = new TrayIcon(image, "Crepz Player", popup);
                 trayIcon.setImageAutoSize(true);
 
 
