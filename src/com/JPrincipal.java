@@ -1542,6 +1542,8 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private void jMenuItem_ArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_ArquivoActionPerformed
         try {
             in = telaAbrirArquivo();
+            if(in==null)
+                return;
             player.open(in);
             tocar();
         } catch (Exception ex) {
