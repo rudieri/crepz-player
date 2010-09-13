@@ -195,7 +195,7 @@ public class Aguarde extends javax.swing.JFrame{
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/homer x ray.jpg"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/capa.jpg"))); // NOI18N
         jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         jPanel3.add(jPanel1, java.awt.BorderLayout.PAGE_START);

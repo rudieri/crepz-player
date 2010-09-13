@@ -57,19 +57,18 @@ public class JMini extends javax.swing.JDialog {
         lib = bl;
         //  this.lib=bl;
         startEvents();
-
-
-
+        jPanel6.setIgnoreRepaint(true);
     }
 
     public void startTextAnim() {
+        jLabelNomeMusica.setIgnoreRepaint(true);
         if (thAnim == null) {
             thAnim = new Thread(new Runnable() {
 
                 public void run() {
-//                    System.out.println("TExTo: " + jLabelNomeMusica.getText());
+                    System.out.println("TExTo: " + jLabelNomeMusica.getText());
 //                    int cont3 =200;
-////                    jLabelNomeMusicaSombra.setLocation(new Point(cont3, jLabelNomeMusica.getY()));
+//                    jLabelNomeMusicaSombra.setLocation(new Point(cont3, jLabelNomeMusica.getY()));
 //
 //                    int cont2 = jLabelNomeMusicaSombra.getX() + jLabelNomeMusicaSombra.getWidth();
 ////                    jLabelNomeMusicaMask.setLocation(new Point(cont2, jLabelNomeMusica.getY()));
@@ -77,44 +76,15 @@ public class JMini extends javax.swing.JDialog {
 //                    int cont = jLabelNomeMusicaMask.getX()+jLabelNomeMusicaMask.getWidth();
 ////                    jLabelNomeMusica.setLocation(new Point(cont, jLabelNomeMusica.getY()));
                     int cont = 0;
-                    int cont2 = -100;
-                    int cont3 = -200;
 //                   System.out.println(jLabelNomeMusica.getWidth() + " - " + jLabelNomeMusicaMask.getWidth() + " - " + jLabelNomeMusicaSombra.getWidth());
 //                    System.out.println(cont + " - " + cont2 + " - " + cont3);
                     while (true) {
 
                         cont += 1;
+                        jLabelNomeMusica.setLocation(cont, jLabelNomeMusica.getY());
+                        if(cont>300)
+                            cont=-jLabel1.getWidth();
 
-                        jLabelNomeMusica.setLocation(new Point(cont, jLabelNomeMusica.getY()));
-                        if (jLabelNomeMusica.getX() + jLabelNomeMusica.getWidth() > 250) {
-                            cont3 = jLabelNomeMusicaMask.getX() - jLabelNomeMusicaSombra.getWidth();
-                        }
-                        if (Testes.hitTest(jLabelNomeMusica, jLabelNomeMusicaMask)) {
-                            System.out.println("woooooow");
-                            cont2 = jLabelNomeMusica.getX() - jLabelNomeMusicaMask.getWidth();
-                        }
-                        if (Testes.hitTest(jLabelNomeMusica, jLabelNomeMusicaSombra)) {
-                            System.out.println("woooooow");
-                            cont3 = jLabelNomeMusicaMask.getX() - jLabelNomeMusicaSombra.getWidth();
-                        }
-                        cont2 += 1;
-                        jLabelNomeMusicaMask.setLocation(new Point(cont2, jLabelNomeMusica.getY()));
-                        if (jLabelNomeMusicaMask.getX() + jLabelNomeMusicaMask.getWidth() > 250) {
-                            cont = jLabelNomeMusicaSombra.getX() - jLabelNomeMusica.getWidth();
-                        }
-                        cont3 += 1;
-                        jLabelNomeMusicaSombra.setLocation(new Point(cont3, jLabelNomeMusica.getY()));
-                        if (jLabelNomeMusicaSombra.getX() + jLabelNomeMusicaSombra.getWidth() > 250) {
-                            cont2 = jLabelNomeMusica.getX() - jLabelNomeMusicaMask.getWidth();
-                        }
-                        if (!jLabelNomeMusica.isVisible()) {
-                            jLabelNomeMusica.setVisible(true);
-                            jLabelNomeMusicaMask.setVisible(true);
-                            jLabelNomeMusicaSombra.setVisible(true);
-                        }
-//                               System.out.println(jLabelNomeMusica.getWidth() + " - "+ jLabelNomeMusicaMask.getWidth()+ " - " + jLabelNomeMusicaSombra.getWidth());
-
-                        // System.out.println(cont + " " + cont2);
 
                         try {
                             Thread.sleep(100);
@@ -265,13 +235,13 @@ public class JMini extends javax.swing.JDialog {
     }
 
     public void setNomeMusica(String n) {
-        jLabelNomeMusica.setVisible(false);
-        jLabelNomeMusicaMask.setVisible(false);
-        jLabelNomeMusicaSombra.setVisible(false);
+//        jLabelNomeMusica.setVisible(true);
+//        jLabelNomeMusicaMask.setVisible(false);
+//        jLabelNomeMusicaSombra.setVisible(false);
         jLabelNomeMusica.setText(n + " 1 -- ");
-        jLabelNomeMusicaMask.setText(n + " 2 -- ");
-        jLabelNomeMusicaSombra.setText(n + " 3 -- ");
-        startTextAnim();
+//        jLabelNomeMusicaMask.setText(n + " 2 -- ");
+//        jLabelNomeMusicaSombra.setText(n + " 3 -- ");
+//        startTextAnim();
 //        jv.add(jLabelNomeMusica);
 //        jScrollPane1.setViewport(jv);
     }
@@ -411,8 +381,6 @@ public class JMini extends javax.swing.JDialog {
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabelNomeMusica = new javax.swing.JLabel();
-        jLabelNomeMusicaMask = new javax.swing.JLabel();
-        jLabelNomeMusicaSombra = new javax.swing.JLabel();
 
         jMenuVisualizacoes.setMnemonic('v');
         jMenuVisualizacoes.setText("Visualizações");
@@ -834,19 +802,11 @@ public class JMini extends javax.swing.JDialog {
         gridBagConstraints.gridy = 0;
         jPanel4.add(jPanel1, gridBagConstraints);
 
-        jPanel5.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
+        jPanel5.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
         jPanel5.setPreferredSize(new java.awt.Dimension(300, 34));
 
         jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
         jLabelNomeMusica.setText("jLabel2");
-
-        jLabelNomeMusicaMask.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
-        jLabelNomeMusicaMask.setText("jLabel2");
-
-        jLabelNomeMusicaSombra.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
-        jLabelNomeMusicaSombra.setText("Um nome bem grande");
-        jLabelNomeMusicaSombra.setFocusable(false);
-        jLabelNomeMusicaSombra.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -855,20 +815,13 @@ public class JMini extends javax.swing.JDialog {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addComponent(jLabelNomeMusica)
-                .addGap(27, 27, 27)
-                .addComponent(jLabelNomeMusicaMask)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabelNomeMusicaSombra)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(223, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelNomeMusica)
-                    .addComponent(jLabelNomeMusicaMask)
-                    .addComponent(jLabelNomeMusicaSombra, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jLabelNomeMusica))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -883,7 +836,7 @@ public class JMini extends javax.swing.JDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1261,8 +1214,6 @@ public class JMini extends javax.swing.JDialog {
     private javax.swing.JCheckBoxMenuItem jCheckBox_top;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelNomeMusica;
-    private javax.swing.JLabel jLabelNomeMusicaMask;
-    private javax.swing.JLabel jLabelNomeMusicaSombra;
     private javax.swing.JLabel jLabel_Playlist;
     private javax.swing.JLabel jLabel_lib;
     private javax.swing.JLabel jLabel_popup;
