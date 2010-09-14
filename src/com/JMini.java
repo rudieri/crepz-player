@@ -183,16 +183,16 @@ public class JMini extends javax.swing.JDialog {
     };
 
     private void startEvents() {
-//        for (int i = 0; i < jPanel1.getComponentCount(); i++) {
-//            if (jPanel1.getComponent(i) instanceof JLabel) {
-//                jPanel1.getComponent(i).addMouseListener(mouseAdapterPopUp);
-//                jPanel1.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
-//            }
-//        }
-//        for (int i = 0; i < jPanel3.getComponentCount(); i++) {
-//            jPanel3.getComponent(i).addMouseListener(mouseAdapterPopUp);
-//            jPanel3.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
-//        }
+        for (int i = 0; i < jPanel1.getComponentCount(); i++) {
+            if (jPanel1.getComponent(i) instanceof JLabel) {
+                jPanel1.getComponent(i).addMouseListener(mouseAdapterPopUp);
+                jPanel1.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
+            }
+        }
+        for (int i = 0; i < jPanel3.getComponentCount(); i++) {
+            jPanel3.getComponent(i).addMouseListener(mouseAdapterPopUp);
+            jPanel3.getComponent(i).addMouseMotionListener(mouseMotionPopUp);
+        }
 
         lib.addWindowListener(new WindowAdapter() {
 
@@ -1169,7 +1169,7 @@ public class JMini extends javax.swing.JDialog {
     private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
         // TODO add your handling code here:
         System.out.println("Hit: " + Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen())));
-        if (!Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen()))) {
+        if (!Testes.hitTest(this, new Point(evt.getXOnScreen(), evt.getYOnScreen()))) {
             tarefa.cancel();
             tarefa = new Timer();
             tarefa.schedule(new tarefaRollOut(), 500);
@@ -1179,7 +1179,7 @@ public class JMini extends javax.swing.JDialog {
     private void jPanel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseExited
         // TODO add your handling code here:
          System.out.println("Hit: " + Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen())));
-        if (!Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen()))) {
+        if (!Testes.hitTest(this, new Point(evt.getXOnScreen(), evt.getYOnScreen()))) {
             tarefa.cancel();
             tarefa = new Timer();
             tarefa.schedule(new tarefaRollOut(), 500);
