@@ -27,54 +27,103 @@ public class GerenciadorConfig {
     private JBiBlioteca lib;
     private JMini mini;
     HashMap list = null;
+    ConfigFile cf;
 
     public GerenciadorConfig(JPrincipal principal, JPlayList playList, JBiBlioteca biblioteca, JMini jmini) {
         pr = principal;
         pl = playList;
         lib = biblioteca;
         mini = jmini;
+        cf = new ConfigFile();
     }
 
     /**Grava as todas configurações que estão sendo usadas pelo Player*/
+    /* public void setAllValores() {
+    pr.setVisible(false);
+    //Cria uma transação com o banco
+    Transacao t = new Transacao();
+    try {
+    //Inicia a transação
+    t.begin();
+    //ATENÇÃO! APENAS O PRIMEIRO incluir DEVE MANDAR O PARAMETRO reset COMO true
+    ConfigBD.incluir("tocando", String.valueOf(pr.tocando2), true, t);
+    ConfigBD.incluir("pause", String.valueOf(pr.paused2), false, t);
+    if (pr.getMusica() != null) {
+    ConfigBD.incluir("musica", pr.getMusica().getId().toString(), false, t);
+    } else {
+    ConfigBD.incluir("musica", "", false, t);
+    }
+
+    ConfigBD.incluir("tempo", String.valueOf(pr.getTempo()), false, t);
+    ConfigBD.incluir("volume", String.valueOf(pr.getVolume()), false, t);
+    pr.setVolume(0);
+    ConfigBD.incluir("pan", String.valueOf(pr.getBalanco()), false, t);
+    if (pl.getId() != -1) {
+    ConfigBD.incluir("playList", String.valueOf(pl.getId()), false, t);
+    } else {
+    ConfigBD.incluir("playList", "", false, t);
+    }
+    ConfigBD.incluir("random", String.valueOf(pr.isRandom()), false, t);
+    ConfigBD.incluir("repeat", String.valueOf(pr.getRepetir()), false, t);
+    ConfigBD.incluir("bandeja", String.valueOf(pr.isBandeija()), false, t);
+    ConfigBD.incluir("miniPosicao", String.valueOf((int) mini.getLocal().getX() + "X" + (int) mini.getLocal().getY()), false, t);
+    ConfigBD.incluir("minitop", String.valueOf(mini.getTop()), false, t);
+
+    //salva o que foi mudado
+    t.commit();
+    BD.fecharBD();
+
+
+    } catch (Exception ex) {
+    t.rollback();
+    ex.printStackTrace();
+    } finally {
+    BD.fecharBD();
+    //            ag.setVisible(false);
+    }
+
+    }*/
     public void setAllValores() {
         pr.setVisible(false);
         //Cria uma transação com o banco
-        Transacao t = new Transacao();
+//        Transacao t = new Transacao();
+
         try {
             //Inicia a transação
-            t.begin();
+//            t.begin();
             //ATENÇÃO! APENAS O PRIMEIRO incluir DEVE MANDAR O PARAMETRO reset COMO true
-            ConfigBD.incluir("tocando", String.valueOf(pr.tocando2), true, t);
-            ConfigBD.incluir("pause", String.valueOf(pr.paused2), false, t);
+            cf.incluir("tocando", String.valueOf(pr.tocando2));
+            cf.incluir("pause", String.valueOf(pr.paused2));
             if (pr.getMusica() != null) {
-                ConfigBD.incluir("musica", pr.getMusica().getId().toString(), false, t);
+                cf.incluir("musica", pr.getMusica().getId().toString());
             } else {
-                ConfigBD.incluir("musica", "", false, t);
-            }          
-
-            ConfigBD.incluir("tempo", String.valueOf(pr.getTempo()), false, t);
-            ConfigBD.incluir("volume", String.valueOf(pr.getVolume()), false, t);
-            pr.setVolume(0);
-            ConfigBD.incluir("pan", String.valueOf(pr.getBalanco()), false, t);
-            if (pl.getId() != -1) {
-                ConfigBD.incluir("playList", String.valueOf(pl.getId()), false, t);
-            } else {
-                ConfigBD.incluir("playList", "", false, t);
+                cf.incluir("musica", "");
             }
-            ConfigBD.incluir("random", String.valueOf(pr.isRandom()), false, t);
-            ConfigBD.incluir("repeat", String.valueOf(pr.getRepetir()), false, t);
-            ConfigBD.incluir("bandeja", String.valueOf(pr.isBandeija()), false, t);
-            ConfigBD.incluir("miniPosicao", String.valueOf((int) mini.getLocal().getX() + "X" + (int) mini.getLocal().getY()), false, t);
-            ConfigBD.incluir("minitop", String.valueOf(mini.getTop()), false, t);
-            
-           //salva o que foi mudado
-            t.commit();
-             BD.fecharBD();            
-            
+
+            cf.incluir("tempo", String.valueOf(pr.getTempo()));
+            cf.incluir("volume", String.valueOf(pr.getVolume()));
+            pr.setVolume(0);
+            cf.incluir("pan", String.valueOf(pr.getBalanco()));
+            if (pl.getId() != -1) {
+                cf.incluir("playList", String.valueOf(pl.getId()));
+            } else {
+                cf.incluir("playList", "");
+            }
+            cf.incluir("random", String.valueOf(pr.isRandom()));
+            cf.incluir("repeat", String.valueOf(pr.getRepetir()));
+            cf.incluir("bandeja", String.valueOf(pr.isBandeija()));
+            cf.incluir("miniPosicao", String.valueOf((int) mini.getLocal().getX() + "X" + (int) mini.getLocal().getY()));
+            cf.incluir("minitop", String.valueOf(mini.getTop()));
+
+            //salva o que foi mudado
+            //   t.commit();
+            // BD.fecharBD();
+            cf.gravar();
+
 
         } catch (Exception ex) {
-            t.rollback();
-           ex.printStackTrace();
+            //    t.rollback();
+            ex.printStackTrace();
         } finally {
             BD.fecharBD();
 //            ag.setVisible(false);
@@ -84,28 +133,30 @@ public class GerenciadorConfig {
 
     /**Aplica todas as configurações que foram gravadas quando o player foi fechado pela ultima vez.*/
     public void getAllValores() {
-
+        if (!cf.read()) {
+            return;
+        }
         try {
             //lê a tabela de configurações que está no banco, list é um HashMap
-            list = ConfigBD.listar(null);
+            // list = ConfigBD.listar(null);
             //aplica as configurações.
-             if (list.get("playList") != null && !list.get("playList").toString().trim().equals("")) {
-                setPlayList(Integer.parseInt((String) list.get("playList")));
+            if (cf.recuperar("playList") != null && !cf.recuperar("playList").toString().trim().equals("")) {
+                setPlayList(Integer.parseInt((String) cf.recuperar("playList")));
             }
-            if (list.get("repeat") != null) {
-                setRepetir(Boolean.parseBoolean((String) list.get("repeat")));
+            if (cf.recuperar("repeat") != null) {
+                setRepetir(Boolean.parseBoolean((String) cf.recuperar("repeat")));
             }
-            if (list.get("random") != null) {
-                setRandom(Boolean.parseBoolean((String) list.get("random")));
+            if (cf.recuperar("random") != null) {
+                setRandom(Boolean.parseBoolean((String) cf.recuperar("random")));
             }
-            if (list.get("musica") != null && !((String) list.get("musica")).trim().equals("")) {
-                String musica = (String) list.get("musica");
-                String tempo = (String) list.get("tempo");
+            if (cf.recuperar("musica") != null && !((String) cf.recuperar("musica")).trim().equals("")) {
+                String musica = (String) cf.recuperar("musica");
+                String tempo = (String) cf.recuperar("tempo");
                 if (tempo == null || tempo.trim().equals("") || tempo.equalsIgnoreCase("null")) {
                     tempo = "0";
                 }
-                String pause = (String) list.get("pause");
-                String tocando = (String) list.get("tocando");
+                String pause = (String) cf.recuperar("pause");
+                String tocando = (String) cf.recuperar("tocando");
                 if (Boolean.parseBoolean(tocando)) {
                     setMusica(Integer.valueOf(musica), Long.valueOf(tempo), Boolean.parseBoolean(pause));
                 } else {
@@ -113,28 +164,81 @@ public class GerenciadorConfig {
                 }
             }
 
-            if (list.get("volume") != null) {
-                setVolume(Integer.parseInt((String) list.get("volume")));
+            if (cf.recuperar("volume") != null) {
+                setVolume(Integer.parseInt((String) cf.recuperar("volume")));
 
             }
-            if (list.get("pan") != null) {
-                setPan(Integer.parseInt((String) list.get("pan")));
+            if (cf.recuperar("pan") != null) {
+                setPan(Integer.parseInt((String) cf.recuperar("pan")));
             }
 
-            if (list.get("bandeja") != null) {
-                setBandeja(Boolean.parseBoolean((String) list.get("bandeja")));
+            if (cf.recuperar("bandeja") != null) {
+                setBandeja(Boolean.parseBoolean((String) cf.recuperar("bandeja")));
             }
-            if (list.get("miniPosicao") != null) {
-                setPosicao(String.valueOf(list.get("miniPosicao")));
+            if (cf.recuperar("miniPosicao") != null) {
+                setPosicao(String.valueOf(cf.recuperar("miniPosicao")));
             }
-            if (list.get("minitop") != null) {
-                setTop(Boolean.parseBoolean((String) list.get("minitop")));
-            }           
+            if (cf.recuperar("minitop") != null) {
+                setTop(Boolean.parseBoolean((String) cf.recuperar("minitop")));
+            }
 
         } catch (Exception ex) {
-           ex.printStackTrace();
+            ex.printStackTrace();
         }
     }
+//    /**Aplica todas as configurações que foram gravadas quando o player foi fechado pela ultima vez.*/
+//    public void getAllValores() {
+//
+//        try {
+//            //lê a tabela de configurações que está no banco, list é um HashMap
+//            list = ConfigBD.listar(null);
+//            //aplica as configurações.
+//             if (list.get("playList") != null && !list.get("playList").toString().trim().equals("")) {
+//                setPlayList(Integer.parseInt((String) list.get("playList")));
+//            }
+//            if (list.get("repeat") != null) {
+//                setRepetir(Boolean.parseBoolean((String) list.get("repeat")));
+//            }
+//            if (list.get("random") != null) {
+//                setRandom(Boolean.parseBoolean((String) list.get("random")));
+//            }
+//            if (list.get("musica") != null && !((String) list.get("musica")).trim().equals("")) {
+//                String musica = (String) list.get("musica");
+//                String tempo = (String) list.get("tempo");
+//                if (tempo == null || tempo.trim().equals("") || tempo.equalsIgnoreCase("null")) {
+//                    tempo = "0";
+//                }
+//                String pause = (String) list.get("pause");
+//                String tocando = (String) list.get("tocando");
+//                if (Boolean.parseBoolean(tocando)) {
+//                    setMusica(Integer.valueOf(musica), Long.valueOf(tempo), Boolean.parseBoolean(pause));
+//                } else {
+//                    setMusica(Integer.valueOf(musica));
+//                }
+//            }
+//
+//            if (list.get("volume") != null) {
+//                setVolume(Integer.parseInt((String) list.get("volume")));
+//
+//            }
+//            if (list.get("pan") != null) {
+//                setPan(Integer.parseInt((String) list.get("pan")));
+//            }
+//
+//            if (list.get("bandeja") != null) {
+//                setBandeja(Boolean.parseBoolean((String) list.get("bandeja")));
+//            }
+//            if (list.get("miniPosicao") != null) {
+//                setPosicao(String.valueOf(list.get("miniPosicao")));
+//            }
+//            if (list.get("minitop") != null) {
+//                setTop(Boolean.parseBoolean((String) list.get("minitop")));
+//            }
+//
+//        } catch (Exception ex) {
+//           ex.printStackTrace();
+//        }
+//    }
 
     public String getValue(String v) {
         return String.valueOf(list.get(v));
