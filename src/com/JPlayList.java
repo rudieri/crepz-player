@@ -33,7 +33,6 @@ import java.io.FileWriter;
 import javax.swing.JFileChooser;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
-import org.farng.mp3.MP3File;
 
 /*
  * To change this template, choose Tools | Templates
@@ -65,7 +64,7 @@ public class JPlayList extends javax.swing.JDialog {
         super(principal, modal);
         initComponents();
         this.principal = principal;
-        setResizable(false);
+       // setResizable(false);
         jPanel1.setVisible(jToggleButton1.isSelected());
         jLabel2.setText("");
         jLabel2.setToolTipText("Salvar internamente");
