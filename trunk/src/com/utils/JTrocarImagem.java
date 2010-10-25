@@ -43,47 +43,75 @@ public class JTrocarImagem extends javax.swing.JDialog {
 
     /** Creates new form JTrocarImagem */
     Musica musica = null;
+
     public JTrocarImagem(java.awt.Frame parent, boolean modal, Musica musica) {
         super(parent, modal);
         initComponents();
-        jLabel1.setText("Musica: "+musica.getNome());
+        jLabel1.setText("Musica: " + musica.getNome());
         this.musica = musica;
-        List<Result> lista = BuscaGoogle.buscaImagens(musica.getAlbum() + " " + musica.getAutor());
-        DefaultTableModel tm = (DefaultTableModel) jTable1.getModel();
-        TableCellRenderer tcr = new Imagem();
-        TableColumn column = jTable1.getColumnModel().getColumn(0);
-        column.setCellRenderer(tcr);
-        column = jTable1.getColumnModel().getColumn(1);
-        column.setCellRenderer(tcr);
+        atualizarTabela();
+    }
 
-        jTable1.removeColumn(jTable1.getColumn("txtImg1"));
-        jTable1.removeColumn(jTable1.getColumn("txtImg2"));
+    private void atualizarTabela() {
+        new Thread(new Runnable() {
 
-        for (int i = 0; i < lista.size(); i += 2) {
-            Object[] row = new Object[4];
-
-            if (lista.get(i) != null) {
-                BufferedImage bf = null;
-                try {
-                    bf = ImageIO.read(new URL(lista.get(i).getUrl()));
-                } catch (Exception ex) {
-                    Logger.getLogger(JTrocarImagem.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                row[0] = new javax.swing.ImageIcon(bf.getScaledInstance(150, 200, Image.SCALE_SMOOTH));
-                row[2] = lista.get(i).getUrl();
+            public void run() {
+                atualizarTabela_Run();
             }
-            if (lista.get(i) != null) {
-                BufferedImage bf = null;
-                try {
-                    bf = ImageIO.read(new URL(lista.get(i+1).getUrl()));
-                } catch (Exception ex) {
-                    Logger.getLogger(JTrocarImagem.class.getName()).log(Level.SEVERE, null, ex);
+        }).start();
+    }
+
+    private void atualizarTabela_Run() {
+        try {
+            jProgressBar.setVisible(true);
+            jButton1.setVisible(false);
+            jProgressBar.setString("Conectando...");
+            List<Result> lista = BuscaGoogle.buscaImagens(musica.getAlbum() + " " + musica.getAutor());
+            jProgressBar.setString("Montando Tabela");
+            DefaultTableModel tm = (DefaultTableModel) jTable1.getModel();
+            TableCellRenderer tcr = new Imagem();
+            TableColumn column = jTable1.getColumnModel().getColumn(0);
+            column.setCellRenderer(tcr);
+            column = jTable1.getColumnModel().getColumn(1);
+            column.setCellRenderer(tcr);
+
+            jTable1.removeColumn(jTable1.getColumn("txtImg1"));
+            jTable1.removeColumn(jTable1.getColumn("txtImg2"));
+
+            for (int i = 0; i < lista.size(); i += 2) {
+                Object[] row = new Object[4];
+
+                if (lista.get(i) != null) {
+                    BufferedImage bf = null;
+                    try {
+                        jProgressBar.setString("Baixando: " + lista.get(i).getTitle());
+                        bf = ImageIO.read(new URL(lista.get(i).getUrl()));
+                    } catch (Exception ex) {
+                        Logger.getLogger(JTrocarImagem.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    row[0] = new javax.swing.ImageIcon(bf.getScaledInstance(150, 200, Image.SCALE_SMOOTH));
+                    row[2] = lista.get(i).getUrl();
                 }
-                row[1] = new javax.swing.ImageIcon(bf.getScaledInstance(150, 200, Image.SCALE_SMOOTH));
-                row[3] = lista.get(i).getUrl();
+                if (lista.get(i) != null) {
+                    BufferedImage bf = null;
+                    try {
+                        jProgressBar.setString("Baixando: " + lista.get(i).getTitle());
+                        bf = ImageIO.read(new URL(lista.get(i + 1).getUrl()));
+                    } catch (Exception ex) {
+                        Logger.getLogger(JTrocarImagem.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    row[1] = new javax.swing.ImageIcon(bf.getScaledInstance(150, 200, Image.SCALE_SMOOTH));
+                    row[3] = lista.get(i).getUrl();
+                }
+
+                tm.addRow(row);
+                jButton1.setVisible(true);
             }
 
-            tm.addRow(row);
+
+        } catch (Exception ex) {
+            jProgressBar.setVisible(false);
+            jButton1.setVisible(true);
         }
     }
 
@@ -97,7 +125,7 @@ public class JTrocarImagem extends javax.swing.JDialog {
                 Object value, boolean isSelected, boolean hasFocus, int row,
                 int column) {
 
-            if(value instanceof ImageIcon){
+            if (value instanceof ImageIcon) {
                 // certifique-se da existencia da imagem "icon.gif" antes de executar
 
                 if (isSelected) {
@@ -114,16 +142,15 @@ public class JTrocarImagem extends javax.swing.JDialog {
         }
     }
 
-
-    private void salvar(){
+    private void salvar() {
         Transacao t = new Transacao();
         try {
-            String img = (String) jTable1.getModel().getValueAt(jTable1.getSelectedRow(), jTable1.getSelectedColumn()+2);
+            String img = (String) jTable1.getModel().getValueAt(jTable1.getSelectedRow(), jTable1.getSelectedColumn() + 2);
             URL link = new URL(img);
             File musicaF = new File(musica.getCaminho());
             String dest = musica.getImg();
-            if(dest == null || dest.equals("")){
-                dest = new File(musicaF.getAbsolutePath().replace(musicaF.getName(), musica.getAlbum()+"_"+musica.getAutor()+".jpg")).getCanonicalPath();
+            if (dest == null || dest.equals("")) {
+                dest = new File(musicaF.getAbsolutePath().replace(musicaF.getName(), musica.getAlbum() + "_" + musica.getAutor() + ".jpg")).getCanonicalPath();
             }
             File destino = new File(dest);
             InputStream in = link.openStream();
@@ -139,6 +166,8 @@ public class JTrocarImagem extends javax.swing.JDialog {
             t.begin();
             Musica.mapearDiretorio(new File(musicaF.getAbsolutePath().replace(musicaF.getName(), "")), t, new JProgressBar(), 10);
             t.commit();
+            setVisible(false);
+            dispose();
         } catch (Exception ex) {
             t.rollback();
             Logger.getLogger(JTrocarImagem.class.getName()).log(Level.SEVERE, null, ex);
@@ -160,7 +189,9 @@ public class JTrocarImagem extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
+        jProgressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -207,7 +238,7 @@ public class JTrocarImagem extends javax.swing.JDialog {
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
         jPanel3.setPreferredSize(new java.awt.Dimension(50, 35));
-        jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 3, 3));
+        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
 
         jButton1.setText("Salvar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -215,7 +246,14 @@ public class JTrocarImagem extends javax.swing.JDialog {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton1);
+        jPanel4.add(jButton1);
+
+        jProgressBar.setIndeterminate(true);
+        jProgressBar.setString("Aguarde");
+        jProgressBar.setStringPainted(true);
+        jPanel4.add(jProgressBar);
+
+        jPanel3.add(jPanel4);
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.PAGE_END);
 
@@ -254,6 +292,8 @@ public class JTrocarImagem extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JProgressBar jProgressBar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
