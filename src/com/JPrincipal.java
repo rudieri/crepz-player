@@ -441,11 +441,12 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jLabel_Musica.setText(properties.get("title") + " " + properties.get("author") + " " + properties.get("album"));
         if (jLabel_Musica.getText().trim().equalsIgnoreCase("") || jLabel_Musica.getText().trim().equalsIgnoreCase("null null null")) {
             try {
-                jLabel_Musica.setText(getMusica().getNome());
+                jLabel_Musica.setText(getMusica().getNome().replaceAll("  ", " ").trim());
             } catch (Exception ex) {
                 Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        jLabel_Musica.setText(jLabel_Musica.getText().replaceAll("  ", " ").trim());
         jmini.setNomeMusica(jLabel_Musica.getText());
 
     }
