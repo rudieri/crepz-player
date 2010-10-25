@@ -43,6 +43,7 @@ public class JTrocarImagem extends javax.swing.JDialog {
 
     /** Creates new form JTrocarImagem */
     Musica musica = null;
+    Thread th;
 
     public JTrocarImagem(java.awt.Frame parent, boolean modal, Musica musica) {
         super(parent, modal);
@@ -53,12 +54,13 @@ public class JTrocarImagem extends javax.swing.JDialog {
     }
 
     private void atualizarTabela() {
-        new Thread(new Runnable() {
+        th = new Thread(new Runnable() {
 
             public void run() {
                 atualizarTabela_Run();
             }
-        }).start();
+        });
+        th.start();
     }
 
     private void atualizarTabela_Run() {
@@ -143,6 +145,7 @@ public class JTrocarImagem extends javax.swing.JDialog {
     }
 
     private void salvar() {
+        th.interrupt();
         Transacao t = new Transacao();
         try {
             String img = (String) jTable1.getModel().getValueAt(jTable1.getSelectedRow(), jTable1.getSelectedColumn() + 2);
