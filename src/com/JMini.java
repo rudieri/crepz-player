@@ -286,7 +286,7 @@ public class JMini extends javax.swing.JDialog {
      */
     public void objetoRollOver(JLabel c) {
         Icon aux = c.getIcon();
-
+        
         if (aux.getIconWidth() > 15) {
             c.getGraphics().drawOval(2, 3, aux.getIconWidth(), aux.getIconHeight());
         }
@@ -953,7 +953,7 @@ public class JMini extends javax.swing.JDialog {
 
     private void jSlider_TempoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMouseReleased
         principal.atualizaTempo(jSlider_Tempo.getValue());
-        principal.getMusiquera().skipTo(jSlider_Tempo.getValue());
+        (principal.getMusiquera()).skipTo(jSlider_Tempo.getValue());
         principal.ajust = false;
 }//GEN-LAST:event_jSlider_TempoMouseReleased
 

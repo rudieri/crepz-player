@@ -30,14 +30,14 @@ public class Aguarde extends javax.swing.JFrame{
     }
 
     public void intro(){
-        try {
-            BasicPlayer player = new BasicPlayer();
-            player.open(getClass().getResource("/com/img/intro.mp3"));
-            player.play();
-        } catch (BasicPlayerException ex) {
-            ex.printStackTrace();
-            System.out.println("Crepz no intro!");
-        }
+//        try {
+////            BasicPlayer player = new BasicPlayer();
+////            player.open(getClass().getResource("/com/img/intro.mp3"));
+////            player.play();
+//        } catch (BasicPlayerException ex) {
+//            ex.printStackTrace();
+//            System.out.println("Crepz no intro!");
+//        }
     }
 
 
