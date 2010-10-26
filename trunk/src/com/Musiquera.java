@@ -96,18 +96,24 @@ public class Musiquera implements BasicPlayerListener {
     public boolean isPaused() {
         return paused;
     }
+    public int getTempo(){
+        return tempo;
+    }
 
     public void abrir(Musica m, int toc, boolean isPause, boolean tocar) {
         try {
             this.musica = m;
             in = new File(m.getCaminho());
+            if(in==null){
+                return ;
+            }
             player.open(in);
             if (toc > 0) {
                 ajust = true;
                 skipTo(toc);
                 ajust = false;
                 tocar();
-                if (!isPause) {
+                if (isPause) {
                     tocar();
                 }
             } else {
@@ -137,21 +143,24 @@ public class Musiquera implements BasicPlayerListener {
         try {
             // tarefa = new Timer();
             if (player.getStatus() == BasicPlayer.UNKNOWN) {
+                System.out.println("Estado UNKNOWN");
                 principal.atualizaIcone("jButton_Play", "PAUSE");
                 player.open(in);
             }
             int estado = player.getStatus();
+            System.out.println(estado);
             switch (estado) {
-                case BasicPlayer.PAUSED:
-                    principal.atualizaIcone("jButton_Play", "PAUSAR");
-                    player.play();
-                    setEstado(true, false);
-                    break;
                 case BasicPlayer.PLAYING:
                     principal.atualizaIcone("jButton_Play", "TOCAR");
                     player.pause();
                     setEstado(true, true);
                     break;
+                case BasicPlayer.PAUSED:
+                    principal.atualizaIcone("jButton_Play", "PAUSAR");
+                    player.resume();
+                    setEstado(true, false);
+                    break;
+             
                 case BasicPlayer.STOPPED:
                     principal.atualizaIcone("jButton_Play", "PAUSAR");
                     player.play();

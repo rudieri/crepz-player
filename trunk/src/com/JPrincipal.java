@@ -97,7 +97,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        _conf.getAllValores();
+      
 
 //        in = new File("D:/Musicas/David_Guetta_-_One_Love-2009-MOD/David Guetta _ Chris Willis ft Fergie _ LMFAO - Gettin_ Over.mp3");
 
@@ -125,6 +125,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jToggle_Random.setName("jToggle_Random");
 
         musiq = new Musiquera(this, playList, biblioteca, jmini, icone);
+          _conf.getAllValores();
     }
 
     public Musiquera getMusiquera() {
