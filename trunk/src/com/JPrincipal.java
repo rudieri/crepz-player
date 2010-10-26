@@ -7,6 +7,7 @@ import com.configuracao.Configuracao;
 import com.configuracao.ConfiguracaoBD;
 import com.configuracao.ConfiguracaoSC;
 import com.configuracao.JConfiguracao;
+import com.graficos.Icones;
 import com.help.JHelp;
 import com.help.JSobre;
 import com.melloware.jintellitype.HotkeyListener;
@@ -44,7 +45,9 @@ import com.musica.Musica;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /*
  * To change this template, choose Tools | Templates
@@ -60,9 +63,11 @@ import javax.swing.JFrame;
  *
  * @author manchini
  */
-public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListener, HotkeyListener, IntellitypeListener {
+public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, IntellitypeListener {
 
     public static Aguarde aguarde = new Aguarde();
+    Icones icone = new Icones();
+    Musiquera musiq;
     /** Creates new form NewJFrame */
     BasicPlayer player = new BasicPlayer();
     // BasicPlayer is a BasicController.
@@ -86,7 +91,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     public JPrincipal() {
         initComponents();
         loadIcons("tipo2");
-        player.addBasicPlayerListener(this);
+
         try {
             aguarde.intro();
         } catch (Exception ex) {
@@ -111,6 +116,71 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         inicializaIcones();
 
         trays();
+        //--------------------------
+        jButton_Play.setName("jButton_Play");
+        jButton_Next.setName("jButton_Next");
+        jButton_Ant.setName("jButton_Ant");
+        jButton_Stop.setName("jButton_Stop");
+        jToggle_Repeat.setName("jToggle_Repeat");
+        jToggle_Random.setName("jToggle_Random");
+
+        musiq = new Musiquera(this, playList, biblioteca, jmini, icone);
+    }
+
+    public Musiquera getMusiquera() {
+        return musiq;
+    }
+
+    /** Atualiza labels da tela principal
+     * @param nome Nome da musica, autor e album
+     * @param tempo Tempo em Minutos e Seguntos
+     * @param bits KiloBits/s
+     * @param freq Frequencia em ?Hz
+     */
+    public void atualizaLabels(String nome, int bits, String tempo, int freq) {
+        jLabel_Musica.setText(nome);
+        jLabel_tempoTotal.setText(tempo);
+        jLabel_bit.setText(bits + " kbps");
+        jLabel_freq.setText(freq + " ?Hz");
+    }
+
+    public void atualizaTempo(int tempo) {
+        jSlider_Tempo.setValue(tempo);
+    }
+
+    public void atualizaTempo(String min_seg) {
+        jLabel_tempo.setText(min_seg);
+        jSlider_Tempo.setToolTipText(min_seg);
+    }
+
+    /**
+     * Muda o icone do label que contenha o nome indicado.
+     * @param quem nome do label.
+     * @param icone nome icones.nomeDoIcone
+     */
+    public void atualizaIcone(String quem, Icon icone) {
+        for (int i = 0; i < getComponentCount(); i++) {
+            if (getComponent(i) instanceof JLabel) {
+                if (getComponent(i).getName().equals(quem)) {
+                    ((JLabel) getComponent(i)).setIcon(icone);
+                }
+            }
+        }
+    }
+
+    /**
+     * Muda o ToolTipText do label que contenha o nome indicado.
+     * @param quem nome do label.
+     * @param texto texto a ser colocado como tooltip
+     */
+    public void atualizaIcone(String quem, String texto) {
+        for (int i = 0; i < getComponentCount(); i++) {
+            if (getComponent(i) instanceof JLabel) {
+                if (getComponent(i).getName().equals(quem)) {
+                    ((JLabel) getComponent(i)).setToolTipText(texto);
+                }
+            }
+        }
     }
 
     public void trays() {
@@ -142,7 +212,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         this.musica = m;
     }
 
-    public Musica getMusica() throws Exception {
+    public Musica getMusica() {
         return musica;
     }
 
@@ -214,200 +284,6 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         }
     }
 
-    public void abrir(Musica m) {
-        try {
-            this.musica = m;
-            in = new File(m.getCaminho());
-            tocador.open(in);
-            tocar();
-        } catch (BasicPlayerException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void apenasAbrir(Musica m, Long toc) {
-        try {
-            this.musica = m;
-            in = new File(m.getCaminho());
-            tocador.open(in);
-            if (toc > 0) {
-                tempo = toc;
-                ajust = true;
-                jSlider_Tempo.setValue(tempo.intValue());
-                skipTo();
-                ajust = false;
-            }
-            paused = true;
-        } catch (BasicPlayerException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void abrir(Musica m, Long t) {
-        try {
-            this.musica = m;
-            in = new File(m.getCaminho());
-            tocador.open(in);
-            player.open(in);
-            player.play();
-            tempo = t;
-            ajust = true;
-            jSlider_Tempo.setValue(tempo.intValue());
-            skipTo();
-            ajust = false;
-        } catch (BasicPlayerException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void tocar() {
-        try {
-            tarefa = new Timer();
-            if (player.getStatus() == BasicPlayer.UNKNOWN) {
-                jButton_Play.setToolTipText("PAUSE");
-                jCIMenuPlay.setText("Pausar");
-                tarefa.schedule(new tarefaPlay(), 50);
-
-            }
-
-            switch (player.getStatus()) {
-                case BasicPlayer.PAUSED:
-                    jButton_Play.setToolTipText("PAUSE");
-                    jCIMenuPlay.setText("Pausar");
-                    tarefa.schedule(new tarefaPlay(), 5);
-                    break;
-                case BasicPlayer.PLAYING:
-                    jButton_Play.setToolTipText("PLAY");
-                    jCIMenuPlay.setText("Tocar");
-                    tarefa.schedule(new tarefaPlay(), 5);
-
-                    break;
-                case BasicPlayer.STOPPED:
-                    jButton_Play.setToolTipText("PAUSE");
-                    jCIMenuPlay.setText("Pausar");
-                    tarefa.schedule(new tarefaPlay(), 40);
-                    break;
-                case BasicPlayer.OPENED:
-                    jButton_Play.setToolTipText("PAUSE");
-                    jCIMenuPlay.setText("Pausar");
-                    tarefa.schedule(new tarefaPlay(), 50);
-            }
-
-
-
-        } catch (Exception ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public synchronized void skipTo() {
-        try {
-
-            long skipBytes = (jSlider_Tempo.getValue() * total / 1000);
-            System.out.println(skipBytes);
-            try {
-                tocador.seek(skipBytes);
-
-            } catch (Exception ex) {
-                tocador.seek(skipBytes);
-            }
-            player.setPan(new Double(jSlider_Balanco.getValue()) / 100);
-
-
-        } catch (Exception ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public synchronized void skipTo(Long t) {
-        try {
-            jSlider_Tempo.setValue(tempo.intValue());
-            long skipBytes = (jSlider_Tempo.getValue() * total / 1000);
-            tocador.seek(skipBytes);
-            player.setPan(new Double(jSlider_Balanco.getValue()) / 100);
-        } catch (BasicPlayerException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    class tarefaPlay extends TimerTask {
-
-        @Override
-        public void run() {
-            try {
-                if (player.getStatus() == BasicPlayer.UNKNOWN) {
-                    player.open(in);
-                }
-
-                switch (player.getStatus()) {
-                    case BasicPlayer.PAUSED:
-                        try {
-                            player.resume();
-                        } catch (Exception e) {
-                            player.resume();
-                        }
-                        break;
-                    case BasicPlayer.PLAYING:
-
-                        try {
-                            player.pause();
-                        } catch (Exception ex) {
-                            player.pause();
-                        }
-                        break;
-                    case BasicPlayer.STOPPED:
-                        try {
-                            player.play();
-                        } catch (Exception ex) {
-                            player.play();
-                        }
-                        break;
-                    case BasicPlayer.OPENED:
-                        try {
-                            player.play();
-                        } catch (Exception e) {
-                            player.play();
-                        }
-                        break;
-                }
-//                player.setGain(new Double(jSlider_vol.getValue()) / 100);
-                Thread.sleep(1000);
-
-
-            } catch (Exception ex) {
-                Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    public executaProxima getExecutaProxima() {
-        return new executaProxima();
-    }
-
-    public executaAnterior getExecutaAnterior() {
-        return new executaAnterior();
-    }
-
-    public class executaProxima extends TimerTask {
-
-        @Override
-        public void run() {
-            playList.getProxima();
-        }
-    }
-
-    public class executaAnterior extends TimerTask {
-
-        @Override
-        public void run() {
-            playList.getAnterior();
-        }
-    }
-
-    public void atualizaTempo(int t) {
-        jSlider_Tempo.setValue(t);
-    }
-
     public String miliSegundosEmMinSeq(Long mili) {
         mili = mili / 1000000;
         SimpleDateFormat sdf = new SimpleDateFormat("ss");
@@ -419,141 +295,6 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         }
 
         return new java.text.SimpleDateFormat("HH:mm:ss").format(date);
-    }
-
-    /**
-     * Open callback, stream is ready to play.
-     *
-     * properties map includes audio format dependant features such as
-     * bitrate, duration, frequency, channels, number of frames, vbr flag, ...
-     *
-     * @param stream could be File, URL or InputStream
-     * @param properties audio stream properties.s
-     */
-    public void opened(Object stream, Map properties) {
-// Pay attention to properties. It's useful to get duration,
-// bitrate, channels, even tag such as ID3v2.
-        display("opened : " + properties.toString());
-        total = new Long((Integer) properties.get("audio.length.bytes"));
-        jLabel_tempoTotal.setText(miliSegundosEmMinSeq((Long) properties.get("duration")));
-        jLabel_bit.setText(String.valueOf((Integer) properties.get("mp3.bitrate.nominal.bps") / 1000) + " Kbps");
-        jLabel_freq.setText(String.valueOf((Integer) properties.get("mp3.frequency.hz") / 1000) + " Mhz");
-        jLabel_Musica.setText(properties.get("title") + " " + properties.get("author") + " " + properties.get("album"));
-        if (jLabel_Musica.getText().trim().equalsIgnoreCase("") || jLabel_Musica.getText().trim().equalsIgnoreCase("null null null")) {
-            try {
-                jLabel_Musica.setText(getMusica().getNome().replaceAll("  ", " ").trim());
-            } catch (Exception ex) {
-                Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        jLabel_Musica.setText(jLabel_Musica.getText().replaceAll("  ", " ").trim());
-        jmini.setNomeMusica(jLabel_Musica.getText());
-
-    }
-
-    /** * Progress callback while playing.
-     *
-     * This method is called severals time per seconds while playing.
-     * properties map includes audio format features such as
-     * instant bitrate, microseconds position, current frame number, ...
-     *
-     * @param bytesread from encoded stream.
-     * @param microseconds elapsed (<b>reseted after a seek !</b>).
-     * @param pcmdata PCM samples.
-     * @param properties audio stream parameters.
-     */
-    public void progress(int bytesread, long microseconds, byte[] pcmdata, Map properties) {
-// Pay attention to properties. It depends on underlying JavaSound SPI
-// MP3SPI provides mp3.equalizer.
-
-        if (!ajust) {
-            jSlider_Tempo.setValue(Integer.valueOf(String.valueOf((Long) properties.get("mp3.position.byte") * 1000 / total)));
-        }
-//        display("progress : " + properties.toString());
-
-        jLabel_tempo.setText(miliSegundosEmMinSeq((Long) properties.get("mp3.position.microseconds")));
-
-        jSlider_Tempo.setToolTipText(miliSegundosEmMinSeq((Long) properties.get("mp3.position.microseconds")));
-        tempo = (Long) properties.get("mp3.position.byte") * 1000 / total;
-        //  display(tempo + "  " + total);
-
-    }
-
-    /**
-     * Notification callback for basicplayer events such as opened, eom ...
-     *
-     * @param event
-     */
-    public void stateUpdated(BasicPlayerEvent event) {
-// Notification of BasicPlayer states (opened, playing, end of media, ...)
-        display("stateUpdated : " + event.toString());
-        switch (event.getCode()) {
-            case BasicPlayerEvent.STOPPED:
-                jButton_Play.setIcon(playIcon);
-                jmini.setPlayIcon(resizeIcons(bf_playIcon));
-                jCIMenuPlay.setText("Tocar");
-
-                tocando = false;
-                paused = false;
-                if (!ajust) {
-                    jSlider_Tempo.setValue(0);
-                }
-                break;
-            case BasicPlayerEvent.PLAYING:
-                if (trayIcon != null && !tocando) {
-                    // trayIcon.displayMessage("Tocando \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
-                }
-                tocando = true;
-                paused = false;
-                jButton_Play.setIcon(pauseIcon);
-                jmini.setPlayIcon(resizeIcons(bf_pauseIcon));
-                jCIMenuPlay.setText("Pausar");
-                break;
-            case BasicPlayerEvent.RESUMED:
-                jButton_Play.setIcon(pauseIcon);
-                jmini.setPlayIcon(resizeIcons(bf_pauseIcon));
-                tocando = true;
-                paused = false;
-                jCIMenuPlay.setText("Pausar");
-                break;
-            case BasicPlayerEvent.PAUSED:
-                tocando = true;
-                paused = true;
-                jButton_Play.setIcon(playIcon);
-                jmini.setPlayIcon(resizeIcons(bf_playIcon));
-                jCIMenuPlay.setText("Tocar");
-                break;
-
-            case BasicPlayerEvent.GAIN:
-                if (Math.abs(event.getValue() * 100 - jSlider_vol.getValue()) > 2) {
-                    try {
-                        player.setGain(new Double(jSlider_vol.getValue()) / 100);
-                    } catch (BasicPlayerException ex) {
-                        Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                if (event.getValue() * 100 != jSlider_Balanco.getValue()) {
-                    try {
-                        player.setPan(new Double(jSlider_Balanco.getValue()) / 100);
-                    } catch (BasicPlayerException ex) {
-                        Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                break;
-            case BasicPlayerEvent.SEEKED:
-                tocando = true;
-                paused = false;
-                break;
-            case BasicPlayerEvent.SEEKING:
-                tocando = true;
-                paused = false;
-                break;
-            case BasicPlayerEvent.EOM:
-                playList.getProxima();
-                break;
-
-        }
-
     }
 
     /**
@@ -641,7 +382,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                     public void mouseClicked(MouseEvent evt) {
                         if (evt.getButton() == MouseEvent.BUTTON1) {
                             if (evt.getClickCount() == 2) {
-                                tocar();
+                                musiq.tocar();
                                 display("Event: 2 cliques");
                             }
                         }
@@ -767,9 +508,9 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
             jmini.inicializaIcones();
         }
         if (random) {
-            jToggleButton1.setIcon(randomOnIcon);
+            jToggle_Random.setIcon(randomOnIcon);
         } else {
-            jToggleButton1.setIcon(randomOffIcon);
+            jToggle_Random.setIcon(randomOffIcon);
         }
         if (repeat) {
             jToggle_Repeat.setIcon(repeatOnIcon);
@@ -868,7 +609,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                 playList.getProxima();
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_PLAY_PAUSE:
-                tocar();
+                musiq.tocar();
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_PREVIOUSTRACK:
                 playList.getAnterior();
@@ -912,9 +653,9 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         super.setVisible(b);
         jmini.setVisible(!b);
         if (random) {
-            jToggleButton1.setIcon(randomOnIcon);
+            jToggle_Random.setIcon(randomOnIcon);
         } else {
-            jToggleButton1.setIcon(randomOffIcon);
+            jToggle_Random.setIcon(randomOffIcon);
         }
         if (repeat) {
             jToggle_Repeat.setIcon(repeatOnIcon);
@@ -1010,7 +751,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         jButton_Stop = new javax.swing.JLabel();
         jButton_Ant = new javax.swing.JLabel();
         jButton_Next = new javax.swing.JLabel();
-        jToggleButton1 = new javax.swing.JLabel();
+        jToggle_Random = new javax.swing.JLabel();
         jToggle_Repeat = new javax.swing.JLabel();
         jSlider_vol = new javax.swing.JSlider();
         jPanel16 = new javax.swing.JPanel();
@@ -1285,11 +1026,11 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseClicked(evt);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton_PlayMouseExited(evt);
-            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jButton_PlayMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jButton_PlayMouseExited(evt);
             }
         });
         jPanel2.add(jButton_Play);
@@ -1336,19 +1077,19 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         });
         jPanel2.add(jButton_Next);
 
-        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/falseRandom.png"))); // NOI18N
-        jToggleButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jToggle_Random.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/falseRandom.png"))); // NOI18N
+        jToggle_Random.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jToggleButton1MouseClicked(evt);
+                jToggle_RandomMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jToggleButton1MouseEntered(evt);
+                jToggle_RandomMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jToggleButton1MouseExited(evt);
+                jToggle_RandomMouseExited(evt);
             }
         });
-        jPanel2.add(jToggleButton1);
+        jPanel2.add(jToggle_Random);
 
         jToggle_Repeat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/repeatOff.png"))); // NOI18N
         jToggle_Repeat.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1527,26 +1268,27 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }// </editor-fold>//GEN-END:initComponents
 
     private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
-        try {
-            player.setGain(new Double(jSlider_vol.getValue()) / 100);
-            jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
-        } catch (BasicPlayerException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        musiq.setVolume(jSlider_vol.getValue());
+        //  player.setGain(new Double(jSlider_vol.getValue()) / 100);
+        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
+
     }//GEN-LAST:event_jSlider_volStateChanged
 
     private void jSlider_TempoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMouseReleased
-        skipTo();
-        ajust = false;
+        //skipTo();
+        ajust = musiq.skipTo(jSlider_Tempo.getValue());
+
     }//GEN-LAST:event_jSlider_TempoMouseReleased
 
     private void jMenuItem_ArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_ArquivoActionPerformed
         try {
             in = telaAbrirArquivo();
-            if(in==null)
+            if (in == null) {
                 return;
-            player.open(in);
-            tocar();
+            }
+            musiq.abrir(in);
+
         } catch (Exception ex) {
             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1619,7 +1361,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
 
     private void jCIMenuPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuPlayActionPerformed
         // TODO add your handling code here:
-        tocar();
+        musiq.tocar();
     }//GEN-LAST:event_jCIMenuPlayActionPerformed
 
     private void jCIMenuStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuStopActionPerformed
@@ -1642,17 +1384,16 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     }//GEN-LAST:event_jPanel2MouseReleased
 
     private void jSlider_BalancoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_BalancoStateChanged
-        try {
-            player.setPan(new Double(jSlider_Balanco.getValue()) / 100);
-            jSlider_Balanco.setToolTipText(String.valueOf(jSlider_Balanco.getValue() / 100));
-        } catch (BasicPlayerException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        // player.setPan(new Double(jSlider_Balanco.getValue()) / 100);
+        musiq.setBalanco(jSlider_Balanco.getValue());
+        jSlider_Balanco.setToolTipText(String.valueOf(jSlider_Balanco.getValue() / 100));
+
 
     }//GEN-LAST:event_jSlider_BalancoStateChanged
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        tocar();
+        musiq.tocar();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -1685,7 +1426,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private void jButton_PlayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            tocar();
+            musiq.tocar();
         }
     }//GEN-LAST:event_jButton_PlayMouseClicked
 
@@ -1701,7 +1442,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         if (evt.getButton() == MouseEvent.BUTTON1) {
             tarefa.cancel();
             tarefa = new Timer();
-            tarefa.schedule(new executaAnterior(), 10);
+            musiq.abrir(playList.getAnterior(), 0, false, true);
         }
     }//GEN-LAST:event_jButton_AntMouseClicked
 
@@ -1712,25 +1453,26 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
                 tarefa.cancel();
             }
             tarefa = new Timer();
-            tarefa.schedule(new executaProxima(), 10);
+            musiq.abrir(playList.getProxima(), 0, false, true);
+            //   tarefa.schedule(new executaProxima(), 10);
         }
     }//GEN-LAST:event_jButton_NextMouseClicked
 
-    private void jToggleButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseClicked
+    private void jToggle_RandomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RandomMouseClicked
         // TODO add your handling code here:
         random = !random;
         playList.setAleatorio(random);
         if (random) {
-            jToggleButton1.setIcon(randomOnIcon);
+            jToggle_Random.setIcon(randomOnIcon);
         } else {
-            jToggleButton1.setIcon(randomOffIcon);
+            jToggle_Random.setIcon(randomOffIcon);
         }
         //jToggleButton1.setIcon(new ImageIcon(getClass().getResource("/com/img/icons/tipo2/"+random+"Random.png")));
-    }//GEN-LAST:event_jToggleButton1MouseClicked
+    }//GEN-LAST:event_jToggle_RandomMouseClicked
 
     private void jSlider_TempoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_TempoStateChanged
         // TODO add your handling code here:
-        jmini.atualizaTempo(jSlider_Tempo.getValue());
+//        jmini.atualizaTempo(jSlider_Tempo.getValue());
     }//GEN-LAST:event_jSlider_TempoStateChanged
 
     private void jSlider_BalancoMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_BalancoMouseWheelMoved
@@ -1779,13 +1521,13 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
         evt.getComponent().repaint();
     }//GEN-LAST:event_jButton_NextMouseExited
 
-    private void jToggleButton1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseEntered
-        jmini.objetoRollOver(jToggleButton1);
-    }//GEN-LAST:event_jToggleButton1MouseEntered
+    private void jToggle_RandomMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RandomMouseEntered
+        jmini.objetoRollOver(jToggle_Random);
+    }//GEN-LAST:event_jToggle_RandomMouseEntered
 
-    private void jToggleButton1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseExited
+    private void jToggle_RandomMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RandomMouseExited
         evt.getComponent().repaint();
-    }//GEN-LAST:event_jToggleButton1MouseExited
+    }//GEN-LAST:event_jToggle_RandomMouseExited
 
     private void jToggle_RepeatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeatMouseClicked
         // TODO add your handling code here:
@@ -1869,19 +1611,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
             try {
                 BD.hadukem();
                 super.setVisible(false);
-                aguarde.setVisible(true);
-                aguarde.fechar();
-                aguarde.setAlwaysOnTop(true);
-                tarefa = new Timer();
-                tarefa.schedule(new TimerTask() {
-
-                    @Override
-                    public void run() {
-                        System.exit(0);
-
-                    }
-                }, 3000);
-
+                System.exit(0);
             } catch (Exception ex) {
                 Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2017,7 +1747,7 @@ public class JPrincipal extends javax.swing.JFrame implements BasicPlayerListene
     private javax.swing.JSlider jSlider_Balanco;
     private javax.swing.JSlider jSlider_Tempo;
     private javax.swing.JSlider jSlider_vol;
-    private javax.swing.JLabel jToggleButton1;
+    private javax.swing.JLabel jToggle_Random;
     private javax.swing.JLabel jToggle_Repeat;
     // End of variables declaration//GEN-END:variables
     DefaultBoundedRangeModel md = new DefaultBoundedRangeModel();

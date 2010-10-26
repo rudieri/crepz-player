@@ -599,7 +599,8 @@ public class JBiBlioteca extends javax.swing.JDialog {
                         if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                             try {
                                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
-                                principal.abrir(m);
+                                principal.getMusiquera().abrir(m, 0, false, true);
+                                principal.getMusiquera().tocar();
                                 jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                             } catch (Exception ex) {
                                 Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
@@ -642,7 +643,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
                         if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                             try {
                                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-                                principal.abrir(m);
+                              principal.getMusiquera().abrir(m,0,false, true);
                                 jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                             } catch (Exception ex) {
                                 Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);

@@ -876,7 +876,7 @@ public class JMini extends javax.swing.JDialog {
 
         if (!(thisX != this.getX() || thisY != this.getY())) {
             if (evt.getButton() == MouseEvent.BUTTON1) {
-                principal.tocar();
+                principal.getMusiquera().tocar();
             }
         }
     }//GEN-LAST:event_jButton_PlayMouseReleased
@@ -896,7 +896,8 @@ public class JMini extends javax.swing.JDialog {
             if (evt.getButton() == MouseEvent.BUTTON1) {
                 tarefa.cancel();
                 tarefa = new Timer();
-                tarefa.schedule(principal.getExecutaAnterior(), 10);
+                principal.getMusiquera().abrir(playList.getAnterior(), 0, false, true);
+               // tarefa.schedule(principal.getExecutaAnterior(), 10);
             }
         }
     }//GEN-LAST:event_jButton_AntMouseReleased
@@ -907,7 +908,8 @@ public class JMini extends javax.swing.JDialog {
             if (evt.getButton() == MouseEvent.BUTTON1) {
                 tarefa.cancel();
                 tarefa = new Timer();
-                tarefa.schedule(principal.getExecutaProxima(), 10);
+                principal.getMusiquera().abrir(playList.getProxima(), 0, false, true);
+              //  tarefa.schedule(principal.getExecutaProxima(), 10);
             }
         }
     }//GEN-LAST:event_jButton_NextMouseReleased
@@ -951,7 +953,7 @@ public class JMini extends javax.swing.JDialog {
 
     private void jSlider_TempoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMouseReleased
         principal.atualizaTempo(jSlider_Tempo.getValue());
-        principal.skipTo();
+        principal.getMusiquera().skipTo(jSlider_Tempo.getValue());
         principal.ajust = false;
 }//GEN-LAST:event_jSlider_TempoMouseReleased
 
