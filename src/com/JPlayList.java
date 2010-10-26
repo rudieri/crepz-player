@@ -64,7 +64,7 @@ public class JPlayList extends javax.swing.JDialog {
         super(principal, modal);
         initComponents();
         this.principal = principal;
-       // setResizable(false);
+        // setResizable(false);
         jPanel1.setVisible(jToggleButton1.isSelected());
         jLabel2.setText("");
         jLabel2.setToolTipText("Salvar internamente");
@@ -244,80 +244,102 @@ public class JPlayList extends javax.swing.JDialog {
         super.setAlwaysOnTop(a);
     }
 
-    private void tocar(Musica m) throws Exception {
-        System.out.println("------------" + m);
-        principal.abrir(m);
+//    private void tocar(Musica m) throws Exception {
+//        System.out.println("------------" + m);
+//        principal.getMusiquera().abrir(m, 0, false);
+//        principal.getMusiquera().tocar();
+//
+//        faltamTocar.remove(m);
+//    }
 
-        faltamTocar.remove(m);
+    public Musica getAleatorio(Musica atual) {
+       try{
+        if (jahFoi.indexOf(atual) == -1) {
+            jahFoi.add(atual);
+            faltamTocar.remove(atual);
+            System.out.println("Atual ADD!");
+        }
+        if (jahFoi.indexOf(atual) < jahFoi.size() - 1 && jahFoi.indexOf(atual) != -1 && jahFoi.size() > 0) {
+            return (Musica) jahFoi.get(jahFoi.indexOf(atual) + 1);
+
+        } else {
+            if (faltamTocar.size() < 1) {
+
+                if (recomecar) {
+                    System.out.println("Recomeçando");
+                    for (int i = 0; i < jTable.getRowCount(); i++) {
+                        faltamTocar.add(total.get(i));
+                        //faltamTocar.add(jTable.getModel().getValueAt(i, jTable.getColumnCount()));
+                    }
+                    return getProxima();
+
+                }
+                return null;
+            } else {
+                int random = (int) (Math.random() * faltamTocar.size());
+                jahFoi.add(faltamTocar.get(random));
+
+                for (int i = 0; i < jTable.getRowCount(); i++) {
+
+                    if (((Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount())).getCaminho().equals(principal.getMusiquera().getMusica().getCaminho())) {
+                        jTable.setRowSelectionInterval(i, i);
+                    }
+
+                }
+                return (Musica) faltamTocar.remove(random);
+            }
+        }
+        }
+       catch (Exception ex){
+           System.out.println("Problema ou sortear uma musica");
+           return null;
+       }
     }
 
-    public void getProxima() {
+    public Musica getProxima() {
 
         try {
-            Musica atual = principal.getMusica();
+            Musica atual = (principal.getMusiquera()).getMusica();
             int mAtual = -1;
             if (!aleatorio) {
+                if(atual==null){
+
+                }
                 for (int i = 0; i < jTable.getRowCount(); i++) {
                     if (((Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount())).getCaminho().equals(atual.getCaminho())) {
                         mAtual = i;
                     }
                 }
 
-                if (mAtual > -1) {
-                    if (mAtual + 1 >= jTable.getRowCount()) {
-                        tocar((Musica) jTable.getModel().getValueAt(0, jTable.getColumnCount()));
-                        jTable.setRowSelectionInterval(0, 0);
-                    } else {
-                        tocar((Musica) jTable.getModel().getValueAt(mAtual + 1, jTable.getColumnCount()));
-                        jTable.setRowSelectionInterval(mAtual + 1, mAtual + 1);
-
-                    }
-
+                if (mAtual < 0) {
+                    return null;
                 }
-            } else {
-                if (jahFoi.indexOf(atual) == -1) {
-                    jahFoi.add(atual);
-                    faltamTocar.remove(atual);
-                    System.out.println("Atual ADD!");
-                }
-                if (jahFoi.indexOf(atual) < jahFoi.size() - 1 && jahFoi.indexOf(atual) != -1 && jahFoi.size() > 0) {
-                    tocar((Musica) jahFoi.get(jahFoi.indexOf(atual) + 1));
-                    System.out.println("jahfoi" + jahFoi.indexOf(principal.getMusica()) + "" + (jahFoi.size() - 1));
+
+                if (mAtual + 1 >= jTable.getRowCount()) {
+                    jTable.setRowSelectionInterval(0, 0);
+                    return (Musica) jTable.getModel().getValueAt(0, jTable.getColumnCount());
+
                 } else {
-                    if (faltamTocar.size() < 1) {
+                    jTable.setRowSelectionInterval(mAtual + 1, mAtual + 1);
+                    return (Musica) jTable.getModel().getValueAt(mAtual + 1, jTable.getColumnCount());
 
-                        if (recomecar) {
-                            System.out.println("Recomeçando");
-                            for (int i = 0; i < jTable.getRowCount(); i++) {
-                                faltamTocar.add(total.get(i));
-                                //faltamTocar.add(jTable.getModel().getValueAt(i, jTable.getColumnCount()));
-                            }
-                            getProxima();
-
-                        }
-                    } else {
-                        int random = (int) (Math.random() * faltamTocar.size());
-                        jahFoi.add(faltamTocar.get(random));
-                        tocar((Musica) faltamTocar.remove(random));
-                        for (int i = 0; i < jTable.getRowCount(); i++) {
-                            if (((Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount())).getCaminho().equals(principal.getMusica().getCaminho())) {
-
-                                jTable.setRowSelectionInterval(i, i);
-                            }
-                        }
-                    }
                 }
+
+
+            } else {
+                return getAleatorio(atual);
             }
 
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
 
     }
 
-    public void getAnterior() {
+    public Musica getAnterior() {
         try {
-            Musica atual = principal.getMusica();
+            Musica atual = principal.getMusiquera().getMusica();
             int mAtual = -1;
             if (!aleatorio) {
                 for (int i = 0; i < jTable.getRowCount(); i++) {
@@ -328,18 +350,21 @@ public class JPlayList extends javax.swing.JDialog {
 
                 if (mAtual > -1) {
                     if (mAtual - 1 < 0) {
-                        tocar((Musica) jTable.getModel().getValueAt(jTable.getRowCount() - 1, jTable.getColumnCount()));
+                        return (Musica) jTable.getModel().getValueAt(jTable.getRowCount() - 1, jTable.getColumnCount());
                     } else {
-                        tocar((Musica) jTable.getModel().getValueAt(mAtual - 1, jTable.getColumnCount()));
+                        return (Musica) jTable.getModel().getValueAt(mAtual - 1, jTable.getColumnCount());
                     }
                 }
+                return null;
             } else {
-                if (jahFoi.indexOf(principal.getMusica()) > 0) {
-                    tocar((Musica) jahFoi.get(jahFoi.indexOf(principal.getMusica()) - 1));
+                if (jahFoi.indexOf(principal.getMusiquera().getMusica()) > 0) {
+                    return (Musica) jahFoi.get(jahFoi.indexOf(principal.getMusiquera().getMusica()) - 1);
                 }
+                return null;
             }
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
 
     }
@@ -496,7 +521,7 @@ public class JPlayList extends javax.swing.JDialog {
             atualizarTabelaLista();
             if (tocarMesmo) {
                 if (!aleatorio) {
-                    tocar((Musica) jTable.getModel().getValueAt(0, jTable.getColumnCount()));
+                //    tocar((Musica) jTable.getModel().getValueAt(0, jTable.getColumnCount()));
                 } else {
                     getProxima();
                 }
@@ -507,34 +532,35 @@ public class JPlayList extends javax.swing.JDialog {
     }
 
     public void adicionarMusica() {
-         Transacao t = new Transacao();
-         try {
+        Transacao t = new Transacao();
+        try {
             File in = principal.telaAbrirArquivo();
-           
+
             t.begin();
-        
-            Musica m =  Musica.addFiles(in, t);
+
+            Musica m = Musica.addFiles(in, t);
             t.commit();
-            trace("ID: " +m.getId());
-            trace("Nome: " +m.getNome());
-            trace("Album: " +m.getAlbum());
+            trace("ID: " + m.getId());
+            trace("Nome: " + m.getNome());
+            trace("Album: " + m.getAlbum());
             trace("Caminho: " + m.getCaminho());
             //trace("ID: " +m.getId());
             MusicaSC filtro = new MusicaSC();
             filtro.setCaminho(m.getCaminho().trim());
 
 
-            m=(Musica)MusicaBD.listar(filtro).get(0);
+            m = (Musica) MusicaBD.listar(filtro).get(0);
 //
             addPlaylist(m);
-        
-            
+
+
         } catch (Exception ex) {
             t.rollback();
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private void trace(Object o){
+
+    private void trace(Object o) {
         System.out.println(o.toString());
     }
 
@@ -899,7 +925,8 @@ public class JPlayList extends javax.swing.JDialog {
         if (evt.getClickCount() == 2) {
             try {
                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-                tocar(m);
+                //tocar(m);
+                principal.getMusiquera().abrir(m, 0, false, true);
                 if (jahFoi.indexOf(m) != jahFoi.size() - 1) {
                     jahFoi.add(m);
                     faltamTocar.remove(m);
@@ -916,7 +943,8 @@ public class JPlayList extends javax.swing.JDialog {
             evt.setKeyCode(KeyEvent.VK_UNDEFINED);
             try {
                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRows()[0], jTable.getColumnCount());
-                tocar(m);
+             //   tocar(m);
+                principal.getMusiquera().abrir(m, 0, false, true);
                 if (jahFoi.indexOf(m) != jahFoi.size() - 1) {
                     jahFoi.add(m);
                     faltamTocar.remove(m);
@@ -925,10 +953,10 @@ public class JPlayList extends javax.swing.JDialog {
                 Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        switch(evt.getKeyCode()){
+        switch (evt.getKeyCode()) {
             case KeyEvent.VK_DELETE:
-               jButton5ActionPerformed(null);
-               return;
+                jButton5ActionPerformed(null);
+                return;
             case KeyEvent.VK_PAGE_DOWN:
             case KeyEvent.VK_PAGE_UP:
             case KeyEvent.VK_END:
@@ -1034,7 +1062,7 @@ public class JPlayList extends javax.swing.JDialog {
             case KeyEvent.VK_ENTER:
                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
                 try {
-                    tocar(m);
+                    principal.getMusiquera().abrir(m, 0, false, true);
                     //  tocar(null);
                 } catch (Exception ex) {
                     Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);

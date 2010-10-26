@@ -99,62 +99,8 @@ public class Aguarde extends javax.swing.JFrame{
     }
 
 
-      public void fechar(){
-        new Thread(new Runnable() {
-
-            public void run() {
-                int count = 0;
-                while(true){
-                    try {
-                        count++;
-                        jProgressBar1.setValue(100-count*10);
-                        if (count == 1) {
-                            jProgressBar1.setString("Aguarde Fechando...");
-                        }
-                        if (count == 5) {
-                            jProgressBar1.setString("Salvando Configurações");
-                        }
-                        if (count == 7) {
-                            jProgressBar1.setString("Ta Um Pouco Demorado");
-                        }
-                        if (count == 8) {
-                            jProgressBar1.setString("É culpa do Banco de Dados");
-                        }
-                        if (count == 10) {
-                            jProgressBar1.setString("Não Do Programa");
-                        }
-                        if (count == 15) {
-                            jProgressBar1.setString("Não Aperte Ctrl+Alt+Del");
-                        }
-                        if (count == 18) {
-                            jProgressBar1.setString("Eu Consigo....");
-                        }
-                        if (count == 20) {
-                            jProgressBar1.setString("Ta Quase...");
-                        }
-                        if (count == 20) {
-                            jProgressBar1.setString("Ou Não");
-                        }
-                        if (count == 30) {
-                            jProgressBar1.setString("To Quase Desistindo");
-                        }
-                        if (count == 35) {
-                            jProgressBar1.setString("Sou Brasileiro");
-                        }
-                        if (count == 33) {
-                            jProgressBar1.setString("Não Desisto Nunca");
-                        }
-                        if (count == 35) {
-                            jProgressBar1.setString("Tá Bom Pode Fecha.");
-                        }
-                        Thread.sleep(700);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Aguarde.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }).start();
-    }
+     
+    
 
     /** This method is called from within the constructor to
      * initialize the form.
