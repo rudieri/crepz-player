@@ -84,8 +84,9 @@ public class BD {
     }
 
     public void testarTabelas(Connection con) throws SQLException {
-        if(naoAbremais)
+        if (naoAbremais) {
             return;
+        }
         if (con == null && (server == null || !server.ativo)) {
             server = new BancoServer("BD");
             con = getConexao();
@@ -145,7 +146,9 @@ public class BD {
     }
 
     public static void fecharBD() {
-        server.stop();
+        if (server != null) {
+            server.stop();
+        }
         try {
             Thread.sleep(2000);
         } catch (InterruptedException ex) {
