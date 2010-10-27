@@ -15,8 +15,9 @@ import javax.swing.ImageIcon;
  * @author rudieri
  */
 public class Icones {
+
     /**
-     Carrega icones...
+    Carrega icones...
      * @param tipo nome da pasta em que estao os icones
      */
     public void loadIcons(String tipo) {
@@ -48,6 +49,16 @@ public class Icones {
             randomOffIcon = new ImageIcon(bf_randomOffIcon);
             repeatOnIcon = new ImageIcon(bf_repeatOnIcon);
             repeatOffIcon = new ImageIcon(bf_repeatOffIcon);
+
+            mini_playIcon = resizeIcons(bf_playIcon, 17, 17);
+            mini_stopIcon = resizeIcons(bf_stopIcon, 17, 17);
+            mini_frenteIcon =  resizeIcons(bf_frenteIcon, 17, 17);
+            mini_voltaIcon =  resizeIcons(bf_voltaIcon, 17, 17);
+            mini_pauseIcon =  resizeIcons(bf_pauseIcon, 17, 17);
+            mini_randomOnIcon =  resizeIcons(bf_randomOnIcon, 17, 17);
+            mini_randomOffIcon =  resizeIcons(bf_randomOffIcon, 17, 17);
+            mini_repeatOnIcon =  resizeIcons(bf_repeatOnIcon, 17, 17);
+            mini_repeatOffIcon =  resizeIcons(bf_repeatOffIcon, 17, 17);
             save = new ImageIcon(bf_save);
             saveAs = new ImageIcon(bf_saveAs);
             topOn = resizeIcons(bf_topOn, 13, 13);
@@ -75,6 +86,15 @@ public class Icones {
     public ImageIcon voltaIcon;
     public ImageIcon repeatOnIcon;
     public ImageIcon repeatOffIcon;
+    public ImageIcon mini_playIcon;
+    public ImageIcon mini_stopIcon;
+    public ImageIcon mini_frenteIcon;
+    public ImageIcon mini_voltaIcon;
+    public ImageIcon mini_pauseIcon;
+    public ImageIcon mini_randomOnIcon;
+    public ImageIcon mini_randomOffIcon;
+    public ImageIcon mini_repeatOnIcon;
+    public ImageIcon mini_repeatOffIcon;
     public ImageIcon save;
     public ImageIcon saveAs;
     public ImageIcon topOn;
