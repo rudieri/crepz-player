@@ -145,7 +145,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
      * @param freq Frequencia em ?Hz
      */
     public void atualizaLabels(String nome, int bits, String tempo, int freq) {
-        jLabel_Musica.setText(nome);
+        jLabel_Musica.setText(nome.replaceAll("  ", " ").trim());
         jLabel_tempoTotal.setText(tempo);
         jLabel_bit.setText(bits + " kbps");
         jLabel_freq.setText(freq + " ?Hz");
@@ -169,15 +169,15 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
        atualizaIcone(this.getContentPane(), quem,_icone);
     }
     public void atualizaIcone(Container root, String quem, Icon _icone) {
-        for (int i = 0; i < getComponentCount(); i++) {
-            if (getComponent(i) instanceof JLabel) {
-                if (getComponent(i).getName().equals(quem)) {
-                    ((JLabel) getComponent(i)).setIcon(_icone);
+        for (int i = 0; i < root.getComponentCount(); i++) {
+            if (root.getComponent(i) instanceof JLabel) {
+                if (root.getComponent(i).getName()!=null && root.getComponent(i).getName().equals(quem)) {
+                    ((JLabel) root.getComponent(i)).setIcon(_icone);
                     return;
                 }
             }else{
-             if(getComponent(i) instanceof JPanel){
-                 atualizaIcone((JPanel) getComponent(i), quem, _icone);
+             if(root.getComponent(i) instanceof JPanel){
+                 atualizaIcone((JPanel) root.getComponent(i), quem, _icone);
              }
             }
         }

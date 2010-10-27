@@ -68,7 +68,9 @@ public class JTrocarImagem extends javax.swing.JDialog {
             jProgressBar.setVisible(true);
             jButton1.setVisible(false);
             jProgressBar.setString("Conectando...");
-            List<Result> lista = BuscaGoogle.buscaImagens(musica.getAlbum() + " " + musica.getAutor());
+            List<Result> lista = BuscaGoogle.buscaImagens(((musica.getAlbum()==null?"": musica.getAlbum())+
+                                    " "+musica.getAutor()==null?"":musica.getAutor()+
+                                    ""+musica.getNome()==null?"":musica.getNome()).replaceAll("  ", " ").trim());
             jProgressBar.setString("Montando Tabela");
             DefaultTableModel tm = (DefaultTableModel) jTable1.getModel();
             TableCellRenderer tcr = new Imagem();

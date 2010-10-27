@@ -80,7 +80,7 @@ public class JSobre extends javax.swing.JDialog {
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         jLabel2.setBackground(new java.awt.Color(0, 0, 0));
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Desenvolvimento:");
         jLabel2.setOpaque(true);
@@ -130,7 +130,7 @@ public class JSobre extends javax.swing.JDialog {
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/homer x ray.jpg"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/capa.jpg"))); // NOI18N
         jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         jPanel3.add(jPanel1, java.awt.BorderLayout.PAGE_START);

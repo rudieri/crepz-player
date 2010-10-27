@@ -26,11 +26,13 @@ public class BuscaGoogle {
      */
     public static List<Result> buscaImagens(String busca) {
         Client c = new Client();
-        return c.searchImages(busca);
+        return c.searchImages(busca +"");
     }
     public static File getAquivoBuscaImagens(Musica musica) throws Exception{
         File retorno = null;
-        List<Result> lista = buscaImagens(musica.getAlbum()+" "+musica.getAutor());
+        List<Result> lista = buscaImagens(((musica.getAlbum()==null?"": musica.getAlbum())+
+                                    " "+musica.getAutor()==null?"":musica.getAutor()+
+                                    ""+musica.getNome()==null?"":musica.getNome()).replaceAll("  ", " ").trim());
         if(!lista.isEmpty()){
              URL link = new URL(lista.get(0).getUrl());
              File musicaF = new File(musica.getCaminho());
