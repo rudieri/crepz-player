@@ -141,6 +141,14 @@ public class JPlayList extends javax.swing.JDialog {
 
     }
 
+
+    ListSelectionListener listSelectionListener = new ListSelectionListener() {
+
+                public void valueChanged(ListSelectionEvent e) {
+                    jTable.scrollRectToVisible(jTable.getCellRect(jTable.getSelectedRow(), 0, false));
+                }
+            };
+
     /** Método que atualiza a consulta atual. */
     public void atualizarTabelaLista() {
         pesquisa.clear();
@@ -152,6 +160,9 @@ public class JPlayList extends javax.swing.JDialog {
         try {
             t.begin();
             initTabelaLista(false);
+            ListSelectionModel modeloDeSelecao = jTable.getSelectionModel();
+            modeloDeSelecao.removeListSelectionListener(listSelectionListener);
+
             DefaultTableModel ts = (DefaultTableModel) jTable.getModel();
             // Filtro...
             PlayMusicaSC filtro = new PlayMusicaSC();
@@ -179,14 +190,8 @@ public class JPlayList extends javax.swing.JDialog {
             if (jTable.getRowCount() > 0) {
                 jTable.changeSelection(0, 0, false, false);
             }
-            t.commit();
-            ListSelectionModel modeloDeSelecao = jTable.getSelectionModel();
-            modeloDeSelecao.addListSelectionListener(new ListSelectionListener() {
-
-                public void valueChanged(ListSelectionEvent e) {
-                    jTable.scrollRectToVisible(jTable.getCellRect(jTable.getSelectedRow(), 0, false));
-                }
-            });
+            t.commit();            
+            modeloDeSelecao.addListSelectionListener(listSelectionListener);
             setTitle(jTextField_NomePlayList.getText());
 
         } catch (Exception ex) {
@@ -469,6 +474,7 @@ public class JPlayList extends javax.swing.JDialog {
 
     public void limpar() {
         jTextField_NomePlayList.setText("");
+        jTable.getSelectionModel().removeListSelectionListener(listSelectionListener);
         initTabelaLista(false);
         faltamTocar = new ArrayList();
         total = new ArrayList();
