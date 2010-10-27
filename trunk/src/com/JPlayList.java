@@ -54,9 +54,9 @@ public class JPlayList extends javax.swing.JDialog {
     private JPrincipal principal;
     boolean aleatorio;
     boolean recomecar = false;
-    ArrayList faltamTocar = new ArrayList();
-    ArrayList jahFoi = new ArrayList();
-    ArrayList total = new ArrayList();
+    ArrayList<Musica> faltamTocar = new ArrayList<Musica>();
+    ArrayList<Musica> jahFoi = new ArrayList<Musica>();
+    ArrayList<Musica> total = new ArrayList<Musica>();
     ArrayList<Musica> pesquisa = new ArrayList<Musica>();
     int IdAberto = -1;
 
@@ -88,7 +88,7 @@ public class JPlayList extends javax.swing.JDialog {
         jahFoi.clear();
         faltamTocar.clear();
 
-        for (Object m : total) {
+        for (Musica m : total) {
             faltamTocar.add(m);
         }
     }
@@ -260,7 +260,7 @@ public class JPlayList extends javax.swing.JDialog {
             System.out.println("Atual ADD!");
         }
         if (jahFoi.indexOf(atual) < jahFoi.size() - 1 && jahFoi.indexOf(atual) != -1 && jahFoi.size() > 0) {
-            jTable.setRowSelectionInterval(jahFoi.indexOf(atual), jahFoi.indexOf(atual));
+            jTable.setRowSelectionInterval(jahFoi.indexOf(atual) + 1, jahFoi.indexOf(atual) + 1);
             return (Musica) jahFoi.get(jahFoi.indexOf(atual) + 1);
 
         } else {
@@ -282,7 +282,7 @@ public class JPlayList extends javax.swing.JDialog {
 
                 for (int i = 0; i < jTable.getRowCount(); i++) {
 
-                    if (((Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount())).getCaminho().equals(principal.getMusiquera().getMusica().getCaminho())) {
+                    if (((Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount())).getCaminho().equals(faltamTocar.get(random).getCaminho())) {
                         jTable.setRowSelectionInterval(i, i);
                     }
 
@@ -527,8 +527,8 @@ public class JPlayList extends javax.swing.JDialog {
     }
 
     public void atualizaIcons() {
-        jLabel2.setIcon(principal.save);
-        jLabel3.setIcon(principal.saveAs);
+        jLabel2.setIcon(principal.getIcones().save);
+        jLabel3.setIcon(principal.getIcones().saveAs);
     }
 
     private void openM3u() {

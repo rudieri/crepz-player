@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -39,15 +38,16 @@ import javax.swing.UIManager;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
 import javazoom.jlgui.basicplayer.BasicPlayer;
-import javazoom.jlgui.basicplayer.BasicPlayerEvent;
-import javazoom.jlgui.basicplayer.BasicPlayerListener;
 import com.musica.Musica;
+import java.awt.Container;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /*
  * To change this template, choose Tools | Templates
@@ -66,7 +66,7 @@ import javax.swing.JLabel;
 public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, IntellitypeListener {
 
     public static Aguarde aguarde = new Aguarde();
-    Icones icone = new Icones();
+    Icones icone ;
     Musiquera musiq;
     /** Creates new form NewJFrame */
     BasicPlayer player = new BasicPlayer();
@@ -90,7 +90,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     public JPrincipal() {
         initComponents();
-        loadIcons("tipo2");
+        
 
         try {
             aguarde.intro();
@@ -113,7 +113,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        inicializaIcones();
+      
 
         trays();
         //--------------------------
@@ -123,13 +123,19 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jButton_Stop.setName("jButton_Stop");
         jToggle_Repeat.setName("jToggle_Repeat");
         jToggle_Random.setName("jToggle_Random");
-
+        icone= new Icones();
+        icone.loadIcons("tipo2");
+       
         musiq = new Musiquera(this, playList, biblioteca, jmini, icone);
           _conf.getAllValores();
+          inicializaIcones();
     }
 
     public Musiquera getMusiquera() {
         return musiq;
+    }
+    public Icones getIcones(){
+        return icone;
     }
 
     /** Atualiza labels da tela principal
@@ -159,12 +165,20 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
      * @param quem nome do label.
      * @param icone nome icones.nomeDoIcone
      */
-    public void atualizaIcone(String quem, Icon icone) {
+      public void atualizaIcone(String quem, Icon _icone) {
+       atualizaIcone(this.getContentPane(), quem,_icone);
+    }
+    public void atualizaIcone(Container root, String quem, Icon _icone) {
         for (int i = 0; i < getComponentCount(); i++) {
             if (getComponent(i) instanceof JLabel) {
                 if (getComponent(i).getName().equals(quem)) {
-                    ((JLabel) getComponent(i)).setIcon(icone);
+                    ((JLabel) getComponent(i)).setIcon(_icone);
+                    return;
                 }
+            }else{
+             if(getComponent(i) instanceof JPanel){
+                 atualizaIcone((JPanel) getComponent(i), quem, _icone);
+             }
             }
         }
     }
@@ -447,76 +461,35 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         return playList;
     }
 
-    public void loadIcons(String tipo) {
-        try {
-            bf_playIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/play.png"));
-            bf_stopIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/stop.png"));
-            bf_voltaIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/tras.png"));
-            bf_frenteIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/frente.png"));
-            bf_pauseIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/pause.png"));
-            bf_randomOnIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/trueRandom.png"));
-            bf_randomOffIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/falseRandom.png"));
-            bf_repeatOnIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/repeatOn.png"));
-            bf_repeatOffIcon = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/repeatOff.png"));
-            bf_save = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/save.png"));
-            bf_saveAs = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/saveAs.png"));
-            bf_topOn = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/c_top_on.png"));
-            bf_topOff = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/c_top_off.png"));
-            bf_pl = ImageIO.read(getClass().getResource("/com/img/playlist.gif"));
-            bf_lib = ImageIO.read(getClass().getResource("/com/img/biblioteca.png"));
-            bf_xis = ImageIO.read(getClass().getResource("/com/img/x.png"));
-            bf_menu = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/c_menu.png"));
+   
+   
 
-            playIcon = new ImageIcon(bf_playIcon);
-            stopIcon = new ImageIcon(bf_stopIcon);
-            frenteIcon = new ImageIcon(bf_frenteIcon);
-            voltaIcon = new ImageIcon(bf_voltaIcon);
-            pauseIcon = new ImageIcon(bf_pauseIcon);
-            randomOnIcon = new ImageIcon(bf_randomOnIcon);
-            randomOffIcon = new ImageIcon(bf_randomOffIcon);
-            repeatOnIcon = new ImageIcon(bf_repeatOnIcon);
-            repeatOffIcon = new ImageIcon(bf_repeatOffIcon);
-            save = new ImageIcon(bf_save);
-            saveAs = new ImageIcon(bf_saveAs);
-            topOn = resizeIcons(bf_topOn, 13, 13);
-            topOff = resizeIcons(bf_topOff, 13, 13);
-            lib = resizeIcons(bf_lib, 13, 13);
-            pl = resizeIcons(bf_pl, 13, 13);
-            menu = resizeIcons(bf_menu, 13, 13);
-            xis = resizeIcons(bf_xis, 13, 13);
-
-            inicializaIcones();
-        } catch (IOException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void inicializaIcones() {
+     public void inicializaIcones() {
         //Estado inicial do botão (está Stop);
-        jButton_Play.setIcon(playIcon);
+        jButton_Play.setIcon(icone.playIcon);
         //Se tiver tocando
         if (getTocando()) {
-            jButton_Play.setIcon(pauseIcon);
+            jButton_Play.setIcon(icone.pauseIcon);
         }
         //Se tiver pause
         if (getPause()) {
-            jButton_Play.setIcon(playIcon);
+            jButton_Play.setIcon(icone.playIcon);
         }
-        jButton_Stop.setIcon(stopIcon);
-        jButton_Next.setIcon(frenteIcon);
-        jButton_Ant.setIcon(voltaIcon);
+        jButton_Stop.setIcon(icone.stopIcon);
+        jButton_Next.setIcon(icone.frenteIcon);
+        jButton_Ant.setIcon(icone.voltaIcon);
         if (!(jmini == null)) {
             jmini.inicializaIcones();
         }
         if (random) {
-            jToggle_Random.setIcon(randomOnIcon);
+            jToggle_Random.setIcon(icone.randomOnIcon);
         } else {
-            jToggle_Random.setIcon(randomOffIcon);
+            jToggle_Random.setIcon(icone.randomOffIcon);
         }
         if (repeat) {
-            jToggle_Repeat.setIcon(repeatOnIcon);
+            jToggle_Repeat.setIcon(icone.repeatOnIcon);
         } else {
-            jToggle_Repeat.setIcon(repeatOffIcon);
+            jToggle_Repeat.setIcon(icone.repeatOffIcon);
         }
         playList.atualizaIcons();
     }
@@ -535,25 +508,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }
 
     public ImageIcon resizeIcons(BufferedImage im) {
-//        int minimo = 17;
-//        int maximo = 18;
-//        if (im != null) {
-//            minimo = Math.min(im.getWidth(), im.getHeight());
-//            maximo = Math.max(im.getWidth(), im.getHeight());
-//        }
-//        int prop = maximo / minimo;
-//        if (minimo < 17 && maximo < 20) {
-//            System.out.println("padrão");
-//            return new ImageIcon(im.getScaledInstance(im.getWidth(), im.getHeight(), Image.SCALE_SMOOTH));
-//        } else {
-//            if (im.getWidth() == minimo) {
-//                System.out.println("minimo= width");
-//                return new ImageIcon(im.getScaledInstance(17, 17 * prop, Image.SCALE_SMOOTH));
-//            } else {
-//                System.out.println("minimo = height");
         return new ImageIcon(im.getScaledInstance(17, 17, Image.SCALE_SMOOTH));
-//            }
-//        }
 
     }
 
@@ -654,14 +609,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         super.setVisible(b);
         jmini.setVisible(!b);
         if (random) {
-            jToggle_Random.setIcon(randomOnIcon);
+            jToggle_Random.setIcon(icone.randomOnIcon);
         } else {
-            jToggle_Random.setIcon(randomOffIcon);
+            jToggle_Random.setIcon(icone.randomOffIcon);
         }
         if (repeat) {
-            jToggle_Repeat.setIcon(repeatOnIcon);
+            jToggle_Repeat.setIcon(icone.repeatOnIcon);
         } else {
-            jToggle_Repeat.setIcon(repeatOffIcon);
+            jToggle_Repeat.setIcon(icone.repeatOffIcon);
         }
     }
 
@@ -1464,9 +1419,9 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         random = !random;
         playList.setAleatorio(random);
         if (random) {
-            jToggle_Random.setIcon(randomOnIcon);
+            jToggle_Random.setIcon(icone.randomOnIcon);
         } else {
-            jToggle_Random.setIcon(randomOffIcon);
+            jToggle_Random.setIcon(icone.randomOffIcon);
         }
         //jToggleButton1.setIcon(new ImageIcon(getClass().getResource("/com/img/icons/tipo2/"+random+"Random.png")));
     }//GEN-LAST:event_jToggle_RandomMouseClicked
@@ -1535,9 +1490,9 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         repeat = !repeat;
         playList.setRepetir(repeat);
         if (repeat) {
-            jToggle_Repeat.setIcon(repeatOnIcon);
+            jToggle_Repeat.setIcon(icone.repeatOnIcon);
         } else {
-            jToggle_Repeat.setIcon(repeatOffIcon);
+            jToggle_Repeat.setIcon(icone.repeatOffIcon);
         }
     }//GEN-LAST:event_jToggle_RepeatMouseClicked
 
@@ -1767,38 +1722,5 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     int thisX;
     int thisY;
     Long tempo;
-    ImageIcon playIcon;
-    ImageIcon pauseIcon;
-    ImageIcon stopIcon;
-    ImageIcon randomOnIcon;
-    ImageIcon randomOffIcon;
-    ImageIcon frenteIcon;
-    ImageIcon voltaIcon;
-    ImageIcon repeatOnIcon;
-    ImageIcon repeatOffIcon;
-    ImageIcon save;
-    ImageIcon saveAs;
-    ImageIcon topOn;
-    ImageIcon topOff;
-    ImageIcon lib;
-    ImageIcon pl;
-    ImageIcon menu;
-    ImageIcon xis;
-    BufferedImage bf_playIcon;
-    BufferedImage bf_pauseIcon;
-    BufferedImage bf_stopIcon;
-    BufferedImage bf_randomOnIcon;
-    BufferedImage bf_randomOffIcon;
-    BufferedImage bf_frenteIcon;
-    BufferedImage bf_voltaIcon;
-    BufferedImage bf_repeatOnIcon;
-    BufferedImage bf_repeatOffIcon;
-    BufferedImage bf_save;
-    BufferedImage bf_saveAs;
-    BufferedImage bf_topOn;
-    BufferedImage bf_topOff;
-    BufferedImage bf_lib;
-    BufferedImage bf_pl;
-    BufferedImage bf_menu;
-    BufferedImage bf_xis;
+   
 }

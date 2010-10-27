@@ -1,5 +1,6 @@
 package com;
 
+import com.graficos.Icones;
 import com.graficos.Testes;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -112,32 +113,32 @@ public class JMini extends javax.swing.JDialog {
         jToggleButton1.setText("");
         jToggle_Repete.setText("");
 
-        jButton_Stop.setIcon(principal.resizeIcons(principal.bf_stopIcon));
-        jButton_Ant.setIcon(principal.resizeIcons(principal.bf_voltaIcon));
-        jButton_Next.setIcon(principal.resizeIcons(principal.bf_frenteIcon));
-        jLabel_Playlist.setIcon(principal.pl);
-        jLabel_lib.setIcon(principal.lib);
-        jLabel_popup.setIcon(principal.menu);
-        jLabel1.setIcon(principal.xis);
+        jButton_Stop.setIcon(getIcones().mini_stopIcon);
+        jButton_Ant.setIcon(getIcones().mini_voltaIcon);
+        jButton_Next.setIcon(getIcones().mini_frenteIcon);
+        jLabel_Playlist.setIcon(getIcones().pl);
+        jLabel_lib.setIcon(getIcones().lib);
+        jLabel_popup.setIcon(getIcones().menu);
+        jLabel1.setIcon(getIcones().xis);
         if (principal.getPause()) {
-            jButton_Play.setIcon(principal.resizeIcons(principal.bf_playIcon));
+            jButton_Play.setIcon(getIcones().mini_playIcon);
         } else {
-            jButton_Play.setIcon(principal.resizeIcons(principal.bf_pauseIcon));
+            jButton_Play.setIcon(getIcones().mini_pauseIcon);
         }
         if (principal.random) {
-            jToggleButton1.setIcon(principal.resizeIcons(principal.bf_randomOnIcon));
+            jToggleButton1.setIcon(getIcones().mini_randomOnIcon);
         } else {
-            jToggleButton1.setIcon(principal.resizeIcons(principal.bf_randomOffIcon));
+            jToggleButton1.setIcon(getIcones().mini_randomOffIcon);
         }
         if (principal.getRepetir()) {
-            jToggle_Repete.setIcon(principal.resizeIcons(principal.bf_repeatOnIcon));
+            jToggle_Repete.setIcon(getIcones().mini_repeatOnIcon);
         } else {
-            jToggle_Repete.setIcon(principal.resizeIcons(principal.bf_repeatOffIcon));
+            jToggle_Repete.setIcon(getIcones().mini_repeatOffIcon);
         }
         if (isAlwaysOnTop()) {
-            jLabel_top.setIcon(principal.topOn);
+            jLabel_top.setIcon(getIcones().topOn);
         } else {
-            jLabel_top.setIcon(principal.topOff);
+            jLabel_top.setIcon(getIcones().topOff);
         }
     }
     MouseAdapter mouseAdapterPopUp = new MouseAdapter() {
@@ -238,14 +239,16 @@ public class JMini extends javax.swing.JDialog {
 //        jLabelNomeMusica.setVisible(true);
 //        jLabelNomeMusicaMask.setVisible(false);
 //        jLabelNomeMusicaSombra.setVisible(false);
-        jLabelNomeMusica.setText(n + " 1 -- ");
+        jLabelNomeMusica.setText(n);
 //        jLabelNomeMusicaMask.setText(n + " 2 -- ");
 //        jLabelNomeMusicaSombra.setText(n + " 3 -- ");
 //        startTextAnim();
 //        jv.add(jLabelNomeMusica);
 //        jScrollPane1.setViewport(jv);
     }
-
+    public Icones getIcones(){
+        return principal.getIcones();
+    }
     public void setTop(boolean b) {
         setAlwaysOnTop(b);
         jCheckBox_top.setSelected(b);
@@ -305,14 +308,14 @@ public class JMini extends javax.swing.JDialog {
         if (!super.isVisible()) {
 
             if (principal.random) {
-                jToggleButton1.setIcon(principal.resizeIcons(principal.bf_randomOnIcon));
+                jToggleButton1.setIcon(getIcones().mini_randomOnIcon);
             } else {
-                jToggleButton1.setIcon(principal.resizeIcons(principal.bf_randomOffIcon));
+                jToggleButton1.setIcon(getIcones().mini_randomOffIcon);
             }
             if (principal.repeat) {
-                jToggle_Repete.setIcon(principal.resizeIcons(principal.bf_repeatOnIcon));
+                jToggle_Repete.setIcon(getIcones().mini_repeatOnIcon);
             } else {
-                jToggle_Repete.setIcon(principal.resizeIcons(principal.bf_repeatOffIcon));
+                jToggle_Repete.setIcon(getIcones().mini_repeatOffIcon);
             }
         }
 
@@ -921,9 +924,9 @@ public class JMini extends javax.swing.JDialog {
                 principal.random = !principal.random;
                 playList.setAleatorio(principal.random);
                 if (principal.random) {
-                    jToggleButton1.setIcon(principal.resizeIcons(principal.bf_randomOnIcon));
+                    jToggleButton1.setIcon(getIcones().mini_randomOnIcon);
                 } else {
-                    jToggleButton1.setIcon(principal.resizeIcons(principal.bf_randomOffIcon));
+                    jToggleButton1.setIcon(getIcones().mini_randomOffIcon);
                 }
             }
         }
@@ -1041,9 +1044,9 @@ public class JMini extends javax.swing.JDialog {
                 principal.repeat = !principal.repeat;
                 playList.setRepetir(principal.repeat);
                 if (principal.repeat) {
-                    jToggle_Repete.setIcon(principal.resizeIcons(principal.bf_repeatOnIcon));
+                    jToggle_Repete.setIcon(getIcones().mini_repeatOnIcon);
                 } else {
-                    jToggle_Repete.setIcon(principal.resizeIcons(principal.bf_repeatOffIcon));
+                    jToggle_Repete.setIcon(getIcones().mini_repeatOffIcon);
                 }
             }
         }
@@ -1154,9 +1157,9 @@ public class JMini extends javax.swing.JDialog {
         // TODO add your handling code here:
         setAlwaysOnTop(jCheckBox_top.isSelected());
         if (isAlwaysOnTop()) {
-            jLabel_top.setIcon(principal.topOn);
+            jLabel_top.setIcon(principal.getIcones().topOn);
         } else {
-            jLabel_top.setIcon(principal.topOff);
+            jLabel_top.setIcon(principal.getIcones().topOff);
         }
     }//GEN-LAST:event_jCheckBox_topStateChanged
 

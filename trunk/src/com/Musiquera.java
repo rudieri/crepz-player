@@ -7,12 +7,9 @@ package com;
 import com.graficos.Icones;
 import com.musica.Musica;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javazoom.jlgui.basicplayer.BasicController;
@@ -43,7 +40,7 @@ public class Musiquera implements BasicPlayerListener {
     BasicPlayer player;
     private Musica musica;
     private File in;
-    private Timer tarefa;
+ 
 
     public Musiquera(JPrincipal jpr, JPlayList jpl, JBiBlioteca jbl, JMini jmi, Icones ico) {
         principal = jpr;
