@@ -24,14 +24,15 @@ import javazoom.jlgui.basicplayer.BasicPlayerListener;
  */
 public class Musiquera implements BasicPlayerListener {
 
-  //  private boolean jSliderBarPressed = false;
+    //  private boolean jSliderBarPressed = false;
     private boolean tocando;
     private boolean paused;
     private boolean ajust;
     private int volume;
     private int balanco;
     private int tempo;
-    private int tentativa=0;
+    private int tenteiTocar = 0;
+    private int tenteiAbrir = 0;
     Long total = new Long(1);
     JPrincipal principal;
     JPlayList playList;
@@ -41,7 +42,6 @@ public class Musiquera implements BasicPlayerListener {
     BasicPlayer player;
     private Musica musica;
     private File in;
- 
 
     public Musiquera(JPrincipal jpr, JPlayList jpl, JBiBlioteca jbl, JMini jmi, Icones ico) {
         principal = jpr;
@@ -78,7 +78,8 @@ public class Musiquera implements BasicPlayerListener {
     public int getBalanco() {
         return balanco;
     }
-    public Musica getMusica(){
+
+    public Musica getMusica() {
         return this.musica;
     }
 
@@ -94,7 +95,8 @@ public class Musiquera implements BasicPlayerListener {
     public boolean isPaused() {
         return paused;
     }
-    public int getTempo(){
+
+    public int getTempo() {
         return tempo;
     }
 
@@ -102,8 +104,8 @@ public class Musiquera implements BasicPlayerListener {
         try {
             this.musica = m;
             in = new File(m.getCaminho());
-            if(in==null){
-                return ;
+            if (in == null) {
+                return;
             }
             player.open(in);
             if (toc > 0) {
@@ -119,15 +121,35 @@ public class Musiquera implements BasicPlayerListener {
                     tocar();
                 }
             }
+            tenteiAbrir = 0;
 
         } catch (BasicPlayerException ex) {
+            tenteiAbrir++;
+            switch (tenteiAbrir) {
+                case 1:
+                case 2:
+                    System.out.println("Falha ao abrir, tentando novamente!");
+                    abrir(m, toc, isPause, tocar);
+                    break;
+                case 3:
+                    System.out.println("Falha ao abrir, passando para a próxima música!");
+                    abrir(playList.getProxima(), 0, false, true);
+                    break;
+                case 4:
+                    System.out.println("Falha ao abrir (estágio 2), tentando novamente!");
+                    abrir(m, toc, isPause, tocar);
+                    break;
+                default:
+                    System.out.println("Todas as tentativas falharam... :(");
+            }
             ex.printStackTrace();
         }
 
     }
-    public void abrir(File f){
-        if(f==null){
-            return ;
+
+    public void abrir(File f) {
+        if (f == null) {
+            return;
         }
         try {
             player.open(f);
@@ -136,10 +158,12 @@ public class Musiquera implements BasicPlayerListener {
             Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public boolean jSliderBarPressed(){
+
+    public boolean jSliderBarPressed() {
         return principal.ajust;
     }
-    public void parar(){
+
+    public void parar() {
         try {
             player.stop();
         } catch (BasicPlayerException ex) {
@@ -152,14 +176,14 @@ public class Musiquera implements BasicPlayerListener {
             // tarefa = new Timer();
             int estado = player.getStatus();
             System.out.println(estado);
-            
+
             if (estado == BasicPlayer.UNKNOWN) {
                 System.out.println("Estado UNKNOWN");
                 principal.atualizaIcone("jButton_Play", "PAUSE");
                 player.open(in);
             }
-           
-            
+
+
             switch (estado) {
                 case BasicPlayer.PLAYING:
                     principal.atualizaIcone("jButton_Play", "TOCAR");
@@ -171,7 +195,7 @@ public class Musiquera implements BasicPlayerListener {
                     player.resume();
                     setEstado(true, false);
                     break;
-             
+
                 case BasicPlayer.STOPPED:
                     principal.atualizaIcone("jButton_Play", "PAUSAR");
                     player.play();
@@ -183,34 +207,44 @@ public class Musiquera implements BasicPlayerListener {
                     setEstado(true, true);
                     break;
             }
-            tentativa=0;
+            tenteiTocar = 0;
 
 
         } catch (Exception ex) {
-            tentativa++;
-            switch (tentativa) {
+            tenteiTocar++;
+            switch (tenteiTocar) {
                 case 1:
                 case 2:
                     System.out.println("Falha ao tocar, tentando novamente!");
-                     tocar();
+                    try {
+                        Thread.sleep(40);
+                    } catch (InterruptedException ex1) {
+                        Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex1);
+                    }
+                    tocar();
                     break;
                 case 3:
-                     System.out.println("Falha ao tocar, passando para a próxima música!");
+                    System.out.println("Falha ao tocar, passando para a próxima música!");
                     abrir(playList.getProxima(), 0, false, true);
                     break;
                 case 4:
                     System.out.println("Falha ao tocar (estágio 2), tentando novamente!");
+                    try {
+                        Thread.sleep(40);
+                    } catch (InterruptedException ex1) {
+                        Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex1);
+                    }
                     tocar();
                     break;
                 default:
                     System.out.println("Todas as tentativas falharam... :(");
             }
-             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-           
+            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+
         }
     }
 
-    public synchronized boolean  skipTo(long time) {
+    public synchronized boolean skipTo(long time) {
         System.out.println(time + "  " + total);
         long skipBytes = (time * total / 1000);
         System.out.println(skipBytes);
@@ -334,7 +368,7 @@ public class Musiquera implements BasicPlayerListener {
                 paused = false;
                 break;
             case BasicPlayerEvent.EOM:
-                abrir(playList.getProxima(),0,false,true);
+                abrir(playList.getProxima(), 0, false, true);
                 break;
 
         }
