@@ -125,6 +125,9 @@ public class Musiquera implements BasicPlayerListener {
 
     }
     public void abrir(File f){
+        if(f==null){
+            return ;
+        }
         try {
             player.open(f);
             tocar();
@@ -134,6 +137,13 @@ public class Musiquera implements BasicPlayerListener {
     }
     public boolean jSliderBarPressed(){
         return principal.ajust;
+    }
+    public void parar(){
+        try {
+            player.stop();
+        } catch (BasicPlayerException ex) {
+            Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void tocar() {
@@ -222,7 +232,7 @@ public class Musiquera implements BasicPlayerListener {
         int freq = (Integer) properties.get("mp3.frequency.hz") / 1000;
         if (info.trim().equalsIgnoreCase("") || info.trim().equalsIgnoreCase("null null null")) {
             try {
-                info = principal.getMusica().getNome();
+                info = getMusica().getNome();
             } catch (Exception ex) {
                 System.out.println("Erro em opened");
             }
