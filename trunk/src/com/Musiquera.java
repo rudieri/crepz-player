@@ -31,6 +31,7 @@ public class Musiquera implements BasicPlayerListener {
     private int volume;
     private int balanco;
     private int tempo;
+    private int tentativa=0;
     Long total = new Long(1);
     JPrincipal principal;
     JPlayList playList;
@@ -149,13 +150,16 @@ public class Musiquera implements BasicPlayerListener {
     public void tocar() {
         try {
             // tarefa = new Timer();
-            if (player.getStatus() == BasicPlayer.UNKNOWN) {
+            int estado = player.getStatus();
+            System.out.println(estado);
+            
+            if (estado == BasicPlayer.UNKNOWN) {
                 System.out.println("Estado UNKNOWN");
                 principal.atualizaIcone("jButton_Play", "PAUSE");
                 player.open(in);
             }
-            int estado = player.getStatus();
-            System.out.println(estado);
+           
+            
             switch (estado) {
                 case BasicPlayer.PLAYING:
                     principal.atualizaIcone("jButton_Play", "TOCAR");
@@ -179,11 +183,30 @@ public class Musiquera implements BasicPlayerListener {
                     setEstado(true, true);
                     break;
             }
-
+            tentativa=0;
 
 
         } catch (Exception ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            tentativa++;
+            switch (tentativa) {
+                case 1:
+                case 2:
+                    System.out.println("Falha ao tocar, tentando novamente!");
+                     tocar();
+                    break;
+                case 3:
+                     System.out.println("Falha ao tocar, passando para a próxima música!");
+                    abrir(playList.getProxima(), 0, false, true);
+                    break;
+                case 4:
+                    System.out.println("Falha ao tocar (estágio 2), tentando novamente!");
+                    tocar();
+                    break;
+                default:
+                    System.out.println("Todas as tentativas falharam... :(");
+            }
+             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+           
         }
     }
 

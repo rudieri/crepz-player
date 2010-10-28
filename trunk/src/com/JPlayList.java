@@ -52,7 +52,7 @@ public class JPlayList extends javax.swing.JDialog {
 
     /** Creates new form JPlayList */
     private JPrincipal principal;
-    boolean aleatorio;
+    boolean aleatorio = false;
     boolean recomecar = false;
     ArrayList<Musica> faltamTocar = new ArrayList<Musica>();
     ArrayList<Musica> jahFoi = new ArrayList<Musica>();
@@ -92,9 +92,15 @@ public class JPlayList extends javax.swing.JDialog {
             faltamTocar.add(m);
         }
     }
+    public boolean  isRandom(){
+        return aleatorio;
+    }
 
     public void setRepetir(boolean v) {
         recomecar = v;
+    }
+    public boolean isRepeat(){
+        return recomecar;
     }
 
     public int getId() {
@@ -361,6 +367,7 @@ public class JPlayList extends javax.swing.JDialog {
                         return (Musica) jTable.getModel().getValueAt(mAtual - 1, jTable.getColumnCount());
                     }
                 }
+                System.out.println(" Null Returned");
                 return null;
             } else {
                 if (jahFoi.indexOf(principal.getMusiquera().getMusica()) > 0) {
@@ -612,6 +619,11 @@ public class JPlayList extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        Conteto_Playlist = new javax.swing.JPopupMenu();
+        cMenu_Tocar = new javax.swing.JMenuItem();
+        cMenu_Editar_prop = new javax.swing.JMenuItem();
+        cMenu_ExcluirLista = new javax.swing.JMenuItem();
+        cMenu_ExcluirDisco = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -641,6 +653,18 @@ public class JPlayList extends javax.swing.JDialog {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
+
+        cMenu_Tocar.setText("jMenuItem7");
+        Conteto_Playlist.add(cMenu_Tocar);
+
+        cMenu_Editar_prop.setText("jMenuItem7");
+        Conteto_Playlist.add(cMenu_Editar_prop);
+
+        cMenu_ExcluirLista.setText("jMenuItem7");
+        Conteto_Playlist.add(cMenu_ExcluirLista);
+
+        cMenu_ExcluirDisco.setText("jMenuItem7");
+        Conteto_Playlist.add(cMenu_ExcluirDisco);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -1131,6 +1155,11 @@ public class JPlayList extends javax.swing.JDialog {
         pesquisa.add(m);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPopupMenu Conteto_Playlist;
+    private javax.swing.JMenuItem cMenu_Editar_prop;
+    private javax.swing.JMenuItem cMenu_ExcluirDisco;
+    private javax.swing.JMenuItem cMenu_ExcluirLista;
+    private javax.swing.JMenuItem cMenu_Tocar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;

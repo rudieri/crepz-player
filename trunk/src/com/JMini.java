@@ -45,7 +45,6 @@ public class JMini extends javax.swing.JDialog {
     private int thisY;
     Timer tarefa = new Timer();
     private int estado = 0;
-    private int xVisivel = 0;
     Thread thAnim;
 //    JViewport jv = new JViewport();
 
@@ -125,12 +124,12 @@ public class JMini extends javax.swing.JDialog {
         } else {
             jButton_Play.setIcon(getIcones().mini_pauseIcon);
         }
-        if (principal.random) {
+        if (playList.isRandom()) {
             jToggleButton1.setIcon(getIcones().mini_randomOnIcon);
         } else {
             jToggleButton1.setIcon(getIcones().mini_randomOffIcon);
         }
-        if (principal.getRepetir()) {
+        if (playList.isRepeat()) {
             jToggle_Repete.setIcon(getIcones().mini_repeatOnIcon);
         } else {
             jToggle_Repete.setIcon(getIcones().mini_repeatOffIcon);
@@ -307,12 +306,12 @@ public class JMini extends javax.swing.JDialog {
     public void setVisible(boolean b, MouseEvent e) {
         if (!super.isVisible()) {
 
-            if (principal.random) {
+            if (playList.isRandom()) {
                 jToggleButton1.setIcon(getIcones().mini_randomOnIcon);
             } else {
                 jToggleButton1.setIcon(getIcones().mini_randomOffIcon);
             }
-            if (principal.repeat) {
+            if (playList.isRepeat()) {
                 jToggle_Repete.setIcon(getIcones().mini_repeatOnIcon);
             } else {
                 jToggle_Repete.setIcon(getIcones().mini_repeatOffIcon);
@@ -921,9 +920,9 @@ public class JMini extends javax.swing.JDialog {
 
         if (!(thisX != this.getX() || thisY != this.getY())) {
             if (evt.getButton() == MouseEvent.BUTTON1) {
-                principal.random = !principal.random;
-                playList.setAleatorio(principal.random);
-                if (principal.random) {
+              
+                playList.setAleatorio(!playList.isRandom());
+                if (playList.isRandom()) {
                     jToggleButton1.setIcon(getIcones().mini_randomOnIcon);
                 } else {
                     jToggleButton1.setIcon(getIcones().mini_randomOffIcon);
@@ -1041,9 +1040,9 @@ public class JMini extends javax.swing.JDialog {
     private void jToggle_RepeteMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseReleased
         if (!(thisX != this.getX() || thisY != this.getY())) {
             if (evt.getButton() == MouseEvent.BUTTON1) {
-                principal.repeat = !principal.repeat;
-                playList.setRepetir(principal.repeat);
-                if (principal.repeat) {
+               
+                playList.setRepetir(!playList.isRepeat());
+                if (playList.isRepeat()) {
                     jToggle_Repete.setIcon(getIcones().mini_repeatOnIcon);
                 } else {
                     jToggle_Repete.setIcon(getIcones().mini_repeatOffIcon);
