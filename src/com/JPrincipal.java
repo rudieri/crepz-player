@@ -85,11 +85,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
             ex.printStackTrace();
         }
 
+  
 
-//        in = new File("D:/Musicas/David_Guetta_-_One_Love-2009-MOD/David Guetta _ Chris Willis ft Fergie _ LMFAO - Gettin_ Over.mp3");
-
-        playList.setAleatorio(random);
-        playList.setRepetir(repeat);
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
         playList.posicionar();
         scan = new Scan(_center.retorna("TempoAtualizar"));
@@ -211,22 +208,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
                 }
             }, 20);
         }
-    }
-
-    public boolean isRandom() {
-        return random;
-    }
-
-    public void setRandom(boolean b) {
-        random = b;
-    }
-
-    public boolean getRepetir() {
-        return repeat;
-    }
-
-    public void setRepetir(boolean b) {
-        repeat = b;
     }
 
     public void setVolume(int v) {
@@ -436,12 +417,12 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         if (!(jmini == null)) {
             jmini.inicializaIcones();
         }
-        if (random) {
+        if (playList.isRandom()) {
             jToggle_Random.setIcon(icone.randomOnIcon);
         } else {
             jToggle_Random.setIcon(icone.randomOffIcon);
         }
-        if (repeat) {
+        if (playList.isRepeat()) {
             jToggle_Repeat.setIcon(icone.repeatOnIcon);
         } else {
             jToggle_Repeat.setIcon(icone.repeatOffIcon);
@@ -561,12 +542,12 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     public void setVisible(boolean b) {
         super.setVisible(b);
         jmini.setVisible(!b);
-        if (random) {
+        if (playList.isRandom()) {
             jToggle_Random.setIcon(icone.randomOnIcon);
         } else {
             jToggle_Random.setIcon(icone.randomOffIcon);
         }
-        if (repeat) {
+        if (playList.isRepeat()) {
             jToggle_Repeat.setIcon(icone.repeatOnIcon);
         } else {
             jToggle_Repeat.setIcon(icone.repeatOffIcon);
@@ -1353,9 +1334,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jToggle_RandomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RandomMouseClicked
         // TODO add your handling code here:
-        random = !random;
-        playList.setAleatorio(random);
-        if (random) {
+        playList.setAleatorio(!playList.isRandom());
+        if (playList.isRandom()) {
             jToggle_Random.setIcon(icone.randomOnIcon);
         } else {
             jToggle_Random.setIcon(icone.randomOffIcon);
@@ -1424,9 +1404,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jToggle_RepeatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeatMouseClicked
         // TODO add your handling code here:
-        repeat = !repeat;
-        playList.setRepetir(repeat);
-        if (repeat) {
+        playList.setRepetir(!playList.isRepeat());
+        if (playList.isRepeat()) {
             jToggle_Repeat.setIcon(icone.repeatOnIcon);
         } else {
             jToggle_Repeat.setIcon(icone.repeatOffIcon);
@@ -1640,8 +1619,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     // End of variables declaration//GEN-END:variables
     DefaultBoundedRangeModel md = new DefaultBoundedRangeModel();
     boolean ajust = false;
-    boolean random = false;
-    boolean repeat = false;
+
     boolean trayEvent = true;
     boolean bandeija = false;
     int initX;

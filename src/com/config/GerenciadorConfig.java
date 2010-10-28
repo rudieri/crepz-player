@@ -9,8 +9,6 @@ import com.JMini;
 import com.JPlayList;
 import com.JPrincipal;
 import com.Musiquera;
-import com.conexao.BD;
-import com.conexao.Transacao;
 import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.playlist.JPlaylists;
@@ -68,8 +66,8 @@ public class GerenciadorConfig {
             } else {
                 cf.incluir("playList", "");
             }
-            cf.incluir("random", String.valueOf(principal.isRandom()));
-            cf.incluir("repeat", String.valueOf(principal.getRepetir()));
+            cf.incluir("random", String.valueOf(pl.isRandom()));
+            cf.incluir("repeat", String.valueOf(pl.isRepeat()));
             cf.incluir("bandeja", String.valueOf(principal.isBandeija()));
             cf.incluir("miniPosicao", String.valueOf((int) mini.getLocal().getX() + "X" + (int) mini.getLocal().getY()));
             cf.incluir("minitop", String.valueOf(mini.getTop()));
@@ -182,11 +180,11 @@ public class GerenciadorConfig {
     }
 
     private void setRandom(boolean b) {
-        principal.setRandom(b);
+        pl.setAleatorio(b);
     }
 
     private void setRepetir(boolean b) {
-        principal.setRepetir(b);
+        pl.setRepetir(b);
     }
 
     private void setVolume(int v) {
