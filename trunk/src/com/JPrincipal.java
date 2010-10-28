@@ -36,15 +36,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javazoom.jlgui.basicplayer.BasicController;
-import javazoom.jlgui.basicplayer.BasicPlayerException;
-import javazoom.jlgui.basicplayer.BasicPlayer;
-import com.musica.Musica;
 import java.awt.Container;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -66,16 +61,8 @@ import javax.swing.JPanel;
 public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, IntellitypeListener {
 
     public static Aguarde aguarde = new Aguarde();
-    Icones icone ;
+    Icones icone;
     Musiquera musiq;
-    /** Creates new form NewJFrame */
-    BasicPlayer player = new BasicPlayer();
-    // BasicPlayer is a BasicController.
-    BasicController tocador = (BasicController) player;
-    //Configurações salvas
-    private Musica musica;
-    File in = null;
-    Long total = new Long(1);
     private int estado = 0;
     private JFileChooser jFileChooser = new JFileChooser();
     private SystemTray tray;
@@ -90,14 +77,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     public JPrincipal() {
         initComponents();
-        
+
 
         try {
             aguarde.intro();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-      
+
 
 //        in = new File("D:/Musicas/David_Guetta_-_One_Love-2009-MOD/David Guetta _ Chris Willis ft Fergie _ LMFAO - Gettin_ Over.mp3");
 
@@ -113,7 +100,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-      
+
 
         trays();
         //--------------------------
@@ -123,18 +110,19 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jButton_Stop.setName("jButton_Stop");
         jToggle_Repeat.setName("jToggle_Repeat");
         jToggle_Random.setName("jToggle_Random");
-        icone= new Icones();
+        icone = new Icones();
         icone.loadIcons("tipo2");
-       
+
         musiq = new Musiquera(this, playList, biblioteca, jmini, icone);
-          _conf.getAllValores();
-          inicializaIcones();
+        _conf.getAllValores();
+        inicializaIcones();
     }
 
     public Musiquera getMusiquera() {
         return musiq;
     }
-    public Icones getIcones(){
+
+    public Icones getIcones() {
         return icone;
     }
 
@@ -148,7 +136,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jLabel_Musica.setText(nome.replaceAll("  ", " ").trim());
         jLabel_tempoTotal.setText(tempo);
         jLabel_bit.setText(bits + " kbps");
-        jLabel_freq.setText(freq + " ?Hz");
+        jLabel_freq.setText(freq + " KHz");
     }
 
     public void atualizaTempo(int tempo) {
@@ -165,20 +153,25 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
      * @param quem nome do label.
      * @param icone nome icones.nomeDoIcone
      */
-      public void atualizaIcone(String quem, Icon _icone) {
-       atualizaIcone(this.getContentPane(), quem,_icone);
+    public void atualizaIcone(String quem, Icon _icone) {
+        atualizaIcone(this.getContentPane(), quem, _icone);
     }
+
+    public void atualizaIcone(String quem, String texto) {
+        atualizaIcone(this.getContentPane(), quem, texto);
+    }
+
     public void atualizaIcone(Container root, String quem, Icon _icone) {
         for (int i = 0; i < root.getComponentCount(); i++) {
             if (root.getComponent(i) instanceof JLabel) {
-                if (root.getComponent(i).getName()!=null && root.getComponent(i).getName().equals(quem)) {
+                if (root.getComponent(i).getName() != null && root.getComponent(i).getName().equals(quem)) {
                     ((JLabel) root.getComponent(i)).setIcon(_icone);
                     return;
                 }
-            }else{
-             if(root.getComponent(i) instanceof JPanel){
-                 atualizaIcone((JPanel) root.getComponent(i), quem, _icone);
-             }
+            } else {
+                if (root.getComponent(i) instanceof JPanel) {
+                    atualizaIcone((JPanel) root.getComponent(i), quem, _icone);
+                }
             }
         }
     }
@@ -188,11 +181,16 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
      * @param quem nome do label.
      * @param texto texto a ser colocado como tooltip
      */
-    public void atualizaIcone(String quem, String texto) {
-        for (int i = 0; i < getComponentCount(); i++) {
-            if (getComponent(i) instanceof JLabel) {
-                if (getComponent(i).getName().equals(quem)) {
-                    ((JLabel) getComponent(i)).setToolTipText(texto);
+    public void atualizaIcone(Container root, String quem, String texto) {
+        for (int i = 0; i < root.getComponentCount(); i++) {
+            if (root.getComponent(i) instanceof JLabel) {
+                if (root.getComponent(i).getName() != null && root.getComponent(i).getName().equals(quem)) {
+                    ((JLabel) root.getComponent(i)).setToolTipText(texto);
+                    return;
+                }
+            } else {
+                if (root.getComponent(i) instanceof JPanel) {
+                    atualizaIcone((JPanel) root.getComponent(i), quem, texto);
                 }
             }
         }
@@ -213,34 +211,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
                 }
             }, 20);
         }
-    }
-
-    public BasicPlayer getPlayer() {
-        return player;
-    }
-
-    public void setMusica(File in) {
-        this.in = in;
-    }
-
-    public void setMusica(Musica m) {
-        this.musica = m;
-    }
-
-    public Musica getMusica() {
-        return musica;
-    }
-
-    public boolean getTocando() {
-        return tocando;
-    }
-
-    public boolean getPause() {
-        return paused;
-    }
-
-    public Long getTempo() {
-        return tempo;
     }
 
     public boolean isRandom() {
@@ -287,18 +257,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     tocando = b;
     }
      */
-    public void parar() {
-        try {
-            jButton_Play.setToolTipText("PLAY");
-
-            jCIMenuPlay.setText("Tocar");
-            tocador.stop();
-            jSlider_Tempo.setValue(0);
-        } catch (BasicPlayerException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     public String miliSegundosEmMinSeq(Long mili) {
         mili = mili / 1000000;
         SimpleDateFormat sdf = new SimpleDateFormat("ss");
@@ -461,18 +419,15 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         return playList;
     }
 
-   
-   
-
-     public void inicializaIcones() {
+    public void inicializaIcones() {
         //Estado inicial do botão (está Stop);
         jButton_Play.setIcon(icone.playIcon);
         //Se tiver tocando
-        if (getTocando()) {
+        if (musiq.isPlaying()) {
             jButton_Play.setIcon(icone.pauseIcon);
         }
         //Se tiver pause
-        if (getPause()) {
+        if (musiq.isPlaying()) {
             jButton_Play.setIcon(icone.playIcon);
         }
         jButton_Stop.setIcon(icone.stopIcon);
@@ -500,9 +455,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }
 
     public void sair() {
-        tocando2 = tocando;
-        paused2 = paused;
-        stopeFinalite();
         setConf();
         System.exit(0);
     }
@@ -562,16 +514,16 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 //         output("LAUNCH_MAIL message received " + Integer.toString(aCommand));
 //         break;
             case JIntellitype.APPCOMMAND_MEDIA_NEXTTRACK:
-                playList.getProxima();
+                musiq.abrir(playList.getProxima(), 0, false, true);
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_PLAY_PAUSE:
                 musiq.tocar();
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_PREVIOUSTRACK:
-                playList.getAnterior();
+                musiq.abrir(playList.getAnterior(), 0, false, true);
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_STOP:
-                parar();
+                musiq.parar();
                 break;
             case JIntellitype.APPCOMMAND_VOLUME_DOWN:
                 jmini.jSlider_vol.setValue(jSlider_vol.getValue() - 2);
@@ -586,6 +538,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
                 } else {
                     jmini.jSlider_vol.setValue(volAnt);
                 }
+
 
                 break;
 //      default:
@@ -647,14 +600,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         playList.salvarPlaylistAtual();
         _conf.setAllValores();
 
-    }
-
-    public void stopeFinalite() {
-        try {
-            player.stop();
-        } catch (BasicPlayerException ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /** This method is called from within the constructor to
@@ -1239,11 +1184,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jMenuItem_ArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_ArquivoActionPerformed
         try {
-            in = telaAbrirArquivo();
-            if (in == null) {
-                return;
-            }
-            musiq.abrir(in);
+
+            musiq.abrir(telaAbrirArquivo());
 
         } catch (Exception ex) {
             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
@@ -1322,7 +1264,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jCIMenuStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuStopActionPerformed
         // TODO add your handling code here:
-        parar();
+        musiq.parar();
     }//GEN-LAST:event_jCIMenuStopActionPerformed
 
     private void jCCheckBarraDeMenusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCCheckBarraDeMenusActionPerformed
@@ -1354,7 +1296,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         try {
-            new JMP3Propriedades(this, true, in).setVisible(true);
+            new JMP3Propriedades(this, true, new File(musiq.getMusica().getCaminho())).setVisible(true);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Abrir Propriedades.\n" + ex);
             ex.printStackTrace();
@@ -1389,15 +1331,13 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private void jButton_StopMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            parar();
+            musiq.parar();
         }
     }//GEN-LAST:event_jButton_StopMouseClicked
 
     private void jButton_AntMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            tarefa.cancel();
-            tarefa = new Timer();
             musiq.abrir(playList.getAnterior(), 0, false, true);
         }
     }//GEN-LAST:event_jButton_AntMouseClicked
@@ -1405,12 +1345,9 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private void jButton_NextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_NextMouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            if (!(tarefa == null)) {
-                tarefa.cancel();
-            }
-            tarefa = new Timer();
+
             musiq.abrir(playList.getProxima(), 0, false, true);
-            //   tarefa.schedule(new executaProxima(), 10);
+
         }
     }//GEN-LAST:event_jButton_NextMouseClicked
 
@@ -1511,12 +1448,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }//GEN-LAST:event_jCIMenuMinimizarActionPerformed
 
     private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
-        // TODO add your handling code here:
-//        if (evt.getNewState() == 1) {
         iconeTray();
-//            this.setState(0);
-//
-//        }
     }//GEN-LAST:event_formWindowStateChanged
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -1539,7 +1471,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private void jLabel_EditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_EditMouseClicked
 //        if (evt.getClickCount() == 2) {
         try {
-            new JMP3Propriedades(this, true, in).setVisible(true);
+            new JMP3Propriedades(this, true, new File(musiq.getMusica().getCaminho())).setVisible(true);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Abrir Propriedades.\n" + ex);
             ex.printStackTrace();
@@ -1707,11 +1639,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private javax.swing.JLabel jToggle_Repeat;
     // End of variables declaration//GEN-END:variables
     DefaultBoundedRangeModel md = new DefaultBoundedRangeModel();
-    Timer tarefa;
-    public boolean tocando2 = false;
-    public boolean paused2 = false;
-    boolean tocando = false;
-    boolean paused = false;
     boolean ajust = false;
     boolean random = false;
     boolean repeat = false;
@@ -1721,6 +1648,4 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     int initY;
     int thisX;
     int thisY;
-    Long tempo;
-   
 }

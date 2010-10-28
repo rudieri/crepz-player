@@ -38,52 +38,7 @@ public class GerenciadorConfig {
         cf = new ConfigFile();
     }
 
-    /**Grava as todas configurações que estão sendo usadas pelo Player*/
-    /* public void setAllValores() {
-    principal.setVisible(false);
-    //Cria uma transação com o banco
-    Transacao t = new Transacao();
-    try {
-    //Inicia a transação
-    t.begin();
-    //ATENÇÃO! APENAS O PRIMEIRO incluir DEVE MANDAR O PARAMETRO reset COMO true
-    ConfigBD.incluir("tocando", String.valueOf(principal.tocando2), true, t);
-    ConfigBD.incluir("pause", String.valueOf(principal.paused2), false, t);
-    if (principal.getMusica() != null) {
-    ConfigBD.incluir("musica", principal.getMusica().getId().toString(), false, t);
-    } else {
-    ConfigBD.incluir("musica", "", false, t);
-    }
 
-    ConfigBD.incluir("tempo", String.valueOf(principal.getTempo()), false, t);
-    ConfigBD.incluir("volume", String.valueOf(principal.getVolume()), false, t);
-    principal.setVolume(0);
-    ConfigBD.incluir("pan", String.valueOf(principal.getBalanco()), false, t);
-    if (pl.getId() != -1) {
-    ConfigBD.incluir("playList", String.valueOf(pl.getId()), false, t);
-    } else {
-    ConfigBD.incluir("playList", "", false, t);
-    }
-    ConfigBD.incluir("random", String.valueOf(principal.isRandom()), false, t);
-    ConfigBD.incluir("repeat", String.valueOf(principal.getRepetir()), false, t);
-    ConfigBD.incluir("bandeja", String.valueOf(principal.isBandeija()), false, t);
-    ConfigBD.incluir("miniPosicao", String.valueOf((int) mini.getLocal().getX() + "X" + (int) mini.getLocal().getY()), false, t);
-    ConfigBD.incluir("minitop", String.valueOf(mini.getTop()), false, t);
-
-    //salva o que foi mudado
-    t.commit();
-    BD.fecharBD();
-
-
-    } catch (Exception ex) {
-    t.rollback();
-    ex.printStackTrace();
-    } finally {
-    BD.fecharBD();
-    //            ag.setVisible(false);
-    }
-
-    }*/
     public void setAllValores() {
         principal.setVisible(false);
         //Cria uma transação com o banco
@@ -200,12 +155,9 @@ public class GerenciadorConfig {
         Musica m = new Musica();
         m.setId(id);
         try {
-            MusicaBD.carregar(m);
-            //principal.setMusica(m);
-            
-            
+            MusicaBD.carregar(m); 
              (principal.getMusiquera()).abrir(m, t.intValue(), pause, true);
-            // principal.getMusiquera().tocar();
+            
             
         } catch (Exception ex) {
             ex.printStackTrace();

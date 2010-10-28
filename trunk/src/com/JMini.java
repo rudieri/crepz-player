@@ -120,7 +120,7 @@ public class JMini extends javax.swing.JDialog {
         jLabel_lib.setIcon(getIcones().lib);
         jLabel_popup.setIcon(getIcones().menu);
         jLabel1.setIcon(getIcones().xis);
-        if (principal.getPause()) {
+        if (principal.getMusiquera().isPaused()) {
             jButton_Play.setIcon(getIcones().mini_playIcon);
         } else {
             jButton_Play.setIcon(getIcones().mini_pauseIcon);
@@ -888,7 +888,7 @@ public class JMini extends javax.swing.JDialog {
 
         if (!(thisX != this.getX() || thisY != this.getY())) {
             if (evt.getButton() == MouseEvent.BUTTON1) {
-                principal.parar();
+                principal.getMusiquera().parar();
             }
         }
     }//GEN-LAST:event_jButton_StopMouseReleased
