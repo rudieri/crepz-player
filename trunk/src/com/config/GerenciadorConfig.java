@@ -11,7 +11,7 @@ import com.JPrincipal;
 import com.Musiquera;
 import com.musica.Musica;
 import com.musica.MusicaBD;
-import com.playlist.JPlaylists;
+import com.playlist.JSelectPlaylists;
 import java.awt.Point;
 import java.util.HashMap;
 
@@ -176,7 +176,7 @@ public class GerenciadorConfig {
 
     public void setPlayList(int id) {
         System.out.println("id: " + id);
-        pl.tocar(JPlaylists.getPlayList(id), false);
+        pl.tocar(JSelectPlaylists.getPlayList(id), false);
     }
 
     private void setRandom(boolean b) {

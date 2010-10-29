@@ -4,7 +4,7 @@
  */
 
 /*
- * JPlaylists.java
+ * JSelectPlaylists.java
  *
  * Created on 12/06/2010, 17:22:14
  */
@@ -25,12 +25,12 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author manchini
  */
-public class JPlaylists extends javax.swing.JDialog {
+public class JSelectPlaylists extends javax.swing.JDialog {
 
-    /** Creates new form JPlaylists */
+    /** Creates new form JSelectPlaylists */
     JPlayList playlist;
 
-    public JPlaylists(java.awt.Frame parent, boolean modal, JPlayList playlist) {
+    public JSelectPlaylists(java.awt.Frame parent, boolean modal, JPlayList playlist) {
         super(parent, modal);
         initComponents();
         this.playlist = playlist;
@@ -81,7 +81,7 @@ public class JPlaylists extends javax.swing.JDialog {
         try {
             PlaylistBD.carregar(playlist);
         } catch (Exception ex) {
-            Logger.getLogger(JPlaylists.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JSelectPlaylists.class.getName()).log(Level.SEVERE, null, ex);
         }
         return playlist;
     }
@@ -156,7 +156,7 @@ public class JPlaylists extends javax.swing.JDialog {
         jPanel_Nome4.setPreferredSize(new java.awt.Dimension(0, 35));
         jPanel_Nome4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 1));
 
-        jLabel_Nome4.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        jLabel_Nome4.setFont(new java.awt.Font("Dialog", 0, 11));
         jLabel_Nome4.setText("Filtro:");
         jLabel_Nome4.setMaximumSize(new java.awt.Dimension(60, 16));
         jLabel_Nome4.setMinimumSize(new java.awt.Dimension(60, 16));
@@ -171,7 +171,6 @@ public class JPlaylists extends javax.swing.JDialog {
         jButton_OK.setText("...");
         jButton_OK.setToolTipText("Carrega a listagem");
         jButton_OK.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jButton_OK.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton_OK.setMaximumSize(new java.awt.Dimension(22, 20));
         jButton_OK.setMinimumSize(new java.awt.Dimension(22, 20));
         jButton_OK.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -317,7 +316,7 @@ public class JPlaylists extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                JPlaylists dialog = new JPlaylists(new javax.swing.JFrame(), true, null);
+                JSelectPlaylists dialog = new JSelectPlaylists(new javax.swing.JFrame(), true, null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
                     public void windowClosing(java.awt.event.WindowEvent e) {
