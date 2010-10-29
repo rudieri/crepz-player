@@ -16,7 +16,7 @@ import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.MusicaSC;
 import com.playlist.JLista;
-import com.playlist.JPlaylists;
+import com.playlist.JSelectPlaylists;
 import com.playlist.PlayListRenderer;
 import com.playlist.Playlist;
 import com.playlist.PlaylistBD;
@@ -981,7 +981,7 @@ public class JPlayList extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        JPlaylists jPlayLists = new JPlaylists(principal, true, this);
+        JSelectPlaylists jPlayLists = new JSelectPlaylists(principal, true, this);
         jPlayLists.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
