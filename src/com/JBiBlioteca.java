@@ -18,6 +18,7 @@ import com.musica.BibliotecalRenderer;
 import com.musica.ModelReadOnly;
 import com.musica.Musica;
 import com.musica.MusicaBD;
+import com.musica.MusicaGerencia;
 import com.musica.MusicaSC;
 import com.utils.DiretorioUtils;
 import com.utils.JTrocarImagem;
@@ -257,8 +258,8 @@ public class JBiBlioteca extends javax.swing.JDialog {
                     if (pasta != null) {
                         int total = DiretorioUtils.calculaQuantidadeArquivos(pasta);
                         Integer count = 0;
-                        Musica.count = 0;
-                        Musica.mapearDiretorio(pasta, t, jProgressBar, total);
+                        MusicaGerencia.count = 0;
+                        MusicaGerencia.mapearDiretorio(pasta, t, jProgressBar, total);
 
                     }
                     t.commit();
