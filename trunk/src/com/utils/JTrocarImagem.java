@@ -12,6 +12,7 @@ package com.utils;
 
 import com.conexao.Transacao;
 import com.musica.Musica;
+import com.musica.MusicaGerencia;
 import gsearch.Result;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,7 +21,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
@@ -169,7 +169,7 @@ public class JTrocarImagem extends javax.swing.JDialog {
             out.close();
 
             t.begin();
-            Musica.mapearDiretorio(new File(musicaF.getAbsolutePath().replace(musicaF.getName(), "")), t, new JProgressBar(), 10);
+            MusicaGerencia.mapearDiretorio(new File(musicaF.getAbsolutePath().replace(musicaF.getName(), "")), t, new JProgressBar(), 10);
             t.commit();
             setVisible(false);
             dispose();

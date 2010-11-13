@@ -7,11 +7,15 @@ package com;
 import com.graficos.Icones;
 import com.musica.Musica;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.sampled.AudioFormat.Encoding;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
@@ -42,6 +46,7 @@ public class Musiquera implements BasicPlayerListener {
     BasicPlayer player;
     private Musica musica;
     private File in;
+    private String tipo = "";
 
     public Musiquera(JPrincipal jpr, JPlayList jpl, JBiBlioteca jbl, JMini jmi, Icones ico) {
         principal = jpr;
@@ -103,11 +108,16 @@ public class Musiquera implements BasicPlayerListener {
     public void abrir(Musica m, int toc, boolean isPause, boolean tocar) {
         try {
             this.musica = m;
+            if(m==null){
+                System.out.println("Musica não existe, nullPointer");
+                return ;
+            }
             in = new File(m.getCaminho());
             if (in == null) {
                 return;
             }
             player.open(in);
+
             if (toc > 0) {
                 ajust = true;
                 skipTo(toc);
@@ -280,30 +290,60 @@ public class Musiquera implements BasicPlayerListener {
 
         return new java.text.SimpleDateFormat("HH:mm:ss").format(date);
     }
+    public String miliSegundosEmMinSeq(int mili) {
+        mili = mili / 1000000;
+        SimpleDateFormat sdf = new SimpleDateFormat("ss");
+        Date date = null;
+        try {
+            date = sdf.parse(String.valueOf(mili));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return new java.text.SimpleDateFormat("HH:mm:ss").format(date);
+    }
 
     public void opened(Object stream, Map properties) {
         total = new Long((Integer) properties.get("audio.length.bytes"));
-        String info = properties.get("title") + " " + properties.get("author") + " " + properties.get("album");
-        String duracao = miliSegundosEmMinSeq((Long) properties.get("duration"));
-        int bits = (Integer) properties.get("mp3.bitrate.nominal.bps") / 1000;
-        int freq = (Integer) properties.get("mp3.frequency.hz") / 1000;
-        if (info.trim().equalsIgnoreCase("") || info.trim().equalsIgnoreCase("null null null")) {
-            try {
-                info = getMusica().getNome();
-            } catch (Exception ex) {
-                System.out.println("Erro em opened");
+      
+        Encoding enc;
+
+        try {
+
+            enc = AudioSystem.getAudioFileFormat((File) stream).getFormat().getEncoding();
+            if (enc.toString().toLowerCase().indexOf("vorbis") != -1) {
+                tipo = "ogg";
             }
+            if (enc.toString().toLowerCase().indexOf("mpeg") != -1) {
+                tipo = "mp3";
+            }
+            System.out.println("Tipo: "+ tipo);
+            String info = properties.get("title") + " " + properties.get("author") + " " + properties.get("album");
+            String duracao = miliSegundosEmMinSeq((Long) properties.get("duration"));
+            int bits = (Integer) properties.get(tipo + ".bitrate.nominal.bps") / 1000;
+            int freq = (Integer) properties.get(tipo + ".frequency.hz") / 1000;
+            if (info.trim().equalsIgnoreCase("") || info.trim().equalsIgnoreCase("null null null")) {
+                try {
+                    info = getMusica().getNome();
+                } catch (Exception ex) {
+                    System.out.println("Erro em opened");
+                }
+            }
+            principal.atualizaLabels(info, bits, duracao, freq);
+            mini.setNomeMusica(info);
+        } catch (UnsupportedAudioFileException ex) {
+            Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
         }
-        principal.atualizaLabels(info, bits, duracao, freq);
-        mini.setNomeMusica(info);
     }
 
     public void progress(int i, long l, byte[] bytes, Map properties) {
-        tempo = Integer.parseInt(String.valueOf((Long) properties.get("mp3.position.byte") * 1000 / total));
+        tempo = Integer.parseInt(String.valueOf((Long) properties.get(tipo + ".position.byte") * 1000 / total));
         if (!jSliderBarPressed()) {
             principal.atualizaTempo(tempo);
         }
-        String hms = miliSegundosEmMinSeq((Long) properties.get("mp3.position.microseconds"));
+        String hms = miliSegundosEmMinSeq(i);
         principal.atualizaTempo(hms);
 
     }

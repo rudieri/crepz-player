@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import com.musica.ModelReadOnly;
 import com.musica.Musica;
 import com.musica.MusicaBD;
+import com.musica.MusicaGerencia;
 import com.musica.MusicaSC;
 import com.playlist.JLista;
 import com.playlist.JSelectPlaylists;
@@ -495,11 +496,6 @@ public class JPlayList extends javax.swing.JDialog {
             atualizarTabelaLista();
             if (tocarMesmo) {
                 principal.getMusiquera().abrir(getProxima(), 0, false, true);
-//                if (!aleatorio) {
-//                //    tocar((Musica) jTable.getModel().getValueAt(0, jTable.getColumnCount()));
-//                } else {
-//                    getProxima();
-//                }
             }
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
@@ -513,7 +509,7 @@ public class JPlayList extends javax.swing.JDialog {
 
             t.begin();
 
-            Musica m = Musica.addFiles(in, t);
+            Musica m = MusicaGerencia.addFiles(in, t);
             t.commit();
             trace("ID: " + m.getId());
             trace("Nome: " + m.getNome());
@@ -577,7 +573,7 @@ public class JPlayList extends javax.swing.JDialog {
                         //  s=s.substring(0,s.lastIndexOf("\\") );
                         s = s.replace("\\\\", "/");
                         File mp3 = new File(s);
-                        addPlaylist(Musica.addFiles(mp3, t));
+                        addPlaylist(MusicaGerencia.addFiles(mp3, t));
                         System.out.println(mp3.getAbsolutePath());
                     }
                 }
