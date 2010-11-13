@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import com.musica.Musica;
 import com.musica.MusicaBD;
+import com.musica.MusicaGerencia;
 import java.io.IOException;
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagConstant;
@@ -48,7 +49,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
     }
 
     private void montarGeneros() {
-        jComboBoxGenero.setModel(new DefaultComboBoxModel(com.musica.Musica.generos));
+        jComboBoxGenero.setModel(new DefaultComboBoxModel(com.musica.MusicaGerencia.generos));
     }
 
     private void setDados() {
@@ -145,10 +146,10 @@ public class JMP3Propriedades extends javax.swing.JDialog {
         Musica m = new Musica();
             m.setCaminho(mp3File.getMp3file().getAbsolutePath());
             if (MusicaBD.existe(m)) {
-                Musica.getMusica(m, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
+                MusicaGerencia.getMusica(m, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
                 MusicaBD.alterar(m);
             } else {
-                Musica.getMusica(m, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
+                MusicaGerencia.getMusica(m, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
                 MusicaBD.incluir(m);
             }
         }
