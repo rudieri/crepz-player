@@ -1,3 +1,5 @@
+
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -13,6 +15,7 @@ public class versao {
         System.out.println(System.getProperty("java.vendor"));
 
         System.out.println(System.getProperties().toString().replace(",", "\n"));
+
     }
 
 }
