@@ -5,6 +5,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import com.musica.Musica;
 import com.musica.MusicaBD;
+import com.musica.MusicaGerencia;
 
 /*
  * To change this template, choose Tools | Templates
@@ -23,7 +24,7 @@ public class modeloManipulaSQL {
             t.begin();
 
 
-            Musica.mapearDiretorio(new File("D:/Users/manchini/Music/Minhas músicas/"), t,null,0);
+            MusicaGerencia.mapearDiretorio(new File("D:/Users/manchini/Music/Minhas músicas/"), t,null,0);
 
             SQL sql = new SQL();
             sql.add("SELECT * from musica");
