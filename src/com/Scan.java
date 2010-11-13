@@ -7,6 +7,7 @@ package com;
 import com.conexao.SQL;
 import com.conexao.Transacao;
 import com.musica.Musica;
+import com.musica.MusicaGerencia;
 import java.io.File;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class Scan {
 
             if (musicas.indexOf(end.getAbsolutePath()) == -1) {
 
-                Musica.addFiles(end, t);
+                MusicaGerencia.addFiles(end, t);
             } else {
                 trace("já tem!");
             }
