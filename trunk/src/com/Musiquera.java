@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JOptionPane;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
@@ -135,6 +136,10 @@ public class Musiquera implements BasicPlayerListener {
 
         } catch (BasicPlayerException ex) {
             tenteiAbrir++;
+            System.out.println(ex.getMessage());
+            if(ex.getMessage().toString().indexOf("FileNotFoundException")!=-1){
+                JOptionPane.showMessageDialog(null, "Arquivo não encontrado: "+m.getCaminho());
+            }
             switch (tenteiAbrir) {
                 case 1:
                 case 2:
@@ -143,7 +148,7 @@ public class Musiquera implements BasicPlayerListener {
                     break;
                 case 3:
                     System.out.println("Falha ao abrir, passando para a próxima música!");
-                    abrir(playList.getProxima(), 0, false, true);
+                    abrir(playList.getProxima(true), 0, false, true);
                     break;
                 case 4:
                     System.out.println("Falha ao abrir (estágio 2), tentando novamente!");
@@ -235,7 +240,7 @@ public class Musiquera implements BasicPlayerListener {
                     break;
                 case 3:
                     System.out.println("Falha ao tocar, passando para a próxima música!");
-                    abrir(playList.getProxima(), 0, false, true);
+                    abrir(playList.getProxima(true), 0, false, true);
                     break;
                 case 4:
                     System.out.println("Falha ao tocar (estágio 2), tentando novamente!");
@@ -352,7 +357,7 @@ public class Musiquera implements BasicPlayerListener {
         switch (event.getCode()) {
             case BasicPlayerEvent.STOPPED:
                 principal.atualizaIcone("jButton_Play", icones.playIcon);
-                mini.setPlayIcon(icones.playIcon);
+                mini.setPlayIcon(icones.mini_playIcon);
 
                 tocando = false;
                 paused = false;
@@ -365,12 +370,12 @@ public class Musiquera implements BasicPlayerListener {
                 tocando = true;
                 paused = false;
                 principal.atualizaIcone("jButton_Play", icones.pauseIcon);
-                mini.setPlayIcon(icones.pauseIcon);
+                mini.setPlayIcon(icones.mini_pauseIcon);
 
                 break;
             case BasicPlayerEvent.RESUMED:
                 principal.atualizaIcone("jButton_Play", icones.pauseIcon);
-                mini.setPlayIcon(icones.pauseIcon);
+                mini.setPlayIcon(icones.mini_pauseIcon);
                 tocando = true;
                 paused = false;
 
@@ -379,7 +384,7 @@ public class Musiquera implements BasicPlayerListener {
                 tocando = true;
                 paused = true;
                 principal.atualizaIcone("jButton_Play", icones.playIcon);
-                mini.setPlayIcon(icones.playIcon);
+                mini.setPlayIcon(icones.mini_playIcon);
 
                 break;
 
@@ -408,7 +413,7 @@ public class Musiquera implements BasicPlayerListener {
                 paused = false;
                 break;
             case BasicPlayerEvent.EOM:
-                abrir(playList.getProxima(), 0, false, true);
+                abrir(playList.getProxima(false), 0, false, true);
                 break;
 
         }

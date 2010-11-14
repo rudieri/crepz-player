@@ -138,6 +138,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     public void atualizaTempo(int tempo) {
         jSlider_Tempo.setValue(tempo);
+        jmini.atualizaTempo(tempo);
     }
 
     public void atualizaTempo(String min_seg) {
@@ -495,7 +496,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 //         output("LAUNCH_MAIL message received " + Integer.toString(aCommand));
 //         break;
             case JIntellitype.APPCOMMAND_MEDIA_NEXTTRACK:
-                musiq.abrir(playList.getProxima(), 0, false, true);
+                musiq.abrir(playList.getProxima(false), 0, false, true);
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_PLAY_PAUSE:
                 musiq.tocar();
@@ -873,11 +874,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jSlider_TempoMouseReleased(evt);
-            }
-        });
-        jSlider_Tempo.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jSlider_TempoStateChanged(evt);
             }
         });
         jPanel4.add(jSlider_Tempo, java.awt.BorderLayout.CENTER);
@@ -1327,7 +1323,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
 
-            musiq.abrir(playList.getProxima(), 0, false, true);
+            musiq.abrir(playList.getProxima(false), 0, false, true);
 
         }
     }//GEN-LAST:event_jButton_NextMouseClicked
@@ -1342,11 +1338,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         }
         //jToggleButton1.setIcon(new ImageIcon(getClass().getResource("/com/img/icons/tipo2/"+random+"Random.png")));
     }//GEN-LAST:event_jToggle_RandomMouseClicked
-
-    private void jSlider_TempoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_TempoStateChanged
-        // TODO add your handling code here:
-//        jmini.atualizaTempo(jSlider_Tempo.getValue());
-    }//GEN-LAST:event_jSlider_TempoStateChanged
 
     private void jSlider_BalancoMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_BalancoMouseWheelMoved
         // TODO add your handling code here:

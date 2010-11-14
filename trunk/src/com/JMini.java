@@ -910,7 +910,7 @@ public class JMini extends javax.swing.JDialog {
             if (evt.getButton() == MouseEvent.BUTTON1) {
                 tarefa.cancel();
                 tarefa = new Timer();
-                principal.getMusiquera().abrir(playList.getProxima(), 0, false, true);
+                principal.getMusiquera().abrir(playList.getProxima(false), 0, false, true);
               //  tarefa.schedule(principal.getExecutaProxima(), 10);
             }
         }
