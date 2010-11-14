@@ -32,6 +32,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
@@ -263,7 +264,7 @@ public class JPlayList extends javax.swing.JDialog {
 //
 //        faltamTocar.remove(m);
 //    }
-
+    int contaErro=0;
     public Musica getAleatorio(Musica atual) {
        try{
         if (jahFoi.indexOf(atual) == -1) {
@@ -280,11 +281,12 @@ public class JPlayList extends javax.swing.JDialog {
 
                 if (recomecar) {
                     System.out.println("Recomeçando");
+                    
                     for (int i = 0; i < jTable.getRowCount(); i++) {
                         faltamTocar.add(total.get(i));
                         //faltamTocar.add(jTable.getModel().getValueAt(i, jTable.getColumnCount()));
                     }
-                    return getProxima();
+                    return getProxima(true);
 
                 }
                 return null;
@@ -309,8 +311,16 @@ public class JPlayList extends javax.swing.JDialog {
        }
     }
 
-    public Musica getProxima() {
-
+    public Musica getProxima(boolean erro) {
+        if(! erro){
+            contaErro=0;
+        }else{
+            contaErro++;
+        }
+        if(contaErro>total.size()){
+            JOptionPane.showMessageDialog(this, "Nenhum arquivo foi encontrado... Você montou sua unidades?");
+            return null;
+        }
         try {
             Musica atual = (principal.getMusiquera()).getMusica();
             int mAtual = -1;
@@ -495,7 +505,7 @@ public class JPlayList extends javax.swing.JDialog {
             setTitle(playlist.getNome());
             atualizarTabelaLista();
             if (tocarMesmo) {
-                principal.getMusiquera().abrir(getProxima(), 0, false, true);
+                principal.getMusiquera().abrir(getProxima(false), 0, false, true);
             }
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
