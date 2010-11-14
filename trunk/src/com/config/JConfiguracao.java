@@ -10,12 +10,15 @@
  */
 package com.config;
 
+import com.Scan;
 import com.musica.MusicaGerencia;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -24,13 +27,12 @@ import javax.swing.table.DefaultTableModel;
 public class JConfiguracao extends javax.swing.JDialog {
 
     private JFileChooser jFileChooser = new JFileChooser();
-  
 
     /** Creates new form JConfiguracao */
     public JConfiguracao(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-       
+
         setTela();
     }
 
@@ -39,28 +41,21 @@ public class JConfiguracao extends javax.swing.JDialog {
             jCheckBox_DownloadCapa.setSelected(MusicaGerencia.downLoadCapas);
             jCheckBox_Organizador.setSelected(MusicaGerencia.organizarPastas);
             jTextField_DestinoOrg.setText(MusicaGerencia.destino);
+            Object tmp =Scan.getTempo();
+            jSpinner1.setValue(tmp);
+            DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+            tm.setRowCount(0);
+            ArrayList<String> ps = Scan.getPastas();
+            for (short i = 0; i < ps.size(); i++) {
+                if (ps.get(i) != null && !ps.get(i).replaceAll(" ", "").equals("")) {
+                    tm.addRow(new Object[]{ps.get(i)});
 
-        
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-
-//    private void setTabelaPastas(HashMap<String, String> lista) {
-//        int c = 1;
-//        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
-//        tm.setRowCount(0);
-//        String pastaMonitorada = "pastaMonitorada";
-//        Set chaves = lista.keySet();
-//        for (int i = 0; i < chaves.toArray().length; i++) {
-//            if (lista.get(pastaMonitorada + c) != null) {
-//                Object[] linha = new Object[1];
-//                linha[0] = lista.get(pastaMonitorada + c);
-//                tm.addRow(linha);
-//            }
-//            c++;
-//        }
-//    }
 
     private File telaAbrirArquivo() throws Exception {
 
@@ -94,57 +89,21 @@ public class JConfiguracao extends javax.swing.JDialog {
         }
     }
 
-//    private void setDadosBancoPasta(HashMap<String, String> lista) {
-//        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
-//        String pastaMonitorada = "pastaMonitorada";
-//        try {
-//            ConfiguracaoBD.excluirChavesQueComecam(pastaMonitorada);
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//        int c = 1;
-//        for (int i = 0; i < tm.getRowCount(); i++) {
-//            String pasta = (String) tm.getValueAt(i, 0);
-//            if (pasta != null && !pasta.trim().equals("")) {
-//                lista.put(pastaMonitorada + (c), pasta);
-//                c++;
-//            }
-//        }
-//    }
-
     private void setDadosBanco() {
-//        HashMap<String, String> lista = new HashMap<String, String>();
-//        lista.put("teste", String.valueOf(jCheckBox_teste.isSelected()));
-//        lista.put("TempoAtualizar", jSpinner1.getValue().toString());
 
-       // lista.put("organizadorPastas", String.valueOf(jCheckBox_Organizador.isSelected()));
-       MusicaGerencia.organizarPastas=jCheckBox_Organizador.isSelected();
-       MusicaGerencia.destino=jTextField_DestinoOrg.getText()!=null?jTextField_DestinoOrg.getText():"";
-       MusicaGerencia.downLoadCapas=jCheckBox_DownloadCapa.isSelected();
-       //lista.put("organizadorDestino", jTextField_DestinoOrg.getText());
-       // lista.put("downloadCapas", String.valueOf(jCheckBox_DownloadCapa.isSelected()));
+        MusicaGerencia.organizarPastas = jCheckBox_Organizador.isSelected();
+        MusicaGerencia.destino = jTextField_DestinoOrg.getText() != null ? jTextField_DestinoOrg.getText() : "";
+        MusicaGerencia.downLoadCapas = jCheckBox_DownloadCapa.isSelected();
+        Scan.setTempo(jSpinner1.getValue());
+        TableModel tm = jTable_pastas.getModel();
+        ArrayList<String> pastas = new ArrayList<String>();
+        for (int i = 0; i < tm.getRowCount(); i++) {
+            String tms = tm.getValueAt(i, 0) == null ? "" : tm.getValueAt(i, 0).toString();
+            pastas.add(tms);
+        }
+        Scan.setPastas(pastas);
 
-        //setDadosBancoPasta(lista);
 
-//        Set chaves = lista.keySet();
-//        for (int i = 0; i < chaves.toArray().length; i++) {
-//            try {
-//                Configuracao conf = new Configuracao();
-//                conf.setChave(chaves.toArray()[i].toString());
-//                Boolean existe = ConfiguracaoBD.carregar(conf);
-//                conf.setValor(lista.get(chaves.toArray()[i]));
-//                if (existe) {
-//                    ConfiguracaoBD.alterar(conf);
-//                } else {
-//                    ConfiguracaoBD.incluir(conf);
-//                }
-//
-//            } catch (Exception ex) {
-//                System.out.println("Erro ao Salvar Configuracao");
-//                ex.printStackTrace();
-//            }
-//
-//        }
 
     }
 
@@ -411,7 +370,7 @@ public class JConfiguracao extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowClosing
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         try {
+        try {
             setDadosBanco();
             Configuracao.setConfiguracoes(ConfiguracaoBD.listar(new ConfiguracaoSC()));
         } catch (Exception ex) {
@@ -428,22 +387,20 @@ public class JConfiguracao extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton_ADD1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-       // restringe a amostra a diretorios apenas
+        // restringe a amostra a diretorios apenas
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         jFileChooser.setDialogTitle("Abrir Pasta");
 
         int res = jFileChooser.showOpenDialog(null);
 
-        if (res == JFileChooser.APPROVE_OPTION) 
+        if (res == JFileChooser.APPROVE_OPTION) {
             jTextField_DestinoOrg.setText(jFileChooser.getSelectedFile().getAbsolutePath());
-        
-    }//GEN-LAST:event_jButton2ActionPerformed
+        }
 
+    }//GEN-LAST:event_jButton2ActionPerformed
     /**
      * @param args the command line arguments
      */
-   
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

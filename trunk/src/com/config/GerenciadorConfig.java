@@ -9,12 +9,15 @@ import com.JMini;
 import com.JPlayList;
 import com.JPrincipal;
 import com.Musiquera;
+import com.Scan;
 import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
 import com.playlist.JSelectPlaylists;
 import java.awt.Point;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -72,6 +75,14 @@ public class GerenciadorConfig {
             cf.incluir("downloadcapas", String.valueOf(MusicaGerencia.downLoadCapas));
             cf.incluir("organizador", String.valueOf(MusicaGerencia.organizarPastas));
             cf.incluir("destino", MusicaGerencia.destino);
+            cf.incluir("tempo_monitorar", String.valueOf(Scan.getTempo()));
+            ArrayList<String> pastas=Scan.getPastas();
+            String pastasT="";
+            for (int i = 0; i < pastas.size(); i++) {
+                pastasT+=pastas.get(i)+";";
+            }
+
+            cf.incluir("monitorar", pastasT);
             cf.gravar();
 
 
@@ -141,6 +152,17 @@ public class GerenciadorConfig {
                     MusicaGerencia.organizarPastas=false;
                 }
             }
+            if(cf.recuperar("tempo_monitorar")!=null){
+                Scan.setTempo(cf.recuperar("tempo_monitorar"));
+              //  Scan.setTempo(1);
+            }
+            if(cf.recuperar("monitorar")!=null){
+                String pastasT[]=cf.recuperar("monitorar").split(";");
+                ArrayList<String> pastas = new ArrayList<String>();
+                pastas.addAll(Arrays.asList(pastasT));
+                Scan.setPastas(pastas);
+            }
+
 
 
 

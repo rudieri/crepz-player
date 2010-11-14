@@ -89,8 +89,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
         playList.posicionar();
-        scan = new Scan(_center.retorna("TempoAtualizar"));
-        scan.setPastas(ConfiguracaoBD.listarPastas());
+       
         try {
             Configuracao.setConfiguracoes(ConfiguracaoBD.listar(new ConfiguracaoSC()));
         } catch (Exception ex) {
@@ -114,6 +113,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         _conf.getAllValores();
         configuracao= new JConfiguracao(this, true);
         inicializaIcones();
+        scan = new Scan(null);
+        //scan.setTempo(1);
     }
 
     public Musiquera getMusiquera() {
@@ -123,6 +124,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     public Icones getIcones() {
         return icone;
     }
+    
 
     /** Atualiza labels da tela principal
      * @param nome Nome da musica, autor e album
@@ -1466,7 +1468,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
        configuracao.setVisible(true);
-        scan.setPastas(ConfiguracaoBD.listarPastas());
+      //  scan.setPastas(ConfiguracaoBD.listarPastas());
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jSlider_volMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_volMouseReleased
