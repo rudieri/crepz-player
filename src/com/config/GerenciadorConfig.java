@@ -11,8 +11,10 @@ import com.JPrincipal;
 import com.Musiquera;
 import com.musica.Musica;
 import com.musica.MusicaBD;
+import com.musica.MusicaGerencia;
 import com.playlist.JSelectPlaylists;
 import java.awt.Point;
+import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -39,13 +41,9 @@ public class GerenciadorConfig {
 
     public void setAllValores() {
         principal.setVisible(false);
-        //Cria uma transação com o banco
-//        Transacao t = new Transacao();
-
+        
         try {
-            //Inicia a transação
-//            t.begin();
-
+          
             Musiquera mq= principal.getMusiquera();
 
             cf.incluir("tocando", String.valueOf(mq.isPlaying()));
@@ -71,20 +69,15 @@ public class GerenciadorConfig {
             cf.incluir("bandeja", String.valueOf(principal.isBandeija()));
             cf.incluir("miniPosicao", String.valueOf((int) mini.getLocal().getX() + "X" + (int) mini.getLocal().getY()));
             cf.incluir("minitop", String.valueOf(mini.getTop()));
-
-            //salva o que foi mudado
-            //   t.commit();
-            // BD.fecharBD();
+            cf.incluir("downloadcapas", String.valueOf(MusicaGerencia.downLoadCapas));
+            cf.incluir("organizador", String.valueOf(MusicaGerencia.organizarPastas));
+            cf.incluir("destino", MusicaGerencia.destino);
             cf.gravar();
 
 
         } catch (Exception ex) {
-            //    t.rollback();
             ex.printStackTrace();
-        } finally {
-         //   BD.fecharBD();
-//            ag.setVisible(false);
-        }
+        } 
 
     }
 
@@ -94,9 +87,7 @@ public class GerenciadorConfig {
             return;
         }
         try {
-            //lê a tabela de configurações que está no banco, list é um HashMap
-            // list = ConfigBD.listar(null);
-            //aplica as configurações.
+            
             if (cf.recuperar("playList") != null && !cf.recuperar("playList").toString().trim().equals("")) {
                 setPlayList(Integer.parseInt((String) cf.recuperar("playList")));
             }
@@ -138,6 +129,20 @@ public class GerenciadorConfig {
             if (cf.recuperar("minitop") != null) {
                 setTop(Boolean.parseBoolean((String) cf.recuperar("minitop")));
             }
+            if(cf.recuperar("downloadcapas")!=null){
+                MusicaGerencia.downLoadCapas=Boolean.parseBoolean(cf.recuperar("downloadcapas"));
+            }
+            if(cf.recuperar("organizador")!=null){
+                MusicaGerencia.organizarPastas=Boolean.parseBoolean(cf.recuperar("organizador"));
+            }
+            if(cf.recuperar("destino")!=null){
+                MusicaGerencia.destino=cf.recuperar("destino");
+                if(! new File(MusicaGerencia.destino).exists()){
+                    MusicaGerencia.organizarPastas=false;
+                }
+            }
+
+
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -189,6 +194,8 @@ public class GerenciadorConfig {
 
     private void setVolume(int v) {
         principal.getMusiquera().setVolume(v);
+        principal.setVolume(v);
+        mini.atualizaVolume(v);
     }
 
     private void setPan(int p) {

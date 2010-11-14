@@ -73,9 +73,9 @@ public class DiretorioUtils {
         int cont = 0;
 
         File[] arquivos = diretorio.listFiles();
-        for (File f : arquivos) {
-            if (f.isDirectory()) {
-                cont += calculaQuantidadeArquivos(f);
+        for (int i=0; i<arquivos.length; i++) {
+            if (arquivos[i].isDirectory()) {
+                cont += calculaQuantidadeArquivos(arquivos[i]);
             } else {
                 cont++;
             }

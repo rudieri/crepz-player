@@ -204,7 +204,7 @@ public class JPlayList extends javax.swing.JDialog {
 
         } catch (Exception ex) {
             t.rollback();
-            System.out.println("FUUUUUUUUUUUUUUUUUUUUUUUUUUUu");
+            System.out.println("FUUUUUUU!! Problema ao atualizar lista!");
             // JOptionPane.showMessageDialog(this, "Erro ao Filtrar \\õ/");
             ex.printStackTrace();
         }
@@ -237,7 +237,7 @@ public class JPlayList extends javax.swing.JDialog {
                         try {
                             jTable.scrollRectToVisible(jTable.getCellRect(jTable.getSelectedRow(), 0, false));
                         } catch (Exception ex) {
-                            System.out.println("---------------Crepz do Rudieri----------------------");
+                            System.out.println("---------------Crepz ao rolar lista----------------------");
                             ex.printStackTrace();
                         }
                     }
@@ -317,8 +317,12 @@ public class JPlayList extends javax.swing.JDialog {
         }else{
             contaErro++;
         }
+        if(total.size()<1){
+            return null;
+        }
         if(contaErro>total.size()){
             JOptionPane.showMessageDialog(this, "Nenhum arquivo foi encontrado... Você montou sua unidades?");
+           contaErro=0;
             return null;
         }
         try {
