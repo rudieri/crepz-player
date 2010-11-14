@@ -333,6 +333,10 @@ public class JMini extends javax.swing.JDialog {
     public void atualizaTempo(int t) {
         jSlider_Tempo.setValue(t);
     }
+    public void atualizaVolume(int t){
+        jSlider_vol.setValue(t);
+         jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -417,15 +421,6 @@ public class JMini extends javax.swing.JDialog {
         jMenuBalanco.setText("Opções");
 
         jMenu3.setText("Balanço");
-        jMenu3.addMenuListener(new javax.swing.event.MenuListener() {
-            public void menuCanceled(javax.swing.event.MenuEvent evt) {
-            }
-            public void menuDeselected(javax.swing.event.MenuEvent evt) {
-            }
-            public void menuSelected(javax.swing.event.MenuEvent evt) {
-                jMenu3MenuSelected(evt);
-            }
-        });
 
         buttonGrou_Balanco.add(jRadioButtonMenuItem1);
         jRadioButtonMenuItem1.setText("Dierito");
@@ -506,11 +501,6 @@ public class JMini extends javax.swing.JDialog {
 
         jMenuCancelar.setMnemonic('c');
         jMenuCancelar.setText("Cancelar");
-        jMenuCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuCancelarActionPerformed(evt);
-            }
-        });
         jPopupMenu1.add(jMenuCancelar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -520,12 +510,6 @@ public class JMini extends javax.swing.JDialog {
         setMinimumSize(new java.awt.Dimension(100, 40));
         setUndecorated(true);
         addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                formMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 formMouseExited(evt);
             }
@@ -541,9 +525,6 @@ public class JMini extends javax.swing.JDialog {
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
                 formMouseDragged(evt);
-            }
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                formMouseMoved(evt);
             }
         });
         getContentPane().setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 1, 1));
@@ -788,13 +769,8 @@ public class JMini extends javax.swing.JDialog {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jSlider_volMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jSlider_volMousePressed(evt);
-            }
-        });
-        jSlider_vol.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jSlider_volStateChanged(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jSlider_volMouseReleased(evt);
             }
         });
         jPanel1.add(jSlider_vol);
@@ -853,10 +829,6 @@ public class JMini extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
-//       setVisible(false);
-    }//GEN-LAST:event_formMouseMoved
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         if (evt.getButton() == 1) {
@@ -932,21 +904,10 @@ public class JMini extends javax.swing.JDialog {
     }//GEN-LAST:event_jToggleButton1MouseReleased
 
     private void jSlider_volMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_volMouseWheelMoved
-        jSlider_vol.setValue(jSlider_vol.getValue() - evt.getWheelRotation());
+        int v=jSlider_vol.getValue() - evt.getWheelRotation();
+        jSlider_vol.setValue(v);
+        jSlider_volMouseReleased(evt);
 }//GEN-LAST:event_jSlider_volMouseWheelMoved
-
-    private void jSlider_volMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_volMousePressed
-}//GEN-LAST:event_jSlider_volMousePressed
-
-    private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
-        System.out.println(jSlider_vol.getValue());
-        principal.mexeVolume(jSlider_vol.getValue());
-//            principal.player.setGain(new Double(jSlider_vol.getValue()) / 100);
-//            principal.player.setGain(new Double(jSlider_vol.getValue()) / 100);
-
-        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
-
-}//GEN-LAST:event_jSlider_volStateChanged
 
     private void jSlider_TempoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMousePressed
 
@@ -961,8 +922,6 @@ public class JMini extends javax.swing.JDialog {
 
     private void jSlider_TempoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMouseEntered
 
-//        System.out.println("RollOver");
-
         jSlider_Tempo.setBorder(new BevelBorder(1, Color.getHSBColor(1, 0.22f, 0.66f), Color.lightGray, Color.lightGray, Color.darkGray));
     }//GEN-LAST:event_jSlider_TempoMouseEntered
 
@@ -970,12 +929,6 @@ public class JMini extends javax.swing.JDialog {
 
         jSlider_Tempo.setBorder(null);
     }//GEN-LAST:event_jSlider_TempoMouseExited
-
-    private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
-//        tarefa.cancel();
-//        tarefa = new Timer();
-//        tarefa.schedule(new tarefaRollOut(), 500);
-    }//GEN-LAST:event_formMouseEntered
 
     private void jPanel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseEntered
 
@@ -1066,10 +1019,6 @@ public class JMini extends javax.swing.JDialog {
             jPopupMenu1.show(this, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_jPanel4MouseClicked
-
-    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_formMouseClicked
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
@@ -1162,14 +1111,6 @@ public class JMini extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jCheckBox_topStateChanged
 
-    private void jMenu3MenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_jMenu3MenuSelected
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenu3MenuSelected
-
-    private void jMenuCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuCancelarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuCancelarActionPerformed
-
     private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
         // TODO add your handling code here:
         System.out.println("Hit: " + Testes.hitTest(evt.getComponent(), new Point(evt.getXOnScreen(), evt.getYOnScreen())));
@@ -1189,6 +1130,13 @@ public class JMini extends javax.swing.JDialog {
             tarefa.schedule(new tarefaRollOut(), 500);
         }
     }//GEN-LAST:event_jPanel4MouseExited
+
+    private void jSlider_volMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_volMouseReleased
+        // TODO add your handling code here:
+        principal.getMusiquera().setVolume(jSlider_vol.getValue());
+        principal.setVolume(jSlider_vol.getValue());
+         jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
+    }//GEN-LAST:event_jSlider_volMouseReleased
 
     /**
      * @param args the command line arguments

@@ -4,8 +4,9 @@
  */
 package com.musica;
 
+import com.JPrincipal;
 import com.conexao.Transacao;
-import com.configuracao.Configuracao;
+import com.config.Configuracao;
 import com.utils.BuscaGoogle;
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +37,15 @@ public class MusicaGerencia {
             + "Big Band,Chorus,Easy Listening,Acoustic,Humor,Speech,Chanson,Opera,Chamber Music,Sonata,Symphony,Booty Bass,Primus,Porn Groove,"
             + "Satire,Slow Jam,Club,Tango,Samba,Folclore").split(",");
     private static String extSuportada = ".mp3.ogg.wav";
-    public static Integer count = 0;
+    public static int count = 0;
+    public static boolean organizarPastas = false;
+    public static boolean downLoadCapas = false;
+    public static String destino  = "";
 
     public static Musica getMusica(Musica m, MP3File mp3, File file) throws Exception {
-        m.setCaminho(mp3.getMp3file().getAbsolutePath());
-
         //getID3v2Tag
-        int cont = 0;
+        m.setNome(file.getName());
         if (mp3.hasID3v2Tag()) {
-            cont++;
             if (!m.setNome(mp3.getID3v2Tag().getSongTitle())) {
                 m.setNome(file.getName());
             }
@@ -55,9 +56,7 @@ public class MusicaGerencia {
             //   mp3.getID3v1Tag().getSize();
         }
         if (mp3.hasID3v1Tag()) {
-
 //        getID3v1
-            cont++;
             if (!m.setNome(mp3.getID3v1Tag().getTitle())) {
                 m.setNome(file.getName());
             }
@@ -66,17 +65,7 @@ public class MusicaGerencia {
             m.setAutor(mp3.getID3v1Tag().getArtist());
             m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
         }
-        if (cont == 0) {
-            if (file.getName().indexOf(".mp3") != -1) {
-                System.out.println("Not MP3");
 
-                m.setNome(file.getName());
-            } else {
-
-                throw new Exception("Erro arquivo não suportado.\n" + file.getName() + "\n" + file.getName().indexOf(".mp3"));
-
-            }
-        }
         m.setImg(getImagemDir(new File(mp3.getMp3file().getAbsolutePath().replace(mp3.getMp3file().getName(), ""))));
 
         return m;
@@ -85,16 +74,12 @@ public class MusicaGerencia {
     public static Musica getMusica(Musica m, File file) throws Exception {
         m.setCaminho(file.getAbsolutePath());
 
-        //getID3v2Tag
-        int cont = 0;
-
-        cont++;
         Map<String, String> pro = getPropriedades(file);
         if (pro != null) {
             if (!m.setNome(pro.get("title"))) {
                 m.setNome(file.getName());
             }
-            
+
             m.setAlbum(pro.get("album"));
             m.setAutor(pro.get("author"));
             m.setGenero(pro.get("ogg.comment.genre"));
@@ -107,9 +92,9 @@ public class MusicaGerencia {
 
     public static void mapearDiretorio(File dir, Transacao t, JProgressBar JProgressBar, Integer total) throws Exception {
         if (dir.isDirectory()) {
-            for (int i = 0; i < dir.listFiles().length; i++) {
-                File f = dir.listFiles()[i];
-                mapearDiretorio(f, t, JProgressBar, total);
+            File[] f = dir.listFiles();
+            for (int i = 0; i < f.length; i++) {
+                mapearDiretorio(f[i], t, JProgressBar, total);
             }
 
         } else {
@@ -133,7 +118,7 @@ public class MusicaGerencia {
     }
 
     public static String getExtecao(File f) {
-        String ext = f.getName().toString();
+        String ext = f.getName();
         return ext.substring(ext.lastIndexOf(".") + 1, ext.length());
 
     }
@@ -153,9 +138,9 @@ public class MusicaGerencia {
     }
 
     public static Musica addFiles(File dir, Transacao t) {
-        Musica m = new Musica();
-        ehValido(dir);
+
         if (ehValido(dir)) {
+            Musica m = new Musica();
             if (getExtecao(dir).equalsIgnoreCase("ogg")) {
                 return adicionaOGG(dir, t);
             }
@@ -164,20 +149,15 @@ public class MusicaGerencia {
                 dir = new File(dir.getAbsolutePath());
                 MP3File mp3 = new MP3File(dir.getAbsolutePath().replace("\\\\", "/").replace("\\", "/").trim());
                 m.setCaminho(dir.getAbsolutePath());
-                boolean organizadorPastas = false;
-                if (Configuracao.getConfiguracoes().get("organizadorPastas") != null) {
-                    organizadorPastas = Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("organizadorPastas").toString());
-                }
-                if (organizadorPastas) {
+                if (organizarPastas) {
                     getMusica(m, mp3, dir);
-                    String dest = Configuracao.getConfiguracoes().get("organizadorDestino") + "/" + removeCaracteresEsp(m.getAutor()) + "/" + removeCaracteresEsp(m.getAlbum()) + "/";
-                    File destino = new File(dest);
-                    destino.mkdirs();
-                    destino = new File(destino.getAbsolutePath() + "/" + dir.getName());
-                    if (!destino.getAbsolutePath().equals(dir.getAbsolutePath())) {
+                    File destinoF = new File(destino);
+                    destinoF.mkdirs();
+                    destinoF = new File(destinoF.getAbsolutePath() + "/" + dir.getName());
+                    if (!destinoF.getAbsolutePath().equals(dir.getAbsolutePath())) {
                         mp3 = null;
-                        if (dir.renameTo(destino)) {
-                            dir = destino;
+                        if (dir.renameTo(destinoF)) {
+                            dir = destinoF;
                         }
                     }
 
@@ -186,7 +166,6 @@ public class MusicaGerencia {
 
                 }
 
-                System.out.println("---------------------\n" + dir.getName());
                 if (MusicaBD.existe(m, t)) {
                     MusicaBD.carregar(m, t);
                     getMusica(m, mp3, dir);
@@ -195,21 +174,22 @@ public class MusicaGerencia {
                     getMusica(m, mp3, dir);
                     MusicaBD.incluir(m, t);
                 }
-                if (Configuracao.getConfiguracoes().get("downloadCapas") != null) {
-                    if (Boolean.TRUE.toString().equals(Configuracao.getConfiguracoes().get("downloadCapas").toString()) && (m.getImg() == null || m.getImg().equals(""))) {
+                    if (downLoadCapas && (m.getImg() == null || m.getImg().equals(""))) {
                         m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
                         MusicaBD.alterar(m, t);
                     }
-                }
+                
 
             } catch (Exception e) {
                 System.out.println("Erro ao importar arquivos");
                 e.printStackTrace();
             }
+            return m;
         } else {
             System.out.println(dir.getName().toLowerCase() + " Não é MP3");
+            return null;
         }
-        return m;
+
     }
 
     public static Musica adicionaOGG(File dir, Transacao t) {
@@ -219,14 +199,14 @@ public class MusicaGerencia {
             getMusica(m, dir);
 
 
-              if (MusicaBD.existe(m, t)) {
-                    MusicaBD.carregar(m, t);
-                   getMusica(m, dir);
-                    MusicaBD.alterar(m, t);
-                } else {
-                  //  getMusica(m, mp3, dir);
-                    MusicaBD.incluir(m, t);
-                }
+            if (MusicaBD.existe(m, t)) {
+                MusicaBD.carregar(m, t);
+                getMusica(m, dir);
+                MusicaBD.alterar(m, t);
+            } else {
+                //  getMusica(m, mp3, dir);
+                MusicaBD.incluir(m, t);
+            }
         } catch (Exception ex) {
             Logger.getLogger(MusicaGerencia.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -242,6 +222,9 @@ public class MusicaGerencia {
 
             public boolean accept(File pathname) {
                 try {
+                    if (getExtecao(pathname).toLowerCase().indexOf(".jpg.png.bmp.gif") != -1) {
+                        return pathname.canRead();
+                    }
                     return (new javax.swing.ImageIcon(pathname.getPath()).getIconHeight() > 0 && pathname.canRead()) && new File(pathname.getAbsolutePath()).exists();
                 } catch (Exception ex) {
                     return false;

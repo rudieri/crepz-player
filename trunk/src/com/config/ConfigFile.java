@@ -18,7 +18,7 @@ public class ConfigFile {
 
     HashMap<String, String> mapa = new HashMap<String, String>();
     String total = "";
-    String grava="";
+    String grava = "";
     public static final String NOVA_LINHA = "<br>";
     public static final String SEPARADOR = "<gt>";
     private FileUtils fu;
@@ -44,6 +44,16 @@ public class ConfigFile {
         }
     }
 
+    public static  void excluir() {
+        File mk = new File(".crepzConf");
+        File f = new File(mk.getAbsolutePath() + "/config.crpz");
+        if(f.exists()){
+            if(!f.delete()){
+                System.out.println("Não consegui apagar o arquivo config.crpz");
+            }
+        }
+    }
+
 //    private void trace(Object ob) {
 //        System.out.println(ob.toString());
 //    }
@@ -56,15 +66,18 @@ public class ConfigFile {
             File f = new File(".crepzConf/config.crpz");
             if (!f.exists()) {
                 f.createNewFile();
-               
-            } 
-            System.out.println("local: " +f.getAbsoluteFile());
-          total= new String( fu.leArquivoCodificacao(f, "UTF-8"));
+
+            }
+            System.out.println("local: " + f.getAbsoluteFile());
+            total = new String(fu.leArquivoCodificacao(f, "UTF-8"));
             String[] lines = total.split(NOVA_LINHA);
             for (int i = 0; i < lines.length; i++) {
                 String string[] = lines[i].split(SEPARADOR);
-                if(string.length<2){
-                    return true;
+                if (string.length < 2) {
+                    String[] st=new String[2];
+                    st[0]=string[0];
+                    st[1]="";
+                    string=st;
                 }
                 mapa.put(string[0], string[1]);
             }

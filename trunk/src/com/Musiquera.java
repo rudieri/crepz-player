@@ -61,6 +61,7 @@ public class Musiquera implements BasicPlayerListener {
 
     public void setVolume(int v) {
         volume = v;
+
         try {
             player.setGain(new Double(v) / 100);
         } catch (BasicPlayerException ex) {
@@ -392,6 +393,7 @@ public class Musiquera implements BasicPlayerListener {
                 if (Math.abs(event.getValue() * 100 - volume) > 2) {
                     try {
                         player.setGain(new Double(volume) / 100);
+
                     } catch (BasicPlayerException ex) {
                         System.out.println("Erro ao mudar o volume!");
                     }

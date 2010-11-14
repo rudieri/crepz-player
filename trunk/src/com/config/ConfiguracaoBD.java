@@ -1,5 +1,6 @@
-package com.configuracao;
+package com.config;
 
+import com.config.Configuracao;
 import com.conexao.SQL;
 import com.conexao.Transacao;
 import java.io.File;

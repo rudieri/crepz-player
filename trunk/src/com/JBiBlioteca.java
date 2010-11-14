@@ -23,6 +23,7 @@ import com.musica.MusicaSC;
 import com.utils.DiretorioUtils;
 import com.utils.JTrocarImagem;
 import java.awt.event.KeyEvent;
+import java.util.Date;
 
 /*
  * To change this template, choose Tools | Templates
@@ -256,10 +257,12 @@ public class JBiBlioteca extends javax.swing.JDialog {
                     t.begin();
                     File pasta = telaAbrirArquivo();
                     if (pasta != null) {
+                        Long date = new Date().getTime();
                         int total = DiretorioUtils.calculaQuantidadeArquivos(pasta);
-                        Integer count = 0;
                         MusicaGerencia.count = 0;
                         MusicaGerencia.mapearDiretorio(pasta, t, jProgressBar, total);
+                        System.out.println("Tempo decorrido: " + (new Date().getTime() - date));
+
 
                     }
                     t.commit();
@@ -644,7 +647,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
                         if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                             try {
                                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-                              principal.getMusiquera().abrir(m,0,false, true);
+                                principal.getMusiquera().abrir(m, 0, false, true);
                                 jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                             } catch (Exception ex) {
                                 Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);

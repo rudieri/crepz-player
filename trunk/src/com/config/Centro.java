@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.configuracao;
+package com.config;
 
 import java.util.HashMap;
 import java.util.logging.Level;

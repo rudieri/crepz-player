@@ -8,11 +8,10 @@
  *
  * Created on 19/08/2010, 21:17:54
  */
-package com.configuracao;
+package com.config;
 
+import com.musica.MusicaGerencia;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -25,47 +24,43 @@ import javax.swing.table.DefaultTableModel;
 public class JConfiguracao extends javax.swing.JDialog {
 
     private JFileChooser jFileChooser = new JFileChooser();
+  
 
     /** Creates new form JConfiguracao */
     public JConfiguracao(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+       
         setTela();
     }
 
     private void setTela() {
         try {
-            HashMap<String, String> lista = ConfiguracaoBD.listar(new ConfiguracaoSC());
-            jCheckBox_teste.setSelected(lista.get("teste") == null ? false : Boolean.parseBoolean(lista.get("teste").toString()));
-            
-            //Aba Organizador
-            jCheckBox_Organizador.setSelected(lista.get("organizadorPastas") == null ? false : Boolean.parseBoolean(lista.get("organizadorPastas").toString()));
-            jTextField_DestinoOrg.setText(lista.get("organizadorDestino") == null?"":lista.get("organizadorDestino").toString());
-            jCheckBox_DownloadCapa.setSelected(lista.get("downloadCapas") == null ? false : Boolean.parseBoolean(lista.get("downloadCapas").toString()));
+            jCheckBox_DownloadCapa.setSelected(MusicaGerencia.downLoadCapas);
+            jCheckBox_Organizador.setSelected(MusicaGerencia.organizarPastas);
+            jTextField_DestinoOrg.setText(MusicaGerencia.destino);
 
-            setTabelaPastas(lista);
-            Object ob = Integer.parseInt(lista.get("TempoAtualizar"));
-            jSpinner1.setValue(ob);
+        
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void setTabelaPastas(HashMap<String, String> lista) {
-        int c = 1;
-        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
-        tm.setRowCount(0);
-        String pastaMonitorada = "pastaMonitorada";
-        Set chaves = lista.keySet();
-        for (int i = 0; i < chaves.toArray().length; i++) {
-            if (lista.get(pastaMonitorada + c) != null) {
-                Object[] linha = new Object[1];
-                linha[0] = lista.get(pastaMonitorada + c);
-                tm.addRow(linha);
-            }
-            c++;
-        }
-    }
+//    private void setTabelaPastas(HashMap<String, String> lista) {
+//        int c = 1;
+//        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+//        tm.setRowCount(0);
+//        String pastaMonitorada = "pastaMonitorada";
+//        Set chaves = lista.keySet();
+//        for (int i = 0; i < chaves.toArray().length; i++) {
+//            if (lista.get(pastaMonitorada + c) != null) {
+//                Object[] linha = new Object[1];
+//                linha[0] = lista.get(pastaMonitorada + c);
+//                tm.addRow(linha);
+//            }
+//            c++;
+//        }
+//    }
 
     private File telaAbrirArquivo() throws Exception {
 
@@ -99,54 +94,57 @@ public class JConfiguracao extends javax.swing.JDialog {
         }
     }
 
-    private void setDadosBancoPasta(HashMap<String, String> lista) {
-        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
-        String pastaMonitorada = "pastaMonitorada";
-        try {
-            ConfiguracaoBD.excluirChavesQueComecam(pastaMonitorada);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        int c = 1;
-        for (int i = 0; i < tm.getRowCount(); i++) {
-            String pasta = (String) tm.getValueAt(i, 0);
-            if (pasta != null && !pasta.trim().equals("")) {
-                lista.put(pastaMonitorada + (c), pasta);
-                c++;
-            }
-        }
-    }
+//    private void setDadosBancoPasta(HashMap<String, String> lista) {
+//        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+//        String pastaMonitorada = "pastaMonitorada";
+//        try {
+//            ConfiguracaoBD.excluirChavesQueComecam(pastaMonitorada);
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//        int c = 1;
+//        for (int i = 0; i < tm.getRowCount(); i++) {
+//            String pasta = (String) tm.getValueAt(i, 0);
+//            if (pasta != null && !pasta.trim().equals("")) {
+//                lista.put(pastaMonitorada + (c), pasta);
+//                c++;
+//            }
+//        }
+//    }
 
     private void setDadosBanco() {
-        HashMap<String, String> lista = new HashMap<String, String>();
-        lista.put("teste", String.valueOf(jCheckBox_teste.isSelected()));
-        lista.put("TempoAtualizar", jSpinner1.getValue().toString());
+//        HashMap<String, String> lista = new HashMap<String, String>();
+//        lista.put("teste", String.valueOf(jCheckBox_teste.isSelected()));
+//        lista.put("TempoAtualizar", jSpinner1.getValue().toString());
 
-        lista.put("organizadorPastas", String.valueOf(jCheckBox_Organizador.isSelected()));
-        lista.put("organizadorDestino", jTextField_DestinoOrg.getText());
-        lista.put("downloadCapas", String.valueOf(jCheckBox_DownloadCapa.isSelected()));
+       // lista.put("organizadorPastas", String.valueOf(jCheckBox_Organizador.isSelected()));
+       MusicaGerencia.organizarPastas=jCheckBox_Organizador.isSelected();
+       MusicaGerencia.destino=jTextField_DestinoOrg.getText()!=null?jTextField_DestinoOrg.getText():"";
+       MusicaGerencia.downLoadCapas=jCheckBox_DownloadCapa.isSelected();
+       //lista.put("organizadorDestino", jTextField_DestinoOrg.getText());
+       // lista.put("downloadCapas", String.valueOf(jCheckBox_DownloadCapa.isSelected()));
 
-        setDadosBancoPasta(lista);
+        //setDadosBancoPasta(lista);
 
-        Set chaves = lista.keySet();
-        for (int i = 0; i < chaves.toArray().length; i++) {
-            try {
-                Configuracao conf = new Configuracao();
-                conf.setChave(chaves.toArray()[i].toString());
-                Boolean existe = ConfiguracaoBD.carregar(conf);
-                conf.setValor(lista.get(chaves.toArray()[i]));
-                if (existe) {
-                    ConfiguracaoBD.alterar(conf);
-                } else {
-                    ConfiguracaoBD.incluir(conf);
-                }
-
-            } catch (Exception ex) {
-                System.out.println("Erro ao Salvar Configuracao");
-                ex.printStackTrace();
-            }
-
-        }
+//        Set chaves = lista.keySet();
+//        for (int i = 0; i < chaves.toArray().length; i++) {
+//            try {
+//                Configuracao conf = new Configuracao();
+//                conf.setChave(chaves.toArray()[i].toString());
+//                Boolean existe = ConfiguracaoBD.carregar(conf);
+//                conf.setValor(lista.get(chaves.toArray()[i]));
+//                if (existe) {
+//                    ConfiguracaoBD.alterar(conf);
+//                } else {
+//                    ConfiguracaoBD.incluir(conf);
+//                }
+//
+//            } catch (Exception ex) {
+//                System.out.println("Erro ao Salvar Configuracao");
+//                ex.printStackTrace();
+//            }
+//
+//        }
 
     }
 
@@ -444,21 +442,8 @@ public class JConfiguracao extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                JConfiguracao dialog = new JConfiguracao(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+   
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
