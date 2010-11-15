@@ -8,6 +8,7 @@ import com.conexao.SQL;
 import com.conexao.Transacao;
 import com.musica.MusicaGerencia;
 import java.io.File;
+import java.io.FileFilter;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -67,6 +68,7 @@ public class Scan {
         } catch (Exception ex) {
             Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         thMonitor = new Thread(new Runnable() {
 
             public void run() {
@@ -102,7 +104,7 @@ public class Scan {
             } catch (InterruptedException ex) {
                 Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
             }
-            File[] files=end.listFiles(new java.io.FileFilter() {
+            File[] files=end.listFiles(new FileFilter() {
 
                    public boolean accept(File pathname) {
                         return MusicaGerencia.ehValido(pathname) || pathname.isDirectory();
