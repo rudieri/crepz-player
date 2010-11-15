@@ -110,9 +110,9 @@ public class Musiquera implements BasicPlayerListener {
     public void abrir(Musica m, int toc, boolean isPause, boolean tocar) {
         try {
             this.musica = m;
-            if(m==null){
+            if (m == null) {
                 System.out.println("Musica não existe, nullPointer");
-                return ;
+                return;
             }
             in = new File(m.getCaminho());
             if (in == null) {
@@ -138,8 +138,8 @@ public class Musiquera implements BasicPlayerListener {
         } catch (BasicPlayerException ex) {
             tenteiAbrir++;
             System.out.println(ex.getMessage());
-            if(ex.getMessage().toString().indexOf("FileNotFoundException")!=-1){
-                JOptionPane.showMessageDialog(null, "Arquivo não encontrado: "+m.getCaminho());
+            if (ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
+                JOptionPane.showMessageDialog(null, "Arquivo não encontrado: " + m.getCaminho());
             }
             switch (tenteiAbrir) {
                 case 1:
@@ -285,17 +285,20 @@ public class Musiquera implements BasicPlayerListener {
     }
 
     public String miliSegundosEmMinSeq(Long mili) {
-        mili = mili / 1000000;
-        SimpleDateFormat sdf = new SimpleDateFormat("ss");
-        Date date = null;
         try {
+            mili = mili / 1000000;
+            SimpleDateFormat sdf = new SimpleDateFormat("ss");
+            Date date = null;
+
             date = sdf.parse(mili.toString());
+            return new java.text.SimpleDateFormat("HH:mm:ss").format(date);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        return new java.text.SimpleDateFormat("HH:mm:ss").format(date);
+        return "";
     }
+
     public String miliSegundosEmMinSeq(int mili) {
         mili = mili / 1000000;
         SimpleDateFormat sdf = new SimpleDateFormat("ss");
@@ -311,7 +314,7 @@ public class Musiquera implements BasicPlayerListener {
 
     public void opened(Object stream, Map properties) {
         total = new Long((Integer) properties.get("audio.length.bytes"));
-      
+
         Encoding enc;
 
         try {
@@ -323,7 +326,7 @@ public class Musiquera implements BasicPlayerListener {
             if (enc.toString().toLowerCase().indexOf("mpeg") != -1) {
                 tipo = "mp3";
             }
-            System.out.println("Tipo: "+ tipo);
+            System.out.println("Tipo: " + tipo);
             String info = properties.get("title") + " " + properties.get("author") + " " + properties.get("album");
             String duracao = miliSegundosEmMinSeq((Long) properties.get("duration"));
             int bits = (Integer) properties.get(tipo + ".bitrate.nominal.bps") / 1000;
