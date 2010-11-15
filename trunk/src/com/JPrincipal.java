@@ -3,10 +3,7 @@ package com;
 import com.conexao.BD;
 import com.config.ConfigFile;
 import com.config.GerenciadorConfig;
-import com.config.Centro;
-import com.config.Configuracao;
-import com.config.ConfiguracaoBD;
-import com.config.ConfiguracaoSC;
+
 import com.config.JConfiguracao;
 import com.graficos.Icones;
 import com.help.JHelp;
@@ -71,7 +68,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private JPlayList playList = new JPlayList(this, false, this);
     private JMini jmini = new JMini(this, false, this, playList, biblioteca);
     GerenciadorConfig _conf = new GerenciadorConfig(this, playList, biblioteca, jmini);
-    Centro _center = new Centro();
+
     private Scan scan;
     private int volAnt;
     JConfiguracao configuracao;
@@ -90,11 +87,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
         playList.posicionar();
        
-        try {
-            Configuracao.setConfiguracoes(ConfiguracaoBD.listar(new ConfiguracaoSC()));
-        } catch (Exception ex) {
-            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-        }
+     
 
 
 
