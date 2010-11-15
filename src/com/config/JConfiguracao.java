@@ -14,8 +14,6 @@ import com.Scan;
 import com.musica.MusicaGerencia;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -41,7 +39,7 @@ public class JConfiguracao extends javax.swing.JDialog {
             jCheckBox_DownloadCapa.setSelected(MusicaGerencia.downLoadCapas);
             jCheckBox_Organizador.setSelected(MusicaGerencia.organizarPastas);
             jTextField_DestinoOrg.setText(MusicaGerencia.destino);
-            Object tmp =Scan.getTempo();
+            Object tmp = Scan.getTempo();
             jSpinner1.setValue(tmp);
             DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
             tm.setRowCount(0);
@@ -103,8 +101,16 @@ public class JConfiguracao extends javax.swing.JDialog {
         }
         Scan.setPastas(pastas);
 
+    }
 
-
+    private void remove() {
+        DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+        if (tm.getRowCount() > 1) {
+            tm.removeRow(jTable_pastas.getSelectedRow());
+        } else {
+            tm.setRowCount(0);
+        }
+        setDadosBanco();
     }
 
     /** This method is called from within the constructor to
@@ -258,7 +264,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jLabel6.setText("Tempo de Repetição");
         jPanel1.add(jLabel6);
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(30, 30, 120, 15));
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(5, 5, 300, 5));
         jPanel1.add(jSpinner1);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -361,21 +367,16 @@ public class JConfiguracao extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        try {
-            setDadosBanco();
-            Configuracao.setConfiguracoes(ConfiguracaoBD.listar(new ConfiguracaoSC()));
-        } catch (Exception ex) {
-            Logger.getLogger(JConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        setDadosBanco();
+
+
     }//GEN-LAST:event_formWindowClosing
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            setDadosBanco();
-            Configuracao.setConfiguracoes(ConfiguracaoBD.listar(new ConfiguracaoSC()));
-        } catch (Exception ex) {
-            Logger.getLogger(JConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        setDadosBanco();
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton_ADDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ADDActionPerformed
@@ -383,7 +384,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 }//GEN-LAST:event_jButton_ADDActionPerformed
 
     private void jButton_ADD1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ADD1ActionPerformed
-        // TODO add your handling code here:
+        remove();
     }//GEN-LAST:event_jButton_ADD1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

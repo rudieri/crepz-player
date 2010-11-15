@@ -4,9 +4,7 @@
  */
 package com.musica;
 
-import com.JPrincipal;
 import com.conexao.Transacao;
-import com.config.Configuracao;
 import com.utils.BuscaGoogle;
 import java.io.File;
 import java.io.IOException;

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class Scan {
 
-    private static Integer tempo = 100;
+    private static Integer tempo;
     Thread thMonitor;
 
     public Scan(Object t) {
@@ -35,6 +35,10 @@ public class Scan {
     }
 
     public static void setPastas(ArrayList<String> dirs) {
+        System.out.println("Novs locais definidos para o scan:");
+        for (int i= 0; i < dirs.size(); i++) {
+            System.out.println("L"+i + ": " + dirs.get(i));
+        }
         pastas = dirs;
     }
 
@@ -47,6 +51,7 @@ public class Scan {
             t = 30;
         }
         tempo = Integer.parseInt(t.toString());
+        System.out.println("Novo tepo: "+ tempo);
     }
 
     public static Integer getTempo() {
@@ -68,6 +73,7 @@ public class Scan {
                 trace("Começando comparação!");
                 while (true) {
                     try {
+                        System.out.println("Esperando: " + tempo + " min.");
                         Thread.sleep(tempo * 60000);
                         for (int i = 0; i < pastas.size(); i++) {
                             atualiza();
