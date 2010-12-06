@@ -153,6 +153,7 @@ public class JPlayList extends javax.swing.JDialog {
     ListSelectionListener listSelectionListener = new ListSelectionListener() {
 
                 public void valueChanged(ListSelectionEvent e) {
+                    System.out.println(e.toString());
                     jTable.scrollRectToVisible(jTable.getCellRect(jTable.getSelectedRow(), 0, false));
                 }
             };
