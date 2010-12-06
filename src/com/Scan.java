@@ -12,7 +12,6 @@ import java.io.FileFilter;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -100,7 +99,7 @@ public class Scan {
         if (end.isDirectory()) {
             trace("Dir: " + end.getAbsolutePath());
             try {
-                Thread.sleep(150);
+                Thread.sleep(170);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
             }
