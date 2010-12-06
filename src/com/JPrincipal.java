@@ -68,10 +68,11 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private JPlayList playList = new JPlayList(this, false, this);
     private JMini jmini = new JMini(this, false, this, playList, biblioteca);
     GerenciadorConfig _conf = new GerenciadorConfig(this, playList, biblioteca, jmini);
-
     private Scan scan;
     private int volAnt;
     JConfiguracao configuracao;
+    private boolean mouseVolumeDown = false;
+
     public JPrincipal() {
         initComponents();
 
@@ -86,8 +87,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
         playList.posicionar();
-       
-     
+
+
 
 
 
@@ -104,7 +105,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         musiq = new Musiquera(this, playList, biblioteca, jmini, icone);
         _conf.getAllValores();
-        configuracao= new JConfiguracao(this, true);
+        configuracao = new JConfiguracao(this, true);
         inicializaIcones();
         scan = new Scan(null);
         //scan.setTempo(1);
@@ -117,7 +118,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     public Icones getIcones() {
         return icone;
     }
-    
 
     /** Atualiza labels da tela principal
      * @param nome Nome da musica, autor e album
@@ -212,12 +212,9 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
     }
 
-
     public void setBalaco(int b) {
         jSlider_Balanco.setValue(b);
     }
-
-   
 
     public void setBandeija(boolean b) {
         bandeija = b;
@@ -442,10 +439,28 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         return new ImageIcon(im.getScaledInstance(l, a, Image.SCALE_SMOOTH));
     }
 
+    public void volumeMudando() {
+        new Thread(new Runnable() {
+
+            public void run() {
+                while (mouseVolumeDown) {
+                    try {
+                        Thread.sleep(50);
+                        musiq.setVolume(jSlider_vol.getValue());
+                        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+            }
+        }).start();
+    }
     /*
      * (non-Javadoc)
      * @see com.melloware.jintellitype.HotkeyListener#onHotKey(int)
      */
+
     public void onHotKey(int aIdentifier) {
 //      output("WM_HOTKEY message received " + Integer.toString(aIdentifier));
     }
@@ -561,8 +576,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         thisX = this.getX();
         thisY = this.getY();
     }
-
-  
 
     public int getSliderValue() {
         return jSlider_vol.getValue();
@@ -989,6 +1002,11 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
                 jSlider_volMouseReleased(evt);
             }
         });
+        jSlider_vol.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSlider_volStateChanged(evt);
+            }
+        });
         jPanel2.add(jSlider_vol);
 
         jPanel16.setBackground(new java.awt.Color(255, 255, 255));
@@ -1152,11 +1170,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private void jSlider_volMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_volMouseWheelMoved
         // TODO add your handling code here:
         jSlider_vol.setValue(jSlider_vol.getValue() - evt.getWheelRotation());
-        jSlider_volMouseReleased(evt);
+        musiq.setVolume(jSlider_vol.getValue());
+        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
     }//GEN-LAST:event_jSlider_volMouseWheelMoved
 
     private void jSlider_volMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_volMousePressed
         // TODO add your handling code here:
+        mouseVolumeDown = true;
+        volumeMudando();
         System.out.println("pressed");
     }//GEN-LAST:event_jSlider_volMousePressed
 
@@ -1460,16 +1481,20 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-       configuracao.setVisible(true);
-      //  scan.setPastas(ConfiguracaoBD.listarPastas());
+        configuracao.setVisible(true);
+        //  scan.setPastas(ConfiguracaoBD.listarPastas());
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jSlider_volMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_volMouseReleased
         // TODO add your handling code here:
-        musiq.setVolume(jSlider_vol.getValue());
-        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
+        mouseVolumeDown = false;
+
         System.out.println("Volume Released: " + jSlider_vol.getValue());
     }//GEN-LAST:event_jSlider_volMouseReleased
+
+    private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jSlider_volStateChanged
 
     /**
      * @param args the command line arguments
@@ -1517,26 +1542,25 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 //            public void run() {
         JPrincipal p = new JPrincipal();
         p.setVisible(true);
-       try{
-        if (System.getProperty("os.name").indexOf("Windows") > -1) {
-            if (System.getProperty("sun.arch.data.model").equals("64")) {
-                JIntellitype.setLibraryLocation(p.getClass().getResource("com/dll/JIntellitype64.dll").getFile());
-            } else {
-                JIntellitype.setLibraryLocation(p.getClass().getResource("com/dll/JIntellitype.dll").getFile());
-            }
+        try {
+            if (System.getProperty("os.name").indexOf("Windows") > -1) {
+                if (System.getProperty("sun.arch.data.model").equals("64")) {
+                    JIntellitype.setLibraryLocation(p.getClass().getResource("com/dll/JIntellitype64.dll").getFile());
+                } else {
+                    JIntellitype.setLibraryLocation(p.getClass().getResource("com/dll/JIntellitype.dll").getFile());
+                }
 
-            if (JIntellitype.checkInstanceAlreadyRunning("JIntellitype Test Application")) {
-                System.exit(1);
+                if (JIntellitype.checkInstanceAlreadyRunning("JIntellitype Test Application")) {
+                    System.exit(1);
+                }
+                if (!JIntellitype.isJIntellitypeSupported()) {
+                    System.exit(1);
+                }
+                p.initJIntellitype();
             }
-            if (!JIntellitype.isJIntellitypeSupported()) {
-                System.exit(1);
-            }
-            p.initJIntellitype();
-        }
-        }
-       catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-       }
+        }
         aguarde.setVisible(false);
 //            }
 //        });
@@ -1606,7 +1630,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     boolean ajust = false;
     boolean trayEvent = true;
     boolean bandeija = false;
-   
     int initX;
     int initY;
     int thisX;
