@@ -1517,11 +1517,12 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 //            public void run() {
         JPrincipal p = new JPrincipal();
         p.setVisible(true);
+       try{
         if (System.getProperty("os.name").indexOf("Windows") > -1) {
             if (System.getProperty("sun.arch.data.model").equals("64")) {
-                JIntellitype.setLibraryLocation(p.getClass().getResource("/com/dll/JIntellitype64.dll").getFile());
+                JIntellitype.setLibraryLocation(p.getClass().getResource("com/dll/JIntellitype64.dll").getFile());
             } else {
-                JIntellitype.setLibraryLocation(p.getClass().getResource("/com/dll/JIntellitype.dll").getFile());
+                JIntellitype.setLibraryLocation(p.getClass().getResource("com/dll/JIntellitype.dll").getFile());
             }
 
             if (JIntellitype.checkInstanceAlreadyRunning("JIntellitype Test Application")) {
@@ -1532,6 +1533,10 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
             }
             p.initJIntellitype();
         }
+        }
+       catch(Exception e){
+            e.printStackTrace();
+       }
         aguarde.setVisible(false);
 //            }
 //        });
