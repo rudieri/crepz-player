@@ -664,6 +664,8 @@ public class JPlayList extends javax.swing.JDialog {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenu_info = new javax.swing.JMenuItem();
 
         cMenu_Tocar.setText("jMenuItem7");
         Conteto_Playlist.add(cMenu_Tocar);
@@ -897,6 +899,18 @@ public class JPlayList extends javax.swing.JDialog {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu2.setText("Ver");
+
+        jMenu_info.setText("Informações");
+        jMenu_info.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu_infoActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenu_info);
+
+        jMenuBar1.add(jMenu2);
+
         setJMenuBar(jMenuBar1);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -1124,6 +1138,13 @@ public class JPlayList extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jTextEntradaCaretUpdate
 
+    private void jMenu_infoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_infoActionPerformed
+        // TODO add your handling code here:
+        principal.info.add("Total de músicas na playlist", String.valueOf(total.size()));
+        principal.info.setVisible(true);
+
+    }//GEN-LAST:event_jMenu_infoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1181,6 +1202,7 @@ public class JPlayList extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -1188,6 +1210,7 @@ public class JPlayList extends javax.swing.JDialog {
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenu_info;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
