@@ -137,12 +137,10 @@ public class BD {
     public void criaTabelas(Connection conn) throws Exception {
         //dai cria
         Statement st = conn.createStatement();
-        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/config/config.sql").toURI())).toString());
-        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/musica.sql").toURI())).toString());
+         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/musica.sql").toURI())).toString());
         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playlist/playlist.sql").toURI())).toString());
         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playmusica/playmusica.sql").toURI())).toString());
-        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/configuracao/configuracao.sql").toURI())).toString());
-
+       
     }
 
     public static void fecharBD() {
