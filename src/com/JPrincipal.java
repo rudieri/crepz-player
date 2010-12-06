@@ -5,6 +5,7 @@ import com.config.ConfigFile;
 import com.config.GerenciadorConfig;
 
 import com.config.JConfiguracao;
+import com.geral.InfoList;
 import com.graficos.Icones;
 import com.help.JHelp;
 import com.help.JSobre;
@@ -73,6 +74,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     JConfiguracao configuracao;
     private boolean mouseVolumeDown = false;
 
+    public InfoList info = new InfoList(this, false);
     public JPrincipal() {
         initComponents();
 
