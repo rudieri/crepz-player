@@ -352,7 +352,7 @@ public class Musiquera implements BasicPlayerListener {
         if (!jSliderBarPressed()) {
             principal.atualizaTempo(tempo);
         }
-        String hms = miliSegundosEmMinSeq(i);
+        String hms = miliSegundosEmMinSeq((Long) properties.get(tipo + ".position.microseconds"));
         principal.atualizaTempo(hms);
 
     }
