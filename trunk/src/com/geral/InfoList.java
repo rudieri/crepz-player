@@ -32,23 +32,24 @@ public class InfoList extends javax.swing.JDialog {
         Object[] linha = new Object[2];
         linha[0] = chave;
         linha[1] = valor;
-        if (jahTem(chave)) {
-            return;
+        int indice=indexOf(chave);
+        if (indice==-1) {
+           dftm.setValueAt(valor, indice, 1);
         }
         dftm.addRow(linha);
     }
 
-    public boolean jahTem(String chave) {
+    public int indexOf(String chave) {
         for (int i = 0; i < dftm.getRowCount(); i++) {
             Object ob = dftm.getValueAt(i, 0);
             if (ob != null) {
 
                 if (ob.toString().equals(chave)) {
-                    return true;
+                    return i;
                 }
             }
         }
-        return false;
+        return -1;
     }
 
     /** This method is called from within the constructor to
