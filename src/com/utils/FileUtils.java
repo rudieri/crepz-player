@@ -27,7 +27,7 @@ public class FileUtils {
      * @return
      * @throws Exception
      */
-    public static StringBuffer leArquivo(File arquivo) throws Exception {
+    public static StringBuffer leArquivo(File arquivo) throws FileNotFoundException, IOException  {
         return leArquivoCodificacao(arquivo, "UTF-8");
         
     }
@@ -63,7 +63,7 @@ public class FileUtils {
      * @throws UnsupportedEncodingException
      * @throws IOException
      */
-    public static StringBuffer leArquivoCodificacao(File arquivo, String codificacao) throws Exception {
+    public static StringBuffer leArquivoCodificacao(File arquivo, String codificacao) throws FileNotFoundException, UnsupportedEncodingException, IOException  {
         StringBuffer stringBuffer = new StringBuffer();
         FileInputStream leitor = new FileInputStream(arquivo);
         InputStreamReader in = new InputStreamReader(leitor, codificacao);
