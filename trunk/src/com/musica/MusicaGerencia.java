@@ -4,10 +4,12 @@
  */
 package com.musica;
 
+import com.conexao.SQL;
 import com.conexao.Transacao;
 import com.utils.BuscaGoogle;
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +40,36 @@ public class MusicaGerencia {
     public static int count = 0;
     public static boolean organizarPastas = false;
     public static boolean downLoadCapas = false;
-    public static String destino  = "";
+    public static String destino = "";
+
+    public static boolean addGenero(String genero) {
+        if (genero == null || genero.equals("")) {
+            return false;
+        }
+        Transacao t = new Transacao();
+        try {
+            t.begin();
+            SQL sql = new SQL();
+            sql.add("select nome from genero where genero.nome=:nm");
+            sql.setParam("nm", genero);
+            ResultSet rs = t.executeQuery(sql.getSql());
+            if (rs.next()) {
+                return false;
+            }
+            sql.clear();
+            sql.add("insert into genero values(:id,:nome)");
+            sql.setParam("nome", genero);
+            sql.setParam("id", null);
+            if(t.executeUpdate(sql.getSql())<1){
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+
+            Logger.getLogger(MusicaGerencia.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 
     public static Musica getMusica(Musica m, MP3File mp3, File file) throws Exception {
         //getID3v2Tag
@@ -172,11 +203,11 @@ public class MusicaGerencia {
                     getMusica(m, mp3, dir);
                     MusicaBD.incluir(m, t);
                 }
-                    if (downLoadCapas && (m.getImg() == null || m.getImg().equals(""))) {
-                        m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
-                        MusicaBD.alterar(m, t);
-                    }
-                
+                if (downLoadCapas && (m.getImg() == null || m.getImg().equals(""))) {
+                    m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
+                    MusicaBD.alterar(m, t);
+                }
+
 
             } catch (Exception e) {
                 System.out.println("Erro ao importar arquivos");

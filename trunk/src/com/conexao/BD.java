@@ -121,13 +121,13 @@ public class BD {
             String banco = new BD().getArquivosBanco();
             File properties = new File(banco + ".properties");
             if (!properties.delete()) {
-                System.out.println("Não deu pra excluir o BD.properties");
+               JOptionPane.showMessageDialog(null,"Não deu pra excluir o BD.properties");
             }
             BD bd = new BD();
             bd.criaTabelas(bd.getConexao());
             File script = new File(banco + ".script");
             if (!script.delete()) {
-                System.out.println("Não deu pra excluir o BD.script");
+                 JOptionPane.showMessageDialog(null,"Não deu pra excluir o BD.script");
             }
         } catch (Exception ex) {
             Logger.getLogger(BD.class.getName()).log(Level.SEVERE, null, ex);
