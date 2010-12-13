@@ -1,4 +1,5 @@
 package com.musica;
+
 import com.conexao.SQL;
 import com.conexao.Transacao;
 import java.sql.*;
@@ -26,7 +27,6 @@ public class MusicaBD {
             throw new Exception(" - Caminho da Musica não informado.");
         }
 
-
     }
 
     /**
@@ -35,9 +35,6 @@ public class MusicaBD {
     public static void consistir(Musica musica) throws Exception {
         consistirBK(musica);
 
-//        if (musica.getNome() == null || musica.getNome().equals("")) {
-//            throw new Exception(" - Nome da Musica não informado.");
-//        }
 
     }
 
@@ -53,17 +50,17 @@ public class MusicaBD {
         consistir(musica);
 
         SQL sql = new SQL();
-        sql.add("INSERT INTO " + TBL);
-        sql.add(" (id, caminho, nome, autor, genero, album, img) ");
-        sql.add("VALUES ");
-        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img)");
-
-        sql.setParam("id", null);
-        sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
-        sql.setParam("nome", musica.getNome());
-        sql.setParam("autor", musica.getAutor());
-        sql.setParam("genero", musica.getGenero());
-        sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
+//        sql.add("INSERT INTO " + TBL);
+//        sql.add(" (id, caminho, nome, autor, genero, album, img) ");
+//        sql.add("VALUES ");
+//        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img)");
+//
+//        sql.setParam("id", null);
+//        sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
+//        sql.setParam("nome", musica.getNome());
+//        sql.setParam("autor", musica.getAutor());
+//        sql.setParam("genero", musica.getGenero());
+//        sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
 
         return t.executeUpdate(sql.getSql());
     }
@@ -209,14 +206,14 @@ public class MusicaBD {
             sql.setParam("album", filtro.getAlbum().toUpperCase() + "%");
             c++;
         }
-        if(filtro.getGenero()!=null && ! filtro.getGenero().equals("")){
+        if (filtro.getGenero() != null && !filtro.getGenero().equals("")) {
             sql.add("OR UCASE (genero) like :genero");
-            sql.setParam("genero", filtro.getGenero().toUpperCase()+"%");
+            sql.setParam("genero", filtro.getGenero().toUpperCase() + "%");
             c++;
         }
-        
-        
-        if(c==0){
+
+
+        if (c == 0) {
             sql.add("1=1");
         }
         sql.add("ORDER BY nome ");
@@ -244,7 +241,6 @@ public class MusicaBD {
         }
     }
 
-
     public static ArrayList listarAgrupado(MusicaSC filtro, String agrupar, Transacao t) throws Exception {
         if (filtro == null) {
             throw new Exception(" - Filtro não informado.");
@@ -252,7 +248,7 @@ public class MusicaBD {
 
 
         SQL sql = new SQL();
-        sql.add("SELECT "+agrupar+" as agrup , count(*) as m, max(img) as capa");
+        sql.add("SELECT " + agrupar + " as agrup , count(*) as m, max(img) as capa");
         sql.add("FROM " + TBL);
         sql.add("WHERE ");
         int c = 0;
@@ -271,11 +267,11 @@ public class MusicaBD {
             sql.setParam("album", filtro.getAlbum().toUpperCase() + "%");
             c++;
         }
-         if(c==0){
+        if (c == 0) {
             sql.add("1=1");
         }
 
-        sql.add("GROUP BY "+agrupar);
+        sql.add("GROUP BY " + agrupar);
 
 
 
@@ -283,7 +279,7 @@ public class MusicaBD {
         try {
             ArrayList lista = new ArrayList();
             while (rs.next()) {
-                JCapa capa = new JCapa(rs.getString("capa").replace("<&aspas>","'"), rs.getString("agrup"),new Integer(rs.getInt("m")));
+                JCapa capa = new JCapa(rs.getString("capa").replace("<&aspas>", "'"), rs.getString("agrup"), new Integer(rs.getInt("m")));
 
                 lista.add(capa);
             }
@@ -292,7 +288,8 @@ public class MusicaBD {
             rs.close();
         }
     }
-    public Musica pesquisar(String parametro, String valor){
+
+    public Musica pesquisar(String parametro, String valor) {
         SQL sql = new SQL();
         sql.add("SELECT * ");
         sql.add("FROM " + TBL);
@@ -302,11 +299,11 @@ public class MusicaBD {
         Musica musica = new Musica();
         try {
             t.begin();
-            ResultSet rs=t.executeQuery(sql.getSql());
+            ResultSet rs = t.executeQuery(sql.getSql());
             t.commit();
-            
+
             while (rs.next()) {
-             
+
                 musica.setId(rs.getInt("id"));
                 musica.setCaminho(rs.getString("caminho"));
                 musica.setNome(rs.getString("nome"));
@@ -442,7 +439,116 @@ public class MusicaBD {
         }
     }
 
-      public static ArrayList listarAgrupado(MusicaSC filtro,String agrupador) throws Exception {
+    public static boolean inserirGenero(String genero, Transacao t) {
+        try {
+
+            SQL sql = new SQL();
+            sql.add("INSERT INTO GENERO VALUES(:id,:genero)");
+            sql.setParam("id", null);
+            sql.setParam(":genero", genero);
+            t.executeUpdate(sql.getSql());
+            return true;
+
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public static boolean inserirFotos(String endereco, Transacao t) {
+        try {
+
+            SQL sql = new SQL();
+            sql.add("INSERT INTO FOTOS VALUES(:id,:endereco)");
+            sql.setParam("id", null);
+            sql.setParam(":endereco", endereco);
+            t.executeUpdate(sql.getSql());
+            return true;
+
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public static boolean inserirArtista(String nome, String pais, Transacao t) {
+        try {
+
+            SQL sql = new SQL();
+            sql.add("INSERT INTO ARTISTA VALUES(:id,:nome,:pais)");
+            sql.setParam("id", null);
+            sql.setParam(":nome", nome);
+            sql.setParam(":pais", pais);
+            t.executeUpdate(sql.getSql());
+            return true;
+
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public static boolean inserirArtista(int id, String tipo, Transacao t) {
+        try {
+            SQL sql = new SQL();
+            sql.clear();
+            sql.add("INSERT INTO" + tipo + " VALUES(:id)");
+            sql.setParam("id", id);
+            t.executeUpdate(sql.getSql());
+            return true;
+
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    /**
+     Inseri um album.
+     *@param nome Nome do album.
+     * @param dataLanc Data do lancamento do album.
+     * @param codFoto Código da foto do album.
+     * @param codInterprete Código do interprete ou banda.
+       @return true
+     */
+    public static boolean inserirAlbum(String nome, String dataLanc, int codFoto, int codInterprete, Transacao t) throws Exception {
+        SQL sql = new SQL();
+        sql.add("INSERT INTO ALBUM VALUES(:id,:nome,:dataLanc,:codFoto,:codInterprete)");
+        sql.setParam("id", null);
+        sql.setParam(":nome", nome);
+        sql.setParam(":dataLanc", dataLanc);
+        sql.setParam(":codFoto", nome);
+        sql.setParam(":codInterprete", codInterprete);
+        t.executeUpdate(sql.getSql());
+        return true;
+    }
+    /**
+     *@param arquivo Endereço do arquivo.
+     *@param nome Nome da música.
+     * @param favorita Se a musica está marcada como favorita.
+     * @param Xtocada Quantas vezes a música foi todcada (comneça me 0)
+     * @param codComp Código que se relaciona com o compositor.
+     * @param codAlb Código que diz em que album está a música.
+     * @param codGen Código que diz o gênero da música.
+     *
+     * @return Se foi inserido.
+     */
+    public static boolean inserirMusica(String arquivo, String nome, boolean favorita, int Xtocada, int codComp, int codAlb, int codGen, Transacao t) throws Exception {
+        SQL sql = new SQL();
+        sql.add("INSERT INTO ALBUM VALUES(:id,:arquivo,:nome,:favorita,:Xtocada,:codComp,:codAlb,:codGen)");
+        sql.setParam("id", null);
+        sql.setParam(":arquivo", arquivo);
+        sql.setParam(":nome", nome);
+        sql.setParam(":favorita", favorita);
+        sql.setParam(":Xtocada", Xtocada);
+        sql.setParam(":codComp", codComp);
+        sql.setParam(":codAlb", codAlb);
+        sql.setParam(":codGen", codGen);
+        t.executeUpdate(sql.getSql());
+        return true;
+    }
+
+
+    public static ArrayList listarAgrupado(MusicaSC filtro, String agrupador) throws Exception {
         Transacao t = new Transacao();
         try {
             t.begin();
