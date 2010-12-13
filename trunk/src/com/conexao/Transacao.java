@@ -47,18 +47,9 @@ public class Transacao {
     }
 
     /** Método que realiza a execução de um comando de atualização sql, a saber, insert, update, delete. */
-    public int executeUpdate(String sql) throws Exception {
-
+    public int executeUpdate(String sql) throws SQLException {
         int r = 0;
-        try {
-            r = stmt.executeUpdate(sql);
-        } catch (Exception ex) {
-            if (ex.getMessage().indexOf("foreign key") == -1) {
-                throw ex;
-            } else {
-                throw new Exception(" - Existem registros associados.Mensagem do BD: \n - " + ex.getMessage());
-            }
-        }
+        r = stmt.executeUpdate(sql);
         return r;
     }
 
@@ -68,4 +59,3 @@ public class Transacao {
         return conn.createStatement().executeQuery(sql);
     }
 }
-
