@@ -36,6 +36,7 @@ public class JCapa extends javax.swing.JPanel {
                 }else{
                     BufferedImage bf = ImageIO.read(new File(img));
                     imgIcon = new javax.swing.ImageIcon(bf.getScaledInstance(80, 120, Image.SCALE_SMOOTH));
+
                     SwapCapa.swap.put(img, imgIcon);
                 }
                 
