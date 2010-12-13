@@ -10,6 +10,9 @@ package com.graficos;
  * @author Rudieri T. Colbek
  */
 public class Dado {
+    public Dado(String img){
+        imagem=img;
+    }
     public String imagem;
     public Dado prox;
 }
