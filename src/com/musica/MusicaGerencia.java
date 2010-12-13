@@ -6,7 +6,9 @@ package com.musica;
 
 import com.conexao.SQL;
 import com.conexao.Transacao;
+import com.graficos.Dado;
 import com.utils.BuscaGoogle;
+import com.utils.Fila;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -41,6 +43,7 @@ public class MusicaGerencia {
     public static boolean organizarPastas = false;
     public static boolean downLoadCapas = false;
     public static String destino = "";
+    public static Fila filaDeImagens = new Fila();
 
     public static boolean addGenero(String genero) {
         if (genero == null || genero.equals("")) {
@@ -94,8 +97,9 @@ public class MusicaGerencia {
             m.setAutor(mp3.getID3v1Tag().getArtist());
             m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
         }
-
-        m.setImg(getImagemDir(new File(mp3.getMp3file().getAbsolutePath().replace(mp3.getMp3file().getName(), ""))));
+        String endImg=getImagemDir(new File(mp3.getMp3file().getAbsolutePath().replace(mp3.getMp3file().getName(), "")));
+        m.setImg(endImg);
+        filaDeImagens.inserir(new Dado(endImg));
 
         return m;
     }
