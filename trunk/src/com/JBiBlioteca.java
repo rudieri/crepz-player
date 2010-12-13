@@ -44,7 +44,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     /** Creates new form JBiBlioteca */
     private JPrincipal principal;
     private JFileChooser jFileChooser = new JFileChooser();
-    private JMini mini;
+    
     String genero = "";
 
     public JBiBlioteca(JPrincipal principal) {
@@ -64,7 +64,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
     public JBiBlioteca(JMini mini, JPrincipal principal) {
         super(mini, false);
         initComponents();
-        this.mini = mini;
         this.principal = principal;
         jProgressBar.setVisible(false);
         jPanelFiltrar.setVisible(false);
@@ -79,6 +78,11 @@ public class JBiBlioteca extends javax.swing.JDialog {
     public void setVisible(boolean b, boolean a) {
         super.setVisible(b);
         super.setAlwaysOnTop(a);
+         if (jCheckBox_capa.isSelected()) {
+            atualizarTabelaCapa();
+        } else {
+            atualizarTabelaLista();
+        }
     }
 
     /** Método que inicializa a tela. */
