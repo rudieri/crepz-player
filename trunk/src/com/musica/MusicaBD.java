@@ -22,11 +22,9 @@ public class MusicaBD {
         if (musica == null) {
             throw new Exception(" - Musica não informado.");
         }
-
         if (musica.getCaminho() == null || musica.getCaminho().equals("")) {
             throw new Exception(" - Caminho da Musica não informado.");
         }
-
     }
 
     /**
@@ -34,8 +32,6 @@ public class MusicaBD {
      */
     public static void consistir(Musica musica) throws Exception {
         consistirBK(musica);
-
-
     }
 
     /**
@@ -50,6 +46,15 @@ public class MusicaBD {
         consistir(musica);
 
         SQL sql = new SQL();
+        int idGenero = inserirGenero(musica.getGenero(), t);
+        int idFotos = inserirFotos(musica.getImg(), t);
+        int idCompositor = inserirCompositor(musica.getCompositor(), "Não definido", t);
+        int idInterprete = inserirInterprete(musica.getAutor(), "Não definido", t);
+        int idAlbum = inserirAlbum(musica.getAlbum(), "Não definido",idFotos , idInterprete, t);
+        int idMusica= inserirMusica(musica.getCaminho(), musica.getNome(), false, 0, idCompositor, idAlbum, idGenero, t);
+
+        //  inserirMusica(musica.getCaminho(), musica.getNome(), true, 0, codComp, codAlb, codGen, t);
+//        MusicaGerencia
 //        sql.add("INSERT INTO " + TBL);
 //        sql.add(" (id, caminho, nome, autor, genero, album, img) ");
 //        sql.add("VALUES ");
@@ -147,7 +152,7 @@ public class MusicaBD {
      * @param t Contendo a transação.
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
      */
-    public static boolean carregar(Musica musica, Transacao t) throws Exception {
+    public static Musica carregar(Musica musica, Transacao t) throws Exception {
         SQL sql = new SQL();
         sql.add("SELECT * FROM " + TBL);
         sql.add("WHERE id = :id ");
@@ -157,7 +162,7 @@ public class MusicaBD {
         ResultSet rs = t.executeQuery(sql.getSql());
         try {
             if (!rs.next()) {
-                return false;
+                return null;
             }
 
             musica.setId(rs.getInt("id"));
@@ -169,7 +174,7 @@ public class MusicaBD {
             musica.setImg(rs.getString("img"));
 
 
-            return true;
+            return musica;
         } finally {
             rs.close();
         }
@@ -410,11 +415,11 @@ public class MusicaBD {
      * @param musica Contendo a musica.
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
      */
-    public static boolean carregar(Musica musica) throws Exception {
+    public static Musica carregar(Musica musica) throws Exception {
         Transacao t = new Transacao();
         try {
             t.begin();
-            boolean r = carregar(musica, t);
+            Musica r = carregar(musica, t);
             t.commit();
             return r;
         } catch (Exception ex) {
@@ -439,59 +444,88 @@ public class MusicaBD {
         }
     }
 
-    public static boolean inserirGenero(String genero, Transacao t) {
+    public static int existe(String valor, String coluna, String tabela, Transacao t) {
         try {
+            SQL sql = new SQL();
+            sql.add("SELECT ID FROM :tabela WHERE :coluna = :valor");
+            sql.setParam(":tabela", tabela);
+            sql.setParam("coluna", coluna);
+            sql.setParam(":valor", valor);
+            ResultSet rs = t.executeQuery(sql.getSql());
+            if (!rs.next()) {
+                return -1;
+            }
+            return rs.getInt(coluna);
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
 
+    public static int inserirGenero(String genero, Transacao t) {
+        try {
+            int id = existe(genero, "nome", "genero", t);
+            if (id != -1) {
+                return id;
+            }
             SQL sql = new SQL();
             sql.add("INSERT INTO GENERO VALUES(:id,:genero)");
             sql.setParam("id", null);
             sql.setParam(":genero", genero);
             t.executeUpdate(sql.getSql());
-            return true;
+            id = existe(genero, "nome", "genero", t);
+            return id;
 
         } catch (Exception ex) {
             Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            return -1;
         }
     }
 
-    public static boolean inserirFotos(String endereco, Transacao t) {
+    public static int inserirFotos(String endereco, Transacao t) {
         try {
-
+            int id = existe(endereco, "endereco", "fotos", t);
+            if (id != -1) {
+                return id;
+            }
             SQL sql = new SQL();
             sql.add("INSERT INTO FOTOS VALUES(:id,:endereco)");
             sql.setParam("id", null);
             sql.setParam(":endereco", endereco);
             t.executeUpdate(sql.getSql());
-            return true;
+            id = existe(endereco, "endereco", "fotos", t);
+            return id;
 
         } catch (Exception ex) {
             Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            return -1;
         }
     }
 
-    public static boolean inserirArtista(String nome, String pais, Transacao t) {
+    public static int inserirArtista(String nome, String pais, Transacao t) {
         try {
-
+            int id = existe(nome, "nome", "artista", t);
+            if (id != -1) {
+                return id;
+            }
             SQL sql = new SQL();
             sql.add("INSERT INTO ARTISTA VALUES(:id,:nome,:pais)");
             sql.setParam("id", null);
             sql.setParam(":nome", nome);
             sql.setParam(":pais", pais);
             t.executeUpdate(sql.getSql());
-            return true;
+            id = existe(nome, "nome", "artista", t);
+            return id;
 
         } catch (Exception ex) {
             Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            return -1;
         }
     }
 
     public static boolean inserirArtista(int id, String tipo, Transacao t) {
         try {
             SQL sql = new SQL();
-            sql.clear();
             sql.add("INSERT INTO" + tipo + " VALUES(:id)");
             sql.setParam("id", id);
             t.executeUpdate(sql.getSql());
@@ -502,25 +536,59 @@ public class MusicaBD {
             return false;
         }
     }
+
+    public static int inserirInterprete(String nome, String pais, Transacao t) {
+        try {
+            int id = inserirArtista(nome, pais, t);
+            inserirArtista(id, "interprete", t);
+            return id;
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
+
+    public static int inserirCompositor(String nome, String pais, Transacao t) {
+        try {
+            int id = inserirArtista(nome, pais, t);
+            inserirArtista(id, "compositor", t);
+            return id;
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
+
     /**
-     Inseri um album.
+    Inseri um album.
      *@param nome Nome do album.
      * @param dataLanc Data do lancamento do album.
      * @param codFoto Código da foto do album.
      * @param codInterprete Código do interprete ou banda.
-       @return true
+    @return true
      */
-    public static boolean inserirAlbum(String nome, String dataLanc, int codFoto, int codInterprete, Transacao t) throws Exception {
-        SQL sql = new SQL();
-        sql.add("INSERT INTO ALBUM VALUES(:id,:nome,:dataLanc,:codFoto,:codInterprete)");
-        sql.setParam("id", null);
-        sql.setParam(":nome", nome);
-        sql.setParam(":dataLanc", dataLanc);
-        sql.setParam(":codFoto", nome);
-        sql.setParam(":codInterprete", codInterprete);
-        t.executeUpdate(sql.getSql());
-        return true;
+    public static int inserirAlbum(String nome, String dataLanc, int codFoto, int codInterprete, Transacao t) {
+        try {
+            int id = existe(nome, "nome", "album", t);
+            if (id != -1) {
+                return id;
+            }
+            SQL sql = new SQL();
+            sql.add("INSERT INTO ALBUM VALUES(:id,:nome,:dataLanc,:codFoto,:codInterprete)");
+            sql.setParam("id", null);
+            sql.setParam(":nome", nome);
+            sql.setParam(":dataLanc", dataLanc);
+            sql.setParam(":codFoto", nome);
+            sql.setParam(":codInterprete", codInterprete);
+            t.executeUpdate(sql.getSql());
+            id = existe(nome, "nome", "album", t);
+            return id;
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
     }
+
     /**
      *@param arquivo Endereço do arquivo.
      *@param nome Nome da música.
@@ -532,7 +600,11 @@ public class MusicaBD {
      *
      * @return Se foi inserido.
      */
-    public static boolean inserirMusica(String arquivo, String nome, boolean favorita, int Xtocada, int codComp, int codAlb, int codGen, Transacao t) throws Exception {
+    public static int inserirMusica(String arquivo, String nome, boolean favorita, int Xtocada, int codComp, int codAlb, int codGen, Transacao t) {
+         try{int id = existe(arquivo, "arquivo", "musica", t);
+            if (id != -1) {
+                return id;
+            }
         SQL sql = new SQL();
         sql.add("INSERT INTO ALBUM VALUES(:id,:arquivo,:nome,:favorita,:Xtocada,:codComp,:codAlb,:codGen)");
         sql.setParam("id", null);
@@ -544,9 +616,13 @@ public class MusicaBD {
         sql.setParam(":codAlb", codAlb);
         sql.setParam(":codGen", codGen);
         t.executeUpdate(sql.getSql());
-        return true;
+        id = existe(arquivo, "arquivo", "musica", t);
+        return id;
+        }catch(Exception ex){
+             System.out.println("Problemas ao inserir a musica!!!");
+             return -1;
+        }
     }
-
 
     public static ArrayList listarAgrupado(MusicaSC filtro, String agrupador) throws Exception {
         Transacao t = new Transacao();

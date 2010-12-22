@@ -16,6 +16,7 @@ public class Musica {
     private String nome;
     private String autor;
     private String genero;
+    private String compositor;
     private String Album;
     private String caminho;
     private String img;
@@ -54,7 +55,26 @@ public class Musica {
      * @param autor the autor to set
      */
     public void setAutor(String autor) {
-        this.autor = autor;
+        if(autor==null && autor.equals("") ){
+            if(this.autor==null){
+                this.autor="Não definido!";
+            }
+        }else{
+            this.autor = autor;
+        }
+    }
+
+    public void setCompositor(String compositor){
+       if(compositor==null && compositor.equals("") ){
+            if(this.compositor==null){
+                this.compositor="Não definido!";
+            }
+        }else{
+            this.compositor = compositor;
+        }
+    }
+    public String getCompositor(){
+        return compositor;
     }
 
     /**
@@ -68,7 +88,7 @@ public class Musica {
      * @param genero the genero to set
      */
     public void setGenero(String genero) {
-        if (!(genero == null)) {
+        if (genero != null) {
             if (genero.indexOf("(") == 0) {
                 try {
                     setGenero(new Integer(genero.replace("(", "").replace(")", "")));
@@ -77,6 +97,11 @@ public class Musica {
                 }
             } else {
                 this.genero = genero;
+            }
+        }
+        else{
+            if(this.genero==null){
+                this.genero="Não definido!";
             }
         }
     }
@@ -95,7 +120,9 @@ public class Musica {
         if (Album != null) {
             this.Album = Album;
         } else {
-            Album = "";
+            if(this.Album==null){
+                this.Album = "Não definido!";
+            }
         }
     }
 
