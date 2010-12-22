@@ -6,7 +6,6 @@ package com.musica;
 
 import com.conexao.SQL;
 import com.conexao.Transacao;
-import com.graficos.Dado;
 import com.utils.BuscaGoogle;
 import com.utils.Fila;
 import java.io.File;
@@ -85,11 +84,14 @@ public class MusicaGerencia {
             m.setAlbum(mp3.getID3v2Tag().getAlbumTitle());
             m.setAutor(mp3.getID3v2Tag().getLeadArtist());
             m.setGenero(mp3.getID3v2Tag().getSongGenre());
+           m.setCompositor(mp3.getID3v2Tag().getAuthorComposer());
+           
+            
             //   mp3.getID3v1Tag().getSize();
         }
         if (mp3.hasID3v1Tag()) {
 //        getID3v1
-            if (!m.setNome(mp3.getID3v1Tag().getTitle())) {
+            if (!m.setNome(mp3.getID3v1Tag().getTitle()) && m.getNome()==null) {
                 m.setNome(file.getName());
             }
             m.setSize(mp3.getID3v1Tag().getSize());
@@ -99,7 +101,7 @@ public class MusicaGerencia {
         }
         String endImg=getImagemDir(new File(mp3.getMp3file().getAbsolutePath().replace(mp3.getMp3file().getName(), "")));
         m.setImg(endImg);
-        filaDeImagens.inserir(new Dado(endImg));
+       // filaDeImagens.inserir(new Dado(endImg));
 
         return m;
     }
@@ -182,8 +184,9 @@ public class MusicaGerencia {
                 dir = new File(dir.getAbsolutePath());
                 MP3File mp3 = new MP3File(dir.getAbsolutePath().replace("\\\\", "/").replace("\\", "/").trim());
                 m.setCaminho(dir.getAbsolutePath());
+                 m= getMusica(m, mp3, dir);
                 if (organizarPastas) {
-                    getMusica(m, mp3, dir);
+                  
                     File destinoF = new File(destino);
                     destinoF.mkdirs();
                     destinoF = new File(destinoF.getAbsolutePath() + "/" + dir.getName());
@@ -200,11 +203,10 @@ public class MusicaGerencia {
                 }
 
                 if (MusicaBD.existe(m, t)) {
-                    MusicaBD.carregar(m, t);
-                    getMusica(m, mp3, dir);
+                   // MusicaBD.carregar(m, t);
+                    //getMusica(m, mp3, dir);
                     MusicaBD.alterar(m, t);
                 } else {
-                    getMusica(m, mp3, dir);
                     MusicaBD.incluir(m, t);
                 }
                 if (downLoadCapas && (m.getImg() == null || m.getImg().equals(""))) {

@@ -42,6 +42,7 @@ public class Aguarde extends javax.swing.JFrame{
     public void standBy(){
         new Thread(new Runnable() {
 
+            @SuppressWarnings("SleepWhileHoldingLock")
             public void run() {
                 int count = 0;
                 while(true){
