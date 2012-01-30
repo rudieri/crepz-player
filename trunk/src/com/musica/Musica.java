@@ -4,6 +4,7 @@
  */
 package com.musica;
 
+import com.utils.model.Filtravel;
 import com.utils.model.ObjetoTabela;
 import java.io.Serializable;
 
@@ -11,7 +12,7 @@ import java.io.Serializable;
  *
  * @author manchini
  */
-public class Musica implements Serializable{
+public class Musica implements Serializable, Filtravel {
 
     private int id;
     @ObjetoTabela(nomeColuna = "Nome")
@@ -216,5 +217,10 @@ public class Musica implements Serializable{
         int hash = 7;
         hash = 79 * hash + this.id;
         return hash;
+    }
+
+    @Override
+    public String getTextoParaPesquisa() {
+        return String.valueOf(nome + album + autor + genero).toLowerCase();
     }
 }

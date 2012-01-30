@@ -69,6 +69,20 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
         this.carregador = carregador;
     }
 
+    private void alterarMusica(Musica musica) {
+        try {
+//            int musicasBanco = MusicaBD.contarMusicas();
+//            if (musicasBanco != objModelMusicas.getRowCount()) {
+//                atualizaTabelaMusica();
+//            } else {
+                MusicaBD.carregar(musica);
+                objModelMusicas.atualizarItem(musica, jTableMusicas.getSelectedRow());
+//            }
+        } catch (Exception ex) {
+            Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void initTabelaFila() {
         modelFila = new ModelReadOnly();
         modelFila.addColumn("");
@@ -172,6 +186,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
         if (modelFila.getRowCount() > 0) {
             Musica musica = (Musica) modelFila.getValueAt(0, 0);
             modelFila.removeRow(0);
+            alterarMusica(musica);
             return musica;
         }
         return null;
@@ -249,6 +264,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
         jPanel3.add(jLabel1);
 
         jTextFieldPesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldPesquisaKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jTextFieldPesquisaKeyTyped(evt);
             }
@@ -319,7 +337,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Tocando Agora..."));
         jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jLabelTocando.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        jLabelTocando.setFont(new java.awt.Font("Dialog", 0, 11));
         jLabelTocando.setText("Nada...");
         jLabelTocando.setPreferredSize(new java.awt.Dimension(0, 18));
         jPanel5.add(jLabelTocando, java.awt.BorderLayout.CENTER);
@@ -342,24 +360,20 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
 
     private void jTableMusicasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMusicasMouseClicked
         if (evt.getClickCount() > 1) {
-            Musica musica = objModelMusicas.getItem(jTableMusicas.getSelectedRow());
+            Musica musica = objModelMusicas.getItem(jTableMusicas.convertRowIndexToModel(jTableMusicas.getSelectedRow()));
             musiquera.abrir(musica, 0, false);
-            try {
-                int musicasBanco = MusicaBD.contarMusicas();
-                if (musicasBanco != objModelMusicas.getRowCount()) {
-                    atualizaTabelaMusica();
-                } else {
-                    MusicaBD.carregar(musica);
-                    objModelMusicas.atualizarItem(musica, jTableMusicas.getSelectedRow());
-                }
-            } catch (Exception ex) {
-                Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            alterarMusica(musica);
         }
     }//GEN-LAST:event_jTableMusicasMouseClicked
 
     private void jTextFieldPesquisaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPesquisaKeyTyped
-        // TODO add your handling code here:
+
+//        for (int i = 0; i < objModelMusicas.getRowCount(); i++) {
+//            Musica musica = objModelMusicas.getItem(i);
+//            if (musica.getNome().contains(text)) {
+//
+//            }
+//        }
     }//GEN-LAST:event_jTextFieldPesquisaKeyTyped
 
     private void jTableFilaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFilaMouseClicked
@@ -367,8 +381,14 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
             Musica musica = (Musica) modelFila.getValueAt(jTableFila.getSelectedRow(), 0);
             modelFila.removeRow(jTableFila.getSelectedRow());
             musiquera.abrir(musica, 0, false);
+            alterarMusica(musica);
         }
     }//GEN-LAST:event_jTableFilaMouseClicked
+
+    private void jTextFieldPesquisaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPesquisaKeyReleased
+        String text = jTextFieldPesquisa.getText();
+        objModelMusicas.setFiltro(text);
+    }//GEN-LAST:event_jTextFieldPesquisaKeyReleased
 
     /**
      * @param args the command line arguments

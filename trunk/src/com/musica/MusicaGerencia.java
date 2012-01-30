@@ -261,12 +261,14 @@ public class MusicaGerencia {
             return "";
         }
         String ret;
-        ret = st.replace("/", "");
-//        ret = ret.replace("|", "").replace("ώ", "");
-//        ret = ret.replace("|", "").replace("ώ", "");
-//        ret = ret.replace(" ", "_");
-        ret = ret.replace("ÿ", "");
-        ret = ret.replace("ώ", "");
+
+        ret = st.replaceAll("[^0-9a-zA-Z/_.:;η\\-+()*&@#$!%αβγικντυσϊ ]", "");
+//        ret = st.replace("/", "");
+////        ret = ret.replace("|", "").replace("ώ", "");
+////        ret = ret.replace("|", "").replace("ώ", "");
+////        ret = ret.replace(" ", "_");
+//        ret = ret.replace("ÿ", "");
+//        ret = ret.replace("ώ", "");
 
         return ret;
     }
