@@ -96,6 +96,7 @@
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldPesquisa">
                       <Events>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldPesquisaKeyReleased"/>
                         <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldPesquisaKeyTyped"/>
                       </Events>
                     </Component>

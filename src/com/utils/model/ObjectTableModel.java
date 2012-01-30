@@ -14,21 +14,28 @@ import javax.swing.table.TableModel;
  *
  * @author rudieri
  */
-public class ObjectTableModel<E> implements TableModel {
+public class ObjectTableModel<E extends Filtravel> implements TableModel {
 
     private ArrayList<TableModelListener> tableModelListeners;
     private ArrayList<E> itens;
+    private ArrayList<E> itensFiltrados;
     private final Class<E> modelo;
+    private String filtro;
 
     public ObjectTableModel(Class<E> modelo) {
         tableModelListeners = new ArrayList<TableModelListener>(2);
         itens = new ArrayList<E>(10);
+        itensFiltrados = new ArrayList<E>(10);
         this.modelo = modelo;
     }
 
     @Override
     public int getRowCount() {
-        return itens.size();
+        if (filtro == null) {
+            return itens.size();
+        } else {
+            return itensFiltrados.size();
+        }
     }
 
     @Override
@@ -65,7 +72,11 @@ public class ObjectTableModel<E> implements TableModel {
     @Override
     @Deprecated
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return ObjetoTabeaUtils.getValueAt(itens.get(rowIndex), columnIndex);
+        if (filtro == null) {
+            return ObjetoTabeaUtils.getValueAt(itens.get(rowIndex), columnIndex);
+        } else {
+            return ObjetoTabeaUtils.getValueAt(itensFiltrados.get(rowIndex), columnIndex);
+        }
     }
 
     /**
@@ -115,7 +126,12 @@ public class ObjectTableModel<E> implements TableModel {
     }
 
     public E getItem(int row) {
-        return itens.get(row);
+        if (filtro==null) {
+            return itens.get(row);
+
+        }else{
+            return itensFiltrados.get(row);
+        }
     }
 
     public void clear() {
@@ -124,6 +140,53 @@ public class ObjectTableModel<E> implements TableModel {
             TableModelEvent event = new TableModelEvent(this);
             tableModelListeners.get(i).tableChanged(event);
 
+        }
+    }
+
+    private void atualizarFiltro() {
+        if (!itensFiltrados.isEmpty()) {
+            for (int i = 0; i < tableModelListeners.size(); i++) {
+                TableModelEvent event = new TableModelEvent(this, 0, 0, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
+                tableModelListeners.get(i).tableChanged(event);
+            }
+        }
+        itensFiltrados.clear();
+        System.out.println("Filtro: " + filtro);
+        for (int i = 0; i < itens.size(); i++) {
+            E item = itens.get(i);
+            if (item.getTextoParaPesquisa().contains(filtro)) {
+                itensFiltrados.add(item);
+            }
+        }
+        System.out.println("Itens Filtrados: " + itensFiltrados.size());
+        for (int i = 0; i < tableModelListeners.size(); i++) {
+            TableModelEvent event = new TableModelEvent(this, 0, itensFiltrados.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+            if (!itensFiltrados.isEmpty()) {
+//             event = new TableModelEvent(this, 0, 0, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
+                tableModelListeners.get(i).tableChanged(event);
+            }
+
+        }
+    }
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String text) {
+        if (text.isEmpty()) {
+            filtro = null;
+            for (int i = 0; i < tableModelListeners.size(); i++) {
+                TableModelEvent event = new TableModelEvent(this, 0, itens.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+                if (!itensFiltrados.isEmpty()) {
+//             event = new TableModelEvent(this, 0, 0, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
+                    tableModelListeners.get(i).tableChanged(event);
+                }
+
+            }
+        } else {
+            this.filtro = text;
+            atualizarFiltro();
         }
     }
 }
