@@ -4,24 +4,30 @@
  */
 package com.musica;
 
+import com.utils.model.ObjetoTabela;
+import java.io.Serializable;
+
 /**
  *
  * @author manchini
  */
-public class Musica {
+public class Musica implements Serializable{
 
-   
-   
-    private Integer id;
+    private int id;
+    @ObjetoTabela(nomeColuna = "Nome")
     private String nome;
+    @ObjetoTabela(nomeColuna = "Autor")
     private String autor;
+    @ObjetoTabela(nomeColuna = "Genero")
     private String genero;
-    private String Album;
+    @ObjetoTabela(nomeColuna = "Album")
+    private String album;
+    @ObjetoTabela(nomeColuna = "Tempo")
+    private Tempo tempo;
     private String caminho;
     private String img;
     private int size;
     private int number;
-   
 
     /**
      * @return the nome
@@ -34,11 +40,11 @@ public class Musica {
      * @param nome the nome to set
      */
     public boolean setNome(String nome) {
-        if (nome == null || nome.equals("")) {
+        if (nome == null || nome.isEmpty()) {
             System.out.println("\n------- NOME VAZIO -------\n");
             return false;
         } else {
-            this.nome = nome;
+            this.nome = MusicaGerencia.removeCaracteresEsp(nome);
             return true;
         }
     }
@@ -54,7 +60,7 @@ public class Musica {
      * @param autor the autor to set
      */
     public void setAutor(String autor) {
-        this.autor = autor;
+        this.autor = MusicaGerencia.removeCaracteresEsp(autor);
     }
 
     /**
@@ -68,15 +74,17 @@ public class Musica {
      * @param genero the genero to set
      */
     public void setGenero(String genero) {
-        if (!(genero == null)) {
-            if (genero.indexOf("(") == 0) {
+        if (genero != null) {
+            String normalizeGenero = MusicaGerencia.removeCaracteresEsp(genero);
+            if (normalizeGenero.indexOf('(') == 0) {
                 try {
-                    setGenero(new Integer(genero.replace("(", "").replace(")", "")));
+                    String replace = normalizeGenero.replaceAll("[^0-9]", "");
+                    setGenero(new Integer(replace));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             } else {
-                this.genero = genero;
+                this.genero = normalizeGenero;
             }
         }
     }
@@ -85,17 +93,17 @@ public class Musica {
      * @return the Album
      */
     public String getAlbum() {
-        return Album;
+        return album;
     }
 
     /**
-     * @param Album the Album to set
+     * @param album the Album to set
      */
-    public void setAlbum(String Album) {
-        if (Album != null) {
-            this.Album = Album;
+    public void setAlbum(String album) {
+        if (album != null) {
+            this.album = MusicaGerencia.removeCaracteresEsp(album);
         } else {
-            Album = "";
+            this.album = "";
         }
     }
 
@@ -125,7 +133,7 @@ public class Musica {
         if (img != null) {
             return img.replace("<&aspas>", "'");
         } else {
-            return "";
+            return null;
         }
     }
 
@@ -133,7 +141,7 @@ public class Musica {
      * @param img the img to set
      */
     public void setImg(String img) {
-        if (!(img == null)) {
+        if (img != null) {
             this.img = img.replace("\\", "/").replace("//", "/").replace("'", "<&aspas>");
         }
 
@@ -153,9 +161,7 @@ public class Musica {
         this.id = id;
     }
 
-   
-
-    public  void setGenero(int genre) {
+    public void setGenero(int genre) {
         if (genre >= MusicaGerencia.generos.length || genre < 0) {
             genero = "";
             return;
@@ -168,7 +174,7 @@ public class Musica {
         }
     }
 
-    public  void setSize(int s) {
+    public void setSize(int s) {
         this.size = s;
     }
 
@@ -176,7 +182,7 @@ public class Musica {
         return this.size;
     }
 
-    private void setNumero(int n) {
+    public void setNumero(int n) {
         this.number = n;
     }
 
@@ -184,5 +190,31 @@ public class Musica {
         return number;
     }
 
-   
+    public Tempo getTempo() {
+        return tempo;
+    }
+
+    public void setTempo(Tempo tempo) {
+        this.tempo = tempo;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Musica) {
+            return ((Musica) obj).id == id;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + this.id;
+        return hash;
+    }
 }

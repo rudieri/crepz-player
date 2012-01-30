@@ -5,42 +5,31 @@ import com.config.ConfigFile;
 import com.config.GerenciadorConfig;
 
 import com.config.JConfiguracao;
-import com.graficos.Icones;
 import com.help.JHelp;
 import com.help.JSobre;
+import com.main.Carregador;
+import com.main.Notificavel;
 import com.melloware.jintellitype.HotkeyListener;
 import com.melloware.jintellitype.IntellitypeListener;
 import com.melloware.jintellitype.JIntellitype;
-import com.socket.Servidor;
+import com.utils.Warning;
 import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javazoom.jlgui.basicplayer.BasicController;
 import java.awt.Container;
 import java.awt.image.BufferedImage;
-import java.io.PrintStream;
 import javax.swing.Icon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 
 /*
  * To change this template, choose Tools | Templates
@@ -56,49 +45,22 @@ import javax.swing.JPanel;
  *
  * @author manchini
  */
-public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, IntellitypeListener {
+public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, IntellitypeListener, Notificavel {
 
     public static Aguarde aguarde = new Aguarde();
-    Icones icone;
-    Musiquera musiq;
+    private Musiquera musiquera;
     private int estado = 0;
     private JFileChooser jFileChooser = new JFileChooser();
-    private SystemTray tray;
-    private TrayIcon trayIcon;
-    private JBiBlioteca biblioteca = new JBiBlioteca(this);
-    private JPlayList playList = new JPlayList(this, false, this);
-    private JMini jmini = new JMini(this, false, this, playList, biblioteca);
-    GerenciadorConfig _conf = new GerenciadorConfig(this, playList, biblioteca, jmini);
-    private Scan scan;
+    GerenciadorConfig _conf = null;//new GerenciadorConfig(this, playList, biblioteca, jmini);
     private int volAnt;
     JConfiguracao configuracao;
     private boolean mouseVolumeDown = false;
+    private final Carregador carregador;
 
-    public JPrincipal() {
+    public JPrincipal(Musiquera mus, Carregador carregador) {
         initComponents();
-        try {
-            Servidor server = new Servidor();
-            new Thread(server).start();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            aguarde.intro();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-
-
+        this.carregador = carregador;
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
-        playList.posicionar();
-
-
-
-
-
-        trays();
         //--------------------------
         jButton_Play.setName("jButton_Play");
         jButton_Next.setName("jButton_Next");
@@ -106,23 +68,53 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jButton_Stop.setName("jButton_Stop");
         jToggle_Repeat.setName("jToggle_Repeat");
         jToggle_Random.setName("jToggle_Random");
-        icone = new Icones();
-        icone.loadIcons("tipo2");
-
-        musiq = new Musiquera(this, playList, biblioteca, jmini, icone);
-        _conf.getAllValores();
-        configuracao = new JConfiguracao(this, true);
+        musiquera = mus;
+        // _conf.getAllValores();
+        //  configuracao = new JConfiguracao(this, true);
         inicializaIcones();
-        scan = new Scan(null);
         //scan.setTempo(1);
     }
 
     public Musiquera getMusiquera() {
-        return musiq;
+        return musiquera;
     }
 
-    public Icones getIcones() {
-        return icone;
+    @Override
+    public void tempoEh(double v) {
+        if (ajusteDeTempo) {
+            return;
+        }
+        jSlider_Tempo.setValue((int) (jSlider_Tempo.getMaximum() * v));
+    }
+
+    @Override
+    public void tempoEhHMS(String hms) {
+        jLabel_tempo.setText(hms);
+        jSlider_Tempo.setToolTipText(hms);
+    }
+
+//    @Override
+//    public void tempoTotalEhHMS(String hms) {
+//        jLabel_tempoTotal.setText(hms);
+//    }
+
+    @Override
+    public void eventoNaMusica(int tipo) {
+        switch (tipo) {
+            case BasicPlayerEvent.PAUSED:
+
+                break;
+            case BasicPlayerEvent.PLAYING:
+            case BasicPlayerEvent.RESUMED:
+
+                break;
+            case BasicPlayerEvent.STOPPED:
+
+                break;
+            default:
+                Warning.write("Evento desconhecio. Id: " + tipo);
+                break;
+        }
     }
 
     /** Atualiza labels da tela principal
@@ -138,20 +130,10 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jLabel_freq.setText(freq + " KHz");
     }
 
-    public void atualizaTempo(int tempo) {
-        jSlider_Tempo.setValue(tempo);
-        jmini.atualizaTempo(tempo);
-    }
-
-    public void atualizaTempo(String min_seg) {
-        jLabel_tempo.setText(min_seg);
-        jSlider_Tempo.setToolTipText(min_seg);
-    }
-
     /**
-     * Muda o icone do label que contenha o nome indicado.
+     * Muda o icones do label que contenha o nome indicado.
      * @param quem nome do label.
-     * @param icone nome icones.nomeDoIcone
+     * @param icones nome icones.nomeDoIcone
      */
     public void atualizaIcone(String quem, Icon _icone) {
         atualizaIcone(this.getContentPane(), quem, _icone);
@@ -196,23 +178,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         }
     }
 
-    public void trays() {
-        if (isVisible()) {
-            if (bandeija) {
-                iconeTray();
-            }
-        } else {
-            Timer t = new Timer();
-            t.schedule(new TimerTask() {
-
-                @Override
-                public void run() {
-                    trays();
-                }
-            }, 20);
-        }
-    }
-
     public void setVolume(int v) {
         jSlider_vol.setValue(v);
         jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
@@ -220,14 +185,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     public void setBalaco(int b) {
         jSlider_Balanco.setValue(b);
-    }
-
-    public void setBandeija(boolean b) {
-        bandeija = b;
-    }
-
-    public boolean isBandeija() {
-        return bandeija;
     }
 
     /*   public void setTocando(boolean b) {
@@ -247,20 +204,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         return new java.text.SimpleDateFormat("HH:mm:ss").format(date);
     }
 
-    /**
-     * A handle to the BasicPlayer, plugins may control the player through
-     * the controller (play, stop, ...)
-     * @param controller : a handle to the player
-     */
-    public void setController(BasicController controller) {
-        display("setController : " + controller);
-    }
-
-    public void display(Object msg) {
-        System.out.println(msg);
-
-    }
-
     public File telaAbrirArquivo() throws Exception {
 
         // restringe a amostra a diretorios apenas
@@ -278,162 +221,36 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 //        }
     }
 
-    public void someTray(int x, int y) {
-        tray.remove(trayIcon);
-        setVisible(true);
-        setLocation(x - this.getWidth() / 2, y - this.getHeight() / 2);
-        jmini.dispose();
-        setBandeija(false);
-    }
-
-    public void someTray() {
-        tray.remove(trayIcon);
-        setVisible(true);
-        jmini.dispose();
-        setBandeija(false);
-    }
-
-    private void iconeTray() {
-        try {
-            if (SystemTray.isSupported()) {
-                tray = SystemTray.getSystemTray();
-                setBandeija(true);
-                Image image = new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage();
-                ActionListener listener1 = new ActionListener() {
-
-                    public void actionPerformed(ActionEvent e) {
-                        someTray();
-                    }
-                };
-                ActionListener listener2 = new ActionListener() {
-
-                    public void actionPerformed(ActionEvent e) {
-                        sair();
-
-                    }
-                };
-
-                PopupMenu popup = new PopupMenu();
-                MenuItem item1 = new MenuItem("Restaurar");
-                MenuItem item2 = new MenuItem("Sair");
-                item1.addActionListener(listener1);
-                item2.addActionListener(listener2);
-                popup.add(item1);
-                popup.add(item2);
-
-
-                trayIcon = new TrayIcon(image, "Crepz Player", popup);
-                trayIcon.setImageAutoSize(true);
-
-
-                trayIcon.addMouseListener(new java.awt.event.MouseAdapter() {
-
-                    @Override
-                    public void mouseClicked(MouseEvent evt) {
-                        if (evt.getButton() == MouseEvent.BUTTON1) {
-                            if (evt.getClickCount() == 2) {
-                                musiq.tocar();
-                                display("Event: 2 cliques");
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        initX = e.getXOnScreen();
-                        initY = e.getYOnScreen();
-                    }
-
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        if (e.getButton() == MouseEvent.BUTTON1) {
-                            if (Math.abs(initX - e.getXOnScreen()) > 1 || Math.abs(initY - e.getYOnScreen()) > 1) {
-                                someTray(e.getXOnScreen(), e.getYOnScreen());
-                            } else {
-                                jmini.setVisible(true, e);
-                                display("Event: release");
-                            }
-                        }
-                        if (e.getButton() == MouseEvent.BUTTON2) {
-                            someTray();
-                        }
-                    }
-                });
-
-                try {
-                    tray.add(trayIcon);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                this.setVisible(false);
-                if (this.getState() == JFrame.ICONIFIED) {
-                    this.setState(JFrame.NORMAL);
-                }
-                this.dispose();
-                jmini.pack();
-                jmini.setVisible(true);
-
-                new Thread(new Runnable() {
-
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                            //   trayIcon.displayMessage("Tocancdo \n", jLabel_Musica.getText(), TrayIcon.MessageType.INFO);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }).start();
-
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public JPlayList getJPlaylist() {
-        return playList;
-    }
-
-    public void inicializaIcones() {
+    private void inicializaIcones() {
         //Estado inicial do botão (está Stop);
-        jButton_Play.setIcon(icone.playIcon);
+        jButton_Play.setIcon(carregador.icones.playIcon);
         //Se tiver tocando
-        if (musiq.isPlaying()) {
-            jButton_Play.setIcon(icone.pauseIcon);
+        if (musiquera.isPlaying()) {
+            jButton_Play.setIcon(carregador.icones.pauseIcon);
         }
         //Se tiver pause
-        if (musiq.isPlaying()) {
-            jButton_Play.setIcon(icone.playIcon);
+        if (musiquera.isPlaying()) {
+            jButton_Play.setIcon(carregador.icones.playIcon);
         }
-        jButton_Stop.setIcon(icone.stopIcon);
-        jButton_Next.setIcon(icone.frenteIcon);
-        jButton_Ant.setIcon(icone.voltaIcon);
-        if (!(jmini == null)) {
-            jmini.inicializaIcones();
-        }
-        if (playList.isRandom()) {
-            jToggle_Random.setIcon(icone.randomOnIcon);
+        jButton_Stop.setIcon(carregador.icones.stopIcon);
+        jButton_Next.setIcon(carregador.icones.frenteIcon);
+        jButton_Ant.setIcon(carregador.icones.voltaIcon);
+
+        if (carregador.isRandom()) {
+            jToggle_Random.setIcon(carregador.icones.randomOnIcon);
         } else {
-            jToggle_Random.setIcon(icone.randomOffIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOffIcon);
         }
-        if (playList.isRepeat()) {
-            jToggle_Repeat.setIcon(icone.repeatOnIcon);
+        if (carregador.isRepeat()) {
+            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon);
         } else {
-            jToggle_Repeat.setIcon(icone.repeatOffIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon);
         }
-        playList.atualizaIcons();
     }
 
     @Override
     public synchronized void setState(int state) {
         super.setState(state);
-    }
-
-    public void sair() {
-        setConf();
-        System.exit(0);
     }
 
     public ImageIcon resizeIcons(BufferedImage im) {
@@ -445,28 +262,11 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         return new ImageIcon(im.getScaledInstance(l, a, Image.SCALE_SMOOTH));
     }
 
-    public void volumeMudando() {
-        new Thread(new Runnable() {
-
-            public void run() {
-                while (mouseVolumeDown) {
-                    try {
-                        Thread.sleep(50);
-                        musiq.setVolume(jSlider_vol.getValue());
-                        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-            }
-        }).start();
-    }
     /*
      * (non-Javadoc)
      * @see com.melloware.jintellitype.HotkeyListener#onHotKey(int)
      */
-
+    @Override
     public void onHotKey(int aIdentifier) {
 //      output("WM_HOTKEY message received " + Integer.toString(aIdentifier));
     }
@@ -475,63 +275,34 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
      * (non-Javadoc)
      * @see com.melloware.jintellitype.IntellitypeListener#onIntellitype(int)
      */
+    @Override
     public void onIntellitype(int aCommand) {
 
         switch (aCommand) {
-//      case JIntellitype.APPCOMMAND_BROWSER_BACKWARD:
-//            playList.getAnterior();
-//         break;
-////      case JIntellitype.APPCOMMAND_BROWSER_FAVOURITES:
-////            playList.getProxima();
-////         break;
-//      case JIntellitype.APPCOMMAND_BROWSER_FORWARD:
-//          playList.getProxima();
-//         break;
-//      case JIntellitype.APPCOMMAND_BROWSER_HOME:
-//         output("BROWSER_HOME message received " + Integer.toString(aCommand));
-//         break;
-//      case JIntellitype.APPCOMMAND_BROWSER_REFRESH:
-//         output("BROWSER_REFRESH message received " + Integer.toString(aCommand));
-//         break;
-//      case JIntellitype.APPCOMMAND_BROWSER_SEARCH:
-//         output("BROWSER_SEARCH message received " + Integer.toString(aCommand));
-//         break;
-//      case JIntellitype.APPCOMMAND_BROWSER_STOP:
-//         output("BROWSER_STOP message received " + Integer.toString(aCommand));
-//         break;
-//      case JIntellitype.APPCOMMAND_LAUNCH_APP1:
-//         output("LAUNCH_APP1 message received " + Integer.toString(aCommand));
-//         break;
-//      case JIntellitype.APPCOMMAND_LAUNCH_APP2:
-//         output("LAUNCH_APP2 message received " + Integer.toString(aCommand));
-//         break;
-//      case JIntellitype.APPCOMMAND_LAUNCH_MAIL:
-//         output("LAUNCH_MAIL message received " + Integer.toString(aCommand));
-//         break;
             case JIntellitype.APPCOMMAND_MEDIA_NEXTTRACK:
-                musiq.abrir(playList.getProxima(false), 0, false, true);
+                musiquera.abrir(musiquera.getNextMusica(), 0, false);
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_PLAY_PAUSE:
-                musiq.tocar();
+                musiquera.tocarPausar();
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_PREVIOUSTRACK:
-                musiq.abrir(playList.getAnterior(), 0, false, true);
+                musiquera.abrir(musiquera.getPreviousMusica(), 0, false);
                 break;
             case JIntellitype.APPCOMMAND_MEDIA_STOP:
-                musiq.parar();
+                musiquera.parar();
                 break;
             case JIntellitype.APPCOMMAND_VOLUME_DOWN:
-                jmini.jSlider_vol.setValue(jSlider_vol.getValue() - 2);
+                jSlider_vol.setValue(jSlider_vol.getValue() - 2);
                 break;
             case JIntellitype.APPCOMMAND_VOLUME_UP:
-                jmini.jSlider_vol.setValue(jSlider_vol.getValue() + 2);
+                jSlider_vol.setValue(jSlider_vol.getValue() + 2);
                 break;
             case JIntellitype.APPCOMMAND_VOLUME_MUTE:
-                if (jmini.jSlider_vol.getValue() > 0) {
-                    volAnt = jmini.jSlider_vol.getValue();
-                    jmini.jSlider_vol.setValue(0);
+                if (jSlider_vol.getValue() > 0) {
+                    volAnt = jSlider_vol.getValue();
+                    jSlider_vol.setValue(0);
                 } else {
-                    jmini.jSlider_vol.setValue(volAnt);
+                    jSlider_vol.setValue(volAnt);
                 }
 
 
@@ -555,17 +326,17 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
-        jmini.setVisible(!b);
-        if (playList.isRandom()) {
-            jToggle_Random.setIcon(icone.randomOnIcon);
+        if (carregador.isRandom()) {
+            jToggle_Random.setIcon(carregador.icones.randomOnIcon);
         } else {
-            jToggle_Random.setIcon(icone.randomOffIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOffIcon);
         }
-        if (playList.isRepeat()) {
-            jToggle_Repeat.setIcon(icone.repeatOnIcon);
+        if (carregador.isRepeat()) {
+            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon);
         } else {
-            jToggle_Repeat.setIcon(icone.repeatOffIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon);
         }
+        jSlider_vol.setValue(musiquera.getVolume());
     }
 
     private void vouParaOnde(MouseEvent e) {
@@ -585,12 +356,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     public int getSliderValue() {
         return jSlider_vol.getValue();
-    }
-
-    public void setConf() {
-        playList.salvarPlaylistAtual();
-        _conf.setAllValores();
-
     }
 
     /** This method is called from within the constructor to
@@ -615,9 +380,10 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel17 = new javax.swing.JPanel();
         jLabel_bib = new javax.swing.JLabel();
         jLabel_Playlist = new javax.swing.JLabel();
+        jLabelFilaReproducao = new javax.swing.JLabel();
         jLabel_Edit = new javax.swing.JLabel();
         jLabel_Minimizar = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelHelp = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel15 = new javax.swing.JPanel();
@@ -757,6 +523,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         });
         jPanel17.add(jLabel_Playlist);
 
+        jLabelFilaReproducao.setText("Fila");
+        jLabelFilaReproducao.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelFilaReproducaoMouseClicked(evt);
+            }
+        });
+        jPanel17.add(jLabelFilaReproducao);
+
         jLabel_Edit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/edit.png"))); // NOI18N
         jLabel_Edit.setToolTipText("Edit Propriedades MP3");
         jLabel_Edit.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -775,13 +549,13 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         });
         jPanel17.add(jLabel_Minimizar);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/help/img/help.PNG"))); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jLabelHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/help/img/help.PNG"))); // NOI18N
+        jLabelHelp.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+                jLabelHelpMouseClicked(evt);
             }
         });
-        jPanel17.add(jLabel1);
+        jPanel17.add(jLabelHelp);
 
         getContentPane().add(jPanel17, java.awt.BorderLayout.PAGE_START);
 
@@ -1000,14 +774,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
                 jSlider_volMouseWheelMoved(evt);
             }
         });
-        jSlider_vol.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jSlider_volMousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jSlider_volMouseReleased(evt);
-            }
-        });
         jSlider_vol.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSlider_volStateChanged(evt);
@@ -1159,14 +925,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jSlider_TempoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMouseReleased
         //skipTo();
-        ajust = musiq.skipTo(jSlider_Tempo.getValue());
-
+        musiquera.skipTo((double) (jSlider_Tempo.getValue()) / jSlider_Tempo.getMaximum());
+        ajusteDeTempo = false;
     }//GEN-LAST:event_jSlider_TempoMouseReleased
 
     private void jMenuItem_ArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_ArquivoActionPerformed
         try {
 
-            musiq.abrir(telaAbrirArquivo());
+            musiquera.abrir(telaAbrirArquivo());
 
         } catch (Exception ex) {
             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
@@ -1176,20 +942,13 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private void jSlider_volMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_volMouseWheelMoved
         // TODO add your handling code here:
         jSlider_vol.setValue(jSlider_vol.getValue() - evt.getWheelRotation());
-        musiq.setVolume(jSlider_vol.getValue());
+        musiquera.setVolume((byte) jSlider_vol.getValue());
         jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
     }//GEN-LAST:event_jSlider_volMouseWheelMoved
 
-    private void jSlider_volMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_volMousePressed
-        // TODO add your handling code here:
-        mouseVolumeDown = true;
-        volumeMudando();
-        System.out.println("pressed");
-    }//GEN-LAST:event_jSlider_volMousePressed
-
     private void jSlider_TempoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMousePressed
         // TODO add your handling code here:
-        ajust = true;
+        ajusteDeTempo = true;
     }//GEN-LAST:event_jSlider_TempoMousePressed
 
     private void jPanel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MousePressed
@@ -1214,7 +973,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jCIMenuFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuFecharActionPerformed
         // TODO add your handling code here:
-        sair();
+        carregador.sair();
     }//GEN-LAST:event_jCIMenuFecharActionPerformed
 
     private void jPanel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MousePressed
@@ -1245,12 +1004,12 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jCIMenuPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuPlayActionPerformed
         // TODO add your handling code here:
-        musiq.tocar();
+        musiquera.tocarPausar();
     }//GEN-LAST:event_jCIMenuPlayActionPerformed
 
     private void jCIMenuStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuStopActionPerformed
         // TODO add your handling code here:
-        musiq.parar();
+        musiquera.parar();
     }//GEN-LAST:event_jCIMenuStopActionPerformed
 
     private void jCCheckBarraDeMenusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCCheckBarraDeMenusActionPerformed
@@ -1269,20 +1028,17 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jSlider_BalancoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_BalancoStateChanged
 
-        // player.setPan(new Double(jSlider_Balanco.getValue()) / 100);
-        musiq.setBalanco(jSlider_Balanco.getValue());
+        musiquera.setBalanco((byte) jSlider_Balanco.getValue());
         jSlider_Balanco.setToolTipText(String.valueOf(jSlider_Balanco.getValue() / 100));
-
-
     }//GEN-LAST:event_jSlider_BalancoStateChanged
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        musiq.tocar();
+        musiquera.tocarPausar();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         try {
-            new JMP3Propriedades(this, true, new File(musiq.getMusica().getCaminho())).setVisible(true);
+            new JMP3Propriedades(this, true, new File(musiquera.getMusica().getCaminho())).setVisible(true);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Abrir Propriedades.\n" + ex);
             ex.printStackTrace();
@@ -1290,17 +1046,15 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        iconeTray();
+        carregador.setMiniComoBase();
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem_Arquivo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_Arquivo1ActionPerformed
-        biblioteca.setVisible(true);
-
-        // biblioteca.setModal(true);
+        carregador.mostrarBiblioteca();
     }//GEN-LAST:event_jMenuItem_Arquivo1ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        playList.setVisible(true);
+        carregador.mostrarPlayList();
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
@@ -1310,21 +1064,21 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private void jButton_PlayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            musiq.tocar();
+            musiquera.tocarPausar();
         }
     }//GEN-LAST:event_jButton_PlayMouseClicked
 
     private void jButton_StopMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            musiq.parar();
+            musiquera.parar();
         }
     }//GEN-LAST:event_jButton_StopMouseClicked
 
     private void jButton_AntMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            musiq.abrir(playList.getAnterior(), 0, false, true);
+            musiquera.abrir(musiquera.getPreviousMusica(), 0, false);
         }
     }//GEN-LAST:event_jButton_AntMouseClicked
 
@@ -1332,18 +1086,18 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
 
-            musiq.abrir(playList.getProxima(false), 0, false, true);
+            musiquera.abrir(musiquera.getNextMusica(), 0, false);
 
         }
     }//GEN-LAST:event_jButton_NextMouseClicked
 
     private void jToggle_RandomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RandomMouseClicked
         // TODO add your handling code here:
-        playList.setAleatorio(!playList.isRandom());
-        if (playList.isRandom()) {
-            jToggle_Random.setIcon(icone.randomOnIcon);
+        carregador.setRandom(!carregador.isRandom());
+        if (carregador.isRandom()) {
+            jToggle_Random.setIcon(carregador.icones.randomOnIcon);
         } else {
-            jToggle_Random.setIcon(icone.randomOffIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOffIcon);
         }
         //jToggleButton1.setIcon(new ImageIcon(getClass().getResource("/com/img/icons/tipo2/"+random+"Random.png")));
     }//GEN-LAST:event_jToggle_RandomMouseClicked
@@ -1359,7 +1113,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jButton_PlayMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseEntered
         // TODO add your handling code here:
-        jmini.objetoRollOver(jButton_Play);
+        //jmini.objetoRollOver(jButton_Play);
     }//GEN-LAST:event_jButton_PlayMouseEntered
 
     private void jButton_PlayMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseExited
@@ -1369,7 +1123,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jButton_StopMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseEntered
         // TODO add your handling code here:
-        jmini.objetoRollOver(jButton_Stop);
+        //  jmini.objetoRollOver(jButton_Stop);
     }//GEN-LAST:event_jButton_StopMouseEntered
 
     private void jButton_StopMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseExited
@@ -1378,7 +1132,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jButton_AntMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseEntered
         // TODO add your handling code here:
-        jmini.objetoRollOver(jButton_Ant);
+        //   jmini.objetoRollOver(jButton_Ant);
     }//GEN-LAST:event_jButton_AntMouseEntered
 
     private void jButton_AntMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_AntMouseExited
@@ -1387,7 +1141,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jButton_NextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_NextMouseEntered
         // TODO add your handling code here:
-        jmini.objetoRollOver(jButton_Next);
+        // jmini.objetoRollOver(jButton_Next);
     }//GEN-LAST:event_jButton_NextMouseEntered
 
     private void jButton_NextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_NextMouseExited
@@ -1395,7 +1149,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }//GEN-LAST:event_jButton_NextMouseExited
 
     private void jToggle_RandomMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RandomMouseEntered
-        jmini.objetoRollOver(jToggle_Random);
+        //  jmini.objetoRollOver(jToggle_Random);
     }//GEN-LAST:event_jToggle_RandomMouseEntered
 
     private void jToggle_RandomMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RandomMouseExited
@@ -1404,17 +1158,17 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jToggle_RepeatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeatMouseClicked
         // TODO add your handling code here:
-        playList.setRepetir(!playList.isRepeat());
-        if (playList.isRepeat()) {
-            jToggle_Repeat.setIcon(icone.repeatOnIcon);
+        carregador.setRepeat(!carregador.isRepeat());
+        if (carregador.isRepeat()) {
+            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon);
         } else {
-            jToggle_Repeat.setIcon(icone.repeatOffIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon);
         }
     }//GEN-LAST:event_jToggle_RepeatMouseClicked
 
     private void jToggle_RepeatMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeatMouseEntered
         // TODO add your handling code here:
-        jmini.objetoRollOver(jToggle_Repeat);
+//        jmini.objetoRollOver(jToggle_Repeat);
     }//GEN-LAST:event_jToggle_RepeatMouseEntered
 
     private void jToggle_RepeatMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeatMouseExited
@@ -1423,34 +1177,36 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jCIMenuMinimizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCIMenuMinimizarActionPerformed
         // TODO add your handling code here:
-        iconeTray();
+        carregador.setMiniComoBase();
     }//GEN-LAST:event_jCIMenuMinimizarActionPerformed
 
     private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
-        iconeTray();
+        if (evt.getNewState() != NORMAL) {
+            carregador.setMiniComoBase();
+        }
     }//GEN-LAST:event_formWindowStateChanged
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-        sair();
+        carregador.sair();
     }//GEN-LAST:event_formWindowClosing
 
     private void jLabel_bibMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_bibMouseClicked
 //        if (evt.getClickCount() == 2) {
-        biblioteca.setVisible(true);
+        carregador.mostrarBiblioteca();
 //        }
     }//GEN-LAST:event_jLabel_bibMouseClicked
 
     private void jLabel_PlaylistMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_PlaylistMouseClicked
 //        if (evt.getClickCount() == 2) {
-        playList.setVisible(true);
+        carregador.mostrarPlayList();
 //        }
     }//GEN-LAST:event_jLabel_PlaylistMouseClicked
 
     private void jLabel_EditMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_EditMouseClicked
 //        if (evt.getClickCount() == 2) {
         try {
-            new JMP3Propriedades(this, true, new File(musiq.getMusica().getCaminho())).setVisible(true);
+            new JMP3Propriedades(this, true, new File(musiquera.getMusica().getCaminho())).setVisible(true);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Abrir Propriedades.\n" + ex);
             ex.printStackTrace();
@@ -1459,19 +1215,19 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }//GEN-LAST:event_jLabel_EditMouseClicked
 
     private void jLabel_MinimizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_MinimizarMouseClicked
-        iconeTray();
+        carregador.setMiniComoBase();
     }//GEN-LAST:event_jLabel_MinimizarMouseClicked
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
         new JSobre(this).setVisible(true);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+    private void jLabelHelpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelHelpMouseClicked
         // TODO add your handling code here:
         if (evt.getButton() == MouseEvent.BUTTON1) {
             new JHelp(this).setVisible(true);
         }
-    }//GEN-LAST:event_jLabel1MouseClicked
+    }//GEN-LAST:event_jLabelHelpMouseClicked
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         if (JOptionPane.showConfirmDialog(this, "Isso limpará a biblioteca e a playlist.\nO Crepz Player será fechado.\n Está certo disso ??") == JOptionPane.YES_OPTION) {
@@ -1491,83 +1247,24 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         //  scan.setPastas(ConfiguracaoBD.listarPastas());
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
-    private void jSlider_volMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_volMouseReleased
-        // TODO add your handling code here:
-        mouseVolumeDown = false;
-
-        System.out.println("Volume Released: " + jSlider_vol.getValue());
-    }//GEN-LAST:event_jSlider_volMouseReleased
-
     private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
         // TODO add your handling code here:
+        musiquera.setVolume((byte) jSlider_vol.getValue());
+        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
     }//GEN-LAST:event_jSlider_volStateChanged
+
+    private void jLabelFilaReproducaoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelFilaReproducaoMouseClicked
+        if (carregador.isFilaReproducaoVisivel()) {
+            carregador.ocultarFilaReproducao();
+        } else {
+            carregador.mostrarFilaReproducao();
+        }
+    }//GEN-LAST:event_jLabelFilaReproducaoMouseClicked
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) throws ParseException {
-
-
-        aguarde.setVisible(true);
-        aguarde.standBy();
-        File mk = new File("nbproject");
-        if (!mk.exists()) {
-            mk = new File("log");
-            if (!mk.exists()) {
-                mk.mkdir();
-            }
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-
-            File f = new File(mk.getAbsolutePath() + "/" + format.format(new Date().getTime()) + ".txt");
-            if (!f.exists()) {
-                try {
-
-                    f.createNewFile();
-                    PrintStream saida = new PrintStream(f);
-                    System.setOut(saida);
-                    System.setErr(saida);
-                } catch (IOException ex) {
-                    Logger.getLogger(JMini.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-
-        }
-        System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
-
-
-        try {
-            UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//
-//            public void run() {
-        JPrincipal p = new JPrincipal();
-        p.setVisible(true);
-        try {
-            if (System.getProperty("os.name").indexOf("Windows") > -1) {
-                if (System.getProperty("sun.arch.data.model").equals("64")) {
-                    JIntellitype.setLibraryLocation(p.getClass().getResource("com/dll/JIntellitype64.dll").getFile());
-                } else {
-                    JIntellitype.setLibraryLocation(p.getClass().getResource("com/dll/JIntellitype.dll").getFile());
-                }
-
-                if (JIntellitype.checkInstanceAlreadyRunning("JIntellitype Test Application")) {
-                    System.exit(1);
-                }
-                if (!JIntellitype.isJIntellitypeSupported()) {
-                    System.exit(1);
-                }
-                p.initJIntellitype();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        aguarde.setVisible(false);
 //            }
 //        });
     }
@@ -1585,7 +1282,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private javax.swing.JMenuItem jCIMenuStop;
     private javax.swing.JMenu jCMenuReproduz;
     private javax.swing.JMenu jCMenuVisual;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabelFilaReproducao;
+    private javax.swing.JLabel jLabelHelp;
     private javax.swing.JLabel jLabel_Edit;
     private javax.swing.JLabel jLabel_Minimizar;
     private javax.swing.JLabel jLabel_Musica;
@@ -1633,9 +1331,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private javax.swing.JLabel jToggle_Random;
     private javax.swing.JLabel jToggle_Repeat;
     // End of variables declaration//GEN-END:variables
-    boolean ajust = false;
-    boolean trayEvent = true;
-    boolean bandeija = false;
+    private boolean ajusteDeTempo = false;
     int initX;
     int initY;
     int thisX;

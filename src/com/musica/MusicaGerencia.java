@@ -34,11 +34,12 @@ public class MusicaGerencia {
             + "Swing,Bebob,Latin,Revival,Celtic,Bluegrass,Avantgarde,Gothic Rock,Progressive Rock,Psychedelic Rock,Symphonic Rock,Slow Rock,"
             + "Big Band,Chorus,Easy Listening,Acoustic,Humor,Speech,Chanson,Opera,Chamber Music,Sonata,Symphony,Booty Bass,Primus,Porn Groove,"
             + "Satire,Slow Jam,Club,Tango,Samba,Folclore").split(",");
-    private static String extSuportada = ".mp3.ogg.wav";
+    private static String[] extSuportadaMusica = new String[]{"mp3", "ogg", "wav"};
+    private static String[] extSuportadaImagem = new String[]{"jpg", "jpeg", "png", "gif"};
     public static int count = 0;
     public static boolean organizarPastas = false;
     public static boolean downLoadCapas = false;
-    public static String destino  = "";
+    public static String destino = "";
 
     public static Musica getMusica(Musica m, MP3File mp3, File file) throws Exception {
         //getID3v2Tag
@@ -52,18 +53,18 @@ public class MusicaGerencia {
             m.setAutor(mp3.getID3v2Tag().getLeadArtist());
             m.setGenero(mp3.getID3v2Tag().getSongGenre());
             //   mp3.getID3v1Tag().getSize();
-        }
-        if (mp3.hasID3v1Tag()) {
+        } else {
+            if (mp3.hasID3v1Tag()) {
 //        getID3v1
-            if (!m.setNome(mp3.getID3v1Tag().getTitle())) {
-                m.setNome(file.getName());
+                if (!m.setNome(mp3.getID3v1Tag().getTitle())) {
+                    m.setNome(file.getName());
+                }
+                m.setSize(mp3.getID3v1Tag().getSize());
+                m.setAlbum(mp3.getID3v1Tag().getAlbum());
+                m.setAutor(mp3.getID3v1Tag().getArtist());
+                m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
             }
-            m.setSize(mp3.getID3v1Tag().getSize());
-            m.setAlbum(mp3.getID3v1Tag().getAlbum());
-            m.setAutor(mp3.getID3v1Tag().getArtist());
-            m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
         }
-
         m.setImg(getImagemDir(new File(mp3.getMp3file().getAbsolutePath().replace(mp3.getMp3file().getName(), ""))));
 
         return m;
@@ -108,16 +109,17 @@ public class MusicaGerencia {
 
     public static boolean ehValido(File file) {
         //  System.out.println(new MimetypesFileTypeMap().getContentType(file));
-        String ext = file.getName().toString();
-        ext = ext.substring(ext.lastIndexOf(".") + 1, ext.length());
-        System.out.println("Extenção: " + ext);
-
-        return extSuportada.indexOf(ext) != -1;
+        String ext = file.getName().toLowerCase();
+        boolean valido = false;
+        for (int i = 0; !valido && i < extSuportadaMusica.length; i++) {
+            valido |= ext.endsWith(extSuportadaMusica[i]);
+        }
+        return valido;
     }
 
     public static String getExtecao(File f) {
         String ext = f.getName();
-        return ext.substring(ext.lastIndexOf(".") + 1, ext.length());
+        return ext.substring(ext.lastIndexOf('.') + 1, ext.length());
 
     }
 
@@ -135,6 +137,20 @@ public class MusicaGerencia {
         }
     }
 
+    public static Musica addFiles(File dir) {
+        Transacao t = new Transacao();
+        try {
+            t.begin();
+            Musica addFiles = addFiles(dir, t);
+            t.commit();
+            return addFiles;
+        } catch (Exception ex) {
+            Logger.getLogger(MusicaGerencia.class.getName()).log(Level.SEVERE, null, ex);
+            t.rollback();
+            return null;
+        }
+    }
+
     public static Musica addFiles(File dir, Transacao t) {
 
         if (ehValido(dir)) {
@@ -144,7 +160,6 @@ public class MusicaGerencia {
             }
             try {
 
-                dir = new File(dir.getAbsolutePath());
                 MP3File mp3 = new MP3File(dir.getAbsolutePath().replace("\\\\", "/").replace("\\", "/").trim());
                 m.setCaminho(dir.getAbsolutePath());
                 if (organizarPastas) {
@@ -172,11 +187,11 @@ public class MusicaGerencia {
                     getMusica(m, mp3, dir);
                     MusicaBD.incluir(m, t);
                 }
-                    if (downLoadCapas && (m.getImg() == null || m.getImg().equals(""))) {
-                        m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
-                        MusicaBD.alterar(m, t);
-                    }
-                
+                if (downLoadCapas && (m.getImg() == null || m.getImg().isEmpty())) {
+                    m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
+                    MusicaBD.alterar(m, t);
+                }
+
 
             } catch (Exception e) {
                 System.out.println("Erro ao importar arquivos");
@@ -184,7 +199,7 @@ public class MusicaGerencia {
             }
             return m;
         } else {
-            System.out.println(dir.getName().toLowerCase() + " Não é MP3");
+            System.out.println(dir.getName().toLowerCase() + " Não é um tipo válido.");
             return null;
         }
 
@@ -192,7 +207,6 @@ public class MusicaGerencia {
 
     public static Musica adicionaOGG(File dir, Transacao t) {
         Musica m = new Musica();
-        dir = new File(dir.getAbsolutePath());
         try {
             getMusica(m, dir);
 
@@ -218,12 +232,16 @@ public class MusicaGerencia {
         }
         File[] files = dir.listFiles(new java.io.FileFilter() {
 
+            @Override
             public boolean accept(File pathname) {
                 try {
-                    if (getExtecao(pathname).toLowerCase().indexOf(".jpg.png.bmp.gif") != -1) {
-                        return pathname.canRead();
+                    boolean aceita = false;
+                    for (int i = 0; !aceita && i < extSuportadaImagem.length; i++) {
+                        aceita |= pathname.getName().toLowerCase().endsWith(extSuportadaImagem[i]);
+
                     }
-                    return (new javax.swing.ImageIcon(pathname.getPath()).getIconHeight() > 0 && pathname.canRead()) && new File(pathname.getAbsolutePath()).exists();
+                    return true;
+//                    return (new javax.swing.ImageIcon(pathname.getPath()).getIconHeight() > 0 && pathname.canRead()) && new File(pathname.getAbsolutePath()).exists();
                 } catch (Exception ex) {
                     return false;
                 }
@@ -239,11 +257,16 @@ public class MusicaGerencia {
     }
 
     public static String removeCaracteresEsp(String st) {
-        String ret = st;
-        ret = ret.replace("/", "").replace("ÿ", "");
-        ret = ret.replace("|", "").replace("þ", "");
-        ret = ret.replace("|", "").replace("þ", "");
-        ret = ret.replace(" ", "_");
+        if (st==null) {
+            return "";
+        }
+        String ret;
+        ret = st.replace("/", "");
+//        ret = ret.replace("|", "").replace("þ", "");
+//        ret = ret.replace("|", "").replace("þ", "");
+//        ret = ret.replace(" ", "_");
+        ret = ret.replace("ÿ", "");
+        ret = ret.replace("þ", "");
 
         return ret;
     }

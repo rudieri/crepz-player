@@ -1,6 +1,7 @@
 package com;
 
 import com.conexao.Transacao;
+import com.main.Carregador;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -10,7 +11,6 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import com.musica.JCapa;
@@ -46,34 +46,14 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private JFileChooser jFileChooser = new JFileChooser();
     private JMini mini;
     String genero = "";
+    private Musiquera musiquera;
+    private final Carregador carregador;
+    
 
-    public JBiBlioteca(JPrincipal principal) {
-        super(principal, false);
+    public JBiBlioteca(Musiquera mus, Carregador carregador) {
         initComponents();
-        this.principal = principal;
-        jProgressBar.setVisible(false);
-        jPanelFiltrar.setVisible(true);
-//        if (jCheckBox_capa.isSelected()) {
-//            atualizarTabelaCapa();
-//        } else {
-//            atualizarTabelaLista();
-//        }
-
-    }
-
-    public JBiBlioteca(JMini mini, JPrincipal principal) {
-        super(mini, false);
-        initComponents();
-        this.mini = mini;
-        this.principal = principal;
-        jProgressBar.setVisible(false);
-        jPanelFiltrar.setVisible(false);
-
-//        if (jCheckBox_capa.isSelected()) {
-//            atualizarTabelaCapa();
-//        } else {
-//            atualizarTabelaLista();
-//        }
+        musiquera= mus;
+        this.carregador = carregador;
     }
 
     public void setVisible(boolean b, boolean a) {
@@ -603,15 +583,15 @@ public class JBiBlioteca extends javax.swing.JDialog {
                         if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                             try {
                                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
-                                principal.getMusiquera().abrir(m, 0, false, true);
-                                principal.getMusiquera().tocar();
+                                principal.getMusiquera().abrir(m, 0, false);
+                                principal.getMusiquera().tocarPausar();
                                 jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                             } catch (Exception ex) {
                                 Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         } else {
                             Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
-                            principal.getJPlaylist().addPlaylist(m);
+                            carregador.addToPlayList(m);
                         }
                     }
                 }
@@ -619,7 +599,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
 
             if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_P) {
                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
-                principal.getJPlaylist().addPlaylist(m);
+                carregador.addToPlayList(m);
 
             }
         }
@@ -647,14 +627,14 @@ public class JBiBlioteca extends javax.swing.JDialog {
                         if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                             try {
                                 Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-                                principal.getMusiquera().abrir(m, 0, false, true);
+                                principal.getMusiquera().abrir(m, 0, false);
                                 jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                             } catch (Exception ex) {
                                 Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         } else {
                             Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-                            principal.getJPlaylist().addPlaylist(m);
+                           carregador.addToPlayList(m);
                         }
                     }
                 }
@@ -693,7 +673,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         for (int i = 0; i < jTable.getRowCount(); i++) {
             Musica m = (Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount());
-            principal.getJPlaylist().addPlaylist(m);
+            carregador.addToPlayList(m);
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
@@ -778,26 +758,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
-
-        // set the Quaqua Look and Feel in the UIManager
-        try {
-            UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new JBiBlioteca(null).setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
