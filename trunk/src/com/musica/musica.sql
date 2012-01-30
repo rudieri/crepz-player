@@ -7,4 +7,5 @@ nome varchar(255) NOT NULL,
 autor varchar(100),
 genero varchar(30),
 album varchar(100),
-img varchar(500));
+img varchar(500),
+tempo INTEGER);

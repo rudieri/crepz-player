@@ -15,8 +15,8 @@ import javax.swing.ImageIcon;
  * Classe que representa o Bico no PDV.
  */
 public class JCapa extends javax.swing.JPanel {
-    
-  
+
+
     /** Método construtor. */
       /** Creates new form JCapa */
     private String img;
@@ -28,17 +28,19 @@ public class JCapa extends javax.swing.JPanel {
             this.img = img;
             this.titulo = titulo;
             this.qtd = qtd;
-            if(!(img==null || img.equals(""))){
+            if(!(img==null || img.isEmpty())){
                 System.out.println("img: " + img);
                 ImageIcon imgIcon  =null;
                 if(SwapCapa.swap.get(img)!=null){
                     imgIcon = SwapCapa.swap.get(img);
                 }else{
                     BufferedImage bf = ImageIO.read(new File(img));
-                    imgIcon = new javax.swing.ImageIcon(bf.getScaledInstance(80, 120, Image.SCALE_SMOOTH));
-                    SwapCapa.swap.put(img, imgIcon);
+                    if (bf!=null) {
+                        imgIcon = new javax.swing.ImageIcon(bf.getScaledInstance(80, 120, Image.SCALE_SMOOTH));
+                        SwapCapa.swap.put(img, imgIcon);
+                    }
                 }
-                
+
                 jLabel_Img.setIcon(imgIcon);
             }
             jLabel_Titulo1.setText(titulo);
@@ -72,8 +74,8 @@ public class JCapa extends javax.swing.JPanel {
             jLabel_Titulo1.setForeground(Color.BLACK);
         }
     }
-    
-    
+
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

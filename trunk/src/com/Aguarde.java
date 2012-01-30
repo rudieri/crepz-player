@@ -8,9 +8,9 @@
  *
  * Created on 17/06/2010, 20:44:20
  */
-
 package com;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -19,15 +19,16 @@ import javax.swing.ImageIcon;
  *
  * @author manchini
  */
-public class Aguarde extends javax.swing.JFrame{
+public class Aguarde extends javax.swing.JFrame {
 
     /** Creates new form Aguarde */
     public Aguarde() {
+        super();
         initComponents();
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
     }
 
-    public void intro(){
+    public void intro() {
 //        try {
 ////            BasicPlayer player = new BasicPlayer();
 ////            player.open(getClass().getResource("/com/img/intro.mp3"));
@@ -38,56 +39,86 @@ public class Aguarde extends javax.swing.JFrame{
 //        }
     }
 
+    public void mostrar() {
+        if (isVisible()) {
+            String war="Warning: essa tela já esta ativa.\n";
+            try {
+                System.err.write(war.getBytes());
+            } catch (IOException ex) {
+                Logger.getLogger(Aguarde.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return ;
+        }
+        setVisible(true);
+        standBy();
+    }
 
-    public void standBy(){
+    public void ocultar() {
+        dispose();
+    }
+
+    private void standBy() {
         new Thread(new Runnable() {
 
+            @Override
+            @SuppressWarnings("SleepWhileInLoop")
             public void run() {
                 int count = 0;
-                while(true){
+                while (true) {
                     try {
                         count++;
-                        jProgressBar1.setValue(count*10);
-                        if (count == 1) {
-                            jProgressBar1.setString("Aguarde...");
+                        jProgressBar1.setValue(count * 10);
+                        switch (count) {
+                            case 1:
+                                jProgressBar1.setString("Aguarde...");
+                                break;
+                            case 4:
+                                jProgressBar1.setString("Aguarde Mais Um Pouco");
+                                break;
+                            case 7:
+                                jProgressBar1.setString("Ta Um Pouco Demorado");
+                                break;
+                            case 10:
+                                jProgressBar1.setString("ZZZZZzzzzzZZZZZZzzz");
+                                break;
+                            case 13:
+                                jProgressBar1.setString("RRuuuuuu.... uiiiiiiii");
+                                break;
+                            case 16:
+                                jProgressBar1.setString("Não Aperte Ctrl+Alt+Del");
+                                break;
+                            case 19:
+                                jProgressBar1.setString("Eu Consigo....");
+                                break;
+                            case 22:
+                                jProgressBar1.setString("Ta Quase conseguindo...");
+                                break;
+                            case 25:
+                                jProgressBar1.setString("Ou Não");
+                                break;
+                            case 28:
+                                jProgressBar1.setString("Espere um pouco mais...");
+                                break;
+                            case 31:
+                                jProgressBar1.setString("Está difícil...");
+                                break;
+                            case 34:
+                                jProgressBar1.setString("To Quase Desistindo");
+                                break;
+                            case 37:
+                                jProgressBar1.setString("Sou Brasileiro");
+                                break;
+                            case 40:
+                                jProgressBar1.setString("Não Desisto Nunca");
+                                break;
+                            case 50:
+                                jProgressBar1.setString("Tá Bom Pode Fecha.");
+                                break;
+                            default:
+                                break;
+                                
                         }
-                        if (count == 5) {
-                            jProgressBar1.setString("Aguarde Mais Um Pouco");
-                        }
-                        if (count == 7) {
-                            jProgressBar1.setString("Ta Um Pouco Demorado");
-                        }
-                        if (count == 8) {
-                            jProgressBar1.setString("ZZZZZzzzzzZZZZZZzzz");
-                        }
-                        if (count == 10) {
-                            jProgressBar1.setString("RRuuuuuu.... uiiiiiiii");
-                        }
-                        if (count == 15) {
-                            jProgressBar1.setString("Não Aperte Ctrl+Alt+Del");
-                        }
-                        if (count == 18) {
-                            jProgressBar1.setString("Eu Consigo....");
-                        }
-                        if (count == 20) {
-                            jProgressBar1.setString("Ta Quase...");
-                        }
-                        if (count == 25) {
-                            jProgressBar1.setString("Ou Não");
-                        }
-                        if (count == 35) {
-                            jProgressBar1.setString("To Quase Desistindo");
-                        }
-                        if (count == 40) {
-                            jProgressBar1.setString("Sou Brasileiro");
-                        }
-                        if (count == 43) {
-                            jProgressBar1.setString("Não Desisto Nunca");
-                        }
-                        if (count == 50) {
-                            jProgressBar1.setString("Tá Bom Pode Fecha.");
-                        }
-                        Thread.sleep(700);
+                        Thread.sleep(1000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Aguarde.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -95,10 +126,6 @@ public class Aguarde extends javax.swing.JFrame{
             }
         }).start();
     }
-
-
-     
-    
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -151,19 +178,20 @@ public class Aguarde extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+
+            @Override
             public void run() {
-                Aguarde g =new Aguarde();
+                Aguarde g = new Aguarde();
                 g.setVisible(true);
                 g.standBy();
                 g.intro();
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
@@ -171,7 +199,4 @@ public class Aguarde extends javax.swing.JFrame{
     private javax.swing.JPanel jPanel3;
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
-
-
-
 }

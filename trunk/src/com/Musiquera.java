@@ -6,7 +6,9 @@ package com;
 
 import com.graficos.Icones;
 import com.musica.Musica;
-import com.socket.Buffer;
+import com.musica.MusicaBD;
+import com.musica.Tempo;
+import com.utils.Warning;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -17,7 +19,6 @@ import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JOptionPane;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
@@ -28,39 +29,49 @@ import javazoom.jlgui.basicplayer.BasicPlayerListener;
  *
  * @author rudieri
  */
-public class Musiquera implements BasicPlayerListener {
+public abstract class Musiquera implements BasicPlayerListener {
 
     //  private boolean jSliderBarPressed = false;
     private boolean tocando;
     private boolean paused;
     private boolean ajust;
-    private int volume;
-    private int balanco;
-    private int tempo;
+    private byte volume;
+    private byte balanco;
+    private int tempoAtual;
     private int tenteiTocar = 0;
     private int tenteiAbrir = 0;
-    Long total = new Long(1);
-    JPrincipal principal;
-    JPlayList playList;
-    JBiBlioteca biblioteca;
-    JMini mini;
+    private long totalTempo = 1;
+    private int totalBytes = 1;
     Icones icones;
     BasicPlayer player;
     private Musica musica;
     private File in;
     private String tipo = "";
 
-    public Musiquera(JPrincipal jpr, JPlayList jpl, JBiBlioteca jbl, JMini jmi, Icones ico) {
-        principal = jpr;
-        playList = jpl;
-        biblioteca = jbl;
-        mini = jmi;
-        icones = ico;
+    @SuppressWarnings("LeakingThisInConstructor")
+    public Musiquera() {
         player = new BasicPlayer();
         player.addBasicPlayerListener(this);
+        player.setSleepTime(15);
+        volume = 50;
+        balanco = 50;
     }
 
-    public void setVolume(int v) {
+    public abstract void numberTempoChange(double s);
+
+    public abstract void stringTempoChange(String hms);
+
+//    public abstract void stringTempoTotalChange(String hms);
+
+    public abstract void eventoOcorreuNaMusica(int evt);
+
+    public abstract Musica getNextMusica();
+
+    public abstract Musica getPreviousMusica();
+
+    public abstract void atualizaLabels(String nome, int bits, String tempo, int freq);
+
+    public void setVolume(byte v) {
         volume = v;
 
         try {
@@ -74,13 +85,17 @@ public class Musiquera implements BasicPlayerListener {
         return volume;
     }
 
-    public void setBalanco(int b) {
+    public void setBalanco(byte b) {
         balanco = b;
         try {
             player.setPan(new Double(b) / 100);
         } catch (BasicPlayerException ex) {
             Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public int getTempoAtual() {
+        return tempoAtual;
     }
 
     public int getBalanco() {
@@ -104,57 +119,80 @@ public class Musiquera implements BasicPlayerListener {
         return paused;
     }
 
-    public int getTempo() {
-        return tempo;
-    }
-
-    public void abrir(Musica m, int toc, boolean isPause, boolean tocar) {
+    public boolean apenasAbrir(Musica m) throws BasicPlayerException {
         try {
             this.musica = m;
             if (m == null) {
                 System.out.println("Musica não existe, nullPointer");
-                return;
+                return false;
             }
             in = new File(m.getCaminho());
             if (in == null) {
-                return;
+                return false;
             }
             player.open(in);
+            return true;
+        } catch (BasicPlayerException ex) {
+            throw ex;
+        }
+    }
 
-            if (toc > 0) {
+    public void abrirETocar() {
+        abrir(getNextMusica(), 0, false);
+    }
+
+    @SuppressWarnings("CallToThreadDumpStack")
+    public void abrir(Musica m, int posicao, boolean abrirComPausa) {
+        try {
+            boolean abriu = apenasAbrir(m);
+            if (!abriu) {
+                return;
+            }
+            try {
+                MusicaBD.carregar(musica);
+            } catch (Exception ex) {
+                Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            if (posicao > 0) {
                 ajust = true;
-                skipTo(toc);
+                skipTo(posicao);
                 ajust = false;
-                tocar();
-                if (isPause) {
-                    tocar();
+                tocarPausar();
+                if (abrirComPausa) {
+                    tocarPausar();
                 }
             } else {
-                if (tocar) {
-                    tocar();
-                }
+                tocarPausar();
             }
             tenteiAbrir = 0;
 
-        } catch (BasicPlayerException ex) {
+
+        } catch (Exception ex) {
             tenteiAbrir++;
             System.out.println(ex.getMessage());
             if (ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
-                JOptionPane.showMessageDialog(null, "Arquivo não encontrado: " + m.getCaminho());
+                Warning.write(ex.getMessage());
+                try {
+                    MusicaBD.excluir(m);
+                    //                Operacoes.moverMusicaParaEstragadas(m);
+                } catch (Exception ex1) {
+                    Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex1);
+                }
             }
             switch (tenteiAbrir) {
                 case 1:
                 case 2:
                     System.out.println("Falha ao abrir, tentando novamente!");
-                    abrir(m, toc, isPause, tocar);
+                    abrir(m, posicao, abrirComPausa);
                     break;
                 case 3:
                     System.out.println("Falha ao abrir, passando para a próxima música!");
-                    abrir(playList.getProxima(true), 0, false, true);
+                    abrir(getNextMusica(), 0, false);
                     break;
                 case 4:
                     System.out.println("Falha ao abrir (estágio 2), tentando novamente!");
-                    abrir(m, toc, isPause, tocar);
+                    abrir(m, posicao, abrirComPausa);
                     break;
                 default:
                     System.out.println("Todas as tentativas falharam... :(");
@@ -170,14 +208,10 @@ public class Musiquera implements BasicPlayerListener {
         }
         try {
             player.open(f);
-            tocar();
+            tocarPausar();
         } catch (BasicPlayerException ex) {
             Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public boolean jSliderBarPressed() {
-        return principal.ajust;
     }
 
     public void parar() {
@@ -188,7 +222,7 @@ public class Musiquera implements BasicPlayerListener {
         }
     }
 
-    public void tocar() {
+    public void tocarPausar() {
         try {
             // tarefa = new Timer();
             int estado = player.getStatus();
@@ -196,30 +230,25 @@ public class Musiquera implements BasicPlayerListener {
 
             if (estado == BasicPlayer.UNKNOWN) {
                 System.out.println("Estado UNKNOWN");
-                principal.atualizaIcone("jButton_Play", "PAUSE");
                 player.open(in);
             }
 
 
             switch (estado) {
                 case BasicPlayer.PLAYING:
-                    principal.atualizaIcone("jButton_Play", "TOCAR");
                     player.pause();
                     setEstado(true, true);
                     break;
                 case BasicPlayer.PAUSED:
-                    principal.atualizaIcone("jButton_Play", "PAUSAR");
                     player.resume();
                     setEstado(true, false);
                     break;
 
                 case BasicPlayer.STOPPED:
-                    principal.atualizaIcone("jButton_Play", "PAUSAR");
                     player.play();
                     setEstado(true, true);
                     break;
                 case BasicPlayer.OPENED:
-                    principal.atualizaIcone("jButton_Play", "PAUSAR");
                     player.play();
                     setEstado(true, true);
                     break;
@@ -238,11 +267,10 @@ public class Musiquera implements BasicPlayerListener {
                     } catch (InterruptedException ex1) {
                         Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex1);
                     }
-                    tocar();
+                    tocarPausar();
                     break;
                 case 3:
                     System.out.println("Falha ao tocar, passando para a próxima música!");
-                    abrir(playList.getProxima(true), 0, false, true);
                     break;
                 case 4:
                     System.out.println("Falha ao tocar (estágio 2), tentando novamente!");
@@ -251,7 +279,7 @@ public class Musiquera implements BasicPlayerListener {
                     } catch (InterruptedException ex1) {
                         Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex1);
                     }
-                    tocar();
+                    tocarPausar();
                     break;
                 default:
                     System.out.println("Todas as tentativas falharam... :(");
@@ -261,9 +289,16 @@ public class Musiquera implements BasicPlayerListener {
         }
     }
 
-    public synchronized boolean skipTo(long time) {
-        System.out.println(time + "  " + total);
-        long skipBytes = (time * total / 1000);
+    public synchronized void skipTo(int segundos) {
+        //DoIt
+        double micro = segundos * 1000000;
+        skipTo(micro / (double) totalTempo);
+    }
+
+    @SuppressWarnings("CallToThreadDumpStack")
+    public synchronized void skipTo(double timePorcent) {
+        System.out.println("Skip to: " + timePorcent + "%");
+        long skipBytes = (long) (timePorcent * totalBytes);
         System.out.println(skipBytes);
         try {
             player.seek(skipBytes);
@@ -280,28 +315,25 @@ public class Musiquera implements BasicPlayerListener {
         } catch (BasicPlayerException ex) {
             ex.printStackTrace();
         }
-        return false;
-
 
     }
 
-    public String miliSegundosEmMinSeq(Long mili) {
+    @SuppressWarnings("CallToThreadDumpStack")
+    public String microSegundosEmMinSeq(long micro) {
         try {
-            mili = mili / 1000000;
+            micro = micro / 1000000;
             SimpleDateFormat sdf = new SimpleDateFormat("ss");
-            Date date = null;
-
-            date = sdf.parse(mili.toString());
-            return new java.text.SimpleDateFormat("HH:mm:ss").format(date);
+            Date date = sdf.parse(String.valueOf(micro));
+            return new SimpleDateFormat("HH:mm:ss").format(date);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         return "";
     }
 
+    @SuppressWarnings("CallToThreadDumpStack")
     public String miliSegundosEmMinSeq(int mili) {
-        mili = mili / 1000000;
+        mili = mili / 1000;
         SimpleDateFormat sdf = new SimpleDateFormat("ss");
         Date date = null;
         try {
@@ -313,9 +345,17 @@ public class Musiquera implements BasicPlayerListener {
         return new java.text.SimpleDateFormat("HH:mm:ss").format(date);
     }
 
+    @Override
     public void opened(Object stream, Map properties) {
-        total = new Long((Integer) properties.get("audio.length.bytes"));
-
+        totalTempo = (Long) properties.get("duration");
+        totalBytes = (Integer) properties.get("audio.length.bytes");
+//        stringTempoTotalChange(microSegundosEmMinSeq(totalTempo));
+        musica.setTempo(new Tempo(totalTempo));
+        try {
+            MusicaBD.alterar(musica);
+        } catch (Exception ex) {
+            Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Encoding enc;
 
         try {
@@ -329,7 +369,7 @@ public class Musiquera implements BasicPlayerListener {
             }
             System.out.println("Tipo: " + tipo);
             String info = properties.get("title") + " " + properties.get("author") + " " + properties.get("album");
-            String duracao = miliSegundosEmMinSeq((Long) properties.get("duration"));
+            String duracao = microSegundosEmMinSeq((Long) properties.get("duration"));
             int bits = (Integer) properties.get(tipo + ".bitrate.nominal.bps") / 1000;
             int freq = (Integer) properties.get(tipo + ".frequency.hz") / 1000;
             if (info.trim().equalsIgnoreCase("") || info.trim().equalsIgnoreCase("null null null")) {
@@ -339,8 +379,9 @@ public class Musiquera implements BasicPlayerListener {
                     System.out.println("Erro em opened");
                 }
             }
-            principal.atualizaLabels(info, bits, duracao, freq);
-            mini.setNomeMusica(info);
+            atualizaLabels(info, bits, microSegundosEmMinSeq(totalTempo), freq);
+            // principal.atualizaLabels(info, bits, duracao, freq);
+            // mini.setNomeMusica(info);
         } catch (UnsupportedAudioFileException ex) {
             Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -348,40 +389,31 @@ public class Musiquera implements BasicPlayerListener {
         }
     }
 
+    @Override
     public void progress(int i, long l, byte[] bytes, Map properties) {
-        tempo = Integer.parseInt(String.valueOf((Long) properties.get(tipo + ".position.byte") * 1000 / total));
-        if (!jSliderBarPressed()) {
-            principal.atualizaTempo(tempo);
-        }
-        String hms = miliSegundosEmMinSeq(i);
-        principal.atualizaTempo(hms);
-        Buffer.mandar(bytes);
-
+//        numberTempoChange(new Double(l)/totalTempo);
+        double prop = new Double(i) / totalBytes;
+        numberTempoChange(prop);
+        String hms = microSegundosEmMinSeq((long) (totalTempo * prop));
+        stringTempoChange(hms);
     }
 
+    @Override
     public void stateUpdated(BasicPlayerEvent event) {
         switch (event.getCode()) {
             case BasicPlayerEvent.STOPPED:
-                principal.atualizaIcone("jButton_Play", icones.playIcon);
-                mini.setPlayIcon(icones.mini_playIcon);
-
                 tocando = false;
                 paused = false;
                 if (!ajust) {
-                    principal.atualizaTempo(0);
+                    numberTempoChange(0);
                 }
                 break;
             case BasicPlayerEvent.PLAYING:
 
                 tocando = true;
                 paused = false;
-                principal.atualizaIcone("jButton_Play", icones.pauseIcon);
-                mini.setPlayIcon(icones.mini_pauseIcon);
-
                 break;
             case BasicPlayerEvent.RESUMED:
-                principal.atualizaIcone("jButton_Play", icones.pauseIcon);
-                mini.setPlayIcon(icones.mini_pauseIcon);
                 tocando = true;
                 paused = false;
 
@@ -389,9 +421,6 @@ public class Musiquera implements BasicPlayerListener {
             case BasicPlayerEvent.PAUSED:
                 tocando = true;
                 paused = true;
-                principal.atualizaIcone("jButton_Play", icones.playIcon);
-                mini.setPlayIcon(icones.mini_playIcon);
-
                 break;
 
             case BasicPlayerEvent.GAIN:
@@ -420,13 +449,14 @@ public class Musiquera implements BasicPlayerListener {
                 paused = false;
                 break;
             case BasicPlayerEvent.EOM:
-                abrir(playList.getProxima(false), 0, false, true);
+                abrir(getNextMusica(), 0, false);
                 break;
 
         }
 
     }
 
+    @Override
     public void setController(BasicController bc) {
         System.out.println("Controller= " + bc.toString());
     }

@@ -124,12 +124,12 @@ public class PlaylistBD {
         try {
             if (!rs.next()) {
                 return false;
-            }
+        }
             playlist.setId(rs.getInt("id"));
             return true;
         } finally {
             rs.close();
-        }
+    }
     }
 
     /**
@@ -151,7 +151,7 @@ public class PlaylistBD {
         try {
             if (!rs.next()) {
                 return false;
-            }
+    }
 
             playlist.setId(rs.getInt("id"));
             playlist.setNome(rs.getString("nome"));
@@ -170,7 +170,7 @@ public class PlaylistBD {
     public static ArrayList listar(PlaylistSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
             throw new Exception(" - Filtro não informado.");
-        }
+    }
 
 
         SQL sql = new SQL();

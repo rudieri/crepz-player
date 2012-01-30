@@ -1,4 +1,5 @@
 package com.musica;
+
 import com.conexao.SQL;
 import com.conexao.Transacao;
 import java.sql.*;
@@ -54,9 +55,9 @@ public class MusicaBD {
 
         SQL sql = new SQL();
         sql.add("INSERT INTO " + TBL);
-        sql.add(" (id, caminho, nome, autor, genero, album, img) ");
+        sql.add(" (id, caminho, nome, autor, genero, album, img, tempo) ");
         sql.add("VALUES ");
-        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img)");
+        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img, :tempo)");
 
         sql.setParam("id", null);
         sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
@@ -81,7 +82,8 @@ public class MusicaBD {
 
         SQL sql = new SQL();
         sql.add("UPDATE " + TBL);
-        sql.add("SET nome = :nome, autor = :autor, genero =:genero, album = :album, img = :img, caminho = :caminho          ");
+        sql.add("SET nome = :nome, autor = :autor, genero =:genero, album = :album, img = :img,");
+        sql.add("caminho = :caminho, tempo=:tempo");
         sql.add("WHERE id = :id ");
 
         sql.setParam("id", musica.getId());
@@ -89,6 +91,7 @@ public class MusicaBD {
         sql.setParam("nome", musica.getNome());
         sql.setParam("autor", musica.getAutor());
         sql.setParam("genero", musica.getGenero());
+        sql.setParam("tempo", musica.getTempo() == null ? 0 : musica.getTempo().getMilissegundos());
         sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
 
         return t.executeUpdate(sql.getSql());
@@ -162,14 +165,8 @@ public class MusicaBD {
             if (!rs.next()) {
                 return false;
             }
+            carregarObjeto(musica, rs);
 
-            musica.setId(rs.getInt("id"));
-            musica.setCaminho(rs.getString("caminho"));
-            musica.setNome(rs.getString("nome"));
-            musica.setAutor(rs.getString("autor"));
-            musica.setGenero(rs.getString("genero"));
-            musica.setAlbum(rs.getString("album"));
-            musica.setImg(rs.getString("img"));
 
 
             return true;
@@ -178,11 +175,22 @@ public class MusicaBD {
         }
     }
 
+    private static void carregarObjeto(Musica musica, ResultSet rs) throws SQLException {
+        musica.setId(rs.getInt("id"));
+        musica.setCaminho(rs.getString("caminho"));
+        musica.setNome(rs.getString("nome"));
+        musica.setAutor(rs.getString("autor"));
+        musica.setGenero(rs.getString("genero"));
+        musica.setAlbum(rs.getString("album"));
+        musica.setImg(rs.getString("img"));
+        musica.setTempo(new Tempo(rs.getInt("tempo")));
+    }
+
     /** Método que retorna uma lista de Musicas de acordo com o filtro.
      * @param filtro Contendo o filtro.
      * @param t Contendo a transação.
      * @return ArrayList Contendo uma lista de Musicas. */
-    public static ArrayList listar(MusicaSC filtro, Transacao t) throws Exception {
+    public static ArrayList<Musica> listar(MusicaSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
             throw new Exception(" - Filtro não informado.");
         }
@@ -194,29 +202,29 @@ public class MusicaBD {
         sql.add("WHERE");
         int c = 0;
 
-        if (filtro.getNome() != null && !filtro.getNome().equals("")) {
+        if (filtro.getNome() != null && !filtro.getNome().isEmpty()) {
             sql.add("UCASE (nome) like :nome");
             sql.setParam("nome", filtro.getNome().toUpperCase() + "%");
             c++;
         }
-        if (filtro.getAutor() != null && !filtro.getAutor().equals("")) {
+        if (filtro.getAutor() != null && !filtro.getAutor().isEmpty()) {
             sql.add("OR UCASE (autor) like :autor");
             sql.setParam("autor", filtro.getAutor().toUpperCase() + "%");
             c++;
         }
-        if (filtro.getAlbum() != null && !filtro.getAlbum().equals("")) {
+        if (filtro.getAlbum() != null && !filtro.getAlbum().isEmpty()) {
             sql.add("OR UCASE (album) like :album");
             sql.setParam("album", filtro.getAlbum().toUpperCase() + "%");
             c++;
         }
-        if(filtro.getGenero()!=null && ! filtro.getGenero().equals("")){
+        if (filtro.getGenero() != null && !filtro.getGenero().isEmpty()) {
             sql.add("OR UCASE (genero) like :genero");
-            sql.setParam("genero", filtro.getGenero().toUpperCase()+"%");
+            sql.setParam("genero", filtro.getGenero().toUpperCase() + "%");
             c++;
         }
-        
-        
-        if(c==0){
+
+
+        if (c == 0) {
             sql.add("1=1");
         }
         sql.add("ORDER BY nome ");
@@ -228,13 +236,7 @@ public class MusicaBD {
             ArrayList lista = new ArrayList();
             while (rs.next()) {
                 Musica musica = new Musica();
-                musica.setId(rs.getInt("id"));
-                musica.setCaminho(rs.getString("caminho"));
-                musica.setNome(rs.getString("nome"));
-                musica.setAutor(rs.getString("autor"));
-                musica.setGenero(rs.getString("genero"));
-                musica.setAlbum(rs.getString("album"));
-                musica.setImg(rs.getString("img"));
+                carregarObjeto(musica, rs);
 
                 lista.add(musica);
             }
@@ -244,6 +246,16 @@ public class MusicaBD {
         }
     }
 
+    public static int contarMusicas(Transacao t) throws Exception {
+        SQL sql = new SQL();
+        sql.add("SELECT count(id) as qtd FROM " + TBL);
+        ResultSet rs = t.executeQuery(sql.getSql());
+        if (rs.next()) {
+            return rs.getInt("qtd");
+        } else {
+            return 0;
+        }
+    }
 
     public static ArrayList listarAgrupado(MusicaSC filtro, String agrupar, Transacao t) throws Exception {
         if (filtro == null) {
@@ -252,30 +264,30 @@ public class MusicaBD {
 
 
         SQL sql = new SQL();
-        sql.add("SELECT "+agrupar+" as agrup , count(*) as m, max(img) as capa");
+        sql.add("SELECT " + agrupar + " as agrup , count(*) as m, max(img) as capa");
         sql.add("FROM " + TBL);
         sql.add("WHERE ");
         int c = 0;
-        if (filtro.getNome() != null && !filtro.getNome().equals("")) {
+        if (filtro.getNome() != null && !filtro.getNome().isEmpty()) {
             sql.add("UCASE (nome) like :nome");
             sql.setParam("nome", filtro.getNome().toUpperCase() + "%");
             c++;
         }
-        if (filtro.getAutor() != null && !filtro.getAutor().equals("")) {
+        if (filtro.getAutor() != null && !filtro.getAutor().isEmpty()) {
             sql.add("OR UCASE (autor) like :autor");
             sql.setParam("autor", filtro.getAutor().toUpperCase() + "%");
             c++;
         }
-        if (filtro.getAlbum() != null && !filtro.getAlbum().equals("")) {
+        if (filtro.getAlbum() != null && !filtro.getAlbum().isEmpty()) {
             sql.add("OR UCASE (album) like :album");
             sql.setParam("album", filtro.getAlbum().toUpperCase() + "%");
             c++;
         }
-         if(c==0){
+        if (c == 0) {
             sql.add("1=1");
         }
 
-        sql.add("GROUP BY "+agrupar);
+        sql.add("GROUP BY " + agrupar);
 
 
 
@@ -283,7 +295,7 @@ public class MusicaBD {
         try {
             ArrayList lista = new ArrayList();
             while (rs.next()) {
-                JCapa capa = new JCapa(rs.getString("capa").replace("<&aspas>","'"), rs.getString("agrup"),new Integer(rs.getInt("m")));
+                JCapa capa = new JCapa(rs.getString("capa").replace("<&aspas>", "'"), rs.getString("agrup"), rs.getInt("m"));
 
                 lista.add(capa);
             }
@@ -292,7 +304,8 @@ public class MusicaBD {
             rs.close();
         }
     }
-    public Musica pesquisar(String parametro, String valor){
+
+    public Musica pesquisar(String parametro, String valor) {
         SQL sql = new SQL();
         sql.add("SELECT * ");
         sql.add("FROM " + TBL);
@@ -302,18 +315,11 @@ public class MusicaBD {
         Musica musica = new Musica();
         try {
             t.begin();
-            ResultSet rs=t.executeQuery(sql.getSql());
+            ResultSet rs = t.executeQuery(sql.getSql());
             t.commit();
-            
+
             while (rs.next()) {
-             
-                musica.setId(rs.getInt("id"));
-                musica.setCaminho(rs.getString("caminho"));
-                musica.setNome(rs.getString("nome"));
-                musica.setAutor(rs.getString("autor"));
-                musica.setGenero(rs.getString("genero"));
-                musica.setAlbum(rs.getString("album"));
-                musica.setImg(rs.getString("img"));
+                carregarObjeto(musica, rs);
                 rs.close();
             }
         } catch (Exception ex) {
@@ -429,11 +435,11 @@ public class MusicaBD {
     /** Método que retorna uma lista de Musicas de acordo com o filtro.
      * @param filtro Contendo o filtro.
      * @return ArrayList Contendo uma lista de Musicas. */
-    public static ArrayList listar(MusicaSC filtro) throws Exception {
+    public static ArrayList<Musica> listar(MusicaSC filtro) throws Exception {
         Transacao t = new Transacao();
         try {
             t.begin();
-            ArrayList r = listar(filtro, t);
+            ArrayList<Musica> r = listar(filtro, t);
             t.commit();
             return r;
         } catch (Exception ex) {
@@ -441,8 +447,21 @@ public class MusicaBD {
             throw ex;
         }
     }
+    public static int contarMusicas() throws Exception{
+        Transacao t = new Transacao();
+        try {
+            t.begin();
+            int r = contarMusicas(t);
+            t.commit();
+            return r;
+        } catch (Exception ex) {
+            t.rollback();
+            throw ex;
+        }
 
-      public static ArrayList listarAgrupado(MusicaSC filtro,String agrupador) throws Exception {
+    }
+
+    public static ArrayList listarAgrupado(MusicaSC filtro, String agrupador) throws Exception {
         Transacao t = new Transacao();
         try {
             t.begin();

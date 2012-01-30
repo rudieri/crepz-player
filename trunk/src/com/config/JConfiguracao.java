@@ -45,7 +45,7 @@ public class JConfiguracao extends javax.swing.JDialog {
             tm.setRowCount(0);
             ArrayList<String> ps = Scan.getPastas();
             for (short i = 0; i < ps.size(); i++) {
-                if (ps.get(i) != null && !ps.get(i).replaceAll(" ", "").equals("")) {
+                if (ps.get(i) != null && !ps.get(i).replaceAll(" ", "").isEmpty()) {
                     tm.addRow(new Object[]{ps.get(i)});
 
                 }
@@ -92,7 +92,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         MusicaGerencia.organizarPastas = jCheckBox_Organizador.isSelected();
         MusicaGerencia.destino = jTextField_DestinoOrg.getText() != null ? jTextField_DestinoOrg.getText() : "";
         MusicaGerencia.downLoadCapas = jCheckBox_DownloadCapa.isSelected();
-        Scan.setTempo(jSpinner1.getValue());
+        Scan.setTempo((Integer)jSpinner1.getValue());
         TableModel tm = jTable_pastas.getModel();
         ArrayList<String> pastas = new ArrayList<String>();
         for (int i = 0; i < tm.getRowCount(); i++) {
