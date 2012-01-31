@@ -1,5 +1,6 @@
 package com;
 
+import com.Musiquera.PropriedadesMusica;
 import com.graficos.Testes;
 import com.main.Carregador;
 import com.main.Notificavel;
@@ -62,23 +63,25 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         //atualizar  infs
     }
 
-
     @Override
-    public void tempoEh(double  v) {
+    public void tempoEh(double v) {
         if (ajusteDeTempo) {
-            return ;
+            return;
         }
-        jSlider_Tempo.setValue((int)(jSlider_Tempo.getMaximum()*v));
+        jSlider_Tempo.setValue((int) (jSlider_Tempo.getMaximum() * v));
     }
 
 //    @Override
 //    public void tempoTotalEhHMS(String hms) {
 //        // do nothing
 //    }
-
+    @Override
+    public void propriedadesMusicaChanged(PropriedadesMusica propriedadesMusica) {
+        
+    }
 
     /**Coloca os icones nos Jlabels*/
-    private  void inicializaIcones() {
+    private void inicializaIcones() {
         jButton_Play.setText("");
         jButton_Stop.setText("");
         jButton_Next.setText("");
@@ -200,8 +203,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 //        jv.add(jLabelNomeMusica);
 //        jScrollPane1.setViewport(jv);
     }
-
-
 
     public void setTop(boolean b) {
         setAlwaysOnTop(b);
@@ -860,8 +861,8 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
     private void jSlider_TempoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMouseReleased
 
-        musiquera.skipTo(new Double(jSlider_Tempo.getValue())/jSlider_Tempo.getMaximum());
-        ajusteDeTempo=false;
+        musiquera.skipTo(new Double(jSlider_Tempo.getValue()) / jSlider_Tempo.getMaximum());
+        ajusteDeTempo = false;
 }//GEN-LAST:event_jSlider_TempoMouseReleased
 
     private void jPanel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseEntered
@@ -956,27 +957,27 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
     private void jRadioButtonMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMenuItem1ActionPerformed
         // TODO add your handling code here:
-        musiquera.setBalanco((byte)100);
+        musiquera.setBalanco((byte) 100);
     }//GEN-LAST:event_jRadioButtonMenuItem1ActionPerformed
 
     private void jRadioButtonMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMenuItem2ActionPerformed
         // TODO add your handling code here:
-        musiquera.setBalanco((byte)50);
+        musiquera.setBalanco((byte) 50);
     }//GEN-LAST:event_jRadioButtonMenuItem2ActionPerformed
 
     private void jRadioButtonMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMenuItem3ActionPerformed
         // TODO add your handling code here:
-        musiquera.setBalanco((byte)0);
+        musiquera.setBalanco((byte) 0);
     }//GEN-LAST:event_jRadioButtonMenuItem3ActionPerformed
 
     private void jRadioButtonMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMenuItem4ActionPerformed
         // TODO add your handling code here:
-        musiquera.setBalanco((byte)-50);
+        musiquera.setBalanco((byte) -50);
     }//GEN-LAST:event_jRadioButtonMenuItem4ActionPerformed
 
     private void jRadioButtonMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMenuItem5ActionPerformed
         // TODO add your handling code here:
-        musiquera.setBalanco((byte)-100);
+        musiquera.setBalanco((byte) -100);
     }//GEN-LAST:event_jRadioButtonMenuItem5ActionPerformed
 
     private void jCheckBox_libActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_libActionPerformed
@@ -1020,7 +1021,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 }//GEN-LAST:event_jLabel_PlaylistMouseClicked
 
     private void jLabel_libMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_libMouseClicked
-          if (evt.getButton() == MouseEvent.BUTTON1) {
+        if (evt.getButton() == MouseEvent.BUTTON1) {
             boolean visible = carregador.isBibliotecaVisible();
             jCheckBox_list.setSelected(visible);
             if (visible) {
@@ -1075,13 +1076,13 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
     private void jSlider_volMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_volMouseReleased
         // TODO add your handling code here:
-        musiquera.setVolume((byte)jSlider_vol.getValue());
+        musiquera.setVolume((byte) jSlider_vol.getValue());
         jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
     }//GEN-LAST:event_jSlider_volMouseReleased
 
     private void jSlider_TempoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMousePressed
         // TODO add your handling code here:
-        ajusteDeTempo=true;
+        ajusteDeTempo = true;
     }//GEN-LAST:event_jSlider_TempoMousePressed
 
     /**

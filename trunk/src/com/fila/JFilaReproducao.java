@@ -11,6 +11,7 @@
 package com.fila;
 
 import com.Musiquera;
+import com.Musiquera.PropriedadesMusica;
 import com.main.Carregador;
 import com.main.Notificavel;
 import com.musica.ModelReadOnly;
@@ -29,9 +30,14 @@ import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.InvalidDnDOperationException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DropMode;
@@ -46,7 +52,7 @@ import javax.swing.table.TableRowSorter;
  *
  * @author rudieri
  */
-public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
+public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
 //    private ModelReadOnly modelMusicas;
     private ObjectTableModel<Musica> objModelMusicas;
@@ -69,20 +75,19 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
         this.carregador = carregador;
     }
 
-    private void alterarMusica(Musica musica) {
-        try {
-//            int musicasBanco = MusicaBD.contarMusicas();
-//            if (musicasBanco != objModelMusicas.getRowCount()) {
-//                atualizaTabelaMusica();
-//            } else {
-                MusicaBD.carregar(musica);
-                objModelMusicas.atualizarItem(musica, jTableMusicas.getSelectedRow());
-//            }
-        } catch (Exception ex) {
-            Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+//    private void alterarMusica(Musica musica) {
+//        try {
+////            int musicasBanco = MusicaBD.contarMusicas();
+////            if (musicasBanco != objModelMusicas.getRowCount()) {
+////                atualizaTabelaMusica();
+////            } else {
+//            MusicaBD.carregar(musica);
+//            objModelMusicas.atualizarItem(musica, jTableMusicas.getSelectedRow());
+////            }
+//        } catch (Exception ex) {
+//            Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
     private void initTabelaFila() {
         modelFila = new ModelReadOnly();
         modelFila.addColumn("");
@@ -99,6 +104,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
                 }
             }
         });
+        // Código do Cão...
         jScrollPaneFila.setDropTarget(new DropTarget(jScrollPaneFila, new DropTargetAdapter() {
 
             @Override
@@ -106,17 +112,56 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
                 try {
                     Transferable transferable = dtde.getTransferable();
                     DataFlavor[] flavors = transferable.getTransferDataFlavors();
-                    Object data = transferable.getTransferData(transferable.getTransferDataFlavors()[0]);
-                    if (data instanceof Musica) {
+                    Object data = null;
+                    try {
+                        data = transferable.getTransferData(transferable.getTransferDataFlavors()[0]);
+                    } catch (Exception ex) {
+                        // irá cair no drop do linux e la encontrará alguns arquivos :D
+                        Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, "Crepz tratavel...", ex);
+                    }
+                    if (data != null && data instanceof Musica) {
                         System.out.println(data);
                         ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{data});
-                    } else if (data instanceof ArrayList) {
-                        for (int i = 0; i < ((ArrayList) data).size(); i++) {
-                            Musica musica = ((ArrayList<Musica>) data).get(i);
-                            ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{musica});
+                    } else if (data != null && data instanceof ArrayList) {
+                        addMusicasToFila(data);
+                    } else {
+                        ArrayList<Musica> musicasImportadas = null;
+                        //Windows
+                        if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                            ArrayList<File> arquivos = (ArrayList) transferable.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+                            musicasImportadas = MusicaGerencia.addFiles(arquivos);
+                        } else {
+                            // Linux
+                            loop_flavor:
+                            for (int i = 0; i < flavors.length; i++) {
+                                if (flavors[i].isRepresentationClassReader()) {
+                                    // Say we'll take it.
+                                    //evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
+                                    dtde.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
+
+                                    Reader reader = flavors[i].getReaderForText(transferable);
+
+                                    BufferedReader br = new BufferedReader(reader);
+                                    ArrayList<File> arquivos = new ArrayList<File>(1);
+                                    String linhaLida;
+                                    while ((linhaLida = br.readLine()) != null) {
+                                        if (!linhaLida.isEmpty()) {
+                                            try {
+                                                arquivos.add(new File(new URI(linhaLida)));
+                                            } catch (URISyntaxException ex) {
+                                                Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                        }
+                                    }
+                                    musicasImportadas = MusicaGerencia.addFiles(arquivos);
+                                    break loop_flavor;
+                                }
+                            }
+                        }
+                        if (musicasImportadas != null) {
+                            addMusicasToFila(musicasImportadas);
                         }
                     }
-//                    transferable.getTransferData(dtde.getCurrentDataFlavors()[0]);
 //                    System.out.println(transferable);
                 } catch (UnsupportedFlavorException ex) {
                     Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
@@ -132,6 +177,17 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
             }
         }));
         jTableFila.setModel(modelFila);
+    }
+
+    private void addMusicasToFila(Object data) {
+        addMusicasToFila((ArrayList) data);
+    }
+
+    private void addMusicasToFila(ArrayList<Musica> data) {
+        for (int i = 0; i < data.size(); i++) {
+            Musica musica = data.get(i);
+            ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{musica});
+        }
     }
 
     private void initTabelaMusica() {
@@ -186,32 +242,51 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
         if (modelFila.getRowCount() > 0) {
             Musica musica = (Musica) modelFila.getValueAt(0, 0);
             modelFila.removeRow(0);
-            alterarMusica(musica);
+//            alterarMusica(musica);
             return musica;
         }
         return null;
     }
 
     @Override
-    public void atualizaLabels(String nome, int bits, String tempo, int freq) {
-        jLabelTocando.setText(nome);
+    public void atualizaLabels(String nome, int bits, String tempoTotal, int freq) {
+        // do nothing
+    }
+
+    @Override
+    public void propriedadesMusicaChanged(PropriedadesMusica propriedadesMusica) {
+        jLabelTocando.setText(propriedadesMusica.getNome());
+        int indexOf = objModelMusicas.indexOf(musiquera.getMusica());
+        musiquera.getMusica().setTempo(propriedadesMusica.getTempoTotal());
+        try {
+
+            int convertRow = jTableMusicas.convertRowIndexToView(indexOf);
+            if (convertRow != -1) {
+                objModelMusicas.atualizarItem(musiquera.getMusica(), indexOf, convertRow);
+            }
+            jTableMusicas.repaint();
+        } catch (Exception ex) {
+            System.out.println("Não aparece no filtro...");
+        }
+    }
+
+    @Override
+    public void dispose() {
+        jTextFieldPesquisa.setText("");
+        super.dispose();
     }
 
     @Override
     public void eventoNaMusica(int tipo) {
-
     }
 
     @Override
     public void tempoEh(double v) {
-
     }
 
     @Override
     public void tempoEhHMS(String hms) {
-
     }
-
 
     @Override
     public void setVisible(boolean b) {
@@ -362,12 +437,11 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
         if (evt.getClickCount() > 1) {
             Musica musica = objModelMusicas.getItem(jTableMusicas.convertRowIndexToModel(jTableMusicas.getSelectedRow()));
             musiquera.abrir(musica, 0, false);
-            alterarMusica(musica);
+//            alterarMusica(musica);
         }
     }//GEN-LAST:event_jTableMusicasMouseClicked
 
     private void jTextFieldPesquisaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPesquisaKeyTyped
-
 //        for (int i = 0; i < objModelMusicas.getRowCount(); i++) {
 //            Musica musica = objModelMusicas.getItem(i);
 //            if (musica.getNome().contains(text)) {
@@ -377,11 +451,11 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel{
     }//GEN-LAST:event_jTextFieldPesquisaKeyTyped
 
     private void jTableFilaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFilaMouseClicked
-        if (evt.getClickCount()==2) {
+        if (evt.getClickCount() == 2) {
             Musica musica = (Musica) modelFila.getValueAt(jTableFila.getSelectedRow(), 0);
             modelFila.removeRow(jTableFila.getSelectedRow());
             musiquera.abrir(musica, 0, false);
-            alterarMusica(musica);
+//            alterarMusica(musica);
         }
     }//GEN-LAST:event_jTableFilaMouseClicked
 

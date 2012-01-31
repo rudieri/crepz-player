@@ -221,6 +221,6 @@ public class Musica implements Serializable, Filtravel {
 
     @Override
     public String getTextoParaPesquisa() {
-        return String.valueOf(nome + album + autor + genero).toLowerCase();
+        return String.valueOf(nome + album + autor + genero + tempo.toString()).toLowerCase();
     }
 }

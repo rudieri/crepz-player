@@ -62,12 +62,13 @@ public abstract class Musiquera implements BasicPlayerListener {
     public abstract void stringTempoChange(String hms);
 
 //    public abstract void stringTempoTotalChange(String hms);
-
     public abstract void eventoOcorreuNaMusica(int evt);
 
     public abstract Musica getNextMusica();
 
     public abstract Musica getPreviousMusica();
+
+    public abstract void setPropriedadesMusica(PropriedadesMusica propriedadesMusica);
 
     public abstract void atualizaLabels(String nome, int bits, String tempo, int freq);
 
@@ -126,6 +127,11 @@ public abstract class Musiquera implements BasicPlayerListener {
                 System.out.println("Musica não existe, nullPointer");
                 return false;
             }
+            try {
+                MusicaBD.carregar(musica);
+            } catch (Exception ex) {
+                Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
+            }
             in = new File(m.getCaminho());
             if (in == null) {
                 return false;
@@ -147,11 +153,6 @@ public abstract class Musiquera implements BasicPlayerListener {
             boolean abriu = apenasAbrir(m);
             if (!abriu) {
                 return;
-            }
-            try {
-                MusicaBD.carregar(musica);
-            } catch (Exception ex) {
-                Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             if (posicao > 0) {
@@ -347,6 +348,7 @@ public abstract class Musiquera implements BasicPlayerListener {
 
     @Override
     public void opened(Object stream, Map properties) {
+        PropriedadesMusica propriedadesMusica = new PropriedadesMusica();
         totalTempo = (Long) properties.get("duration");
         totalBytes = (Integer) properties.get("audio.length.bytes");
 //        stringTempoTotalChange(microSegundosEmMinSeq(totalTempo));
@@ -380,6 +382,12 @@ public abstract class Musiquera implements BasicPlayerListener {
                 }
             }
             atualizaLabels(info, bits, microSegundosEmMinSeq(totalTempo), freq);
+            propriedadesMusica.setBytesTotal(totalBytes);
+            propriedadesMusica.setTempoTotal(totalTempo);
+            propriedadesMusica.setNome((String)properties.get("title"));
+            propriedadesMusica.setArtista((String)properties.get("author"));
+            propriedadesMusica.setAlbum((String)properties.get("album"));
+            setPropriedadesMusica(propriedadesMusica);
             // principal.atualizaLabels(info, bits, duracao, freq);
             // mini.setNomeMusica(info);
         } catch (UnsupportedAudioFileException ex) {
@@ -459,5 +467,60 @@ public abstract class Musiquera implements BasicPlayerListener {
     @Override
     public void setController(BasicController bc) {
         System.out.println("Controller= " + bc.toString());
+    }
+
+    public class PropriedadesMusica {
+
+        private Tempo tempoTotal;
+        private long bytesTotal;
+        private String nome;
+        private String artista;
+        private String album;
+
+        public void setTempoTotal(long tempoTotalMicrossegundos) {
+            this.tempoTotal = new Tempo(tempoTotalMicrossegundos);
+        }
+
+        /**Retorna o tempo total em microssegundos*/
+        public Tempo getTempoTotal() {
+            return tempoTotal;
+        }
+
+        public void setTempoTotal(Tempo tempoTotal) {
+            this.tempoTotal = tempoTotal;
+        }
+
+        public long getBytesTotal() {
+            return bytesTotal;
+        }
+
+        public void setBytesTotal(long bytesTotal) {
+            this.bytesTotal = bytesTotal;
+        }
+
+        public String getAlbum() {
+            return album;
+        }
+
+        public void setAlbum(String album) {
+            this.album = album;
+        }
+
+        public String getArtista() {
+            return artista;
+        }
+
+        public void setArtista(String artista) {
+            this.artista = artista;
+        }
+
+        public String getNome() {
+            return nome;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
     }
 }

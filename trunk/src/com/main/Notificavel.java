@@ -4,6 +4,8 @@
  */
 package com.main;
 
+import com.Musiquera.PropriedadesMusica;
+
 /**
  *
  * @author rudieri
@@ -13,5 +15,6 @@ public interface  Notificavel {
     public void tempoEhHMS(String hms);
 //    public void tempoTotalEhHMS(String hms);
     public void eventoNaMusica(int tipo);
+    public void propriedadesMusicaChanged(PropriedadesMusica propriedadesMusica);
     public void atualizaLabels(String nome, int bits, String tempo, int freq) ;
 }
