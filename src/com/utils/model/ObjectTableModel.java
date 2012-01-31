@@ -4,6 +4,7 @@
  */
 package com.utils.model;
 
+import com.musica.Musica;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import javax.swing.event.TableModelEvent;
@@ -75,6 +76,9 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
         if (filtro == null) {
             return ObjetoTabeaUtils.getValueAt(itens.get(rowIndex), columnIndex);
         } else {
+            if (itensFiltrados.isEmpty()) {
+                return null;
+            }
             return ObjetoTabeaUtils.getValueAt(itensFiltrados.get(rowIndex), columnIndex);
         }
     }
@@ -109,33 +113,51 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
 
     public void addItem(E item) {
         itens.add(item);
-        for (int i = 0; i < tableModelListeners.size(); i++) {
-            TableModelEvent event = new TableModelEvent(this, itens.size() - 1, itens.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
-            tableModelListeners.get(i).tableChanged(event);
+        if (filtro == null) {
 
+            for (int i = 0; i < tableModelListeners.size(); i++) {
+                TableModelEvent event = new TableModelEvent(this, itens.size() - 1, itens.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+                tableModelListeners.get(i).tableChanged(event);
+
+            }
+        } else {
+            atualizarFiltro();
         }
+
     }
 
     public void atualizarItem(E item, int row) {
+        atualizarItem(item, row, row);
+    }
+
+    public void atualizarItem(E item, int row, int convertedRow) {
         itens.set(row, item);
+        if (filtro != null) {
+            int indexOf = itensFiltrados.indexOf(item);
+            if (indexOf != -1) {
+                itensFiltrados.set(indexOf, item);
+            }
+        }
+        System.out.println("Item changed: " + item + ", tempo total: " + item.getTextoParaPesquisa());
         for (int i = 0; i < tableModelListeners.size(); i++) {
-            TableModelEvent event = new TableModelEvent(this, row, row, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE);
+            TableModelEvent event = new TableModelEvent(this, convertedRow, convertedRow, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE);
             tableModelListeners.get(i).tableChanged(event);
 
         }
     }
 
     public E getItem(int row) {
-        if (filtro==null) {
+        if (filtro == null) {
             return itens.get(row);
 
-        }else{
+        } else {
             return itensFiltrados.get(row);
         }
     }
 
     public void clear() {
         itens.clear();
+        itensFiltrados.clear();
         for (int i = 0; i < tableModelListeners.size(); i++) {
             TableModelEvent event = new TableModelEvent(this);
             tableModelListeners.get(i).tableChanged(event);
@@ -156,6 +178,7 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
             E item = itens.get(i);
             if (item.getTextoParaPesquisa().contains(filtro)) {
                 itensFiltrados.add(item);
+                System.out.println("Added: " + item);
             }
         }
         System.out.println("Itens Filtrados: " + itensFiltrados.size());
@@ -184,9 +207,32 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
                 }
 
             }
+            itensFiltrados.clear();
         } else {
             this.filtro = text;
             atualizarFiltro();
         }
+    }
+
+    public int indexOf(E item) {
+        int i = 0;
+        boolean achei = false;
+        if (filtro == null) {
+            for (; !achei && i < itens.size(); i++) {
+                E e = itens.get(i);
+                achei |= e.equals(item);
+            }
+        } else {
+            for (; !achei && i < itensFiltrados.size(); i++) {
+                E e = itensFiltrados.get(i);
+                achei |= e.equals(item);
+            }
+        }
+        System.out.println("Achei? " + achei+ ", index: " +  i);
+        return achei ? i : -1;
+    }
+
+    public boolean contains(E item) {
+        return indexOf(item) != -1;
     }
 }

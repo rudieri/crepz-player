@@ -1,5 +1,6 @@
 package com;
 
+import com.Musiquera.PropriedadesMusica;
 import com.conexao.BD;
 import com.config.ConfigFile;
 import com.config.GerenciadorConfig;
@@ -92,6 +93,12 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jLabel_tempo.setText(hms);
         jSlider_Tempo.setToolTipText(hms);
     }
+
+    @Override
+    public void propriedadesMusicaChanged(PropriedadesMusica propriedadesMusica) {
+       
+    }
+
 
 //    @Override
 //    public void tempoTotalEhHMS(String hms) {

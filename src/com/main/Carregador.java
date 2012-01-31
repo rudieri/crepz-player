@@ -10,10 +10,12 @@ import com.JMini;
 import com.JPlayList;
 import com.JPrincipal;
 import com.Musiquera;
+import com.Musiquera.PropriedadesMusica;
 import com.fila.JFilaReproducao;
 import com.graficos.Icones;
 import com.melloware.jintellitype.JIntellitype;
 import com.musica.Musica;
+import com.musica.MusicaBD;
 import com.utils.Warning;
 import java.awt.SystemTray;
 import java.awt.Window;
@@ -101,6 +103,22 @@ public final class Carregador {
                 getTelaPrincipal().atualizaLabels(nome, bits, tempo, freq);
                 if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
                     filaReproducao.atualizaLabels(nome, bits, tempo, freq);
+                }
+            }
+
+            @Override
+            public void setPropriedadesMusica(PropriedadesMusica propriedadesMusica) {
+                Musica musica = musiquera.getMusica();
+                musica.setTempo(propriedadesMusica.getTempoTotal());
+                try {
+                    MusicaBD.alterar(musica);
+                    MusicaBD.carregar(musica);
+                } catch (Exception ex) {
+                    Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                getTelaPrincipal().propriedadesMusicaChanged(propriedadesMusica);
+                if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
+                    filaReproducao.propriedadesMusicaChanged(propriedadesMusica);
                 }
             }
         };
