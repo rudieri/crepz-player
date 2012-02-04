@@ -22,9 +22,11 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
     private ArrayList<E> itensFiltrados;
     private final Class<E> modelo;
     private String filtro;
+    private ArrayList<ObjectTableModelListener> listeners;
 
     public ObjectTableModel(Class<E> modelo) {
         tableModelListeners = new ArrayList<TableModelListener>(2);
+        listeners = new ArrayList<ObjectTableModelListener>(1);
         itens = new ArrayList<E>(10);
         itensFiltrados = new ArrayList<E>(10);
         this.modelo = modelo;
@@ -102,6 +104,14 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
         tableModelListeners.remove(l);
     }
 
+    public void addObjectTableModelListener(ObjectTableModelListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeObjectTableModelListener(ObjectTableModelListener listener) {
+        listeners.remove(listener);
+    }
+
     public void setValueAt(E item, int linha) {
         itens.set(linha, item);
         for (int i = 0; i < tableModelListeners.size(); i++) {
@@ -123,7 +133,32 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
         } else {
             atualizarFiltro();
         }
+        dispararSizeChanged();
 
+    }
+
+    public void setItens(ArrayList<E> itens) {
+//        this.itens.clear();
+//        this.itensFiltrados.clear();
+        clear();
+        this.itens.addAll(itens);
+        if (filtro == null) {
+
+            for (int i = 0; i < tableModelListeners.size(); i++) {
+                TableModelEvent event = new TableModelEvent(this, 0, itens.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+                tableModelListeners.get(i).tableChanged(event);
+
+            }
+        } else {
+            atualizarFiltro();
+        }
+        dispararSizeChanged();
+    }
+
+    private void dispararSizeChanged() {
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).sizeChanged(getRowCount());
+        }
     }
 
     public void atualizarItem(E item, int row) {
@@ -163,22 +198,27 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
             tableModelListeners.get(i).tableChanged(event);
 
         }
+        dispararSizeChanged();
     }
 
     private void atualizarFiltro() {
         if (!itensFiltrados.isEmpty()) {
             for (int i = 0; i < tableModelListeners.size(); i++) {
-                TableModelEvent event = new TableModelEvent(this, 0, 0, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
+                TableModelEvent event = new TableModelEvent(this, -1, itensFiltrados.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
                 tableModelListeners.get(i).tableChanged(event);
             }
         }
         itensFiltrados.clear();
         System.out.println("Filtro: " + filtro);
+        String[] tokenFiltro = filtro.split(" ");
         for (int i = 0; i < itens.size(); i++) {
             E item = itens.get(i);
-            if (item.getTextoParaPesquisa().contains(filtro)) {
+            boolean todos = true;
+            for (int j = 0; todos && j < tokenFiltro.length; j++) {
+                todos &= item.getTextoParaPesquisa().contains(tokenFiltro[j]);
+            }
+            if (todos) {
                 itensFiltrados.add(item);
-                System.out.println("Added: " + item);
             }
         }
         System.out.println("Itens Filtrados: " + itensFiltrados.size());
@@ -212,6 +252,7 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
             this.filtro = text;
             atualizarFiltro();
         }
+        dispararSizeChanged();
     }
 
     public int indexOf(E item) {
@@ -228,8 +269,9 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
                 achei |= e.equals(item);
             }
         }
-        System.out.println("Achei? " + achei+ ", index: " +  i);
-        return achei ? i : -1;
+        System.out.println("Achei? " + achei + ", index: " + i);
+        // diminui 1 por que o for soma uma para mais sempre
+        return achei ? i - 1 : -1;
     }
 
     public boolean contains(E item) {

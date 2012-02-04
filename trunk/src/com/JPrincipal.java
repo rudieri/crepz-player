@@ -96,7 +96,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     @Override
     public void propriedadesMusicaChanged(PropriedadesMusica propriedadesMusica) {
-       
+
     }
 
 
@@ -119,7 +119,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
                 break;
             default:
-                Warning.write("Evento desconhecio. Id: " + tipo);
+                Warning.print("Evento desconhecio. Id: " + tipo);
                 break;
         }
     }
@@ -130,6 +130,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
      * @param bits KiloBits/s
      * @param freq Frequencia em ?Hz
      */
+    @Override
     public void atualizaLabels(String nome, int bits, String tempo, int freq) {
         jLabel_Musica.setText(nome.replaceAll("  ", " ").trim());
         jLabel_tempoTotal.setText(tempo);
@@ -198,12 +199,11 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     tocando = b;
     }
      */
-    public String miliSegundosEmMinSeq(Long mili) {
-        mili = mili / 1000000;
+    public String miliSegundosEmMinSeq(long mili) {
         SimpleDateFormat sdf = new SimpleDateFormat("ss");
         Date date = null;
         try {
-            date = sdf.parse(mili.toString());
+            date = sdf.parse(String.valueOf(mili / 1000000));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

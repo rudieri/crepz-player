@@ -131,7 +131,7 @@ public final class Carregador {
         try {
             crepzTray = new CrepzTray(musiquera, this);
         } catch (Exception ex) {
-            Warning.write("System tray não supostado.");
+            Warning.print("System tray não supostado.");
             crepzTray = null;
         }
 

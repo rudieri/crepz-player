@@ -4,16 +4,18 @@ import java.util.*;
 import java.text.*;
 
 /** Classe que representa uma instrução SQL. */
-public class SQL {
+public final class SQL {
 
     /** Atributo que mantém a instrução SQL. */
-    private StringBuffer sql = new StringBuffer();
+    private StringBuilder sql = new StringBuilder(50);
     /** Atributo que mantém uma lista com todos os parâmetros e seus valores do SQL em questão. */
-    private HashMap params = new HashMap();
+    private HashMap params = new HashMap(8);
     /** Atributo que mantém o ultimo sqlOK. */
-    private StringBuffer sqlOk;
+    private StringBuilder sqlOk;
     /** Atributo que mantém a flag modificado. */
     private boolean modificado;
+    private static final SimpleDateFormat MMddyyyy = new SimpleDateFormat("MM/dd/yyyy");
+    private static final SimpleDateFormat MMddyyyyHHmmss = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
     /** Método que retorna um SQL sem transação. */
     public static SQL getInstanciaSemTransacao() {
@@ -32,7 +34,7 @@ public class SQL {
     /** Método que limpa o sql atual.*/
     public void clear() {
         modificado = true;
-        sql = new StringBuffer();
+        sql = new StringBuilder(50);
     }
 
     /** Método que adiciona uma parte ou todo a instrução SQL.
@@ -48,29 +50,23 @@ public class SQL {
     public void setParam(String param, Object value) throws Exception {
         modificado = true;
 
-        if (param == null || param.equals("")) {
+        if (param == null || param.isEmpty()) {
             return;
         }
 
         String p = ":" + param;
-        String v = "";
+        String v;
         if (value == null) {
             v = "null";
         } else if (value instanceof String) {
-            v = "'" + value.toString().trim().replaceAll("'", "") + "'";
-        } else if (value instanceof Integer) {
+            v = "'" + value.toString().replaceAll("'", "") + "'";
+        } else if (value instanceof Integer || value instanceof Double || value instanceof Float) {
             v = value.toString();
-        } else if (value instanceof Double) {
-            v = value.toString();
-        } else if (value instanceof Float) {
-            v = value.toString();
-        } else if (value instanceof java.sql.Date) {
-            v = "'" + dateToString(value, "MM/dd/yyyy") + "'";
+        } else if (value instanceof java.sql.Date || value instanceof java.util.Date) {
+            v = "'" + dateToString(value, MMddyyyy) + "'";
         } else if (value instanceof java.sql.Timestamp) {
-            v = "'" + dateToString(value, "MM/dd/yyyy HH:mm:ss") + "'";
-        } else if (value instanceof java.util.Date) {
-            v = "'" + dateToString(value, "MM/dd/yyyy") + "'";
-        }  else {
+            v = "'" + dateToString(value, MMddyyyyHHmmss) + "'";
+        } else {
             throw new Exception("classe " + value.getClass().getName() + " não tratada em SQL.");
         }
 
@@ -104,20 +100,18 @@ public class SQL {
         return sql.toString();
     }
 
-
-
     public String getSql() {
         if (modificado) {
             modificado = false;
-            sqlOk = new StringBuffer();
+            sqlOk = new StringBuilder(50);
 
             String param = "";
-            String letra = "";
+            char letra;
             boolean estaNoParametro = false;
             for (int i = 0; i < sql.length(); i++) {
-                letra = String.valueOf(sql.charAt(i));
+                letra = sql.charAt(i);
                 if (estaNoParametro) {
-                    if (letra.equals(",") || letra.equals(" ") || letra.equals("\n") || letra.equals("\t") || letra.equals(")")) {
+                    if (letra == ',' || letra == ' ' || letra == '\n' || letra == '\t' || letra == ')') {
                         estaNoParametro = false;
                         sqlOk.append(params.get(":" + param)).append(letra);
                         param = "";
@@ -125,7 +119,7 @@ public class SQL {
                         param += letra;
                     }
                 } else {
-                    if (letra.equals(":")) {
+                    if (letra == ':') {
                         estaNoParametro = true;
                     } else {
                         sqlOk.append(letra);
@@ -135,20 +129,17 @@ public class SQL {
         }
 
         String sql2 = sqlOk.substring(0, sqlOk.length() - 1) + ";";
-        System.out.println(sql2);
+//        System.out.println(sql2);
         return sql2;
     }
 
-   
     /** Método que imprime o sql na saida padrao. */
     public void print() {
         System.out.println(getSql());
     }
 
     /** Método que retorna uma data como uma String. */
-    private String dateToString(Object data, String formato) {
-        return new SimpleDateFormat(formato).format(data);
+    private String dateToString(Object data, SimpleDateFormat formato) {
+        return formato.format(data);
     }
-
- 
 }

@@ -10,21 +10,21 @@ package com.playlist;
  * @author -moNGe_
  */
 public class Playlist {
-    private Integer id;
+    private int id;
     private String nome;
-    private Integer nrMusicas;
+    private int nrMusicas;
 
     /**
      * @return the id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -45,14 +45,14 @@ public class Playlist {
     /**
      * @return the nrMusicas
      */
-    public Integer getNrMusicas() {
+    public int getNrMusicas() {
         return nrMusicas;
     }
 
     /**
      * @param nrMusicas the nrMusicas to set
      */
-    public void setNrMusicas(Integer nrMusicas) {
+    public void setNrMusicas(int nrMusicas) {
         this.nrMusicas = nrMusicas;
     }
 

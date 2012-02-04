@@ -140,7 +140,8 @@ public class BD {
          st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/musica.sql").toURI())).toString());
         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playlist/playlist.sql").toURI())).toString());
         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playmusica/playmusica.sql").toURI())).toString());
-       
+         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/indices.sql").toURI())).toString());
+
     }
 
     public static void fecharBD() {

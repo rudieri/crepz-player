@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author manchini
  */
 public class Musica implements Serializable, Filtravel {
-
+    private static final char ESPACO = ' ';
     private int id;
     @ObjetoTabela(nomeColuna = "Nome")
     private String nome;
@@ -42,7 +42,6 @@ public class Musica implements Serializable, Filtravel {
      */
     public boolean setNome(String nome) {
         if (nome == null || nome.isEmpty()) {
-            System.out.println("\n------- NOME VAZIO -------\n");
             return false;
         } else {
             this.nome = MusicaGerencia.removeCaracteresEsp(nome);
@@ -134,7 +133,7 @@ public class Musica implements Serializable, Filtravel {
         if (img != null) {
             return img.replace("<&aspas>", "'");
         } else {
-            return null;
+            return "";
         }
     }
 
@@ -151,14 +150,14 @@ public class Musica implements Serializable, Filtravel {
     /**
      * @return the id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -221,6 +220,8 @@ public class Musica implements Serializable, Filtravel {
 
     @Override
     public String getTextoParaPesquisa() {
-        return String.valueOf(nome + album + autor + genero + tempo.toString()).toLowerCase();
+        StringBuilder sb = new StringBuilder(100);
+        sb.append(nome).append(ESPACO).append(album).append(ESPACO).append(autor).append(ESPACO).append(genero).append(ESPACO).append(tempo.toString());
+        return sb.toString().toLowerCase();
     }
 }

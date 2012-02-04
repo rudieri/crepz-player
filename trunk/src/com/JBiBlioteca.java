@@ -48,7 +48,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     String genero = "";
     private Musiquera musiquera;
     private final Carregador carregador;
-    
+
 
     public JBiBlioteca(Musiquera mus, Carregador carregador) {
         initComponents();
@@ -237,7 +237,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
                     t.begin();
                     File pasta = telaAbrirArquivo();
                     if (pasta != null) {
-                        Long date = new Date().getTime();
+                        long date = new Date().getTime();
                         int total = DiretorioUtils.calculaQuantidadeArquivos(pasta);
                         MusicaGerencia.count = 0;
                         MusicaGerencia.mapearDiretorio(pasta, t, jProgressBar, total);

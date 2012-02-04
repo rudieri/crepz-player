@@ -10,22 +10,22 @@ package com.playmusica;
  * @author -moNGe_
  */
 public class PlayMusica {
-    private Integer id;
+    private int id;
     private com.playlist.Playlist playlist;
     private com.musica.Musica musica;
-    private Integer seq;
+    private int seq = -1;
 
     /**
      * @return the id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -61,17 +61,17 @@ public class PlayMusica {
     /**
      * @return the seq
      */
-    public Integer getSeq() {
+    public int getSeq() {
         return seq;
     }
 
     /**
      * @param seq the seq to set
      */
-    public void setSeq(Integer seq) {
+    public void setSeq(int seq) {
         this.seq = seq;
     }
 
-    
+
 
 }

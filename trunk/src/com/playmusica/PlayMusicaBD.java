@@ -42,7 +42,7 @@ public class PlayMusicaBD {
     public static void consistir(PlayMusica playMusica) throws Exception {
         consistirBK(playMusica);
 
-        if (playMusica.getSeq() == null) {
+        if (playMusica.getSeq() < 0 ) {
             throw new Exception(" - Sequência não informado.");
         }
 

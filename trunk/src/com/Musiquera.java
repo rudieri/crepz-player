@@ -173,7 +173,7 @@ public abstract class Musiquera implements BasicPlayerListener {
             tenteiAbrir++;
             System.out.println(ex.getMessage());
             if (ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
-                Warning.write(ex.getMessage());
+                Warning.print(ex.getMessage());
                 try {
                     MusicaBD.excluir(m);
                     //                Operacoes.moverMusicaParaEstragadas(m);
@@ -352,12 +352,6 @@ public abstract class Musiquera implements BasicPlayerListener {
         totalTempo = (Long) properties.get("duration");
         totalBytes = (Integer) properties.get("audio.length.bytes");
 //        stringTempoTotalChange(microSegundosEmMinSeq(totalTempo));
-        musica.setTempo(new Tempo(totalTempo));
-        try {
-            MusicaBD.alterar(musica);
-        } catch (Exception ex) {
-            Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
-        }
         Encoding enc;
 
         try {
@@ -371,14 +365,14 @@ public abstract class Musiquera implements BasicPlayerListener {
             }
             System.out.println("Tipo: " + tipo);
             String info = properties.get("title") + " " + properties.get("author") + " " + properties.get("album");
-            String duracao = microSegundosEmMinSeq((Long) properties.get("duration"));
+//            String duracao = microSegundosEmMinSeq((Long) properties.get("duration"));
             int bits = (Integer) properties.get(tipo + ".bitrate.nominal.bps") / 1000;
             int freq = (Integer) properties.get(tipo + ".frequency.hz") / 1000;
-            if (info.trim().equalsIgnoreCase("") || info.trim().equalsIgnoreCase("null null null")) {
+            if (info.trim().isEmpty() || info.trim().equalsIgnoreCase("null null null")) {
                 try {
                     info = getMusica().getNome();
                 } catch (Exception ex) {
-                    System.out.println("Erro em opened");
+                    System.out.println("Erro em opened, " + ex.toString());
                 }
             }
             atualizaLabels(info, bits, microSegundosEmMinSeq(totalTempo), freq);
