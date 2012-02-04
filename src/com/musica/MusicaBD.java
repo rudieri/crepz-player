@@ -135,11 +135,12 @@ public class MusicaBD {
         ResultSet rs = t.executeQuery(sql.getSql());
 
         try {
-            if (!rs.next()) {
+            if (rs.next()) {
+                musica.setId(rs.getInt("id"));
+                return true;
+            } else {
                 return false;
             }
-            musica.setId(rs.getInt("id"));
-            return true;
         } finally {
             rs.close();
         }
@@ -159,6 +160,28 @@ public class MusicaBD {
         sql.add("WHERE id = :id ");
 
         sql.setParam("id", musica.getId());
+
+        ResultSet rs = t.executeQuery(sql.getSql());
+        try {
+            if (!rs.next()) {
+                return false;
+            }
+            carregarObjeto(musica, rs);
+
+
+
+            return true;
+        } finally {
+            rs.close();
+        }
+    }
+
+    public static boolean carregarPeloEndereco(Musica musica, Transacao t) throws Exception {
+        SQL sql = new SQL();
+        sql.add("SELECT * FROM " + TBL);
+        sql.add("WHERE caminho = :caminho ");
+
+        sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
 
         ResultSet rs = t.executeQuery(sql.getSql());
         try {
@@ -447,7 +470,8 @@ public class MusicaBD {
             throw ex;
         }
     }
-    public static int contarMusicas() throws Exception{
+
+    public static int contarMusicas() throws Exception {
         Transacao t = new Transacao();
         try {
             t.begin();

@@ -52,7 +52,7 @@ public class GerenciadorConfig {
             cf.incluir("pause", String.valueOf(mq.isPaused()));
 
             if (mq.getMusica() != null) {
-                cf.incluir("musica", mq.getMusica().getId().toString());
+                cf.incluir("musica", String.valueOf(mq.getMusica().getId()));
             } else {
                 cf.incluir("musica", "");
             }
@@ -116,7 +116,7 @@ public class GerenciadorConfig {
                 String pause = cf.recuperar("pause");
                 String tocando = cf.recuperar("tocando");
                 if (Boolean.parseBoolean(tocando)) {
-                    setMusica(Integer.valueOf(musica), Long.valueOf(tempo), Boolean.parseBoolean(pause));
+                    setMusica(Integer.valueOf(musica), Integer.valueOf(tempo), Boolean.parseBoolean(pause));
                 } else {
                     setMusica(Integer.valueOf(musica));
                 }
@@ -174,12 +174,12 @@ public class GerenciadorConfig {
         return String.valueOf(list.get(v));
     }
 
-    private void setMusica(int id, Long t, boolean pause) {
+    private void setMusica(int id, int t, boolean pause) {
         Musica m = new Musica();
         m.setId(id);
         try {
             MusicaBD.carregar(m);
-            (principal.getMusiquera()).abrir(m, t.intValue(), pause);
+            (principal.getMusiquera()).abrir(m, t, pause);
 
 
         } catch (Exception ex) {

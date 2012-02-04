@@ -1,12 +1,12 @@
 package com.utils;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import javax.swing.JProgressBar;
 
 /*
@@ -31,7 +31,7 @@ public class DiretorioUtils {
 
     // Copies all files under srcDir to dstDir.
 // If dstDir does not exist, it will be created.
-    public static void copyDirectory(File srcDir, File dstDir,Integer totalArq,JProgressBar jProgressBar ) throws IOException {
+    public static void copyDirectory(File srcDir, File dstDir, Integer totalArq, JProgressBar jProgressBar) throws IOException {
         if (srcDir.isDirectory()) {
             if (!dstDir.exists()) {
                 dstDir.mkdir();
@@ -40,14 +40,14 @@ public class DiretorioUtils {
             String[] children = srcDir.list();
             for (int i = 0; i < children.length; i++) {
                 copyDirectory(new File(srcDir, children[i]),
-                        new File(dstDir, children[i]),totalArq,jProgressBar);
+                        new File(dstDir, children[i]), totalArq, jProgressBar);
             }
         } else {
             // This method is implemented in Copying a File
             copyFile(srcDir, dstDir);
             qtdArqLido++;
-            jProgressBar.setValue(qtdArqLido*100/totalArq);
-            jProgressBar.setString("Atualizando Sistema "+(qtdArqLido*100/totalArq)+"%");
+            jProgressBar.setValue(qtdArqLido * 100 / totalArq);
+            jProgressBar.setString("Atualizando Sistema " + (qtdArqLido * 100 / totalArq) + "%");
         }
     }
 
@@ -67,13 +67,34 @@ public class DiretorioUtils {
         out.close();
     }
 
+    public static int calculaQuantidadeArquivos(ArrayList<File> diretorio) {
+        int count = 0;
+        for (int i = 0; i < diretorio.size(); i++) {
+            count += calculaQuantidadeArquivosDir(diretorio.get(i));
+
+        }
+        return count;
+    }
+
+    private static int calculaQuantidadeArquivosDir(File diretorio) {
+        File[] arquivos = diretorio.listFiles();
+        int cont = arquivos.length;
+        for (int i = 0; i < arquivos.length; i++) {
+            if (arquivos[i].isDirectory()) {
+                cont += calculaQuantidadeArquivosDir(arquivos[i]);
+            }
+        }
+        return cont;
+    }
+
     public static int calculaQuantidadeArquivos(File diretorio) {
-        if(!diretorio.isDirectory())
+        if (!diretorio.isDirectory()) {
             return 1;
+        }
         int cont = 0;
 
         File[] arquivos = diretorio.listFiles();
-        for (int i=0; i<arquivos.length; i++) {
+        for (int i = 0; i < arquivos.length; i++) {
             if (arquivos[i].isDirectory()) {
                 cont += calculaQuantidadeArquivos(arquivos[i]);
             } else {
