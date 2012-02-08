@@ -28,7 +28,6 @@ public class Testes {
     }
 
     public static boolean hitTest(Component g1, Point p) {
-        System.out.println(g1.getBounds().toString() + "  " + p.toString());
         return g1.getX() <= p.getX() && g1.getX() + g1.getWidth() >= p.getX() && g1.getY() <= p.getY() && g1.getY() + g1.getHeight() >= p.getY();
     }
 }

@@ -10,28 +10,19 @@ import java.io.Serializable;
  *
  * @author rudieri
  */
-public class Tempo implements Serializable{
+public class Tempo implements Serializable {
 
-    private int milissegundos;
+    private final int milissegundos;
+    private String string;
+
 
     public Tempo(int milissegundos) {
         this.milissegundos = milissegundos;
+        convertToString();
     }
 
     public Tempo(long microssegundos) {
-        this.milissegundos = (int) (microssegundos / 1000);
-    }
-
-    public void setMilissegundos(int milissegundos) {
-        this.milissegundos = milissegundos;
-    }
-
-    public void setSegundos(int segundos) {
-        this.milissegundos = segundos * 1000;
-    }
-
-    public void setMicrossegundos(long microssegundos) {
-        this.milissegundos = (int) (microssegundos / 1000);
+        this((int) (microssegundos / 1000));
     }
 
     public int getMilissegundos() {
@@ -40,39 +31,35 @@ public class Tempo implements Serializable{
 
     @Override
     public String toString() {
+        return string;
+    }
+
+    private void convertToString() {
         int segundos = milissegundos / 1000;
         int horas = segundos / 3600;
         segundos -= horas * 3600;
         int minutos = segundos / 60;
         segundos -= minutos * 60;
-        String hora;
-        String minuto;
-        String segundo;
+        StringBuilder tempo = new StringBuilder(8);
         if (horas > 0) {
             if (horas > 9) {
-                hora = String.valueOf(horas);
+                tempo.append(horas);
             } else {
-                hora = "0" + String.valueOf(horas);
+                tempo.append('0').append(horas);
             }
-            hora += ":";
-        } else {
-            hora = "";
+            tempo.append(':');
         }
         if (minutos > 9) {
-            minuto = String.valueOf(minutos);
+            tempo.append(minutos);
         } else {
-            minuto = "0" + String.valueOf(minutos);
+            tempo.append('0').append(minutos);
         }
-        minuto += ":";
+        tempo.append(':');
         if (segundos > 9) {
-            segundo = String.valueOf(segundos);
+            tempo.append(segundos);
         } else {
-            segundo = "0" + String.valueOf(segundos);
+            tempo.append('0').append(segundos);
         }
-        return hora + minuto + segundo;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new Tempo(35990));
+        string = tempo.toString();
     }
 }

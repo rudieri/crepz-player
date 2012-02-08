@@ -60,7 +60,7 @@ public final class SQL {
             v = "null";
         } else if (value instanceof String) {
             v = "'" + value.toString().replaceAll("'", "") + "'";
-        } else if (value instanceof Integer || value instanceof Double || value instanceof Float) {
+        } else if (value instanceof Integer || value instanceof Double || value instanceof Float || value instanceof Long) {
             v = value.toString();
         } else if (value instanceof java.sql.Date || value instanceof java.util.Date) {
             v = "'" + dateToString(value, MMddyyyy) + "'";
@@ -77,21 +77,29 @@ public final class SQL {
      * @param param Contem o parametro a ser setado o valor.
      * @param value Contem o valor a ser atribuido ao parametro, do tipo int. */
     public void setParam(String param, int value) throws Exception {
-        setParam(param, new Integer(value));
+        String p = ":" + param;
+        params.put(p, Integer.toString(value));
+//        setParam(param, new Integer(value));
+    }
+    public void setParam(String param, long value) throws Exception {
+        String p = ":" + param;
+        params.put(p, Long.toString(value));
     }
 
     /** Método que seta valor ao parametro.
      * @param param Contem o parametro a ser setado o valor.
      * @param value Contem o valor a ser atribuido ao parametro, do tipo float. */
     public void setParam(String param, float value) throws Exception {
-        setParam(param, new Float(value));
+        String p = ":" + param;
+        params.put(p, Float.toString(value));
     }
 
     /** Método que seta valor ao parametro.
      * @param param Contem o parametro a ser setado o valor.
      * @param value Contem o valor a ser atribuido ao parametro, do tipo double. */
     public void setParam(String param, double value) throws Exception {
-        setParam(param, new Double(value));
+        String p = ":" + param;
+        params.put(p, Double.toString(value));
     }
 
     /** Método que retorna o SQL original, sem os valores dos parâmetros.
@@ -105,7 +113,7 @@ public final class SQL {
             modificado = false;
             sqlOk = new StringBuilder(50);
 
-            String param = "";
+            StringBuilder param = new StringBuilder(10);
             char letra;
             boolean estaNoParametro = false;
             for (int i = 0; i < sql.length(); i++) {
@@ -113,10 +121,10 @@ public final class SQL {
                 if (estaNoParametro) {
                     if (letra == ',' || letra == ' ' || letra == '\n' || letra == '\t' || letra == ')') {
                         estaNoParametro = false;
-                        sqlOk.append(params.get(":" + param)).append(letra);
-                        param = "";
+                        sqlOk.append(params.get(":" + param.toString())).append(letra);
+                        param = new StringBuilder(10);
                     } else {
-                        param += letra;
+                        param.append(letra);
                     }
                 } else {
                     if (letra == ':') {

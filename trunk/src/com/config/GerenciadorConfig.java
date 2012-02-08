@@ -200,7 +200,6 @@ public class GerenciadorConfig {
     }
 
     public void setPlayList(int id) {
-        System.out.println("id: " + id);
         pl.tocar(JSelectPlaylists.getPlayList(id), false);
     }
 
@@ -227,7 +226,6 @@ public class GerenciadorConfig {
     }
 
     private void setPosicao(String s) {
-        System.out.println(s);
         String ar[] = s.split("X");
         Point p = new Point(Integer.parseInt(ar[0]), Integer.parseInt(ar[1]));
         mini.setLocal((int) p.getX(), (int) p.getY());

@@ -23,7 +23,7 @@ public class MusicaBD {
             throw new Exception(" - Musica não informado.");
         }
 
-        if (musica.getCaminho() == null || musica.getCaminho().equals("")) {
+        if (musica.getCaminho() == null || musica.getCaminho().isEmpty()) {
             throw new Exception(" - Caminho da Musica não informado.");
         }
 
@@ -55,9 +55,9 @@ public class MusicaBD {
 
         SQL sql = new SQL();
         sql.add("INSERT INTO " + TBL);
-        sql.add(" (id, caminho, nome, autor, genero, album, img, tempo) ");
+        sql.add(" (id, caminho, nome, autor, genero, album, img, tempo, dt_mod_arquivo) ");
         sql.add("VALUES ");
-        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img, :tempo)");
+        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img, :tempo, :dt_mod_arquivo)");
 
         sql.setParam("id", null);
         sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
@@ -65,6 +65,7 @@ public class MusicaBD {
         sql.setParam("autor", musica.getAutor());
         sql.setParam("genero", musica.getGenero());
         sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
+        sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
 
         return t.executeUpdate(sql.getSql());
     }
@@ -83,7 +84,7 @@ public class MusicaBD {
         SQL sql = new SQL();
         sql.add("UPDATE " + TBL);
         sql.add("SET nome = :nome, autor = :autor, genero =:genero, album = :album, img = :img,");
-        sql.add("caminho = :caminho, tempo=:tempo");
+        sql.add("caminho = :caminho, tempo=:tempo, dt_mod_arquivo=:dt_mod_arquivo");
         sql.add("WHERE id = :id ");
 
         sql.setParam("id", musica.getId());
@@ -93,6 +94,7 @@ public class MusicaBD {
         sql.setParam("genero", musica.getGenero());
         sql.setParam("tempo", musica.getTempo() == null ? 0 : musica.getTempo().getMilissegundos());
         sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
+        sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
 
         return t.executeUpdate(sql.getSql());
     }
@@ -198,6 +200,24 @@ public class MusicaBD {
         }
     }
 
+    public static long getMaxDtModArquivo(String path, boolean ehDiretorio, Transacao t) throws Exception {
+        SQL sql = new SQL();
+        sql.add("SELECT max(dt_mod_arquivo) as max_dt FROM " + TBL);
+        if (ehDiretorio) {
+            sql.add("where caminho LIKE :path");
+            sql.setParam("path", path.replace("'", "<&aspas>") + "%");
+        }else{
+            sql.add("where caminho = :path");
+            sql.setParam("path", path.replace("'", "<&aspas>"));
+        }
+        ResultSet rs = t.executeQuery(sql);
+        if (rs.next()) {
+            return rs.getLong("max_dt");
+        } else {
+            return 0l;
+        }
+    }
+
     private static void carregarObjeto(Musica musica, ResultSet rs) throws SQLException {
         musica.setId(rs.getInt("id"));
         musica.setCaminho(rs.getString("caminho"));
@@ -207,6 +227,7 @@ public class MusicaBD {
         musica.setAlbum(rs.getString("album"));
         musica.setImg(rs.getString("img"));
         musica.setTempo(new Tempo(rs.getInt("tempo")));
+        musica.setDtModArquivo(rs.getLong("dt_mod_arquivo"));
     }
 
     /** Método que retorna uma lista de Musicas de acordo com o filtro.
@@ -463,6 +484,19 @@ public class MusicaBD {
         try {
             t.begin();
             ArrayList<Musica> r = listar(filtro, t);
+            t.commit();
+            return r;
+        } catch (Exception ex) {
+            t.rollback();
+            throw ex;
+        }
+    }
+
+    public static long getMaxDtModArquivo(String path, boolean ehDiretorio) throws Exception {
+        Transacao t = new Transacao();
+        try {
+            t.begin();
+            long r = getMaxDtModArquivo(path, ehDiretorio, t);
             t.commit();
             return r;
         } catch (Exception ex) {

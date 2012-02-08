@@ -269,7 +269,7 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
                 achei |= e.equals(item);
             }
         }
-        System.out.println("Achei? " + achei + ", index: " + i);
+//        System.out.println("Achei? " + achei + ", index: " + i);
         // diminui 1 por que o for soma uma para mais sempre
         return achei ? i - 1 : -1;
     }
