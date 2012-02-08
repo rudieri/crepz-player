@@ -26,6 +26,7 @@ public class Musica implements Serializable, Filtravel {
     @ObjetoTabela(nomeColuna = "Tempo")
     private Tempo tempo;
     private String caminho;
+    private long dtModArquivo;
     private String img;
     private int size;
     private int number;
@@ -70,6 +71,15 @@ public class Musica implements Serializable, Filtravel {
         return genero;
     }
 
+    public long getDtModArquivo() {
+        return dtModArquivo;
+    }
+
+    public void setDtModArquivo(long dtModArquivo) {
+        this.dtModArquivo = dtModArquivo;
+    }
+
+    
     /**
      * @param genero the genero to set
      */

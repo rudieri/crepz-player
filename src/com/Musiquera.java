@@ -225,7 +225,6 @@ public abstract class Musiquera implements BasicPlayerListener {
 
     public void tocarPausar() {
         try {
-            // tarefa = new Timer();
             int estado = player.getStatus();
             System.out.println(estado);
 
@@ -381,6 +380,9 @@ public abstract class Musiquera implements BasicPlayerListener {
             propriedadesMusica.setNome((String)properties.get("title"));
             propriedadesMusica.setArtista((String)properties.get("author"));
             propriedadesMusica.setAlbum((String)properties.get("album"));
+            if (propriedadesMusica.getNome()==null || propriedadesMusica.getNome().isEmpty()) {
+                propriedadesMusica.setNome(musica.getNome());
+            }
             setPropriedadesMusica(propriedadesMusica);
             // principal.atualizaLabels(info, bits, duracao, freq);
             // mini.setNomeMusica(info);

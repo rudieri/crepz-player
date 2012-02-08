@@ -29,7 +29,7 @@ public class FileUtils {
      */
     public static StringBuffer leArquivo(File arquivo) throws Exception {
         return leArquivoCodificacao(arquivo, "UTF-8");
-        
+
     }
 
     /**
@@ -74,7 +74,6 @@ public class FileUtils {
         }
         in.close();
         leitor.close();
-        System.out.println(stringBuffer.toString());
         return stringBuffer;
     }
 

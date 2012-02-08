@@ -76,7 +76,7 @@ public class JConfiguracao extends javax.swing.JDialog {
     private void addTablePastas() {
         try {
             telaAbrirArquivo();
-            if (jTextField_Jpasta.getText().equals("")) {
+            if (jTextField_Jpasta.getText().isEmpty()) {
                 return;
             }
             DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
@@ -94,7 +94,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         MusicaGerencia.downLoadCapas = jCheckBox_DownloadCapa.isSelected();
         Scan.setTempo((Integer)jSpinner1.getValue());
         TableModel tm = jTable_pastas.getModel();
-        ArrayList<String> pastas = new ArrayList<String>();
+        ArrayList<String> pastas = new ArrayList<String>(10);
         for (int i = 0; i < tm.getRowCount(); i++) {
             String tms = tm.getValueAt(i, 0) == null ? "" : tm.getValueAt(i, 0).toString();
             pastas.add(tms);
@@ -204,10 +204,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jTable_pastas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null}
+
             },
             new String [] {
                 "Pasta"

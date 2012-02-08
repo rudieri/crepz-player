@@ -62,7 +62,7 @@ public class MusicaGerencia {
                     m.setNome(file.getName());
                 }
                 m.setSize(mp3.getID3v1Tag().getSize());
-                m.setAlbum(mp3.getID3v1Tag().getAlbum());
+                m.setAlbum(mp3.getID3v1Tag().getAlbumTitle());
                 m.setAutor(mp3.getID3v1Tag().getArtist());
                 m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
             }
@@ -262,9 +262,11 @@ public class MusicaGerencia {
                 if (MusicaBD.existe(m, t)) {
                     MusicaBD.carregar(m, t);
                     getMusica(m, mp3, file);
+                    m.setDtModArquivo(file.lastModified());
                     MusicaBD.alterar(m, t);
                 } else {
                     getMusica(m, mp3, file);
+                    m.setDtModArquivo(file.lastModified());
                     MusicaBD.incluir(m, t);
                     MusicaBD.carregarPeloEndereco(m, t);
 
@@ -281,7 +283,7 @@ public class MusicaGerencia {
             }
             return m;
         } else {
-            System.out.println(file.getName() + " Não é um tipo válido.");
+//            System.out.println(file.getName() + " Não é um tipo válido.");
             return null;
         }
 
@@ -343,16 +345,8 @@ public class MusicaGerencia {
         if (st == null) {
             return "";
         }
-        String ret;
 
-        ret = st.replaceAll("[^0-9a-zA-Z/_.:;ç\\-+()*&@#$!%áâãéêíôõóú ]", "");
-//        ret = st.replace("/", "");
-////        ret = ret.replace("|", "").replace("þ", "");
-////        ret = ret.replace("|", "").replace("þ", "");
-////        ret = ret.replace(" ", "_");
-//        ret = ret.replace("ÿ", "");
-//        ret = ret.replace("þ", "");
-
+       String ret = st.replaceAll("[^0-9a-zA-Z/_.:;ç\\-+()*&@#$!%áâãéêíôõóú ]", "");
         return ret;
     }
 }

@@ -4,6 +4,7 @@ import com.Musiquera.PropriedadesMusica;
 import com.graficos.Testes;
 import com.main.Carregador;
 import com.main.Notificavel;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -46,11 +47,12 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
     private final Carregador carregador;
     private boolean ajusteDeTempo;
 
-    public JMini(Musiquera mus, Carregador carregador) {
+    public JMini(Musiquera musiquera, Carregador carregador) {
         initComponents();
-        musiquera = mus;
+        this.musiquera = musiquera;
         this.carregador = carregador;
         inicializaIcones();
+        startEvents();
     }
 
     @Override
@@ -77,7 +79,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 //    }
     @Override
     public void propriedadesMusicaChanged(PropriedadesMusica propriedadesMusica) {
-        
+
     }
 
     /**Coloca os icones nos Jlabels*/
@@ -131,7 +133,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         public void mousePressed(MouseEvent e) {
             super.mousePressed(e);
             if (e.getButton() == MouseEvent.BUTTON1) {
-                ondeEstou(e);
+                setOndeEstou(e);
             }
         }
 
@@ -181,7 +183,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
     }
 
     public void setLocal(int x, int y) {
-        reshape(x, y, getWidth(), getHeight());
+        setBounds(x, y, getWidth(), getHeight());
     }
 
     public Point getLocal() {
@@ -217,7 +219,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         }
     }
 
-    private void ondeEstou(MouseEvent e) {
+    private void setOndeEstou(MouseEvent e) {
         initX = e.getXOnScreen() - this.getX();
         initY = e.getYOnScreen() - this.getY();
         thisX = this.getX();
@@ -232,7 +234,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
     @Override
     public void atualizaLabels(String nome, int bits, String tempo, int freq) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO algo
     }
 
     class tarefaRollOut extends TimerTask {
@@ -251,12 +253,16 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         Icon aux = c.getIcon();
 
         if (aux.getIconWidth() > 15) {
+
             c.getGraphics().drawOval(2, 3, aux.getIconWidth(), aux.getIconHeight());
+            c.getGraphics().setColor(new Color(250, 250, 250, 30));
+            c.getGraphics().fillOval(2, 3, aux.getIconWidth(), aux.getIconHeight());
         }
     }
 
     public void objetoRollOver2(JLabel c) {
         Icon aux = c.getIcon();
+        c.getGraphics().setColor(new Color(250, 250, 250, 30));
         c.getGraphics().drawRect(2, 3, aux.getIconWidth(), aux.getIconHeight());
     }
 
@@ -309,7 +315,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
+        
 
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jMenuVisualizacoes = new javax.swing.JMenu();
@@ -530,8 +536,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jSlider_Tempo.setMinimumSize(new java.awt.Dimension(36, 14));
         jSlider_Tempo.setPreferredSize(new java.awt.Dimension(180, 14));
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider_Tempo, org.jdesktop.beansbinding.ELProperty.create("${value}"), jSlider_Tempo, org.jdesktop.beansbinding.BeanProperty.create("value"));
-        bindingGroup.addBinding(binding);
+        
 
         jSlider_Tempo.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -710,8 +715,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jSlider_vol.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jSlider_vol.setPreferredSize(new java.awt.Dimension(100, 23));
 
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider_vol, org.jdesktop.beansbinding.ELProperty.create("${value}"), jSlider_vol, org.jdesktop.beansbinding.BeanProperty.create("value"));
-        bindingGroup.addBinding(binding);
+        
 
         jSlider_vol.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -758,13 +762,13 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -775,7 +779,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
         getContentPane().add(jPanel4);
 
-        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -788,7 +791,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
 
-        ondeEstou(evt);
+        setOndeEstou(evt);
     }//GEN-LAST:event_formMousePressed
 
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
@@ -872,7 +875,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
     private void jPanel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MousePressed
 
-        ondeEstou(evt);
+        setOndeEstou(evt);
     }//GEN-LAST:event_jPanel4MousePressed
 
     private void jPanel4MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseDragged
@@ -1141,6 +1144,5 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
     public javax.swing.JSlider jSlider_vol;
     private javax.swing.JLabel jToggleButton1;
     private javax.swing.JLabel jToggle_Repete;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

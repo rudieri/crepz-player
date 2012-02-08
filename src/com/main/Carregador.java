@@ -11,6 +11,7 @@ import com.JPlayList;
 import com.JPrincipal;
 import com.Musiquera;
 import com.Musiquera.PropriedadesMusica;
+import com.Scan;
 import com.fila.JFilaReproducao;
 import com.graficos.Icones;
 import com.melloware.jintellitype.JIntellitype;
@@ -39,6 +40,7 @@ public final class Carregador {
     Musiquera musiquera;
     JPrincipal principal;
     JMini mini;
+    Scan  scan ;
     private JFilaReproducao filaReproducao;
     private final JPlayList playList;
     private final JBiBlioteca biblioteca;
@@ -141,6 +143,7 @@ public final class Carregador {
         startMultimidiaKeys();
         aguarde.dispose();
         setPrincipalComoBase();
+        scan = new Scan();
 
     }
 

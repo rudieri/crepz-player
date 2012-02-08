@@ -29,7 +29,6 @@ public class JCapa extends javax.swing.JPanel {
             this.titulo = titulo;
             this.qtd = qtd;
             if(!(img==null || img.isEmpty())){
-                System.out.println("img: " + img);
                 ImageIcon imgIcon  =null;
                 if(SwapCapa.swap.get(img)!=null){
                     imgIcon = SwapCapa.swap.get(img);

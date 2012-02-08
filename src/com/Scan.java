@@ -6,11 +6,14 @@ package com;
 
 import com.conexao.SQL;
 import com.conexao.Transacao;
+import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
 import java.io.File;
 import java.io.FileFilter;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,17 +24,29 @@ import java.util.logging.Logger;
  */
 public class Scan {
 
-    private static int tempo;
+    private static int tempoSegudos;
     Thread thMonitor;
-    private final int ESCALA_TEMPO = 60000;
+    private final int ESCALA_TEMPO = 1000;
+//    private Transacao t;
+    Timer tScan;
+    ArrayList musicas;
+    private static ArrayList<String> pastas = new ArrayList(32);
+    File teste = new File("/home/rudieri/Música");
+    private HashMap<String, Long> cacheModArquivos;
+    private boolean atualizarChache;
 
     public Scan() {
-        tempo = 30;
-        }
+        this(10);
+    }
 
     public Scan(int t) {
-
-        tempo = t;
+        try {
+            cacheModArquivos = new HashMap<String, Long>(MusicaBD.contarMusicas());
+        } catch (Exception ex) {
+            cacheModArquivos = new HashMap<String, Long>(100);
+        }
+        tempoSegudos = t;
+        pastas.add(teste.getAbsolutePath());
         this.start();
     }
 
@@ -49,101 +64,155 @@ public class Scan {
 
     public static void setTempo(int t) {
 
-        tempo = t;
-        System.out.println("Novo tepo: " + tempo);
-        }
+        tempoSegudos = t;
+        System.out.println("Novo tepo: " + tempoSegudos);
+    }
 
     public static Integer getTempo() {
-        return tempo;
+        return tempoSegudos;
     }
 
     private void start() {
-        t = new Transacao();
-        try {
-            t.begin();
-        } catch (Exception ex) {
-            Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        t = new Transacao();
+//        try {
+//            t.begin();
+//        } catch (Exception ex) {
+//            Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         thMonitor = new Thread(new Runnable() {
 
+            int count = 0;
+
             @SuppressWarnings("SleepWhileInLoop")
             public void run() {
-                trace("Começando comparação!");
                 while (true) {
+                    Transacao t = new Transacao();
                     try {
-                        System.out.println("Esperando: " + tempo + " min.");
-                        Thread.sleep(tempo * ESCALA_TEMPO);
+                        t.begin();
+                        System.out.println("Esperando: " + tempoSegudos + " segundos.");
+                        Thread.sleep(tempoSegudos * ESCALA_TEMPO);
                         for (int i = 0; i < pastas.size(); i++) {
-                            atualiza();
-                            verifica(new File(pastas.get(i)), t);
+                            verificarModicicacoes(new File(pastas.get(i)), t);
                         }
-                    } catch (InterruptedException ex) {
+                        atualizarChache = false;
+                        t.commit();
+                    } catch (Exception ex) {
                         Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
+                        t.rollback();
+                    }
+                    if (count==5) {
+                        //TODO fazer isso
+//                        limparNaoExistentes();
+                    }
+                    if (count++ == 10) {
+                        atualizarChache = true;
+                        count = 0;
                     }
 
                 }
 
             }
         });
+        thMonitor.setPriority(Thread.MIN_PRIORITY);
         thMonitor.start();
     }
 
-    private void trace(Object o) {
-        System.out.println(o);
-    }
-
-    private void verifica(File end, Transacao t) {
-        if (end.isDirectory()) {
-            trace("Dir: " + end.getAbsolutePath());
-            try {
-                Thread.sleep(170);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            File[] files = end.listFiles(new FileFilter() {
-
-                   public boolean accept(File pathname) {
-                        return MusicaGerencia.ehValido(pathname) || pathname.isDirectory();
-                    }
-                });
-
-            for (int i = 0; i < files.length; i++) {
-                verifica(files[i], t);
-            }
-
-        } else {
-            if (!MusicaGerencia.ehValido(end)) {
-                return;
-            }
-
-            if (musicas.indexOf(end.getAbsolutePath()) == -1) {
-
-                MusicaGerencia.addFiles(end, t);
-            } else {
-                trace("já tem!");
-            }
-        }
-
-
-    }
-
-    private void atualiza() {
-        SQL sql = new SQL();
-        sql.add("SELECT caminho FROM musica");
-        musicas = new ArrayList(1000);
+    private void verificarModicicacoes(File path, Transacao t) {
         try {
-            ResultSet rs = t.executeQuery(sql.getSql());
-            while (rs.next()) {
-                musicas.add(rs.getString("caminho"));
-    }
+            boolean ehDiretorio = path.isDirectory();
+            //TODO verificar datade modificação
+            if (ehDiretorio) {
+                long ultimaModificacao = path.lastModified();
+                File[] files = path.listFiles();
+                boolean contemDiretorio = false;
+                for (int i = 0; !contemDiretorio && i < files.length; i++) {
+                    contemDiretorio |= files[i].isDirectory();
+
+                }
+                if (contemDiretorio) {
+                    for (File file : files) {
+                        verificarModicicacoes(file, t);
+                    }
+                } else {
+                    String nomeArq = path.getAbsolutePath();
+                    Long maxDtModArquivo;
+                    if (atualizarChache || (maxDtModArquivo = cacheModArquivos.get(nomeArq)) == null) {
+                        maxDtModArquivo = MusicaBD.getMaxDtModArquivo(nomeArq, ehDiretorio, t);
+                        cacheModArquivos.put(nomeArq, maxDtModArquivo);
+                    }
+                    if (ultimaModificacao > maxDtModArquivo) {
+                        for (File file : files) {
+                            verificarModicicacoes(file, t);
+                        }
+                    }
+                }
+            } else {
+                long ultimaModificacao = path.lastModified();
+                if (MusicaGerencia.ehValido(path)) {
+                    String nomeArq = path.getAbsolutePath();
+                    Long maxDtModArquivo;
+                    if (atualizarChache || (maxDtModArquivo = cacheModArquivos.get(nomeArq)) == null) {
+                        maxDtModArquivo = MusicaBD.getMaxDtModArquivo(nomeArq, ehDiretorio, t);
+                        cacheModArquivos.put(nomeArq, maxDtModArquivo);
+                    }
+                    if (ultimaModificacao > maxDtModArquivo) {
+                        atualizarChache = true;
+                        MusicaGerencia.addFiles(path, t);
+                    }
+                }
+            }
         } catch (Exception ex) {
             Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private Transacao t;
-    Timer tScan;
-    ArrayList musicas;
-    private static ArrayList<String> pastas = new ArrayList(32);
-    File teste = new File("/home/rudieri/Música");
+
+
+//    private void verifica(File end, Transacao t) {
+//        if (end.isDirectory()) {
+//            trace("Dir: " + end.getAbsolutePath());
+//            try {
+//                Thread.sleep(170);
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            File[] files = end.listFiles(new FileFilter() {
+//
+//                public boolean accept(File pathname) {
+//                    return MusicaGerencia.ehValido(pathname) || pathname.isDirectory();
+//                }
+//            });
+//
+//            for (int i = 0; i < files.length; i++) {
+//                verifica(files[i], t);
+//            }
+//
+//        } else {
+//            if (!MusicaGerencia.ehValido(end)) {
+//                return;
+//            }
+//
+//            if (musicas.indexOf(end.getAbsolutePath()) == -1) {
+//
+//                MusicaGerencia.addFiles(end, t);
+//            } else {
+//                trace("já tem!");
+//            }
+//        }
+//
+//
+//    }
+//    private void atualiza() {
+//        SQL sql = new SQL();
+//        sql.add("SELECT caminho FROM musica");
+//        musicas = new ArrayList(1000);
+//        try {
+//            ResultSet rs = t.executeQuery(sql.getSql());
+//            while (rs.next()) {
+//                musicas.add(rs.getString("caminho"));
+//            }
+//        } catch (Exception ex) {
+//            Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
 }

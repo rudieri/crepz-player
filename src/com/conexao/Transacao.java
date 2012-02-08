@@ -67,5 +67,9 @@ public class Transacao {
 
         return conn.createStatement().executeQuery(sql);
     }
+    /** Método que realiza a execução de um comando sql de consulta, a saber, selects. */
+    public java.sql.ResultSet executeQuery(SQL sql) throws Exception {
+        return executeQuery(sql.getSql());
+    }
 }
 
