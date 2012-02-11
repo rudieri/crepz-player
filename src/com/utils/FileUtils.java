@@ -27,7 +27,7 @@ public class FileUtils {
      * @return
      * @throws Exception
      */
-    public static StringBuffer leArquivo(File arquivo) throws Exception {
+    public static StringBuilder leArquivo(File arquivo) throws Exception {
         return leArquivoCodificacao(arquivo, "UTF-8");
 
     }
@@ -38,7 +38,7 @@ public class FileUtils {
      * @param destino
      * @throws Exception
      */
-    public static void gravaArquivo(StringBuffer conteudo, String destino) throws Exception {
+    public static void gravaArquivo(CharSequence conteudo, String destino) throws Exception {
         gravaArquivo(conteudo, destino, false);
     }
 
@@ -50,7 +50,7 @@ public class FileUtils {
      * @return
      * @throws IOException
      */
-    public static void gravaArquivo(StringBuffer conteudo, String destino, boolean addFinal) throws Exception {
+    public static void gravaArquivo(CharSequence conteudo, String destino, boolean addFinal) throws Exception {
         gravaArquivoCodificacao(conteudo, destino, "UTF-8", addFinal);
     }
 
@@ -63,28 +63,28 @@ public class FileUtils {
      * @throws UnsupportedEncodingException
      * @throws IOException
      */
-    public static StringBuffer leArquivoCodificacao(File arquivo, String codificacao) throws Exception {
-        StringBuffer stringBuffer = new StringBuffer();
+    public static StringBuilder leArquivoCodificacao(File arquivo, String codificacao) throws Exception {
+        StringBuilder stringBuilder = new StringBuilder(1024);
         FileInputStream leitor = new FileInputStream(arquivo);
         InputStreamReader in = new InputStreamReader(leitor, codificacao);
         BufferedReader leitorBuf = new BufferedReader(in);
         String line = null;
         while ((line = leitorBuf.readLine()) != null) {
-            stringBuffer.append(line+"\r\n");
+            stringBuilder.append(line).append("\r\n");
         }
         in.close();
         leitor.close();
-        return stringBuffer;
+        return stringBuilder;
     }
 
-      public static StringBuffer leArquivoCodificacao(InputStream arquivo, String codificacao) throws Exception {
-        StringBuffer stringBuffer = new StringBuffer();
+      public static StringBuilder leArquivoCodificacao(InputStream arquivo, String codificacao) throws Exception {
+        StringBuilder stringBuffer = new StringBuilder(1024);
 
         InputStreamReader in = new InputStreamReader(arquivo, codificacao);
         BufferedReader leitorBuf = new BufferedReader(in);
         String line = null;
         while ((line = leitorBuf.readLine()) != null) {
-            stringBuffer.append(line+"\r\n");
+            stringBuffer.append(line).append("\r\n");
         }
         in.close();
         return stringBuffer;
@@ -98,8 +98,11 @@ public class FileUtils {
      * @return
      * @throws Exception
      */
-    public static boolean gravaArquivoCodificacao(StringBuffer conteudo, String destino, String codificacao, boolean addFinal) throws Exception {
+    public static boolean gravaArquivoCodificacao(CharSequence conteudo, String destino, String codificacao, boolean addFinal) throws Exception {
         File file = new File(destino);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
         if (!file.exists()) {
             file.createNewFile();
         }
@@ -113,7 +116,7 @@ public class FileUtils {
 
     public static void main(String arqs[]) {
         try {
-            StringBuffer st = leArquivo(new File("C:/JPlayer/teste.mp3"));
+            StringBuilder st = leArquivo(new File("C:/JPlayer/teste.mp3"));
             System.out.println(st);
         } catch (Exception ex) {
             ex.printStackTrace();

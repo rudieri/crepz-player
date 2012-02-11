@@ -37,17 +37,20 @@ import org.hsqldb.server.Server;
  */
 public final class Carregador {
 
+    private static final byte TELA_NORMAL = 0;
+    private static final byte TELA_MINI = 1;
+    private static final byte TELA_FILA = 2;
     Musiquera musiquera;
     JPrincipal principal;
     JMini mini;
-    Scan  scan ;
+    Scan scan;
+    private byte tipoTela;
     private JFilaReproducao filaReproducao;
     private final JPlayList playList;
     private final JBiBlioteca biblioteca;
-    private boolean isOnTray;
     private CrepzTray crepzTray;
     private boolean random;
-    private boolean repeat;
+    private boolean repeat = false;
     public final Icones icones;
     private FonteReproducao fonteReproducao;
 
@@ -58,10 +61,11 @@ public final class Carregador {
         initLookAndFeel();
         startBanco();
         icones = new Icones();
-        icones.loadIcons("tipo2");
+        icones.loadIcons("crepz");
         createLog();
         fonteReproducao = FonteReproducao.AVULSO;
-        musiquera = new Musiquera() {
+        tipoTela = TELA_FILA;
+        musiquera = new Musiquera(this) {
 
             @Override
             public void numberTempoChange(double s) {
@@ -142,7 +146,9 @@ public final class Carregador {
 
         startMultimidiaKeys();
         aguarde.dispose();
-        setPrincipalComoBase();
+        //TODO  ler das preferências
+        setTelaBase(TELA_FILA);
+
         scan = new Scan();
 
     }
@@ -158,18 +164,31 @@ public final class Carregador {
         server.start();
     }
 
-    public boolean principalIsAtivo() {
-        return !isOnTray;
-    }
-
-    public boolean miniIsAtivo() {
-        return isOnTray;
+//    public boolean principalIsAtivo() {
+//        return tipoTela == TELA_NORMAL;
+//    }
+//
+//    public boolean miniIsAtivo() {
+//        return tipoTela == TELA_MINI;
+//    }
+    public void setTelaBase(byte tipoTela) {
+        switch (tipoTela) {
+            case TELA_FILA:
+                setFilaComoBase();
+                break;
+            case TELA_MINI:
+                setMiniComoBase();
+                break;
+            case TELA_NORMAL:
+                setPrincipalComoBase();
+                break;
+        }
     }
 
     public void mostrarPlayList() {
-        if (isFilaReproducaoVisivel()) {
-            ocultarFilaReproducao();
-        }
+//        if (isFilaReproducaoVisivel()) {
+//            ocultarFilaReproducao();
+//        }
         playList.setLocation(getWindowPrincipal().getX() - playList.getWidth() - 5, getWindowPrincipal().getY());
         playList.setVisible(true);
         setFonteReproducao(FonteReproducao.PLAY_LIST);
@@ -189,36 +208,38 @@ public final class Carregador {
     }
 
     public Window getWindowPrincipal() {
-        if (isOnTray) {
-            return mini;
-        } else {
-            return principal;
+        switch (tipoTela) {
+            case TELA_FILA:
+                return filaReproducao;
+            case TELA_NORMAL:
+                return principal;
+            case TELA_MINI:
+                return mini;
+
         }
+        return principal;
     }
 
     public Notificavel getTelaPrincipal() {
-        if (isOnTray) {
-            return mini;
-        } else {
-            return principal;
-        }
-    }
+        switch (tipoTela) {
+            case TELA_FILA:
+                return filaReproducao;
+            case TELA_NORMAL:
+                return principal;
+            case TELA_MINI:
+                return mini;
 
-    public void alternarMiniPrincipal() {
-        if (isOnTray) {
-            setPrincipalComoBase();
-        } else {
-            setMiniComoBase();
         }
-        isOnTray = !isOnTray;
+        return principal;
     }
 
     public void setMiniComoBase() {
         principal.dispose();
+        filaReproducao.dispose();
         mini.setVisible(true);
-        isOnTray = true;
+        tipoTela = TELA_MINI;
         if (crepzTray != null) {
-            crepzTray.toTray();
+            mostrarIconeTray();
         }
     }
 
@@ -229,11 +250,21 @@ public final class Carregador {
 
     public void setPrincipalComoBase() {
         if (crepzTray != null) {
-            crepzTray.someTray();
+            ocultarIconeTray();
         }
         mini.dispose();
+        filaReproducao.dispose();
         principal.setVisible(true);
-        isOnTray = false;
+    }
+
+    public void setFilaComoBase() {
+        if (crepzTray != null) {
+            ocultarIconeTray();
+        }
+        setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);
+        mini.dispose();
+        principal.dispose();
+        filaReproducao.setVisible(true);
     }
 
     public boolean isPlayListVisible() {
@@ -281,9 +312,15 @@ public final class Carregador {
         playList.addMusica(musica);
     }
 
-    private void iconeTray() {
+    private void mostrarIconeTray() {
         if (SystemTray.isSupported()) {
             crepzTray.toTray();
+        }
+    }
+
+    private void ocultarIconeTray() {
+        if (SystemTray.isSupported()) {
+            crepzTray.someTray();
         }
     }
 
@@ -341,15 +378,12 @@ public final class Carregador {
     }
 
     public void mostrarFilaReproducao() {
-        if (isPlayListVisible()) {
-            ocultarPlayList();
-        }
-        filaReproducao.setVisible(true);
-        setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);
+        setFilaComoBase();
     }
 
     public void ocultarFilaReproducao() {
-        filaReproducao.setVisible(false);
+        setPrincipalComoBase();
+//        filaReproducao.setVisible(false);
     }
 
     public boolean isFilaReproducaoVisivel() {

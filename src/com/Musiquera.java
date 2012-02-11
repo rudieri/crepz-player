@@ -5,6 +5,7 @@
 package com;
 
 import com.graficos.Icones;
+import com.main.Carregador;
 import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.Tempo;
@@ -47,14 +48,16 @@ public abstract class Musiquera implements BasicPlayerListener {
     private Musica musica;
     private File in;
     private String tipo = "";
+    private final Carregador carregador;
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public Musiquera() {
+    public Musiquera(Carregador carregador) {
         player = new BasicPlayer();
         player.addBasicPlayerListener(this);
         player.setSleepTime(15);
         volume = 50;
         balanco = 50;
+        this.carregador = carregador;
     }
 
     public abstract void numberTempoChange(double s);
@@ -201,6 +204,14 @@ public abstract class Musiquera implements BasicPlayerListener {
             ex.printStackTrace();
         }
 
+    }
+
+    public void tocarProxima() {
+        abrir(getNextMusica(), 0, false);
+    }
+
+    public void tocarAnterior() {
+        abrir(getPreviousMusica(), 0, false);
     }
 
     public void abrir(File f) {
@@ -377,10 +388,10 @@ public abstract class Musiquera implements BasicPlayerListener {
             atualizaLabels(info, bits, microSegundosEmMinSeq(totalTempo), freq);
             propriedadesMusica.setBytesTotal(totalBytes);
             propriedadesMusica.setTempoTotal(totalTempo);
-            propriedadesMusica.setNome((String)properties.get("title"));
-            propriedadesMusica.setArtista((String)properties.get("author"));
-            propriedadesMusica.setAlbum((String)properties.get("album"));
-            if (propriedadesMusica.getNome()==null || propriedadesMusica.getNome().isEmpty()) {
+            propriedadesMusica.setNome((String) properties.get("title"));
+            propriedadesMusica.setArtista((String) properties.get("author"));
+            propriedadesMusica.setAlbum((String) properties.get("album"));
+            if (propriedadesMusica.getNome() == null || propriedadesMusica.getNome().isEmpty()) {
                 propriedadesMusica.setNome(musica.getNome());
             }
             setPropriedadesMusica(propriedadesMusica);
@@ -453,7 +464,11 @@ public abstract class Musiquera implements BasicPlayerListener {
                 paused = false;
                 break;
             case BasicPlayerEvent.EOM:
-                abrir(getNextMusica(), 0, false);
+                if (carregador.isRepeat()) {
+                    abrir(musica, 0, false);
+                } else {
+                    abrir(getNextMusica(), 0, false);
+                }
                 break;
 
         }
@@ -507,7 +522,7 @@ public abstract class Musiquera implements BasicPlayerListener {
         }
 
         public void setArtista(String artista) {
-            this.artista = artista;
+            this.artista = artista == null ? "" : artista;
         }
 
         public String getNome() {
@@ -517,6 +532,5 @@ public abstract class Musiquera implements BasicPlayerListener {
         public void setNome(String nome) {
             this.nome = nome;
         }
-
     }
 }

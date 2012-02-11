@@ -91,27 +91,27 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jToggleButton1.setText("");
         jToggle_Repete.setText("");
 
-        jButton_Stop.setIcon(carregador.icones.mini_stopIcon);
-        jButton_Ant.setIcon(carregador.icones.mini_voltaIcon);
-        jButton_Next.setIcon(carregador.icones.mini_frenteIcon);
+        jButton_Stop.setIcon(carregador.icones.stopIcon16);
+        jButton_Ant.setIcon(carregador.icones.voltaIcon16);
+        jButton_Next.setIcon(carregador.icones.frenteIcon16);
         jLabel_Playlist.setIcon(carregador.icones.pl);
         jLabel_lib.setIcon(carregador.icones.lib);
         jLabel_popup.setIcon(carregador.icones.menu);
         jLabel1.setIcon(carregador.icones.xis);
         if (musiquera.isPaused()) {
-            jButton_Play.setIcon(carregador.icones.mini_playIcon);
+            jButton_Play.setIcon(carregador.icones.playIcon16);
         } else {
-            jButton_Play.setIcon(carregador.icones.mini_pauseIcon);
+            jButton_Play.setIcon(carregador.icones.pauseIcon16);
         }
         if (carregador.isRandom()) {
-            jToggleButton1.setIcon(carregador.icones.mini_randomOnIcon);
+            jToggleButton1.setIcon(carregador.icones.randomOnIcon16);
         } else {
-            jToggleButton1.setIcon(carregador.icones.mini_randomOffIcon);
+            jToggleButton1.setIcon(carregador.icones.randomOffIcon16);
         }
         if (carregador.isRepeat()) {
-            jToggle_Repete.setIcon(carregador.icones.mini_repeatOnIcon);
+            jToggle_Repete.setIcon(carregador.icones.repeatOnIcon16);
         } else {
-            jToggle_Repete.setIcon(carregador.icones.mini_repeatOffIcon);
+            jToggle_Repete.setIcon(carregador.icones.repeatOffIcon16);
         }
         if (isAlwaysOnTop()) {
             jLabel_top.setIcon(carregador.icones.topOn);
@@ -274,14 +274,14 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         if (!super.isVisible()) {
 
             if (carregador.isRandom()) {
-                jToggleButton1.setIcon(carregador.icones.mini_randomOnIcon);
+                jToggleButton1.setIcon(carregador.icones.randomOnIcon16);
             } else {
-                jToggleButton1.setIcon(carregador.icones.mini_randomOffIcon);
+                jToggleButton1.setIcon(carregador.icones.randomOffIcon16);
             }
             if (carregador.isRepeat()) {
-                jToggle_Repete.setIcon(carregador.icones.mini_repeatOnIcon);
+                jToggle_Repete.setIcon(carregador.icones.repeatOnIcon16);
             } else {
-                jToggle_Repete.setIcon(carregador.icones.mini_repeatOffIcon);
+                jToggle_Repete.setIcon(carregador.icones.repeatOffIcon16);
             }
         }
 
@@ -848,9 +848,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
                 carregador.setRandom(!carregador.isRandom());
                 if (carregador.isRandom()) {
-                    jToggleButton1.setIcon(carregador.icones.mini_randomOnIcon);
+                    jToggleButton1.setIcon(carregador.icones.randomOnIcon16);
                 } else {
-                    jToggleButton1.setIcon(carregador.icones.mini_randomOffIcon);
+                    jToggleButton1.setIcon(carregador.icones.randomOffIcon16);
                 }
             }
         }
@@ -924,9 +924,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
                 carregador.setRepeat(!carregador.isRepeat());
                 if (carregador.isRepeat()) {
-                    jToggle_Repete.setIcon(carregador.icones.mini_repeatOnIcon);
+                    jToggle_Repete.setIcon(carregador.icones.repeatOnIcon16);
                 } else {
-                    jToggle_Repete.setIcon(carregador.icones.mini_repeatOffIcon);
+                    jToggle_Repete.setIcon(carregador.icones.repeatOffIcon16);
                 }
             }
         }

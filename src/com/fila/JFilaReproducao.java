@@ -12,6 +12,7 @@ package com.fila;
 
 import com.Musiquera;
 import com.Musiquera.PropriedadesMusica;
+import com.config.JConfiguracao;
 import com.main.Carregador;
 import com.main.Notificavel;
 import com.musica.ModelReadOnly;
@@ -19,6 +20,7 @@ import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
 import com.musica.MusicaSC;
+import com.utils.ComandosSO;
 import com.utils.DiretorioUtils;
 import com.utils.model.ObjectTableModel;
 import com.utils.model.ObjectTableModelListener;
@@ -64,6 +66,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private final Carregador carregador;
     private TableRowSorter sorterMusicas;
     private DropTarget dropTargetFila;
+    private boolean ajustandoTempo;
 
     /** Creates new form JFilaReproducao */
     public JFilaReproducao(Musiquera musiquera, Carregador carregador) {
@@ -78,6 +81,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 //       jTableFila.setDropMode(DropMode.ON);
 //        jTableFila.setTransferHandler(transferHandler);
         this.carregador = carregador;
+        inicializaIcones();
     }
 
     private void tocarMusicaSelecionada() {
@@ -182,8 +186,13 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
             public void drop(DropTargetDropEvent dtde) {
                 try {
                     Point location = dtde.getLocation();
-                    if (location.y < jTableFila.getHeight()) {
-                        int destino = jTableFila.rowAtPoint(location);
+                    if ((dtde.getSourceActions() == TransferHandler.MOVE
+                            || location.y < jTableFila.getHeight())
+                            && jTableFila.getSelectedRows().length > 0) {
+                        Point visibleLocation = jTableFila.getVisibleRect().getLocation();
+                        visibleLocation.x += location.x;
+                        visibleLocation.y += location.y;
+                        int destino = jTableFila.rowAtPoint(visibleLocation);
                         alterarPosicaoMusicasFila(jTableFila.getSelectedRows(), destino);
                         return;
                     }
@@ -247,6 +256,36 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jTableFila.setDropTarget(dropTargetFila);
         jScrollPaneFila.setDropTarget(dropTargetFila);
         jTableFila.setModel(modelFila);
+    }
+
+    private void inicializaIcones() {
+        jButton_Play.setText("");
+        jButton_Stop.setText("");
+        jButton_Next.setText("");
+//        jButton_Ant.setText("");
+        jToggle_Repete.setText("");
+
+        jButton_Stop.setIcon(carregador.icones.stopIcon32);
+//        jButton_Ant.setIcon(carregador.icones.voltaIcon32);
+        jButton_Next.setIcon(carregador.icones.frenteIcon32);
+        if (musiquera.isPaused()) {
+            jButton_Play.setIcon(carregador.icones.playIcon32);
+        } else {
+            jButton_Play.setIcon(carregador.icones.pauseIcon32);
+        }
+        if (carregador.isRepeat()) {
+            jToggle_Repete.setIcon(carregador.icones.repeatOnIcon32);
+        } else {
+            jToggle_Repete.setIcon(carregador.icones.repeatOffIcon32);
+        }
+
+        // menus popup
+        jMenuItemFilaTocar.setIcon(carregador.icones.playIcon16);
+        jMenuItemFilaRemover.setIcon(carregador.icones.xis);
+        jMenuItemEmbaralhar.setIcon(carregador.icones.randomOnIcon16);
+//        jMenuItemFilaTocar.setIcon(carregador.icones.playIcon16);
+//        jMenuItemFilaTocar.setIcon(carregador.icones.playIcon16);
+
     }
 
     private void importarMusicas(final ArrayList<File> arquivos) {
@@ -335,10 +374,22 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         }
     }
 
+    private void embaralharFila() {
+        for (int i = 0; i < modelFila.getRowCount(); i++) {
+            modelFila.moveRow(i, i, (int) (Math.random() * modelFila.getRowCount()));
+        }
+    }
+
+    private void limparFila() {
+        modelFila.setRowCount(0);
+        atualizarBarraStausFila();
+    }
+
     public Musica getProxima() {
         if (modelFila.getRowCount() > 0) {
             Musica musica = (Musica) modelFila.getValueAt(0, 0);
             modelFila.removeRow(0);
+            atualizarBarraStausFila();
 //            alterarMusica(musica);
             return musica;
         }
@@ -352,9 +403,10 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
     @Override
     public void propriedadesMusicaChanged(PropriedadesMusica propriedadesMusica) {
-        jLabelTocando.setText(propriedadesMusica.getNome());
+        jLabelTocando.setText(propriedadesMusica.getNome() + " - " + propriedadesMusica.getArtista());
         int indexOf = objModelMusicas.indexOf(musiquera.getMusica());
         musiquera.getMusica().setTempo(propriedadesMusica.getTempoTotal());
+        setTitle(propriedadesMusica.getNome() + " - " + propriedadesMusica.getArtista());
         try {
 
             int convertRow = jTableMusicas.convertRowIndexToView(indexOf);
@@ -379,10 +431,17 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
     @Override
     public void tempoEh(double v) {
+        if (!ajustandoTempo) {
+            jSlider_Tempo.setValue((int) (jSlider_Tempo.getMaximum() * v));
+        }
     }
 
     @Override
     public void tempoEhHMS(String hms) {
+        if (!ajustandoTempo) {
+            jSlider_Tempo.setToolTipText(hms);
+        }
+
     }
 
     @Override
@@ -403,8 +462,14 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jPopupMenuFila = new javax.swing.JPopupMenu();
         jMenuItemFilaTocar = new javax.swing.JMenuItem();
         jMenuItemFilaRemover = new javax.swing.JMenuItem();
+        jMenuItemEmbaralhar = new javax.swing.JMenuItem();
         jMenuItemFilaMoveCima = new javax.swing.JMenuItem();
         jMenuItemFilaMoveBaixo = new javax.swing.JMenuItem();
+        jMenuItemLimpar = new javax.swing.JMenuItem();
+        jPopupMenuMusica = new javax.swing.JPopupMenu();
+        jMenuItemTocar = new javax.swing.JMenuItem();
+        jMenuItemAdicionar = new javax.swing.JMenuItem();
+        jMenuItemPasta = new javax.swing.JMenuItem();
         jPanelCentro = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -412,7 +477,6 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jLabel1 = new javax.swing.JLabel();
         jTextFieldPesquisa = new javax.swing.JTextField();
         jButtonLimparPesquisa = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableMusicas = new javax.swing.JTable();
         jPanelStatus = new javax.swing.JPanel();
@@ -421,19 +485,29 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jPanel_Esquerdo = new javax.swing.JPanel();
         jScrollPaneFila = new javax.swing.JScrollPane();
         jTableFila = new javax.swing.JTable();
-        jPanel5 = new javax.swing.JPanel();
-        jLabelTocando = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jPanelProgress = new javax.swing.JPanel();
         jProgressBarImportando = new javax.swing.JProgressBar();
         jPanel7 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabelQtdMusicasFila = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabelTocando = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jPanelControles = new javax.swing.JPanel();
+        jButton_Play = new javax.swing.JLabel();
+        jButton_Stop = new javax.swing.JLabel();
+        jButton_Next = new javax.swing.JLabel();
+        jToggle_Repete = new javax.swing.JLabel();
+        jPanel11 = new javax.swing.JPanel();
+        jSlider_Tempo = new javax.swing.JSlider();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
-        jMenuItemFilaTocar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/play.png"))); // NOI18N
         jMenuItemFilaTocar.setMnemonic('R');
         jMenuItemFilaTocar.setText("Reproduzir");
         jMenuItemFilaTocar.addActionListener(new java.awt.event.ActionListener() {
@@ -444,13 +518,21 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jPopupMenuFila.add(jMenuItemFilaTocar);
 
         jMenuItemFilaRemover.setMnemonic('e');
-        jMenuItemFilaRemover.setText("Remover");
+        jMenuItemFilaRemover.setText("Remover da Fila");
         jMenuItemFilaRemover.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemFilaRemoverActionPerformed(evt);
             }
         });
         jPopupMenuFila.add(jMenuItemFilaRemover);
+
+        jMenuItemEmbaralhar.setText("Embaralhar Fila");
+        jMenuItemEmbaralhar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemEmbaralharActionPerformed(evt);
+            }
+        });
+        jPopupMenuFila.add(jMenuItemEmbaralhar);
 
         jMenuItemFilaMoveCima.setMnemonic('C');
         jMenuItemFilaMoveCima.setText("Mover para Cima");
@@ -470,15 +552,53 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         });
         jPopupMenuFila.add(jMenuItemFilaMoveBaixo);
 
+        jMenuItemLimpar.setText("Limpar Fila");
+        jMenuItemLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemLimparActionPerformed(evt);
+            }
+        });
+        jPopupMenuFila.add(jMenuItemLimpar);
+
+        jMenuItemTocar.setText("Reproduzir");
+        jMenuItemTocar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemTocarActionPerformed(evt);
+            }
+        });
+        jPopupMenuMusica.add(jMenuItemTocar);
+
+        jMenuItemAdicionar.setText("Adicionar na Fila");
+        jMenuItemAdicionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemAdicionarActionPerformed(evt);
+            }
+        });
+        jPopupMenuMusica.add(jMenuItemAdicionar);
+
+        jMenuItemPasta.setText("Abrir Pasta da Música");
+        jMenuItemPasta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemPastaActionPerformed(evt);
+            }
+        });
+        jPopupMenuMusica.add(jMenuItemPasta);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Fila de Reprodução");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanelCentro.setBorder(javax.swing.BorderFactory.createTitledBorder("Musicas"));
         jPanelCentro.setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setLayout(new java.awt.BorderLayout());
+        jPanel2.setPreferredSize(new java.awt.Dimension(483, 32));
+        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
 
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         jPanel3.setPreferredSize(new java.awt.Dimension(483, 30));
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
@@ -508,13 +628,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         });
         jPanel3.add(jButtonLimparPesquisa);
 
-        jPanel1.add(jPanel3);
+        jPanel1.add(jPanel3, java.awt.BorderLayout.CENTER);
 
-        jPanel4.setPreferredSize(new java.awt.Dimension(483, 100));
-        jPanel4.setLayout(new java.awt.BorderLayout());
-        jPanel1.add(jPanel4);
-
-        jPanel2.add(jPanel1, java.awt.BorderLayout.CENTER);
+        jPanel2.add(jPanel1);
 
         jPanelCentro.add(jPanel2, java.awt.BorderLayout.PAGE_START);
 
@@ -592,16 +708,6 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jPanel_Esquerdo.add(jScrollPaneFila, java.awt.BorderLayout.CENTER);
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Tocando Agora..."));
-        jPanel5.setLayout(new java.awt.BorderLayout());
-
-        jLabelTocando.setFont(new java.awt.Font("Dialog", 0, 11));
-        jLabelTocando.setText("Nada...");
-        jLabelTocando.setPreferredSize(new java.awt.Dimension(0, 18));
-        jPanel5.add(jLabelTocando, java.awt.BorderLayout.CENTER);
-
-        jPanel_Esquerdo.add(jPanel5, java.awt.BorderLayout.PAGE_START);
-
         jPanel6.setLayout(new javax.swing.BoxLayout(jPanel6, javax.swing.BoxLayout.Y_AXIS));
 
         jPanelProgress.setPreferredSize(new java.awt.Dimension(148, 20));
@@ -624,10 +730,109 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         getContentPane().add(jPanel_Esquerdo, java.awt.BorderLayout.WEST);
 
-        jMenu1.setText("File");
+        jPanel8.setLayout(new java.awt.BorderLayout());
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Tocando Agora..."));
+        jPanel5.setLayout(new java.awt.BorderLayout());
+
+        jLabelTocando.setFont(new java.awt.Font("Dialog", 0, 11));
+        jLabelTocando.setText("Nada...");
+        jLabelTocando.setPreferredSize(new java.awt.Dimension(0, 18));
+        jPanel5.add(jLabelTocando, java.awt.BorderLayout.CENTER);
+
+        jPanel8.add(jPanel5, java.awt.BorderLayout.PAGE_START);
+
+        jPanel9.setLayout(new java.awt.BorderLayout());
+
+        jPanelControles.setPreferredSize(new java.awt.Dimension(250, 36));
+        jPanelControles.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 3, 2));
+
+        jButton_Play.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jButton_Play.setText("Tocar");
+        jButton_Play.setToolTipText("Tocar");
+        jButton_Play.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jButton_Play.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton_Play.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton_PlayMouseClicked(evt);
+            }
+        });
+        jPanelControles.add(jButton_Play);
+
+        jButton_Stop.setText("Parar");
+        jButton_Stop.setToolTipText("Parar");
+        jButton_Stop.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton_Stop.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton_StopMouseClicked(evt);
+            }
+        });
+        jPanelControles.add(jButton_Stop);
+
+        jButton_Next.setText("Avançar");
+        jButton_Next.setToolTipText("Avançar");
+        jButton_Next.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jButton_Next.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton_NextMouseClicked(evt);
+            }
+        });
+        jPanelControles.add(jButton_Next);
+
+        jToggle_Repete.setText("Repeat");
+        jToggle_Repete.setToolTipText("Repetir Musica");
+        jToggle_Repete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jToggle_RepeteMouseClicked(evt);
+            }
+        });
+        jPanelControles.add(jToggle_Repete);
+
+        jPanel9.add(jPanelControles, java.awt.BorderLayout.WEST);
+
+        jPanel11.setLayout(new javax.swing.BoxLayout(jPanel11, javax.swing.BoxLayout.LINE_AXIS));
+
+        jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
+        jSlider_Tempo.setMaximum(1000);
+        jSlider_Tempo.setToolTipText("");
+        jSlider_Tempo.setValue(0);
+        jSlider_Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jSlider_Tempo.setMinimumSize(new java.awt.Dimension(36, 14));
+        jSlider_Tempo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jSlider_TempoMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jSlider_TempoMouseReleased(evt);
+            }
+        });
+        jPanel11.add(jSlider_Tempo);
+
+        jPanel9.add(jPanel11, java.awt.BorderLayout.CENTER);
+
+        jPanel8.add(jPanel9, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel8, java.awt.BorderLayout.PAGE_START);
+
+        jMenu1.setText("Importar");
+
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItem2.setText("Mostrar Biblioteca");
+        jMenu1.add(jMenuItem2);
+
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
+        jMenu2.setText("Edtar");
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItem1.setText("Configurações");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -637,9 +842,12 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTableMusicasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMusicasMouseClicked
-        if (evt.getClickCount() > 1) {
+        if (evt.getButton() == 1 && evt.getClickCount() > 1) {
             tocarMusicaSelecionada();
 //            alterarMusica(musica);
+        }
+        if (evt.getButton() == 3) {
+            jPopupMenuMusica.show(jTableMusicas, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_jTableMusicasMouseClicked
 
@@ -732,6 +940,72 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         }
     }//GEN-LAST:event_jTextFieldPesquisaKeyPressed
 
+    private void jButton_PlayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_PlayMouseClicked
+        musiquera.tocarPausar();
+    }//GEN-LAST:event_jButton_PlayMouseClicked
+
+    private void jButton_StopMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_StopMouseClicked
+        musiquera.parar();
+    }//GEN-LAST:event_jButton_StopMouseClicked
+
+    private void jButton_NextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_NextMouseClicked
+        musiquera.tocarProxima();
+    }//GEN-LAST:event_jButton_NextMouseClicked
+
+    private void jToggle_RepeteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseClicked
+        carregador.setRepeat(!carregador.isRepeat());
+        if (carregador.isRepeat()) {
+            jToggle_Repete.setIcon(carregador.icones.repeatOnIcon32);
+        } else {
+            jToggle_Repete.setIcon(carregador.icones.repeatOffIcon32);
+        }
+    }//GEN-LAST:event_jToggle_RepeteMouseClicked
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        carregador.setPrincipalComoBase();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void jSlider_TempoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMousePressed
+        ajustandoTempo = true;
+    }//GEN-LAST:event_jSlider_TempoMousePressed
+
+    private void jSlider_TempoMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider_TempoMouseReleased
+        musiquera.skipTo((double) jSlider_Tempo.getValue() / (double) jSlider_Tempo.getMaximum());
+        ajustandoTempo = false;
+    }//GEN-LAST:event_jSlider_TempoMouseReleased
+
+    private void jMenuItemEmbaralharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemEmbaralharActionPerformed
+        embaralharFila();
+    }//GEN-LAST:event_jMenuItemEmbaralharActionPerformed
+
+    private void jMenuItemLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLimparActionPerformed
+        limparFila();
+    }//GEN-LAST:event_jMenuItemLimparActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new JConfiguracao(this, true).setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItemPastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPastaActionPerformed
+        ComandosSO.abrirPasta(new File(objModelMusicas.getItem(jTableMusicas.getSelectedRow()).getCaminho()).getParent());
+        //        try {
+//            Runtime.getRuntime().exec("nautilus " + new File(objModelMusicas.getItem(jTableMusicas.getSelectedRow()).getCaminho()).getParent());
+//        } catch (IOException ex) {
+//            Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+    }//GEN-LAST:event_jMenuItemPastaActionPerformed
+
+    private void jMenuItemAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAdicionarActionPerformed
+        int[] linhas = jTableMusicas.getSelectedRows();
+        for (int i = 0; i < linhas.length; i++) {
+            modelFila.addRow(new Object[]{objModelMusicas.getItem(linhas[i])});
+        }
+    }//GEN-LAST:event_jMenuItemAdicionarActionPerformed
+
+    private void jMenuItemTocarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemTocarActionPerformed
+        tocarMusicaSelecionada();
+    }//GEN-LAST:event_jMenuItemTocarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -747,6 +1021,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonLimparPesquisa;
+    private javax.swing.JLabel jButton_Next;
+    private javax.swing.JLabel jButton_Play;
+    private javax.swing.JLabel jButton_Stop;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -756,27 +1033,40 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItemAdicionar;
+    private javax.swing.JMenuItem jMenuItemEmbaralhar;
     private javax.swing.JMenuItem jMenuItemFilaMoveBaixo;
     private javax.swing.JMenuItem jMenuItemFilaMoveCima;
     private javax.swing.JMenuItem jMenuItemFilaRemover;
     private javax.swing.JMenuItem jMenuItemFilaTocar;
+    private javax.swing.JMenuItem jMenuItemLimpar;
+    private javax.swing.JMenuItem jMenuItemPasta;
+    private javax.swing.JMenuItem jMenuItemTocar;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JPanel jPanelCentro;
+    private javax.swing.JPanel jPanelControles;
     private javax.swing.JPanel jPanelProgress;
     private javax.swing.JPanel jPanelStatus;
     private javax.swing.JPanel jPanel_Esquerdo;
     private javax.swing.JPopupMenu jPopupMenuFila;
+    private javax.swing.JPopupMenu jPopupMenuMusica;
     private javax.swing.JProgressBar jProgressBarImportando;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneFila;
+    private javax.swing.JSlider jSlider_Tempo;
     private javax.swing.JTable jTableFila;
     private javax.swing.JTable jTableMusicas;
     private javax.swing.JTextField jTextFieldPesquisa;
+    private javax.swing.JLabel jToggle_Repete;
     // End of variables declaration//GEN-END:variables
 }

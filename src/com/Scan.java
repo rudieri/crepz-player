@@ -4,15 +4,12 @@
  */
 package com;
 
-import com.conexao.SQL;
 import com.conexao.Transacao;
+import com.config.Configuracaoes;
 import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
 import java.io.File;
-import java.io.FileFilter;
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.logging.Level;
@@ -30,7 +27,7 @@ public class Scan {
 //    private Transacao t;
     Timer tScan;
     ArrayList musicas;
-    private static ArrayList<String> pastas = new ArrayList(32);
+//    private static ArrayList<String> pastas = new ArrayList(32);
     File teste = new File("/home/rudieri/Música");
     private HashMap<String, Long> cacheModArquivos;
     private boolean atualizarChache;
@@ -46,28 +43,25 @@ public class Scan {
             cacheModArquivos = new HashMap<String, Long>(100);
         }
         tempoSegudos = t;
-        pastas.add(teste.getAbsolutePath());
+//        pastas.add(teste.getAbsolutePath());
         this.start();
     }
 
-    public static void setPastas(ArrayList<String> dirs) {
-        System.out.println("Novs locais definidos para o scan:");
-        for (int i = 0; i < dirs.size(); i++) {
-            System.out.println("L" + i + ": " + dirs.get(i));
-        }
-        pastas = dirs;
-    }
-
-    public static ArrayList<String> getPastas() {
-        return pastas;
-    }
-
-    public static void setTempo(int t) {
-
-        tempoSegudos = t;
-        System.out.println("Novo tepo: " + tempoSegudos);
-    }
-
+//    public static void setPastas(ArrayList<String> dirs) {
+//        System.out.println("Novs locais definidos para o scan:");
+//        for (int i = 0; i < dirs.size(); i++) {
+//            System.out.println("L" + i + ": " + dirs.get(i));
+//        }
+//        pastas = dirs;
+//    }
+//    public static ArrayList<String> getPastas() {
+//        return pastas;
+//    }
+//    public static void setTempo(int t) {
+//
+//        tempoSegudos = t;
+//        System.out.println("Novo tepo: " + tempoSegudos);
+//    }
     public static Integer getTempo() {
         return tempoSegudos;
     }
@@ -85,15 +79,19 @@ public class Scan {
             int count = 0;
 
             @SuppressWarnings("SleepWhileInLoop")
+            @Override
             public void run() {
                 while (true) {
                     Transacao t = new Transacao();
                     try {
-                        t.begin();
                         System.out.println("Esperando: " + tempoSegudos + " segundos.");
                         Thread.sleep(tempoSegudos * ESCALA_TEMPO);
-                        for (int i = 0; i < pastas.size(); i++) {
-                            verificarModicicacoes(new File(pastas.get(i)), t);
+                        if (getPastas().isEmpty()) {
+                            continue;
+                        }
+                        t.begin();
+                        for (int i = 0; i < getPastas().size(); i++) {
+                            verificarModicicacoes(new File(getPastas().get(i)), t);
                         }
                         atualizarChache = false;
                         t.commit();
@@ -101,7 +99,7 @@ public class Scan {
                         Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
                         t.rollback();
                     }
-                    if (count==5) {
+                    if (count == 5) {
                         //TODO fazer isso
 //                        limparNaoExistentes();
                     }
@@ -112,6 +110,10 @@ public class Scan {
 
                 }
 
+            }
+
+            private ArrayList<String> getPastas() {
+                return Configuracaoes.getList(Configuracaoes.PASTAS_SCANER);
             }
         });
         thMonitor.setPriority(Thread.MIN_PRIORITY);
@@ -166,8 +168,6 @@ public class Scan {
             Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-
 //    private void verifica(File end, Transacao t) {
 //        if (end.isDirectory()) {
 //            trace("Dir: " + end.getAbsolutePath());

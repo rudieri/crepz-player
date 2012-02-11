@@ -2,7 +2,6 @@ package com;
 
 import com.Musiquera.PropriedadesMusica;
 import com.conexao.BD;
-import com.config.ConfigFile;
 import com.config.GerenciadorConfig;
 
 import com.config.JConfiguracao;
@@ -60,6 +59,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     public JPrincipal(Musiquera mus, Carregador carregador) {
         initComponents();
+        configuracao = new JConfiguracao(this, false);
         this.carregador = carregador;
         this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
         //--------------------------
@@ -230,28 +230,28 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void inicializaIcones() {
         //Estado inicial do botão (está Stop);
-        jButton_Play.setIcon(carregador.icones.playIcon);
+        jButton_Play.setIcon(carregador.icones.playIcon32);
         //Se tiver tocando
         if (musiquera.isPlaying()) {
-            jButton_Play.setIcon(carregador.icones.pauseIcon);
+            jButton_Play.setIcon(carregador.icones.pauseIcon32);
         }
         //Se tiver pause
         if (musiquera.isPlaying()) {
-            jButton_Play.setIcon(carregador.icones.playIcon);
+            jButton_Play.setIcon(carregador.icones.playIcon32);
         }
-        jButton_Stop.setIcon(carregador.icones.stopIcon);
-        jButton_Next.setIcon(carregador.icones.frenteIcon);
-        jButton_Ant.setIcon(carregador.icones.voltaIcon);
+        jButton_Stop.setIcon(carregador.icones.stopIcon32);
+        jButton_Next.setIcon(carregador.icones.frenteIcon32);
+        jButton_Ant.setIcon(carregador.icones.voltaIcon32);
 
         if (carregador.isRandom()) {
-            jToggle_Random.setIcon(carregador.icones.randomOnIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOnIcon32);
         } else {
-            jToggle_Random.setIcon(carregador.icones.randomOffIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOffIcon32);
         }
         if (carregador.isRepeat()) {
-            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon32);
         } else {
-            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon32);
         }
     }
 
@@ -334,14 +334,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     public void setVisible(boolean b) {
         super.setVisible(b);
         if (carregador.isRandom()) {
-            jToggle_Random.setIcon(carregador.icones.randomOnIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOnIcon32);
         } else {
-            jToggle_Random.setIcon(carregador.icones.randomOffIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOffIcon32);
         }
         if (carregador.isRepeat()) {
-            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon32);
         } else {
-            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon32);
         }
         jSlider_vol.setValue(musiquera.getVolume());
     }
@@ -1102,9 +1102,9 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         // TODO add your handling code here:
         carregador.setRandom(!carregador.isRandom());
         if (carregador.isRandom()) {
-            jToggle_Random.setIcon(carregador.icones.randomOnIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOnIcon32);
         } else {
-            jToggle_Random.setIcon(carregador.icones.randomOffIcon);
+            jToggle_Random.setIcon(carregador.icones.randomOffIcon32);
         }
         //jToggleButton1.setIcon(new ImageIcon(getClass().getResource("/com/img/icons/tipo2/"+random+"Random.png")));
     }//GEN-LAST:event_jToggle_RandomMouseClicked
@@ -1167,9 +1167,9 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         // TODO add your handling code here:
         carregador.setRepeat(!carregador.isRepeat());
         if (carregador.isRepeat()) {
-            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOnIcon32);
         } else {
-            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon);
+            jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon32);
         }
     }//GEN-LAST:event_jToggle_RepeatMouseClicked
 
@@ -1240,7 +1240,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         if (JOptionPane.showConfirmDialog(this, "Isso limpará a biblioteca e a playlist.\nO Crepz Player será fechado.\n Está certo disso ??") == JOptionPane.YES_OPTION) {
             try {
                 BD.hadukem();
-                ConfigFile.excluir();
+//                ConfigFile.excluir();
                 super.setVisible(false);
                 System.exit(0);
             } catch (Exception ex) {
