@@ -10,9 +10,8 @@
  */
 package com.config;
 
-import com.Scan;
+import com.musica.ModelReadOnly;
 import com.musica.MusicaGerencia;
-import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
@@ -36,70 +35,69 @@ public class JConfiguracao extends javax.swing.JDialog {
 
     private void setTela() {
         try {
+            // restringe a amostra a diretorios apenas
+            jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            jFileChooser.setDialogTitle("Abrir Pasta");
+
             jCheckBox_DownloadCapa.setSelected(MusicaGerencia.downLoadCapas);
             jCheckBox_Organizador.setSelected(MusicaGerencia.organizarPastas);
             jTextField_DestinoOrg.setText(MusicaGerencia.destino);
-            Object tmp = Scan.getTempo();
-            jSpinner1.setValue(tmp);
-            DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+            ModelReadOnly tm = new ModelReadOnly();
+            tm.addColumn("Pastas em que o Crepz procurará por músicas");
+            jTable_pastas.setModel(tm);
             tm.setRowCount(0);
-            ArrayList<String> ps = Scan.getPastas();
-            for (short i = 0; i < ps.size(); i++) {
-                if (ps.get(i) != null && !ps.get(i).replaceAll(" ", "").isEmpty()) {
-                    tm.addRow(new Object[]{ps.get(i)});
+            ArrayList<String> pastas = Configuracaoes.getList(Configuracaoes.PASTAS_SCANER);
+            for (short i = 0; i < pastas.size(); i++) {
+                if (pastas.get(i) != null && !pastas.get(i).replace(" ", "").isEmpty()) {
+                    tm.addRow(new Object[]{pastas.get(i)});
 
                 }
             }
+            jComboBoxAcaoFila.setSelectedIndex(Configuracaoes.getInteger(Configuracaoes.ACAO_PADRAO_FILA));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private File telaAbrirArquivo() throws Exception {
-
-        // restringe a amostra a diretorios apenas
-        jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        jFileChooser.setDialogTitle("Abrir Pasta");
-
-        int res = jFileChooser.showOpenDialog(null);
-
-        if (res == JFileChooser.APPROVE_OPTION) {
-            jTextField_Jpasta.setText(jFileChooser.getSelectedFile().getAbsolutePath());
-            return jFileChooser.getSelectedFile();
-        }
-        return null;
-//        else {
-//            throw new Exception("Voce nao selecionou nenhum diretorio.");
+//    private File telaAbrirArquivo() throws Exception {
+//
+//
+//        int res = jFileChooser.showOpenDialog(null);
+//
+//        if (res == JFileChooser.APPROVE_OPTION) {
+//            jTextField_Pasta.setText(jFileChooser.getSelectedFile().getAbsolutePath());
+//            return jFileChooser.getSelectedFile();
 //        }
-    }
-
-    private void addTablePastas() {
-        try {
-            telaAbrirArquivo();
-            if (jTextField_Jpasta.getText().isEmpty()) {
-                return;
-            }
-            DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
-            tm.addRow(new Object[]{jTextField_Jpasta.getText()});
-            jTextField_Jpasta.setText("");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
+//        return null;
+////        else {
+////            throw new Exception("Voce nao selecionou nenhum diretorio.");
+////        }
+//    }
+//    private void addTablePastas() {
+//        try {
+//            telaAbrirArquivo();
+//            if (jTextField_Pasta.getText().isEmpty()) {
+//                return;
+//            }
+//            DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
+//            tm.addRow(new Object[]{jTextField_Pasta.getText()});
+//            jTextField_Pasta.setText("");
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//    }
     private void setDadosBanco() {
 
         MusicaGerencia.organizarPastas = jCheckBox_Organizador.isSelected();
         MusicaGerencia.destino = jTextField_DestinoOrg.getText() != null ? jTextField_DestinoOrg.getText() : "";
         MusicaGerencia.downLoadCapas = jCheckBox_DownloadCapa.isSelected();
-        Scan.setTempo((Integer)jSpinner1.getValue());
+//        Scan.setTempo((Integer) jSpinner1.getValue());
         TableModel tm = jTable_pastas.getModel();
         ArrayList<String> pastas = new ArrayList<String>(10);
         for (int i = 0; i < tm.getRowCount(); i++) {
             String tms = tm.getValueAt(i, 0) == null ? "" : tm.getValueAt(i, 0).toString();
             pastas.add(tms);
         }
-        Scan.setPastas(pastas);
 
     }
 
@@ -128,21 +126,19 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel_Geral = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jCheckBox_teste = new javax.swing.JCheckBox();
+        jComboBoxAcaoFila = new javax.swing.JComboBox();
         jPanel3 = new javax.swing.JPanel();
         jPanel_Avancada = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable_pastas = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
-        jPanel12 = new javax.swing.JPanel();
-        jButton_ADD1 = new javax.swing.JButton();
-        jButton_ADD = new javax.swing.JButton();
+        jPanel13 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField_Jpasta = new javax.swing.JTextField();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
+        jTextField_Pasta = new javax.swing.JTextField();
+        jPanel12 = new javax.swing.JPanel();
+        jButton_Add = new javax.swing.JButton();
+        jButton_Remove = new javax.swing.JButton();
         jPanel_Organizador = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -159,6 +155,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jTextArea1 = new javax.swing.JTextArea();
         jPanel11 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(441, 342));
@@ -183,17 +180,19 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel1.setText("Teste:");
-        jLabel1.setPreferredSize(new java.awt.Dimension(80, 17));
+        jLabel1.setText("Ao clicar 2 vezes na música:");
         jPanel2.add(jLabel1);
-        jPanel2.add(jCheckBox_teste);
+
+        jComboBoxAcaoFila.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Adicionar a Fila", "Reproduzir" }));
+        jComboBoxAcaoFila.setToolTipText("O que acontece quando eu clido 2 vezes numa música...");
+        jPanel2.add(jComboBoxAcaoFila);
 
         jPanel_Geral.add(jPanel2);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
         jPanel_Geral.add(jPanel3);
 
-        jTabbedPane1.addTab("Geral", jPanel_Geral);
+        jTabbedPane1.addTab("Fila de Reprodução", jPanel_Geral);
 
         jPanel_Avancada.setLayout(new javax.swing.BoxLayout(jPanel_Avancada, javax.swing.BoxLayout.Y_AXIS));
 
@@ -207,7 +206,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Pasta"
+                "Pastas em que o Crepz procurará por músicas"
             }
         ) {
             Class[] types = new Class [] {
@@ -232,56 +231,40 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel_Avancada.add(jPanel6);
 
-        jButton_ADD1.setText("DEL");
-        jButton_ADD1.setPreferredSize(new java.awt.Dimension(60, 30));
-        jButton_ADD1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_ADD1ActionPerformed(evt);
-            }
-        });
-        jPanel12.add(jButton_ADD1);
+        jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.Y_AXIS));
 
-        jButton_ADD.setText("ADD");
-        jButton_ADD.setPreferredSize(new java.awt.Dimension(60, 30));
-        jButton_ADD.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_ADDActionPerformed(evt);
-            }
-        });
-        jPanel12.add(jButton_ADD);
+        jPanel13.setLayout(new javax.swing.BoxLayout(jPanel13, javax.swing.BoxLayout.LINE_AXIS));
 
         jLabel3.setText("Pasta:");
-        jPanel12.add(jLabel3);
+        jLabel3.setPreferredSize(new java.awt.Dimension(50, 18));
+        jPanel13.add(jLabel3);
 
-        jTextField_Jpasta.setEditable(false);
-        jTextField_Jpasta.setEnabled(false);
-        jTextField_Jpasta.setPreferredSize(new java.awt.Dimension(250, 30));
-        jPanel12.add(jTextField_Jpasta);
+        jTextField_Pasta.setPreferredSize(new java.awt.Dimension(250, 30));
+        jPanel13.add(jTextField_Pasta);
 
-        jLabel6.setText("Tempo de Repetição");
-        jPanel1.add(jLabel6);
+        jPanel5.add(jPanel13);
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(5, 5, 300, 5));
-        jPanel1.add(jSpinner1);
+        jPanel12.setLayout(new java.awt.GridLayout(1, 0));
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        jButton_Add.setText("Adicionar");
+        jButton_Add.setPreferredSize(new java.awt.Dimension(60, 30));
+        jButton_Add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_AddActionPerformed(evt);
+            }
+        });
+        jPanel12.add(jButton_Add);
+
+        jButton_Remove.setText("Remover");
+        jButton_Remove.setPreferredSize(new java.awt.Dimension(60, 30));
+        jButton_Remove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_RemoveActionPerformed(evt);
+            }
+        });
+        jPanel12.add(jButton_Remove);
+
+        jPanel5.add(jPanel12);
 
         jPanel_Avancada.add(jPanel5);
 
@@ -343,7 +326,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel_Organizador.add(jPanel8);
 
-        jTabbedPane1.addTab("Organizador", jPanel_Organizador);
+        jTabbedPane1.addTab("Organizador (Inativo)", jPanel_Organizador);
 
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
@@ -357,6 +340,14 @@ public class JConfiguracao extends javax.swing.JDialog {
         });
         jPanel11.add(jButton1);
 
+        jButton3.setText("Cancelar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jPanel11.add(jButton3);
+
         getContentPane().add(jPanel11, java.awt.BorderLayout.PAGE_END);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -364,25 +355,38 @@ public class JConfiguracao extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-
-        setDadosBanco();
-
-
+//        setDadosBanco();
     }//GEN-LAST:event_formWindowClosing
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        setDadosBanco();
+        ArrayList<String> pastas = new ArrayList<String>(jTable_pastas.getRowCount());
+        for (int i = 0; i < jTable_pastas.getRowCount(); i++) {
+            String pasta = (String) jTable_pastas.getValueAt(i, 0);
+            pastas.add(pasta);
+        }
+        Configuracaoes.set(Configuracaoes.PASTAS_SCANER, pastas);
+        Configuracaoes.set(Configuracaoes.ACAO_PADRAO_FILA, jComboBoxAcaoFila.getSelectedIndex());
+        dispose();
+//        setDadosBanco();
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton_ADDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ADDActionPerformed
-        addTablePastas();
-}//GEN-LAST:event_jButton_ADDActionPerformed
+    private void jButton_AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddActionPerformed
+        String text = jTextField_Pasta.getText();
+        if (text == null || text.isEmpty()) {
+            int saida = jFileChooser.showOpenDialog(this);
+            if (saida != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+            text = jFileChooser.getSelectedFile().getAbsolutePath();
+        }
+        ((ModelReadOnly) jTable_pastas.getModel()).addRow(new Object[]{text});
+}//GEN-LAST:event_jButton_AddActionPerformed
 
-    private void jButton_ADD1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ADD1ActionPerformed
+    private void jButton_RemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_RemoveActionPerformed
         remove();
-    }//GEN-LAST:event_jButton_ADD1ActionPerformed
+    }//GEN-LAST:event_jButton_RemoveActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // restringe a amostra a diretorios apenas
@@ -396,28 +400,32 @@ public class JConfiguracao extends javax.swing.JDialog {
         }
 
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
     /**
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton_ADD;
-    private javax.swing.JButton jButton_ADD1;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton_Add;
+    private javax.swing.JButton jButton_Remove;
     private javax.swing.JCheckBox jCheckBox_DownloadCapa;
     private javax.swing.JCheckBox jCheckBox_Organizador;
-    private javax.swing.JCheckBox jCheckBox_teste;
+    private javax.swing.JComboBox jComboBoxAcaoFila;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -431,11 +439,10 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel_Organizador;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable_pastas;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField_DestinoOrg;
-    private javax.swing.JTextField jTextField_Jpasta;
+    private javax.swing.JTextField jTextField_Pasta;
     // End of variables declaration//GEN-END:variables
 }

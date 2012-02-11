@@ -591,10 +591,7 @@ public class JPlayList extends javax.swing.JDialog {
         System.out.println(o.toString());
     }
 
-    public void atualizaIcons() {
-        jLabel2.setIcon(carregador.icones.save);
-        jLabel3.setIcon(carregador.icones.saveAs);
-    }
+  
 
     private void openM3u() {
         JFileChooser jf = new JFileChooser();
@@ -705,8 +702,8 @@ public class JPlayList extends javax.swing.JDialog {
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jTextField_NomePlayList = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jButtonSalvar = new javax.swing.JButton();
+        jButtonExportar = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -758,22 +755,21 @@ public class JPlayList extends javax.swing.JDialog {
         jTextField_NomePlayList.setPreferredSize(new java.awt.Dimension(200, 25));
         jPanel4.add(jTextField_NomePlayList);
 
-        jLabel2.setText("jLabel2");
-        jLabel2.setNextFocusableComponent(jTextField_NomePlayList);
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel2MouseClicked(evt);
+        jButtonSalvar.setText("Salvar");
+        jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalvarActionPerformed(evt);
             }
         });
-        jPanel4.add(jLabel2);
+        jPanel4.add(jButtonSalvar);
 
-        jLabel3.setText("jLabel3");
-        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel3MouseClicked(evt);
+        jButtonExportar.setText("Expotar M3u");
+        jButtonExportar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonExportarActionPerformed(evt);
             }
         });
-        jPanel4.add(jLabel3);
+        jPanel4.add(jButtonExportar);
 
         jPanel8.add(jPanel4);
 
@@ -882,7 +878,6 @@ public class JPlayList extends javax.swing.JDialog {
         });
         jPanel6.add(jToggleButton1);
 
-        jTextEntrada.setText("jTextField1");
         jTextEntrada.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 jTextEntradaCaretUpdate(evt);
@@ -965,7 +960,7 @@ public class JPlayList extends javax.swing.JDialog {
         setJMenuBar(jMenuBar1);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-363)/2, (screenSize.height-320)/2, 363, 320);
+        setBounds((screenSize.width-410)/2, (screenSize.height-320)/2, 410, 320);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -1052,20 +1047,6 @@ public class JPlayList extends javax.swing.JDialog {
         setVisible(false);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
-    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        // TODO add your handling code here:
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-            jMenuItem4ActionPerformed(null);
-        }
-    }//GEN-LAST:event_jLabel2MouseClicked
-
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-        // TODO add your handling code here:
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-            exportarPlayList();
-        }
-    }//GEN-LAST:event_jLabel3MouseClicked
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         openM3u();
@@ -1148,6 +1129,14 @@ public class JPlayList extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jTextEntradaCaretUpdate
 
+    private void jButtonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarActionPerformed
+        jMenuItem4ActionPerformed(null);
+    }//GEN-LAST:event_jButtonSalvarActionPerformed
+
+    private void jButtonExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportarActionPerformed
+        exportarPlayList();
+    }//GEN-LAST:event_jButtonExportarActionPerformed
+
     public void addMusica(Musica m) {
         m.setNumero(jTable.getModel().getRowCount());
         Object[] row = new Object[2];
@@ -1191,9 +1180,9 @@ public class JPlayList extends javax.swing.JDialog {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButtonExportar;
+    private javax.swing.JButton jButtonSalvar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;

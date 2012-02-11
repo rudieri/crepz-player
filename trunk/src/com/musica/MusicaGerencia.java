@@ -37,7 +37,7 @@ public class MusicaGerencia {
             + "Swing,Bebob,Latin,Revival,Celtic,Bluegrass,Avantgarde,Gothic Rock,Progressive Rock,Psychedelic Rock,Symphonic Rock,Slow Rock,"
             + "Big Band,Chorus,Easy Listening,Acoustic,Humor,Speech,Chanson,Opera,Chamber Music,Sonata,Symphony,Booty Bass,Primus,Porn Groove,"
             + "Satire,Slow Jam,Club,Tango,Samba,Folclore").split(",");
-    private static String[] extSuportadaMusica = new String[]{"mp3", "ogg", "wav"};
+    private static String[] extSuportadaMusica = new String[]{"mp3", "ogg", "wav", "wma"};
     private static String[] extSuportadaImagem = new String[]{"jpg", "jpeg", "png", "gif"};
     public static int count = 0;
     public static boolean organizarPastas = false;
