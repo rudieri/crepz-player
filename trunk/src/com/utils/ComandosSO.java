@@ -16,9 +16,9 @@ import javax.swing.JOptionPane;
  */
 public class ComandosSO {
 
-    private static final byte LINUX = 0;
-    private static final byte WINDOWS = 1;
-    private static final byte OUTRO = 2;
+    public static final byte LINUX = 0;
+    public static final byte WINDOWS = 1;
+    public static final byte OUTRO = 2;
     private static final byte mySO;
 
     static {
@@ -49,4 +49,10 @@ public class ComandosSO {
             Logger.getLogger(ComandosSO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public static byte getMySO() {
+        return mySO;
+    }
+
+    
 }

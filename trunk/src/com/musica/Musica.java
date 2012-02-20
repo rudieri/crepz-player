@@ -25,6 +25,7 @@ public class Musica implements Serializable, Filtravel {
     private String album;
     @ObjetoTabela(nomeColuna = "Tempo")
     private Tempo tempo;
+    private short numeroReproducoes = 0;
     private String caminho;
     private long dtModArquivo;
     private String img;
@@ -79,7 +80,7 @@ public class Musica implements Serializable, Filtravel {
         this.dtModArquivo = dtModArquivo;
     }
 
-    
+
     /**
      * @param genero the genero to set
      */
@@ -122,7 +123,7 @@ public class Musica implements Serializable, Filtravel {
      */
     public String getCaminho() {
         if (caminho != null) {
-            return caminho.replace("<&aspas>", "'");
+            return caminho;
         } else {
             return null;
         }
@@ -133,7 +134,7 @@ public class Musica implements Serializable, Filtravel {
      */
     public void setCaminho(String caminho) {
 
-        this.caminho = caminho.replace("\\", "/").replace("//", "/").replace("'", "<&aspas>");
+        this.caminho = caminho;
     }
 
     /**
@@ -141,18 +142,19 @@ public class Musica implements Serializable, Filtravel {
      */
     public String getImg() {
         if (img != null) {
-            return img.replace("<&aspas>", "'");
+            return img;
         } else {
             return "";
         }
     }
 
     /**
-     * @param img the img to set
+     * Obs: Faça um replace('\\','/') em nahorade importar
+     * @param img O endereço da imagem
      */
     public void setImg(String img) {
         if (img != null) {
-            this.img = img.replace("\\", "/").replace("//", "/").replace("'", "<&aspas>");
+            this.img = img;
         }
 
     }
@@ -231,7 +233,16 @@ public class Musica implements Serializable, Filtravel {
     @Override
     public String getTextoParaPesquisa() {
         StringBuilder sb = new StringBuilder(100);
-        sb.append(nome).append(ESPACO).append(album).append(ESPACO).append(autor).append(ESPACO).append(genero).append(ESPACO).append(tempo.toString());
+        sb.append(nome).append(ESPACO).append(album).append(ESPACO).append(autor).append(ESPACO).append(genero);
         return sb.toString().toLowerCase();
     }
+
+    public short getNumeroReproducoes() {
+        return numeroReproducoes;
+    }
+
+    public void setNumeroReproducoes(short numeroReproducoes) {
+        this.numeroReproducoes = numeroReproducoes;
+    }
+
 }

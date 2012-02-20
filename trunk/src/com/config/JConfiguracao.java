@@ -10,9 +10,11 @@
  */
 package com.config;
 
+import com.fila.AcaoPadraoFila;
 import com.musica.ModelReadOnly;
 import com.musica.MusicaGerencia;
 import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -53,7 +55,8 @@ public class JConfiguracao extends javax.swing.JDialog {
 
                 }
             }
-            jComboBoxAcaoFila.setSelectedIndex(Configuracaoes.getInteger(Configuracaoes.ACAO_PADRAO_FILA));
+            jComboBoxAcaoFila.setModel(new DefaultComboBoxModel(AcaoPadraoFila.getNomesFakes()));
+            jComboBoxAcaoFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.ACAO_PADRAO_FILA).ordinal());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -366,7 +369,7 @@ public class JConfiguracao extends javax.swing.JDialog {
             pastas.add(pasta);
         }
         Configuracaoes.set(Configuracaoes.PASTAS_SCANER, pastas);
-        Configuracaoes.set(Configuracaoes.ACAO_PADRAO_FILA, jComboBoxAcaoFila.getSelectedIndex());
+        Configuracaoes.set(Configuracaoes.ACAO_PADRAO_FILA, AcaoPadraoFila.values()[jComboBoxAcaoFila.getSelectedIndex()]);
         dispose();
 //        setDadosBanco();
 

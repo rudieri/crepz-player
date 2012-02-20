@@ -49,6 +49,11 @@ public abstract class Musiquera implements BasicPlayerListener {
     private File in;
     private String tipo = "";
     private final Carregador carregador;
+    /**
+     * Variável usada para saber se o núermo de reproduções
+     * já foi alterado.
+     */
+    private boolean naoAlterouAinda;
 
     @SuppressWarnings("LeakingThisInConstructor")
     public Musiquera(Carregador carregador) {
@@ -358,6 +363,7 @@ public abstract class Musiquera implements BasicPlayerListener {
 
     @Override
     public void opened(Object stream, Map properties) {
+        naoAlterouAinda = true;
         PropriedadesMusica propriedadesMusica = new PropriedadesMusica();
         totalTempo = (Long) properties.get("duration");
         totalBytes = (Integer) properties.get("audio.length.bytes");
@@ -408,6 +414,15 @@ public abstract class Musiquera implements BasicPlayerListener {
     public void progress(int i, long l, byte[] bytes, Map properties) {
 //        numberTempoChange(new Double(l)/totalTempo);
         double prop = new Double(i) / totalBytes;
+        if (naoAlterouAinda && prop > 0.8) {
+            try {
+                naoAlterouAinda = false;
+                musica.setNumeroReproducoes((short) (musica.getNumeroReproducoes() + 1));
+                MusicaBD.alterar(musica);
+            } catch (Exception ex) {
+                Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         numberTempoChange(prop);
         String hms = microSegundosEmMinSeq((long) (totalTempo * prop));
         stringTempoChange(hms);
