@@ -57,10 +57,10 @@ public class JPlayList extends javax.swing.JDialog {
     private JPrincipal principal;
     boolean aleatorio = false;
     boolean recomecar = false;
-    ArrayList<Musica> faltamTocar = new ArrayList<Musica>();
-    ArrayList<Musica> jahFoi = new ArrayList<Musica>();
-    ArrayList<Musica> total = new ArrayList<Musica>();
-    ArrayList<Musica> pesquisa = new ArrayList<Musica>();
+    ArrayList<Musica> faltamTocar = new ArrayList<Musica>(200);
+    ArrayList<Musica> jahFoi = new ArrayList<Musica>(200);
+    ArrayList<Musica> total = new ArrayList<Musica>(200);
+    ArrayList<Musica> pesquisa = new ArrayList<Musica>(200);
     int IdAberto = -1;
     private Musiquera musiquera;
     private final Carregador carregador;
@@ -172,6 +172,7 @@ public class JPlayList extends javax.swing.JDialog {
     }
     ListSelectionListener listSelectionListener = new ListSelectionListener() {
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             System.out.println(e.toString());
             jTable.scrollRectToVisible(jTable.getCellRect(jTable.getSelectedRow(), 0, false));
@@ -181,7 +182,7 @@ public class JPlayList extends javax.swing.JDialog {
     /** Método que atualiza a consulta atual. */
     public void atualizarTabelaLista() {
         pesquisa.clear();
-        if (jTextField_NomePlayList.getText().equals("")) {
+        if (jTextField_NomePlayList.getText().isEmpty()) {
             return;
         }
 
@@ -206,7 +207,6 @@ public class JPlayList extends javax.swing.JDialog {
                 if (m.getMusica().getCaminho() == null) {
                     MusicaBD.carregar(m.getMusica(), t);
                 }
-                m.getMusica().setNumero(i);
                 Object[] row = new Object[2];
                 row[0] = new JLista(m.getMusica().getNome(), m.getMusica().getAutor());
                 row[1] = m.getMusica();
@@ -254,6 +254,7 @@ public class JPlayList extends javax.swing.JDialog {
             ListSelectionModel modeloDeSelecao = jTable.getSelectionModel();
             modeloDeSelecao.addListSelectionListener(new ListSelectionListener() {
 
+                @Override
                 public void valueChanged(ListSelectionEvent e) {
                     if (jTable.getRowCount() > 0) {
                         try {
@@ -458,9 +459,9 @@ public class JPlayList extends javax.swing.JDialog {
                 FileWriter fw = new FileWriter(f);
                 BufferedWriter bfw = new BufferedWriter(fw);
                 for (int i = 0; i < total.size(); i++) {
-                    Musica m = (Musica) total.get(i);
+                    Musica m = total.get(i);
                     String aux = m.getCaminho();
-                    aux = aux.replace("/", File.separator);
+                    aux = aux.replace('/', File.separatorChar);
                     bfw.write(aux);
                     bfw.newLine();
                     System.out.println(aux);
@@ -490,7 +491,7 @@ public class JPlayList extends javax.swing.JDialog {
             }
             PlayMusicaBD.excluirMusica(playList, t);
             for (int i = 0; i < total.size(); i++) {
-                Musica m = (Musica) total.get(i);
+                Musica m = total.get(i);
                 System.out.println("--id" + m.getId());
                 // if(!MusicaBD.existe(m))//----------------------aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 //  MusicaBD.incluir(m, t);
@@ -540,8 +541,8 @@ public class JPlayList extends javax.swing.JDialog {
         jTextField_NomePlayList.setText("");
         jTable.getSelectionModel().removeListSelectionListener(listSelectionListener);
         initTabelaLista(false);
-        faltamTocar = new ArrayList();
-        total = new ArrayList();
+        faltamTocar = new ArrayList(200);
+        total = new ArrayList(200);
     }
 
     public void tocar(Playlist playlist, boolean tocarMesmo) {
@@ -576,7 +577,7 @@ public class JPlayList extends javax.swing.JDialog {
             filtro.setCaminho(m.getCaminho().trim());
 
 
-            m = (Musica) MusicaBD.listar(filtro).get(0);
+            m = MusicaBD.listar(filtro).get(0);
 //
             addMusica(m);
 
@@ -591,11 +592,11 @@ public class JPlayList extends javax.swing.JDialog {
         System.out.println(o.toString());
     }
 
-  
+
 
     private void openM3u() {
         JFileChooser jf = new JFileChooser();
-        jf.setDialogType(jf.OPEN_DIALOG);
+        jf.setDialogType(JFileChooser.OPEN_DIALOG);
         jf.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jf.setFileFilter(new FileFilter() {
 
@@ -640,7 +641,7 @@ public class JPlayList extends javax.swing.JDialog {
     }
 
     public void salvarPlaylistAtual() {
-        if (jTextField_NomePlayList.getText() == null || jTextField_NomePlayList.getText().equals("")) {
+        if (jTextField_NomePlayList.getText() == null || jTextField_NomePlayList.getText().isEmpty()) {
             jTextField_NomePlayList.setText("Execução");
         }
         salvarPlaylist();
@@ -1029,7 +1030,7 @@ public class JPlayList extends javax.swing.JDialog {
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         jToggleButton1.setSelected(true);
-        if (jTextField_NomePlayList.getText() == null || jTextField_NomePlayList.getText().equals("") || jTextField_NomePlayList.getText().equals("Coloque um nome!")) {
+        if (jTextField_NomePlayList.getText() == null || jTextField_NomePlayList.getText().isEmpty() || jTextField_NomePlayList.getText().equals("Coloque um nome!")) {
             jTextField_NomePlayList.setText("Coloque um nome!");
             jTextField_NomePlayList.selectAll();
 
@@ -1114,7 +1115,7 @@ public class JPlayList extends javax.swing.JDialog {
     private void jTextEntradaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jTextEntradaCaretUpdate
         if (evt.getDot() != dot) {
             dot = evt.getDot();
-            ArrayList<Musica> novaLista = new ArrayList<Musica>();
+            ArrayList<Musica> novaLista = new ArrayList<Musica>(200);
             for (Musica m : pesquisa) {
                 if ((m.getNome() + m.getAutor()).toLowerCase().indexOf(jTextEntrada.getText().toLowerCase()) != -1) {
                     novaLista.add(m);

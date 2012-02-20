@@ -55,9 +55,9 @@ public class MusicaBD {
 
         SQL sql = new SQL();
         sql.add("INSERT INTO " + TBL);
-        sql.add(" (id, caminho, nome, autor, genero, album, img, tempo, dt_mod_arquivo) ");
+        sql.add(" (id, caminho, nome, autor, genero, album, img, tempo, nro_reproducoes, dt_mod_arquivo) ");
         sql.add("VALUES ");
-        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img, :tempo, :dt_mod_arquivo)");
+        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img, :tempo, :nro_reproducoes, :dt_mod_arquivo)");
 
         sql.setParam("id", null);
         sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
@@ -65,6 +65,7 @@ public class MusicaBD {
         sql.setParam("autor", musica.getAutor());
         sql.setParam("genero", musica.getGenero());
         sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
+        sql.setParam("nro_reproducoes", musica.getNumeroReproducoes());
         sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
 
         return t.executeUpdate(sql.getSql());
@@ -84,7 +85,7 @@ public class MusicaBD {
         SQL sql = new SQL();
         sql.add("UPDATE " + TBL);
         sql.add("SET nome = :nome, autor = :autor, genero =:genero, album = :album, img = :img,");
-        sql.add("caminho = :caminho, tempo=:tempo, dt_mod_arquivo=:dt_mod_arquivo");
+        sql.add("caminho = :caminho, tempo=:tempo, nro_reproducoes=:nro_reproducoes, dt_mod_arquivo=:dt_mod_arquivo");
         sql.add("WHERE id = :id ");
 
         sql.setParam("id", musica.getId());
@@ -94,6 +95,7 @@ public class MusicaBD {
         sql.setParam("genero", musica.getGenero());
         sql.setParam("tempo", musica.getTempo() == null ? 0 : musica.getTempo().getMilissegundos());
         sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
+        sql.setParam("nro_reproducoes", musica.getNumeroReproducoes());
         sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
 
         return t.executeUpdate(sql.getSql());
@@ -227,6 +229,7 @@ public class MusicaBD {
         musica.setAlbum(rs.getString("album"));
         musica.setImg(rs.getString("img"));
         musica.setTempo(new Tempo(rs.getInt("tempo")));
+        musica.setNumeroReproducoes(rs.getShort("nro_reproducoes"));
         musica.setDtModArquivo(rs.getLong("dt_mod_arquivo"));
     }
 

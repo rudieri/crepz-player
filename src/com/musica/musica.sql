@@ -9,4 +9,5 @@ genero varchar(30),
 album varchar(100),
 img varchar(500),
 tempo INTEGER,
+nro_reproducoes SMALLINT,
 dt_mod_arquivo BIGINT);

@@ -4,6 +4,7 @@
  */
 package com.config;
 
+import com.fila.AcaoPadraoFila;
 import com.musica.Musica;
 import com.utils.FileUtils;
 import java.io.File;
@@ -31,7 +32,7 @@ public class Configuracaoes {
     public static final Byte PASTAS_SCANER = 0;
     private static final ArrayList<String> pastasScaner = new ArrayList<String>(10);
     public static final Byte ACAO_PADRAO_FILA = 1;
-    private static Integer acaoPadraoFila = 0;
+    private static AcaoPadraoFila acaoPadraoFila = AcaoPadraoFila.ADICIONAR_FILA;
     // lista de todas as configs
     private static final Object[] configs;
     private static final String ARQUIVO = "etc/conf";
@@ -43,6 +44,11 @@ public class Configuracaoes {
 //        configs[PASTAS_SCANER] = pastasScaner;
         acoes = new HashMap<Byte, Acao>(configs.length);
         ler();
+    }
+
+    public static void set(Byte indexConf, Enum valor) {
+        configs[indexConf] = valor;
+        gravar();
     }
 
     public static void set(Byte indexConf, String valor) {
@@ -82,6 +88,10 @@ public class Configuracaoes {
         return configs[index];
     }
 
+    public static Enum getEnum(Byte index) {
+        return (Enum) configs[index];
+    }
+
     public static String getString(Byte index) {
         return (String) configs[index];
     }
@@ -103,7 +113,13 @@ public class Configuracaoes {
             if (!new File(ARQUIVO).exists()) {
                 return;
             }
-            String conteudo = FileUtils.leArquivo(new File(ARQUIVO)).toString();
+            final StringBuilder conteudoBruto = FileUtils.leArquivo(new File(ARQUIVO));
+            for (int i = conteudoBruto.length() - 1; i >= 0; i--) {
+                if (conteudoBruto.charAt(i) == '\r') {
+                    conteudoBruto.deleteCharAt(i);
+                }
+            }
+            String conteudo = conteudoBruto.toString();
             String[] linhas = conteudo.split("\n");
             for (int i = 0; i < linhas.length; i++) {
                 String linha = linhas[i];
@@ -118,11 +134,13 @@ public class Configuracaoes {
                 } else if (myConfig instanceof Musica) {
                     Musica musica = new Musica();
                     musica.setId(Integer.parseInt(tokens[1].trim()));
-                    myConfig = musica;
+                    configs[Integer.parseInt(tokens[0])] = musica;
                 } else if (myConfig instanceof Integer) {
-                    myConfig = Integer.valueOf(tokens[1].trim());
+                    configs[Integer.parseInt(tokens[0])] = Integer.valueOf(tokens[1].trim());
+                } else if (myConfig instanceof Enum) {
+                    configs[Integer.parseInt(tokens[0])] = Enum.valueOf(((Enum) myConfig).getClass(), tokens[1]);
                 } else {
-                    myConfig = tokens[1];
+                    configs[Integer.parseInt(tokens[0])] = tokens[1];
                 }
 
             }
@@ -140,6 +158,10 @@ public class Configuracaoes {
                 textFile.append(((ArrayList) myConfig).toString().replaceAll("[\\[\\]]", ""));
             } else if (myConfig instanceof Musica) {
                 textFile.append(((Musica) myConfig).getId());
+            } else if (myConfig instanceof Enum) {
+                textFile.append(((Enum) myConfig).name());
+            } else if (myConfig instanceof String) {
+                textFile.append(myConfig.toString());
             } else {
                 textFile.append(myConfig.toString());
             }

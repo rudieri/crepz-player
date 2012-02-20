@@ -113,7 +113,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
             TagOptionSingleton.getInstance().setFilenameTagSave(true);
             mp3File.save(TagConstant.MP3_FILE_SAVE_OVERWRITE);
             alterarMusica();
-           
+
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
@@ -144,7 +144,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
     public void alterarMusica(){
         try{
         Musica m = new Musica();
-            m.setCaminho(mp3File.getMp3file().getAbsolutePath());
+            m.setCaminho(MusicaGerencia.normalizarCaminhoArquivo(mp3File.getMp3file()));
             if (MusicaBD.existe(m)) {
                 MusicaGerencia.getMusica(m, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
                 MusicaBD.alterar(m);

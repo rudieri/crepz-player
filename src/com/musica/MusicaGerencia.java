@@ -6,11 +6,10 @@ package com.musica;
 
 import com.conexao.Transacao;
 import com.utils.BuscaGoogle;
-import com.utils.Warning;
+import com.utils.ComandosSO;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +36,7 @@ public class MusicaGerencia {
             + "Swing,Bebob,Latin,Revival,Celtic,Bluegrass,Avantgarde,Gothic Rock,Progressive Rock,Psychedelic Rock,Symphonic Rock,Slow Rock,"
             + "Big Band,Chorus,Easy Listening,Acoustic,Humor,Speech,Chanson,Opera,Chamber Music,Sonata,Symphony,Booty Bass,Primus,Porn Groove,"
             + "Satire,Slow Jam,Club,Tango,Samba,Folclore").split(",");
-    private static String[] extSuportadaMusica = new String[]{"mp3", "ogg", "wav", "wma"};
+    private static String[] extSuportadaMusica = new String[]{"mp3", "ogg", "wav"};
     private static String[] extSuportadaImagem = new String[]{"jpg", "jpeg", "png", "gif"};
     public static int count = 0;
     public static boolean organizarPastas = false;
@@ -73,7 +72,7 @@ public class MusicaGerencia {
     }
 
     public static Musica getMusica(Musica m, File file) throws Exception {
-        m.setCaminho(file.getAbsolutePath());
+        m.setCaminho(normalizarCaminhoArquivo(file));
 
         Map<String, String> pro = getPropriedades(file);
         if (pro != null) {
@@ -185,51 +184,6 @@ public class MusicaGerencia {
         }
     }
 
-    public static ArrayList<Musica> addFiles(File file) {
-        Transacao t = new Transacao();
-        try {
-            t.begin();
-            ArrayList<Musica> lista = new ArrayList<Musica>(20);
-            if (file.isDirectory()) {
-                mapearDiretorio(file, lista, t);
-            } else {
-                Musica addFiles = addFiles(file, t);
-                if (addFiles != null) {
-                    lista.add(addFiles);
-                }
-            }
-            t.commit();
-            return lista;
-        } catch (Exception ex) {
-            Logger.getLogger(MusicaGerencia.class.getName()).log(Level.SEVERE, null, ex);
-            t.rollback();
-            return null;
-        }
-    }
-
-    public static ArrayList<Musica> addFiles(ArrayList<File> files) {
-        Transacao t = new Transacao();
-        try {
-            t.begin();
-            ArrayList<Musica> list = new ArrayList<Musica>(20);
-            for (int i = 0; i < files.size(); i++) {
-                File file = files.get(i);
-                if (file.isDirectory()) {
-                    mapearDiretorio(file, list, t);
-                } else {
-                    Musica addFiles = addFiles(file, t);
-                    list.add(addFiles);
-                }
-            }
-            t.commit();
-            return list;
-        } catch (Exception ex) {
-            Logger.getLogger(MusicaGerencia.class.getName()).log(Level.SEVERE, null, ex);
-            t.rollback();
-            return null;
-        }
-    }
-
     @SuppressWarnings("AssignmentToMethodParameter")
     public static Musica addFiles(File file, Transacao t) {
 
@@ -242,7 +196,7 @@ public class MusicaGerencia {
 
                 String caminho = file.getAbsolutePath().trim().replace('\\', '/');
                 MP3File mp3 = new MP3File(caminho);
-                m.setCaminho(file.getAbsolutePath());
+                m.setCaminho(normalizarCaminhoArquivo(file));
                 if (organizarPastas) {
                     getMusica(m, mp3, file);
                     File destinoF = new File(destino);
@@ -334,11 +288,31 @@ public class MusicaGerencia {
         });
 
         if (files != null && files.length > 0) {
-            return files[0].getAbsolutePath();
+            if (ComandosSO.getMySO() == ComandosSO.WINDOWS) {
+                return files[0].getAbsolutePath().replace('\\', '/').replace("//", "/");
+            } else {
+                return files[0].getAbsolutePath();
+            }
         } else {
             return null;
         }
 
+    }
+    /**
+     Retorna o caminho absoluto do arquivo substituindo alguns caracteres por outros
+     */
+    public static String normalizarCaminhoArquivo(File caminho) {
+        return normalizarCaminhoArquivo(caminho.getAbsolutePath());
+    }
+    /**
+     Retorna o caminho absoluto do arquivo substituindo alguns caracteres por outros
+     */
+    public static String normalizarCaminhoArquivo(String caminho) {
+        if (ComandosSO.getMySO() == ComandosSO.WINDOWS) {
+            return caminho.replace('\\', '/').replace("//", "/");
+        } else {
+            return caminho;
+        }
     }
 
     public static String removeCaracteresEsp(String st) {
@@ -346,7 +320,7 @@ public class MusicaGerencia {
             return "";
         }
 
-       String ret = st.replaceAll("[^0-9a-zA-Z/_.:;η\\-+()*&@#$!%αβγικντυσϊ ]", "");
+        String ret = st.replaceAll("[^0-9a-zA-Z/_.:;η\\-+()*&@#$!%αβγικντυσϊ ]", "");
         return ret;
     }
 }
