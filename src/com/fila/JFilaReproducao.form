@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -94,6 +94,8 @@
         </MenuItem>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JFileChooser" name="jFileChooserImportar">
+    </Component>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="jMenu1">
@@ -101,7 +103,7 @@
             <Property name="text" type="java.lang.String" value="Importar"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemAbrirBiblioteca">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Alt+B"/>
@@ -109,7 +111,18 @@
                 <Property name="text" type="java.lang.String" value="Mostrar Biblioteca"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem2ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemAbrirBibliotecaActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemImportarArquivos">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Alt+I"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Importar M&#xfa;sicas..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemImportarArquivosActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -480,7 +493,7 @@
                     <Property name="toolTipText" type="java.lang.String" value="Tocar"/>
                     <Property name="verticalAlignment" type="int" value="1"/>
                     <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                      <Color id="Cursor padr&#xe3;o"/>
+                      <Color id="Cursor Default"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -492,7 +505,7 @@
                     <Property name="text" type="java.lang.String" value="Parar"/>
                     <Property name="toolTipText" type="java.lang.String" value="Parar"/>
                     <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                      <Color id="Cursor padr&#xe3;o"/>
+                      <Color id="Cursor Default"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -504,7 +517,7 @@
                     <Property name="text" type="java.lang.String" value="Avan&#xe7;ar"/>
                     <Property name="toolTipText" type="java.lang.String" value="Avan&#xe7;ar"/>
                     <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                      <Color id="Cursor padr&#xe3;o"/>
+                      <Color id="Cursor Default"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -540,7 +553,7 @@
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                     <Property name="value" type="int" value="0"/>
                     <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                      <Color id="Cursor padr&#xe3;o"/>
+                      <Color id="Cursor Default"/>
                     </Property>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[36, 14]"/>

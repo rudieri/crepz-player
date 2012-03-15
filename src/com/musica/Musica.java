@@ -13,6 +13,7 @@ import java.io.Serializable;
  * @author manchini
  */
 public class Musica implements Serializable, Filtravel {
+
     private static final char ESPACO = ' ';
     private int id;
     @ObjetoTabela(nomeColuna = "Nome")
@@ -42,12 +43,11 @@ public class Musica implements Serializable, Filtravel {
     /**
      * @param nome the nome to set
      */
-    public boolean setNome(String nome) {
-        if (nome == null || nome.isEmpty()) {
-            return false;
+    public void setNome(String nome) {
+        if (nome == null) {
+            this.nome = null;
         } else {
             this.nome = MusicaGerencia.removeCaracteresEsp(nome);
-            return true;
         }
     }
 
@@ -79,7 +79,6 @@ public class Musica implements Serializable, Filtravel {
     public void setDtModArquivo(long dtModArquivo) {
         this.dtModArquivo = dtModArquivo;
     }
-
 
     /**
      * @param genero the genero to set
@@ -114,7 +113,7 @@ public class Musica implements Serializable, Filtravel {
         if (album != null) {
             this.album = MusicaGerencia.removeCaracteresEsp(album);
         } else {
-            this.album = "";
+            this.album = null;
         }
     }
 
@@ -122,11 +121,7 @@ public class Musica implements Serializable, Filtravel {
      * @return the caminho
      */
     public String getCaminho() {
-        if (caminho != null) {
-            return caminho;
-        } else {
-            return null;
-        }
+        return caminho;
     }
 
     /**
@@ -141,22 +136,16 @@ public class Musica implements Serializable, Filtravel {
      * @return the img
      */
     public String getImg() {
-        if (img != null) {
-            return img;
-        } else {
-            return "";
-        }
+        return img;
     }
 
     /**
      * Obs: Faça um replace('\\','/') em nahorade importar
+     *
      * @param img O endereço da imagem
      */
     public void setImg(String img) {
-        if (img != null) {
-            this.img = img;
-        }
-
+        this.img = img;
     }
 
     /**
@@ -244,5 +233,4 @@ public class Musica implements Serializable, Filtravel {
     public void setNumeroReproducoes(short numeroReproducoes) {
         this.numeroReproducoes = numeroReproducoes;
     }
-
 }

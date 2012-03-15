@@ -24,8 +24,6 @@ public class BD {
     private static BancoServer server;
     private static boolean naoAbremais = false;
     private Connection conn;
-    private Statement st;
-    private String local = new File("").getAbsolutePath();
     private String banco = "BD";
     private String URL = "jdbc:hsqldb:hsql://localhost/";
     private String user = "sa";
@@ -99,19 +97,20 @@ public class BD {
             }
 
             System.out.println("Primeira Vez Testa Tabelas");
+            Statement sti = con.createStatement();
             try {
-                Statement st = con.createStatement();
-                st.execute("select * from musica limit 1");
+                sti.execute("select * from musica limit 1");
             } catch (Exception e) {
                 //Se Deu erro pq não tem as tabelas
-                if (e.getMessage().equals("user lacks privilege or object not found: MUSICA")) {
+//                if (e.getMessage().equals("user lacks privilege or object not found: MUSICA")) {
                     try {
                         criaTabelas(con);
                     } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Crepz fatal!\nNão consegui criar as tabelas");
                         System.out.println("Crepz Fatal.");
                         ex.printStackTrace();
                     }
-                }
+//                }
             }
         }
     }

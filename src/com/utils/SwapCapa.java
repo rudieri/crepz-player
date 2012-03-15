@@ -14,10 +14,10 @@ import javax.swing.ImageIcon;
  */
 public class SwapCapa {
 
-    public static HashMap<String,ImageIcon> swap = new HashMap<String, ImageIcon>();
+    public static HashMap<String,ImageIcon> swap = new HashMap<String, ImageIcon>(50);
 
     public static void reset(){
-        swap = new HashMap<String, ImageIcon>();
+        swap.clear();
     }
 
 }

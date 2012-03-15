@@ -154,7 +154,7 @@ public class JTrocarImagem extends javax.swing.JDialog {
             URL link = new URL(img);
             File musicaF = new File(musica.getCaminho());
             String dest = musica.getImg();
-            if (dest == null || dest.equals("")) {
+            if (dest == null) {
                 dest = new File(musicaF.getAbsolutePath().replace(musicaF.getName(), musica.getAlbum() + "_" + musica.getAutor() + ".jpg")).getCanonicalPath();
             }
             File destino = new File(dest);

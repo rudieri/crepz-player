@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -28,8 +27,8 @@ public class JCapa extends javax.swing.JPanel {
             this.img = img;
             this.titulo = titulo;
             this.qtd = qtd;
-            if(!(img==null || img.isEmpty())){
-                ImageIcon imgIcon  =null;
+            if(!(img == null)){
+                ImageIcon imgIcon = null;
                 if(SwapCapa.swap.get(img)!=null){
                     imgIcon = SwapCapa.swap.get(img);
                 }else{
