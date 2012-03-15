@@ -16,11 +16,7 @@ import com.config.Configuracaoes;
 import com.config.JConfiguracao;
 import com.main.Carregador;
 import com.main.Notificavel;
-import com.musica.ModelReadOnly;
-import com.musica.Musica;
-import com.musica.MusicaBD;
-import com.musica.MusicaGerencia;
-import com.musica.MusicaSC;
+import com.musica.*;
 import com.utils.ComandosSO;
 import com.utils.DiretorioUtils;
 import com.utils.model.ObjectTableModel;
@@ -30,11 +26,7 @@ import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -44,14 +36,17 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -69,7 +64,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private DropTarget dropTargetFila;
     private boolean ajustandoTempo;
 
-    /** Creates new form JFilaReproducao */
+    /**
+     * Creates new form JFilaReproducao
+     */
     public JFilaReproducao(Musiquera musiquera, Carregador carregador) {
         initComponents();
         jPanelProgress.setVisible(false);
@@ -83,6 +80,20 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 //        jTableFila.setTransferHandler(transferHandler);
         this.carregador = carregador;
         inicializaIcones();
+
+        jFileChooserImportar.setFileFilter(new FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || MusicaGerencia.ehValido(f);
+            }
+
+            @Override
+            public String getDescription() {
+                return "Arquivos de músicas ou pastas";
+            }
+        });
+        jFileChooserImportar.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     }
 
     private void adicionarMusicasSelecionadas() {
@@ -123,7 +134,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     @SuppressWarnings("AssignmentToMethodParameter")
     private void alterarPosicaoMusicasFila(int[] indices, int novaPosicao) {
         int inicio = -1;
-        int fim = -1;
+        int fim;
         int ultimoLido = -1;
         HashMap<Integer, Integer> intervalos = new HashMap<Integer, Integer>(5);
         for (int i = 0; i < indices.length; i++) {
@@ -222,7 +233,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                         //Windows
                         if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                             ArrayList<File> arquivos = (ArrayList) transferable.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
-                            importarMusicas(arquivos);
+                            importarMusicas(arquivos, true);
                         } else {
                             // Linux
                             loop_flavor:
@@ -244,7 +255,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                                             }
                                         }
                                     }
-                                    importarMusicas(arquivos);
+                                    importarMusicas(arquivos, true);
                                     break loop_flavor;
                                 }
                             }
@@ -297,23 +308,25 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
     }
 
-    private void importarMusicas(final ArrayList<File> arquivos) {
+    private void importarMusicas(final ArrayList<File> arquivos, final boolean adicionarFila) {
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                importarMusicasRun(arquivos);
+                importarMusicasRun(arquivos, adicionarFila);
             }
         }).start();
     }
 
-    private void importarMusicasRun(ArrayList<File> arquivos) {
+    private void importarMusicasRun(ArrayList<File> arquivos, boolean adicionarFila) {
         try {
             int nroFiles = DiretorioUtils.calculaQuantidadeArquivos(arquivos);
             jPanelProgress.setVisible(true);
             ArrayList musicasImportadas = new ArrayList<Musica>(nroFiles);
             MusicaGerencia.mapearDiretorio(arquivos, musicasImportadas, jProgressBarImportando, nroFiles);
-            addMusicasToFila(musicasImportadas);
+            if (adicionarFila) {
+                addMusicasToFila(musicasImportadas);
+            }
             jPanelProgress.setVisible(false);
             atualizaTabelaMusica();
         } catch (Exception ex) {
@@ -459,10 +472,10 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         atualizaTabelaMusica();
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -479,6 +492,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jMenuItemTocar = new javax.swing.JMenuItem();
         jMenuItemAdicionar = new javax.swing.JMenuItem();
         jMenuItemPasta = new javax.swing.JMenuItem();
+        jFileChooserImportar = new javax.swing.JFileChooser();
         jPanelCentro = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -513,7 +527,8 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jSlider_Tempo = new javax.swing.JSlider();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItemAbrirBiblioteca = new javax.swing.JMenuItem();
+        jMenuItemImportarArquivos = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -744,7 +759,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Tocando Agora..."));
         jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jLabelTocando.setFont(new java.awt.Font("Dialog", 0, 11));
+        jLabelTocando.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         jLabelTocando.setText("Nada...");
         jLabelTocando.setPreferredSize(new java.awt.Dimension(0, 18));
         jPanel5.add(jLabelTocando, java.awt.BorderLayout.CENTER);
@@ -825,14 +840,23 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jMenu1.setText("Importar");
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem2.setText("Mostrar Biblioteca");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemAbrirBiblioteca.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItemAbrirBiblioteca.setText("Mostrar Biblioteca");
+        jMenuItemAbrirBiblioteca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                jMenuItemAbrirBibliotecaActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        jMenu1.add(jMenuItemAbrirBiblioteca);
+
+        jMenuItemImportarArquivos.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItemImportarArquivos.setText("Importar Músicas...");
+        jMenuItemImportarArquivos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemImportarArquivosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemImportarArquivos);
 
         jMenuBar1.add(jMenu1);
 
@@ -967,6 +991,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                 jTableMusicas.requestFocus();
                 jTableMusicas.setRowSelectionInterval(0, 0);
                 break;
+            case KeyEvent.VK_F5:
+                atualizaTabelaMusica();
+                break;
         }
     }//GEN-LAST:event_jTextFieldPesquisaKeyPressed
 
@@ -1047,18 +1074,33 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         }
     }//GEN-LAST:event_jTableMusicasMousePressed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void jMenuItemAbrirBibliotecaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAbrirBibliotecaActionPerformed
         carregador.mostrarBiblioteca();
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_jMenuItemAbrirBibliotecaActionPerformed
+
+    private void jMenuItemImportarArquivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemImportarArquivosActionPerformed
+        int result = jFileChooserImportar.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            ArrayList<File> lista = new ArrayList<File>(2000);
+            lista.addAll(Arrays.asList(jFileChooserImportar.getSelectedFiles()));
+            if (lista.isEmpty()) {
+                lista.add(jFileChooserImportar.getSelectedFile());
+            }
+            importarMusicas(lista, false);
+        }
+    }//GEN-LAST:event_jMenuItemImportarArquivosActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
 
-        /* Create and display the form */
+        /*
+         * Create and display the form
+         */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 new JFilaReproducao(null, null).setVisible(true);
             }
@@ -1069,6 +1111,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private javax.swing.JLabel jButton_Next;
     private javax.swing.JLabel jButton_Play;
     private javax.swing.JLabel jButton_Stop;
+    private javax.swing.JFileChooser jFileChooserImportar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1079,13 +1122,14 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItemAbrirBiblioteca;
     private javax.swing.JMenuItem jMenuItemAdicionar;
     private javax.swing.JMenuItem jMenuItemEmbaralhar;
     private javax.swing.JMenuItem jMenuItemFilaMoveBaixo;
     private javax.swing.JMenuItem jMenuItemFilaMoveCima;
     private javax.swing.JMenuItem jMenuItemFilaRemover;
     private javax.swing.JMenuItem jMenuItemFilaTocar;
+    private javax.swing.JMenuItem jMenuItemImportarArquivos;
     private javax.swing.JMenuItem jMenuItemLimpar;
     private javax.swing.JMenuItem jMenuItemPasta;
     private javax.swing.JMenuItem jMenuItemTocar;

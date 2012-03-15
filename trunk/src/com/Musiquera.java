@@ -20,11 +20,7 @@ import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javazoom.jlgui.basicplayer.BasicController;
-import javazoom.jlgui.basicplayer.BasicPlayer;
-import javazoom.jlgui.basicplayer.BasicPlayerEvent;
-import javazoom.jlgui.basicplayer.BasicPlayerException;
-import javazoom.jlgui.basicplayer.BasicPlayerListener;
+import javazoom.jlgui.basicplayer.*;
 
 /**
  *
@@ -47,7 +43,6 @@ public abstract class Musiquera implements BasicPlayerListener {
     BasicPlayer player;
     private Musica musica;
     private File in;
-    private String tipo = "";
     private final Carregador carregador;
     /**
      * Variável usada para saber se o núermo de reproduções
@@ -370,6 +365,7 @@ public abstract class Musiquera implements BasicPlayerListener {
 //        stringTempoTotalChange(microSegundosEmMinSeq(totalTempo));
         Encoding enc;
 
+        String tipo = "";
         try {
 
             enc = AudioSystem.getAudioFileFormat((File) stream).getFormat().getEncoding();

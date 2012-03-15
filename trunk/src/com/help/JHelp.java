@@ -11,7 +11,6 @@
 package com.help;
 
 import com.JPrincipal;
-import java.io.File;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 
@@ -45,7 +44,7 @@ public class JHelp extends javax.swing.JDialog {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         try{
-            jEditorPane1 = new JEditorPane(new File(getClass().getResource("/com/help/Help.html").toURI()).toURL());
+            jEditorPane1 = new JEditorPane(getClass().getResource("/com/help/Help.html").toURI().toURL());
         }catch(Exception ex){
             ex.printStackTrace();
         }

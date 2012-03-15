@@ -45,26 +45,28 @@ public class MusicaGerencia {
 
     public static Musica getMusica(Musica m, MP3File mp3, File file) throws Exception {
         //getID3v2Tag
-        m.setNome(file.getName());
         if (mp3.hasID3v2Tag()) {
-            if (!m.setNome(mp3.getID3v2Tag().getSongTitle())) {
-                m.setNome(file.getName());
-            }
+            m.setNome(mp3.getID3v2Tag().getSongTitle());
             m.setSize(mp3.getID3v2Tag().getSize());
             m.setAlbum(mp3.getID3v2Tag().getAlbumTitle());
             m.setAutor(mp3.getID3v2Tag().getLeadArtist());
             m.setGenero(mp3.getID3v2Tag().getSongGenre());
-        } else {
-            if (mp3.hasID3v1Tag()) {
-//        getID3v1
-                if (!m.setNome(mp3.getID3v1Tag().getTitle())) {
-                    m.setNome(file.getName());
-                }
-                m.setSize(mp3.getID3v1Tag().getSize());
+            if (m.getAlbum() == null) {
                 m.setAlbum(mp3.getID3v1Tag().getAlbumTitle());
-                m.setAutor(mp3.getID3v1Tag().getArtist());
-                m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
             }
+        }
+//        getID3v1
+        if (mp3.hasID3v1Tag()) {
+            if (m.getNome() == null) {
+                m.setNome(mp3.getID3v1Tag().getTitle());
+            }
+            m.setSize(mp3.getID3v1Tag().getSize());
+            m.setAlbum(mp3.getID3v1Tag().getAlbumTitle());
+            m.setAutor(mp3.getID3v1Tag().getArtist());
+            m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
+        }
+        if (m.getNome() == null || m.getNome().isEmpty()) {
+            m.setNome(file.getName());
         }
         m.setImg(getImagemDir(file.getParentFile()));
 
@@ -76,7 +78,8 @@ public class MusicaGerencia {
 
         Map<String, String> pro = getPropriedades(file);
         if (pro != null) {
-            if (!m.setNome(pro.get("title"))) {
+            m.setNome(pro.get("title"));
+            if (m.getNome() == null) {
                 m.setNome(file.getName());
             }
 
@@ -225,7 +228,7 @@ public class MusicaGerencia {
                     MusicaBD.carregarPeloEndereco(m, t);
 
                 }
-                if (downLoadCapas && (m.getImg() == null || m.getImg().isEmpty())) {
+                if (downLoadCapas && m.getImg() == null) {
                     m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
                     MusicaBD.alterar(m, t);
                 }
@@ -298,14 +301,18 @@ public class MusicaGerencia {
         }
 
     }
+
     /**
-     Retorna o caminho absoluto do arquivo substituindo alguns caracteres por outros
+     * Retorna o caminho absoluto do arquivo substituindo alguns caracteres por
+     * outros
      */
     public static String normalizarCaminhoArquivo(File caminho) {
         return normalizarCaminhoArquivo(caminho.getAbsolutePath());
     }
+
     /**
-     Retorna o caminho absoluto do arquivo substituindo alguns caracteres por outros
+     * Retorna o caminho absoluto do arquivo substituindo alguns caracteres por
+     * outros
      */
     public static String normalizarCaminhoArquivo(String caminho) {
         if (ComandosSO.getMySO() == ComandosSO.WINDOWS) {

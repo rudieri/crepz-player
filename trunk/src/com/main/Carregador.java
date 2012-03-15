@@ -4,14 +4,8 @@
  */
 package com.main;
 
-import com.Aguarde;
-import com.JBiBlioteca;
-import com.JMini;
-import com.JPlayList;
-import com.JPrincipal;
-import com.Musiquera;
 import com.Musiquera.PropriedadesMusica;
-import com.Scan;
+import com.*;
 import com.fila.JFilaReproducao;
 import com.graficos.Icones;
 import com.melloware.jintellitype.JIntellitype;

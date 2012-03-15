@@ -11,6 +11,7 @@ import java.util.logging.Logger;
  * Classe responsável pela persistência de objetos Musica.
  */
 public class MusicaBD {
+    public static final String ASPAS = "<&aspas>";
 
     /** Constante que define o nome da tabela. */
     public static final String TBL = "musica";
@@ -60,11 +61,11 @@ public class MusicaBD {
         sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img, :tempo, :nro_reproducoes, :dt_mod_arquivo)");
 
         sql.setParam("id", null);
-        sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
+        sql.setParam("caminho", musica.getCaminho().replace("'", ASPAS));
         sql.setParam("nome", musica.getNome());
         sql.setParam("autor", musica.getAutor());
         sql.setParam("genero", musica.getGenero());
-        sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
+        sql.setParam("img", musica.getImg() == null ? null : musica.getImg().replace("'", ASPAS));
         sql.setParam("nro_reproducoes", musica.getNumeroReproducoes());
         sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
 
@@ -89,12 +90,12 @@ public class MusicaBD {
         sql.add("WHERE id = :id ");
 
         sql.setParam("id", musica.getId());
-        sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
+        sql.setParam("caminho", musica.getCaminho().replace("'", ASPAS));
         sql.setParam("nome", musica.getNome());
         sql.setParam("autor", musica.getAutor());
         sql.setParam("genero", musica.getGenero());
         sql.setParam("tempo", musica.getTempo() == null ? 0 : musica.getTempo().getMilissegundos());
-        sql.setParam("img", musica.getImg().replace("'", "<&aspas>"));
+        sql.setParam("img", musica.getImg() == null ? null : musica.getImg().replace("'", ASPAS));
         sql.setParam("nro_reproducoes", musica.getNumeroReproducoes());
         sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
 
@@ -134,7 +135,7 @@ public class MusicaBD {
         sql.add("SELECT id FROM " + TBL);
         sql.add("WHERE caminho = :caminho ");
 
-        sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
+        sql.setParam("caminho", musica.getCaminho().replace("'", ASPAS));
 
         ResultSet rs = t.executeQuery(sql.getSql());
 
@@ -185,7 +186,7 @@ public class MusicaBD {
         sql.add("SELECT * FROM " + TBL);
         sql.add("WHERE caminho = :caminho ");
 
-        sql.setParam("caminho", musica.getCaminho().replace("'", "<&aspas>"));
+        sql.setParam("caminho", musica.getCaminho().replace("'", ASPAS));
 
         ResultSet rs = t.executeQuery(sql.getSql());
         try {
@@ -207,10 +208,10 @@ public class MusicaBD {
         sql.add("SELECT max(dt_mod_arquivo) as max_dt FROM " + TBL);
         if (ehDiretorio) {
             sql.add("where caminho LIKE :path");
-            sql.setParam("path", path.replace("'", "<&aspas>") + "%");
+            sql.setParam("path", path.replace("'", ASPAS) + "%");
         }else{
             sql.add("where caminho = :path");
-            sql.setParam("path", path.replace("'", "<&aspas>"));
+            sql.setParam("path", path.replace("'", ASPAS));
         }
         ResultSet rs = t.executeQuery(sql);
         if (rs.next()) {
@@ -222,12 +223,12 @@ public class MusicaBD {
 
     private static void carregarObjeto(Musica musica, ResultSet rs) throws SQLException {
         musica.setId(rs.getInt("id"));
-        musica.setCaminho(rs.getString("caminho"));
+        musica.setCaminho(rs.getString("caminho").replace(ASPAS, "'"));
         musica.setNome(rs.getString("nome"));
         musica.setAutor(rs.getString("autor"));
         musica.setGenero(rs.getString("genero"));
         musica.setAlbum(rs.getString("album"));
-        musica.setImg(rs.getString("img"));
+        musica.setImg(rs.getString("img")==null?null:rs.getString("img").replace(ASPAS, "'"));
         musica.setTempo(new Tempo(rs.getInt("tempo")));
         musica.setNumeroReproducoes(rs.getShort("nro_reproducoes"));
         musica.setDtModArquivo(rs.getLong("dt_mod_arquivo"));
@@ -342,7 +343,7 @@ public class MusicaBD {
         try {
             ArrayList lista = new ArrayList();
             while (rs.next()) {
-                JCapa capa = new JCapa(rs.getString("capa").replace("<&aspas>", "'"), rs.getString("agrup"), rs.getInt("m"));
+                JCapa capa = new JCapa(rs.getString("capa").replace(ASPAS, "'"), rs.getString("agrup"), rs.getInt("m"));
 
                 lista.add(capa);
             }
