@@ -270,11 +270,6 @@
                   <Dimension value="[180, 14]"/>
                 </Property>
               </Properties>
-              <BindingProperties>
-                <BindingProperty name="value" source="jSlider_Tempo" sourcePath="${value}" target="jSlider_Tempo" targetPath="value" updateStrategy="0" immediately="false">
-                  <BindingParameter name="IGNORE_ADJUSTING" value="N"/>
-                </BindingProperty>
-              </BindingProperties>
               <Events>
                 <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jSlider_TempoMousePressed"/>
                 <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jSlider_TempoMouseReleased"/>
@@ -483,11 +478,6 @@
                   <Dimension value="[100, 23]"/>
                 </Property>
               </Properties>
-              <BindingProperties>
-                <BindingProperty name="value" source="jSlider_vol" sourcePath="${value}" target="jSlider_vol" targetPath="value" updateStrategy="0" immediately="false">
-                  <BindingParameter name="IGNORE_ADJUSTING" value="N"/>
-                </BindingProperty>
-              </BindingProperties>
               <Events>
                 <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="jSlider_volMouseWheelMoved"/>
                 <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jSlider_volMouseReleased"/>
