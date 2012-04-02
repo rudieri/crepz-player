@@ -87,11 +87,12 @@ public final class Carregador {
 
             @Override
             public Musica getPreviousMusica() {
-                if (fonteReproducao != FonteReproducao.FILA_REPRODUCAO) {
+                if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
+                    return filaReproducao.getAnterior();
+                }else{
                     playList.setAleatorio(random);
-                    return playList.getAnterior();
+                    return playList.getAnterior();    
                 }
-                return null;
             }
 
 //            @Override
@@ -100,9 +101,9 @@ public final class Carregador {
 //            }
             @Override
             public void atualizaLabels(String nome, int bits, String tempo, int freq) {
-                getTelaPrincipal().atualizaLabels(nome, bits, tempo, freq);
-                if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
-                    filaReproducao.atualizaLabels(nome, bits, tempo, freq);
+                for (int i = 0; i < getTodasTelas().length; i++) {
+                    getTodasTelas()[i].atualizaLabels(nome, bits, tempo, freq);
+                    
                 }
             }
 
@@ -226,6 +227,9 @@ public final class Carregador {
         }
         return principal;
     }
+    public Notificavel[] getTodasTelas(){
+        return new Notificavel[]{filaReproducao, principal, mini};
+    }
 
     public void setMiniComoBase() {
         principal.dispose();
@@ -246,6 +250,7 @@ public final class Carregador {
         if (crepzTray != null) {
             ocultarIconeTray();
         }
+        tipoTela = TELA_NORMAL;
         mini.dispose();
         filaReproducao.dispose();
         principal.setVisible(true);
@@ -256,6 +261,7 @@ public final class Carregador {
             ocultarIconeTray();
         }
         setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);
+        tipoTela = TELA_FILA;
         mini.dispose();
         principal.dispose();
         filaReproducao.setVisible(true);

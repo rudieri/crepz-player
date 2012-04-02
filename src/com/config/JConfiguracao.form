@@ -1,6 +1,6 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.8" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -104,6 +104,30 @@
                       </StringArray>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="O que acontece quando eu clido 2 vezes numa m&#xfa;sica..."/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel1">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                <Property name="alignment" type="int" value="0"/>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JLabel" name="jLabel6">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Quando a Fila Estiver Vazia:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JComboBox" name="jComboBoxAoEsvaziaFila">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="3">
+                        <StringItem index="0" value="N&#xe3;o fa&#xe7;a nada"/>
+                        <StringItem index="1" value="Tocar da lista ao lado (Aleat&#xf3;rio)"/>
+                        <StringItem index="2" value="Tocar da lista ao lado (Sequencial)"/>
+                      </StringArray>
+                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -215,7 +239,9 @@
                   <SubComponents>
                     <Component class="javax.swing.JButton" name="jButton_Add">
                       <Properties>
+                        <Property name="mnemonic" type="int" value="65"/>
                         <Property name="text" type="java.lang.String" value="Adicionar"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Adicionar endere&#xe7;o na lista. (Alt + A)"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[60, 30]"/>
                         </Property>
@@ -226,7 +252,9 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="jButton_Remove">
                       <Properties>
+                        <Property name="mnemonic" type="int" value="82"/>
                         <Property name="text" type="java.lang.String" value="Remover"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Remover da lista o item selecionado. (Alt + R)"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                           <Dimension value="[60, 30]"/>
                         </Property>
@@ -345,7 +373,6 @@
                         <Property name="lineWrap" type="boolean" value="true"/>
                         <Property name="rows" type="int" value="5"/>
                         <Property name="text" type="java.lang.String" value="O modo organizador ativado, o sitema ao ler uma musica ira organiza-la na pasta de destino, mais as pastas&#xa;         Artista&#xa;         Album&#xa;Com download de capa ativo o sistema ira buscar uma capa, para o &#xe1;lbum caso o mesmo n&#xe3;o tenha"/>
-                        <Property name="autoscrolls" type="boolean" value="true"/>
                         <Property name="enabled" type="boolean" value="false"/>
                         <Property name="focusable" type="boolean" value="false"/>
                       </Properties>
@@ -372,20 +399,24 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="jButtonSalvar">
           <Properties>
+            <Property name="mnemonic" type="int" value="83"/>
             <Property name="text" type="java.lang.String" value="Salvar"/>
+            <Property name="toolTipText" type="java.lang.String" value="Salvar configura&#xe7;&#xf5;es. (Alt + S )"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSalvarActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton3">
+        <Component class="javax.swing.JButton" name="jButtonFechar">
           <Properties>
+            <Property name="mnemonic" type="int" value="67"/>
             <Property name="text" type="java.lang.String" value="Cancelar"/>
+            <Property name="toolTipText" type="java.lang.String" value="Cancelar. (Alt + C)"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonFecharActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

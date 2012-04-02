@@ -26,7 +26,7 @@ public class Icones {
 
 
              */
-
+            
             BufferedImage bf_playIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_play.png"));
             BufferedImage bf_stopIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_stop.png"));
             BufferedImage bf_voltaIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_tras.png"));
@@ -51,7 +51,7 @@ public class Icones {
             BufferedImage bf_pl = ImageIO.read(getClass().getResource("/com/img/playlist.gif"));
             BufferedImage bf_lib = ImageIO.read(getClass().getResource("/com/img/biblioteca.png"));
             BufferedImage bf_xis = ImageIO.read(getClass().getResource("/com/img/x.png"));
-
+            
             playIcon32 = new ImageIcon(bf_playIcon32);
             stopIcon32 = new ImageIcon(bf_stopIcon32);
             frenteIcon32 = new ImageIcon(bf_frenteIcon32);

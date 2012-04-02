@@ -234,7 +234,8 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
     @Override
     public void atualizaLabels(String nome, int bits, String tempo, int freq) {
-        //TODO algo
+        jLabelNomeMusica.setText(nome);
+        jSlider_Tempo.setToolTipText(tempo);
     }
 
     class tarefaRollOut extends TimerTask {
@@ -290,6 +291,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jPanel2.setVisible(false);
         pack();
         super.setVisible(b);
+        repaint();
 
     }
 
@@ -315,7 +317,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
-        
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jPopupMenu1 = new javax.swing.JPopupMenu();
         jMenuVisualizacoes = new javax.swing.JMenu();
@@ -495,7 +497,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
                 formMouseDragged(evt);
             }
         });
-        getContentPane().setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 1, 1));
 
         jPanel4.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204), new java.awt.Color(0, 0, 0), new java.awt.Color(51, 51, 51)), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204), new java.awt.Color(102, 102, 102), new java.awt.Color(153, 153, 153))));
         jPanel4.setForeground(new java.awt.Color(102, 102, 102));
@@ -536,7 +537,8 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jSlider_Tempo.setMinimumSize(new java.awt.Dimension(36, 14));
         jSlider_Tempo.setPreferredSize(new java.awt.Dimension(180, 14));
 
-        
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider_Tempo, org.jdesktop.beansbinding.ELProperty.create("${value}"), jSlider_Tempo, org.jdesktop.beansbinding.BeanProperty.create("value"));
+        bindingGroup.addBinding(binding);
 
         jSlider_Tempo.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -590,7 +592,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         });
         jPanel3.add(jLabel_top);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 8));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/x.png"))); // NOI18N
         jLabel1.setToolTipText("Ocultar");
         jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -715,7 +717,8 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jSlider_vol.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jSlider_vol.setPreferredSize(new java.awt.Dimension(100, 23));
 
-        
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider_vol, org.jdesktop.beansbinding.ELProperty.create("${value}"), jSlider_vol, org.jdesktop.beansbinding.BeanProperty.create("value"));
+        bindingGroup.addBinding(binding);
 
         jSlider_vol.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -734,10 +737,11 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         gridBagConstraints.gridy = 0;
         jPanel4.add(jPanel1, gridBagConstraints);
 
-        jPanel5.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
+        jPanel5.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
         jPanel5.setPreferredSize(new java.awt.Dimension(300, 34));
+        jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11));
+        jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
         jLabelNomeMusica.setText("jLabel2");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -747,7 +751,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addComponent(jLabelNomeMusica)
-                .addContainerGap(223, Short.MAX_VALUE))
+                .addContainerGap(255, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -756,20 +760,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
                 .addComponent(jLabelNomeMusica))
         );
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jPanel5.add(jPanel6, java.awt.BorderLayout.CENTER);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -777,8 +768,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel4.add(jPanel5, gridBagConstraints);
 
-        getContentPane().add(jPanel4);
+        getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
 
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1144,5 +1136,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
     public javax.swing.JSlider jSlider_vol;
     private javax.swing.JLabel jToggleButton1;
     private javax.swing.JLabel jToggle_Repete;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }

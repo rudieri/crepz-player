@@ -240,7 +240,9 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonLimparPesquisa">
                       <Properties>
+                        <Property name="mnemonic" type="int" value="76"/>
                         <Property name="text" type="java.lang.String" value="Limpar"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Limpar filtro. (Alt + L)"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonLimparPesquisaActionPerformed"/>
@@ -278,8 +280,8 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableMusicasMouseClicked"/>
                 <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableMusicasMousePressed"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableMusicasMouseClicked"/>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTableMusicasKeyPressed"/>
               </Events>
             </Component>
