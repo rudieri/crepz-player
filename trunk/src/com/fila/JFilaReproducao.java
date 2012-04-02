@@ -23,6 +23,7 @@ import com.utils.model.ObjectTableModel;
 import com.utils.model.ObjectTableModelListener;
 import com.utils.model.ObjectTransferable;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -407,6 +408,21 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         atualizarBarraStausFila();
     }
 
+    public Musica getAnterior() {
+        if (modelFila.getRowCount() == 0) {
+            if (Configuracaoes.getEnum(Configuracaoes.ACOES_FILA_VAZIA) == AcoesFilaVazia.TOCAR_SEQ) {
+                int selectedRow = jTableMusicas.getSelectedRow() - 1;
+                if (selectedRow < 0) {
+                    selectedRow = jTableMusicas.getRowCount() - 1;
+                }
+                jTableMusicas.setRowSelectionInterval(selectedRow, selectedRow);
+                return objModelMusicas.getItem(selectedRow);
+            }
+
+        }
+        return null;
+    }
+
     public Musica getProxima() {
         if (modelFila.getRowCount() > 0) {
             Musica musica = (Musica) modelFila.getValueAt(0, 0);
@@ -414,8 +430,33 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
             atualizarBarraStausFila();
 //            alterarMusica(musica);
             return musica;
+        } else if (Configuracaoes.getEnum(Configuracaoes.ACOES_FILA_VAZIA) != AcoesFilaVazia.NADA) {
+            return getMusicaDaLista();
         }
         return null;
+    }
+
+    private Musica getMusicaDaLista() {
+        if (objModelMusicas.getRowCount() == 0) {
+            return null;
+        }
+        Rectangle rect = jTableMusicas.getVisibleRect();
+        if (Configuracaoes.getEnum(Configuracaoes.ACOES_FILA_VAZIA) == AcoesFilaVazia.TOCAR_SEQ) {
+            int selectedRow = jTableMusicas.getSelectedRow() + 1;
+            if (selectedRow >= jTableMusicas.getRowCount()) {
+                selectedRow = 0;
+            }
+            jTableMusicas.setRowSelectionInterval(selectedRow, selectedRow);
+            rect.y = jTableMusicas.getCellRect(selectedRow, 0, true).y - rect.height / 2;
+            jTableMusicas.scrollRectToVisible(rect);
+            return objModelMusicas.getItem(selectedRow);
+        } else {
+            final int rand = (int) (Math.random() * objModelMusicas.getRowCount());
+            jTableMusicas.setRowSelectionInterval(rand, rand);
+            rect.y = jTableMusicas.getCellRect(rand, 0, true).y - rect.height / 2;
+            jTableMusicas.scrollRectToVisible(rect);
+            return objModelMusicas.getItem(rand);
+        }
     }
 
     @Override
@@ -641,7 +682,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         });
         jPanel3.add(jTextFieldPesquisa);
 
+        jButtonLimparPesquisa.setMnemonic('L');
         jButtonLimparPesquisa.setText("Limpar");
+        jButtonLimparPesquisa.setToolTipText("Limpar filtro. (Alt + L)");
         jButtonLimparPesquisa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonLimparPesquisaActionPerformed(evt);
@@ -911,22 +954,50 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     }//GEN-LAST:event_jTextFieldPesquisaKeyReleased
 
     private void jTableMusicasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableMusicasKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            final AcaoPadraoFila acaoPadraoFila = (AcaoPadraoFila) Configuracaoes.getObject(Configuracaoes.ACAO_PADRAO_FILA);
-            if (acaoPadraoFila == AcaoPadraoFila.ADICIONAR_FILA) {
-                adicionarMusicasSelecionadas();
-            } else if (acaoPadraoFila == AcaoPadraoFila.REPRODUZIR) {
-                tocarMusicaSelecionada();
-            } else {
-                tocarMusicaSelecionada();
+        if (evt.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK) {
+            switch (evt.getKeyCode()) {
+                case KeyEvent.VK_A:
+                case KeyEvent.VK_T:
+                    jTableMusicas.selectAll();
+                    break;
+                case KeyEvent.VK_ENTER:
+                    final AcaoPadraoFila acaoPadraoFila = (AcaoPadraoFila) Configuracaoes.getObject(Configuracaoes.ACAO_PADRAO_FILA);
+                    if (acaoPadraoFila != AcaoPadraoFila.ADICIONAR_FILA) {
+                        adicionarMusicasSelecionadas();
+                    } else if (acaoPadraoFila != AcaoPadraoFila.REPRODUZIR) {
+                        tocarMusicaSelecionada();
+                    } else {
+                        tocarMusicaSelecionada();
+                    }
+                    break;
             }
-        } else if (evt.getKeyCode() == KeyEvent.VK_F5) {
-            atualizaTabelaMusica();
-            jTextFieldPesquisa.requestFocus();
-        } else if (evt.getKeyCode() > KeyEvent.VK_A && evt.getKeyCode() < KeyEvent.VK_Z) {
-            jTextFieldPesquisa.setText(String.valueOf(evt.getKeyChar()));
-            objModelMusicas.setFiltro(jTextFieldPesquisa.getText());
-            jTextFieldPesquisa.requestFocus();
+        } else {
+            switch (evt.getKeyCode()) {
+                case KeyEvent.VK_ENTER:
+                    final AcaoPadraoFila acaoPadraoFila = (AcaoPadraoFila) Configuracaoes.getObject(Configuracaoes.ACAO_PADRAO_FILA);
+                    if (acaoPadraoFila == AcaoPadraoFila.ADICIONAR_FILA) {
+                        adicionarMusicasSelecionadas();
+                    } else if (acaoPadraoFila == AcaoPadraoFila.REPRODUZIR) {
+                        tocarMusicaSelecionada();
+                    } else {
+                        tocarMusicaSelecionada();
+                    }
+                    break;
+                case KeyEvent.VK_F5:
+                    atualizaTabelaMusica();
+                    jTextFieldPesquisa.requestFocus();
+                    break;
+                case KeyEvent.VK_CONTEXT_MENU:
+                    final Rectangle cellRect = jTableMusicas.getCellRect(jTableMusicas.getSelectedRow(), 0, true);
+                    jPopupMenuMusica.show(jTableMusicas, jTableMusicas.getWidth() / 2, cellRect.y);
+                    break;
+
+            }
+            if (evt.getKeyCode() > KeyEvent.VK_A && evt.getKeyCode() < KeyEvent.VK_Z) {
+                jTextFieldPesquisa.setText(String.valueOf(evt.getKeyChar()));
+                objModelMusicas.setFiltro(jTextFieldPesquisa.getText());
+                jTextFieldPesquisa.requestFocus();
+            }
         }
     }//GEN-LAST:event_jTableMusicasKeyPressed
 

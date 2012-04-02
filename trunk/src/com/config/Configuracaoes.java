@@ -5,6 +5,7 @@
 package com.config;
 
 import com.fila.AcaoPadraoFila;
+import com.fila.AcoesFilaVazia;
 import com.musica.Musica;
 import com.utils.FileUtils;
 import java.io.File;
@@ -25,14 +26,20 @@ public class Configuracaoes {
     /*
     Declare aqui todas as configurações com seus determinados tipos;
      * Fazer dessa forma:
-    public static final Byte NOME_DA_CONFIG = ordinal_da_config;
+    public static final Byte NOME_DA_CONFIG = ordinal_da_config; // é sequencial, deve ser o indice da config no array
     private static final Tipo nomeDaConfig = new Tipo();
      *
      */
+    // Config 0
     public static final Byte PASTAS_SCANER = 0;
     private static final ArrayList<String> pastasScaner = new ArrayList<String>(10);
+    // Config 1
     public static final Byte ACAO_PADRAO_FILA = 1;
     private static AcaoPadraoFila acaoPadraoFila = AcaoPadraoFila.ADICIONAR_FILA;
+    // Config 2
+    public static final Byte ACOES_FILA_VAZIA = 2;
+    private static AcoesFilaVazia acoesFilaVazia = AcoesFilaVazia.TOCAR_RANDOM;
+    
     // lista de todas as configs
     private static final Object[] configs;
     private static final String ARQUIVO = "etc/conf";
@@ -40,7 +47,7 @@ public class Configuracaoes {
 
     static {
         // inicializa a lista das configs
-        configs = new Object[]{pastasScaner, acaoPadraoFila};
+        configs = new Object[]{pastasScaner, acaoPadraoFila, acoesFilaVazia};
 //        configs[PASTAS_SCANER] = pastasScaner;
         acoes = new HashMap<Byte, Acao>(configs.length);
         ler();

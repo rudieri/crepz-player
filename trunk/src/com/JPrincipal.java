@@ -54,7 +54,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     GerenciadorConfig _conf = null;//new GerenciadorConfig(this, playList, biblioteca, jmini);
     private int volAnt;
     JConfiguracao configuracao;
-    private boolean mouseVolumeDown = false;
     private final Carregador carregador;
 
     public JPrincipal(Musiquera mus, Carregador carregador) {

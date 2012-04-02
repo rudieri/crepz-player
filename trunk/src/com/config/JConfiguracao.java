@@ -11,6 +11,7 @@
 package com.config;
 
 import com.fila.AcaoPadraoFila;
+import com.fila.AcoesFilaVazia;
 import com.musica.ModelReadOnly;
 import com.musica.MusicaGerencia;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class JConfiguracao extends javax.swing.JDialog {
             }
             jComboBoxAcaoFila.setModel(new DefaultComboBoxModel(AcaoPadraoFila.getNomesFakes()));
             jComboBoxAcaoFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.ACAO_PADRAO_FILA).ordinal());
+            jComboBoxAoEsvaziaFila.setModel(new DefaultComboBoxModel(AcoesFilaVazia.getNomesFakes()));
+            jComboBoxAoEsvaziaFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.ACOES_FILA_VAZIA).ordinal());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -130,6 +133,9 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jComboBoxAcaoFila = new javax.swing.JComboBox();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jComboBoxAoEsvaziaFila = new javax.swing.JComboBox();
         jPanel3 = new javax.swing.JPanel();
         jPanel_Avancada = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
@@ -157,8 +163,8 @@ public class JConfiguracao extends javax.swing.JDialog {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jPanel11 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jButtonSalvar = new javax.swing.JButton();
+        jButtonFechar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(441, 342));
@@ -170,7 +176,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel4.setPreferredSize(new java.awt.Dimension(400, 25));
 
-        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13));
+        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jLabel2.setText("Configurações");
         jPanel4.add(jLabel2);
 
@@ -191,6 +197,16 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel2.add(jComboBoxAcaoFila);
 
         jPanel_Geral.add(jPanel2);
+
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel6.setText("Quando a Fila Estiver Vazia:");
+        jPanel1.add(jLabel6);
+
+        jComboBoxAoEsvaziaFila.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Não faça nada", "Tocar da lista ao lado (Aleatório)", "Tocar da lista ao lado (Sequencial)" }));
+        jPanel1.add(jComboBoxAoEsvaziaFila);
+
+        jPanel_Geral.add(jPanel1);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
         jPanel_Geral.add(jPanel3);
@@ -249,7 +265,9 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel12.setLayout(new java.awt.GridLayout(1, 0));
 
+        jButton_Add.setMnemonic('A');
         jButton_Add.setText("Adicionar");
+        jButton_Add.setToolTipText("Adicionar endereço na lista. (Alt + A)");
         jButton_Add.setPreferredSize(new java.awt.Dimension(60, 30));
         jButton_Add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -258,7 +276,9 @@ public class JConfiguracao extends javax.swing.JDialog {
         });
         jPanel12.add(jButton_Add);
 
+        jButton_Remove.setMnemonic('R');
         jButton_Remove.setText("Remover");
+        jButton_Remove.setToolTipText("Remover da lista o item selecionado. (Alt + R)");
         jButton_Remove.setPreferredSize(new java.awt.Dimension(60, 30));
         jButton_Remove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -320,7 +340,6 @@ public class JConfiguracao extends javax.swing.JDialog {
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jTextArea1.setText("O modo organizador ativado, o sitema ao ler uma musica ira organiza-la na pasta de destino, mais as pastas\n         Artista\n         Album\nCom download de capa ativo o sistema ira buscar uma capa, para o álbum caso o mesmo não tenha");
-        jTextArea1.setAutoscrolls(true);
         jTextArea1.setEnabled(false);
         jTextArea1.setFocusable(false);
         jScrollPane2.setViewportView(jTextArea1);
@@ -335,21 +354,25 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel11.setPreferredSize(new java.awt.Dimension(400, 35));
 
-        jButton1.setText("Salvar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSalvar.setMnemonic('S');
+        jButtonSalvar.setText("Salvar");
+        jButtonSalvar.setToolTipText("Salvar configurações. (Alt + S )");
+        jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonSalvarActionPerformed(evt);
             }
         });
-        jPanel11.add(jButton1);
+        jPanel11.add(jButtonSalvar);
 
-        jButton3.setText("Cancelar");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        jButtonFechar.setMnemonic('C');
+        jButtonFechar.setText("Cancelar");
+        jButtonFechar.setToolTipText("Cancelar. (Alt + C)");
+        jButtonFechar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                jButtonFecharActionPerformed(evt);
             }
         });
-        jPanel11.add(jButton3);
+        jPanel11.add(jButtonFechar);
 
         getContentPane().add(jPanel11, java.awt.BorderLayout.PAGE_END);
 
@@ -361,7 +384,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 //        setDadosBanco();
     }//GEN-LAST:event_formWindowClosing
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarActionPerformed
 
         ArrayList<String> pastas = new ArrayList<String>(jTable_pastas.getRowCount());
         for (int i = 0; i < jTable_pastas.getRowCount(); i++) {
@@ -370,10 +393,11 @@ public class JConfiguracao extends javax.swing.JDialog {
         }
         Configuracaoes.set(Configuracaoes.PASTAS_SCANER, pastas);
         Configuracaoes.set(Configuracaoes.ACAO_PADRAO_FILA, AcaoPadraoFila.values()[jComboBoxAcaoFila.getSelectedIndex()]);
+        Configuracaoes.set(Configuracaoes.ACOES_FILA_VAZIA, AcoesFilaVazia.values()[jComboBoxAoEsvaziaFila.getSelectedIndex()]);
         dispose();
 //        setDadosBanco();
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonSalvarActionPerformed
 
     private void jButton_AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddActionPerformed
         String text = jTextField_Pasta.getText();
@@ -404,27 +428,30 @@ public class JConfiguracao extends javax.swing.JDialog {
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void jButtonFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFecharActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jButtonFecharActionPerformed
     /**
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButtonFechar;
+    private javax.swing.JButton jButtonSalvar;
     private javax.swing.JButton jButton_Add;
     private javax.swing.JButton jButton_Remove;
     private javax.swing.JCheckBox jCheckBox_DownloadCapa;
     private javax.swing.JCheckBox jCheckBox_Organizador;
     private javax.swing.JComboBox jComboBoxAcaoFila;
+    private javax.swing.JComboBox jComboBoxAoEsvaziaFila;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;

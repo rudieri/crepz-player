@@ -4,7 +4,6 @@
  */
 package com.utils.model;
 
-import com.musica.Musica;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import javax.swing.event.TableModelEvent;
