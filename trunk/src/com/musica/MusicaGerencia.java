@@ -186,6 +186,19 @@ public class MusicaGerencia {
             return null;
         }
     }
+    public static Musica addFiles(File file) {
+        Transacao t= new Transacao();
+        try {
+            t.begin();
+            Musica addFiles = addFiles(file, t);
+            t.commit();
+            return addFiles;
+        } catch (Exception ex) {
+            t.rollback();
+            Logger.getLogger(MusicaGerencia.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 
     @SuppressWarnings("AssignmentToMethodParameter")
     public static Musica addFiles(File file, Transacao t) {

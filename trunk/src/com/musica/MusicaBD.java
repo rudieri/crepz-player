@@ -2,10 +2,9 @@ package com.musica;
 
 import com.conexao.SQL;
 import com.conexao.Transacao;
-import java.sql.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Classe responsável pela persistência de objetos Musica.
@@ -27,8 +26,6 @@ public class MusicaBD {
         if (musica.getCaminho() == null || musica.getCaminho().isEmpty()) {
             throw new Exception(" - Caminho da Musica não informado.");
         }
-
-
     }
 
     /**
@@ -36,11 +33,6 @@ public class MusicaBD {
      */
     public static void consistir(Musica musica) throws Exception {
         consistirBK(musica);
-
-//        if (musica.getNome() == null || musica.getNome().equals("")) {
-//            throw new Exception(" - Nome da Musica não informado.");
-//        }
-
     }
 
     /**
@@ -65,6 +57,7 @@ public class MusicaBD {
         sql.setParam("nome", musica.getNome());
         sql.setParam("autor", musica.getAutor());
         sql.setParam("genero", musica.getGenero());
+        sql.setParam("album", musica.getAlbum());
         sql.setParam("img", musica.getImg() == null ? null : musica.getImg().replace("'", ASPAS));
         sql.setParam("nro_reproducoes", musica.getNumeroReproducoes());
         sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
@@ -94,12 +87,14 @@ public class MusicaBD {
         sql.setParam("nome", musica.getNome());
         sql.setParam("autor", musica.getAutor());
         sql.setParam("genero", musica.getGenero());
+        sql.setParam("album", musica.getAlbum());
         sql.setParam("tempo", musica.getTempo() == null ? 0 : musica.getTempo().getMilissegundos());
         sql.setParam("img", musica.getImg() == null ? null : musica.getImg().replace("'", ASPAS));
         sql.setParam("nro_reproducoes", musica.getNumeroReproducoes());
         sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
-
-        return t.executeUpdate(sql.getSql());
+        int numLinhas = t.executeUpdate(sql.getSql());
+        CacheDeMusica.adicionar(musica);
+        return numLinhas;
     }
 
     /**
@@ -116,8 +111,9 @@ public class MusicaBD {
         sql.add("WHERE id = :id ");
 
         sql.setParam("id", musica.getId());
-
-        return t.executeUpdate(sql.getSql());
+        int numLinhas = t.executeUpdate(sql.getSql());
+        CacheDeMusica.remover(musica);
+        return numLinhas;
     }
 
     /**
@@ -172,9 +168,7 @@ public class MusicaBD {
                 return false;
             }
             carregarObjeto(musica, rs);
-
-
-
+            CacheDeMusica.adicionar(musica);
             return true;
         } finally {
             rs.close();
@@ -194,9 +188,7 @@ public class MusicaBD {
                 return false;
             }
             carregarObjeto(musica, rs);
-
-
-
+            CacheDeMusica.adicionar(musica);
             return true;
         } finally {
             rs.close();
@@ -285,9 +277,9 @@ public class MusicaBD {
             while (rs.next()) {
                 Musica musica = new Musica();
                 carregarObjeto(musica, rs);
-
                 lista.add(musica);
             }
+            System.gc();
             return lista;
         } finally {
             rs.close();
@@ -343,7 +335,11 @@ public class MusicaBD {
         try {
             ArrayList lista = new ArrayList();
             while (rs.next()) {
-                JCapa capa = new JCapa(rs.getString("capa").replace(ASPAS, "'"), rs.getString("agrup"), rs.getInt("m"));
+                final String enderecoCapa = rs.getString("capa");
+                if (enderecoCapa==null) {
+                    continue;
+                }
+                JCapa capa = new JCapa(enderecoCapa.replace(ASPAS, "'"), rs.getString("agrup"), rs.getInt("m"));
 
                 lista.add(capa);
             }
@@ -352,30 +348,6 @@ public class MusicaBD {
             rs.close();
         }
     }
-
-    public Musica pesquisar(String parametro, String valor) {
-        SQL sql = new SQL();
-        sql.add("SELECT * ");
-        sql.add("FROM " + TBL);
-        sql.add("WHERE");
-        sql.add(parametro + "=" + valor);
-        Transacao t = new Transacao();
-        Musica musica = new Musica();
-        try {
-            t.begin();
-            ResultSet rs = t.executeQuery(sql.getSql());
-            t.commit();
-
-            while (rs.next()) {
-                carregarObjeto(musica, rs);
-                rs.close();
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(MusicaBD.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return musica;
-    }
-
 
     /*#########################################
     METODOS SEM TRANSACAO

@@ -4,7 +4,7 @@
  */
 package com.main;
 
-import com.Musiquera;
+import com.musica.Musiquera;
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.MenuItem;

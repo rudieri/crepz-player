@@ -4,20 +4,15 @@
  */
 package com.config;
 
-import com.JBiBlioteca;
-import com.JMini;
-import com.JPlayList;
-import com.JPrincipal;
-import com.Musiquera;
-import com.Scan;
+import com.main.gui.JBiBlioteca;
+import com.main.gui.JMini;
+import com.main.gui.JPrincipal;
+import com.musica.CacheDeMusica;
 import com.musica.Musica;
 import com.musica.MusicaBD;
-import com.musica.MusicaGerencia;
+import com.playlist.JPlayList;
 import com.playlist.JSelectPlaylists;
 import java.awt.Point;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -173,8 +168,7 @@ public class GerenciadorConfig {
     }
 
     private void setMusica(int id, int t, boolean pause) {
-        Musica m = new Musica();
-        m.setId(id);
+        Musica m = CacheDeMusica.get(id);
         try {
             MusicaBD.carregar(m);
             (principal.getMusiquera()).abrir(m, t, pause);
@@ -186,7 +180,7 @@ public class GerenciadorConfig {
     }
 
     private void setMusica(int id) {
-        Musica m = new Musica();
+        Musica m = CacheDeMusica.get(id);
         m.setId(id);
         try {
             MusicaBD.carregar(m);

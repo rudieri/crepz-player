@@ -4,8 +4,8 @@
  */
 package com.musica;
 
-import com.utils.model.Filtravel;
-import com.utils.model.ObjetoTabela;
+import com.utils.model.objetcmodel.Filtravel;
+import com.utils.model.objetcmodel.ObjetoTabela;
 import java.io.Serializable;
 
 /**
@@ -33,6 +33,13 @@ public class Musica implements Serializable, Filtravel {
     private int size;
     private int number;
 
+    /**
+     Limitar o número de objetos, para usar melhor a cache em {@link CacheDeMusica}
+     */
+    protected Musica() {
+    }
+    
+    
     /**
      * @return the nome
      */

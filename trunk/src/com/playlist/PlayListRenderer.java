@@ -1,58 +1,53 @@
-
-
 package com.playlist;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.table.*;
-			
-/** Classe que define o renderer para JTable como sendo um JPanel. */
-public class PlayListRenderer extends JPanel implements TableCellRenderer {
-	
-	// Atributos que definem as cores...
-//	private Color unselectedForeground = new JLista("", "").getForeground();
-//	private Color unselectedBackground = new JLista("", "").getBackground();
+import com.musica.Musica;
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JTable;
+import javax.swing.UIManager;
+import javax.swing.table.TableCellRenderer;
+
+/**
+ * Classe que define o renderer para JTable como sendo um JPanel.
+ */
+public class PlayListRenderer implements TableCellRenderer {
+
     private Color unselectedForeground = Color.WHITE;
-	private Color unselectedBackground = Color.BLACK;
-	 
-	/** Método construtor. */
-	public PlayListRenderer() {
-		super();
-		setOpaque(false);
-		setLayout(new BorderLayout());
-	}	
+    private Color unselectedBackground = Color.BLACK;
+    private JLista jLista;
+    
+    /**
+     * Método construtor.
+     */
+    public PlayListRenderer() {
+        jLista = new JLista(null, null);
+    }
 
-	/** Método sobreescrito de TableCellRenderer. */
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		removeAll();
-                JLista panel=null;
-                try{
-		panel = (JLista)value;
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-		if (panel != null) {
-			panel.setBounds(table.getCellRect(0, 0, false));
-			add(panel, BorderLayout.CENTER);			
-		}
-                if (isSelected) {
-                        panel.setOpaque(false);
-			super.setForeground(table.getSelectionForeground());
-			super.setBackground(table.getSelectionBackground());
-		} else {
-                        panel.setOpaque(true);
-			super.setForeground((unselectedForeground != null) ? unselectedForeground : table.getForeground());
-			super.setBackground((unselectedBackground != null) ? unselectedBackground : table.getBackground());
-		}
+    /**
+     * Método sobreescrito de TableCellRenderer.
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        
+        if (value instanceof Musica) {
+            jLista.setMusica((Musica)value);
+        }
+        if (isSelected) {
+            jLista.setOpaque(false);
+            jLista.setForeground(table.getSelectionForeground());
+            jLista.setBackground(table.getSelectionBackground());
+        } else {
+            jLista.setOpaque(true);
+            jLista.setForeground((unselectedForeground != null) ? unselectedForeground : table.getForeground());
+            jLista.setBackground((unselectedBackground != null) ? unselectedBackground : table.getBackground());
+        }
 
-		if (hasFocus) {
-			if (table.isCellEditable(row, column)) {
-				super.setForeground( UIManager.getColor("Table.focusCellForeground") );
-				super.setBackground( UIManager.getColor("Table.focusCellBackground") );
-			}
-		}
-		return this;
-	}
+        if (hasFocus) {
+            if (table.isCellEditable(row, column)) {
+                jLista.setForeground(UIManager.getColor("Table.focusCellForeground"));
+                jLista.setBackground(UIManager.getColor("Table.focusCellBackground"));
+            }
+        }
+        return jLista;
+    }
 }
-			

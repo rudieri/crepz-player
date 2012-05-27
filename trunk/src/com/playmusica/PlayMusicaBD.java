@@ -2,6 +2,7 @@ package com.playmusica;
 
 import com.conexao.SQL;
 import com.conexao.Transacao;
+import com.musica.CacheDeMusica;
 import java.sql.*;
 import java.util.*;
 import com.musica.Musica;
@@ -164,8 +165,7 @@ public class PlayMusicaBD {
             }
 
             playMusica.setId(rs.getInt("id"));
-            Musica m = new Musica();
-            m.setId(rs.getInt("musica"));
+            Musica m = CacheDeMusica.get(rs.getInt("musica"));
             playMusica.setMusica(m);
 
             Playlist p = new Playlist();
@@ -208,8 +208,7 @@ public class PlayMusicaBD {
             while (rs.next()) {
                 PlayMusica playMusica = new PlayMusica();
                 playMusica.setId(rs.getInt("id"));
-                Musica m = new Musica();
-                m.setId(rs.getInt("musica"));
+                Musica m = CacheDeMusica.get(rs.getInt("musica"));
                 playMusica.setMusica(m);
 
                 Playlist p = new Playlist();

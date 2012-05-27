@@ -11,7 +11,7 @@
 
 package com.help;
 
-import com.JPrincipal;
+import com.main.gui.JPrincipal;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 

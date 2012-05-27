@@ -4,8 +4,11 @@
  */
 package com.config;
 
-import com.fila.AcaoPadraoFila;
-import com.fila.AcoesFilaVazia;
+import com.config.constantes.AcaoPadraoFila;
+import com.config.constantes.AcoesFilaVazia;
+import com.config.constantes.AdicionarNaFilaVazia;
+import com.config.constantes.TelaPadrao;
+import com.musica.CacheDeMusica;
 import com.musica.Musica;
 import com.utils.FileUtils;
 import java.io.File;
@@ -31,14 +34,23 @@ public class Configuracaoes {
      *
      */
     // Config 0
-    public static final Byte PASTAS_SCANER = 0;
+    public static final Byte CONF_PASTAS_SCANER = 0;
     private static final ArrayList<String> pastasScaner = new ArrayList<String>(10);
     // Config 1
-    public static final Byte ACAO_PADRAO_FILA = 1;
+    public static final Byte CONF_ACAO_PADRAO_FILA = 1;
     private static AcaoPadraoFila acaoPadraoFila = AcaoPadraoFila.ADICIONAR_FILA;
     // Config 2
-    public static final Byte ACOES_FILA_VAZIA = 2;
+    public static final Byte CONF_ACOES_FILA_VAZIA = 2;
     private static AcoesFilaVazia acoesFilaVazia = AcoesFilaVazia.TOCAR_RANDOM;
+    // Config 3
+    public static final Byte CONF_ADICIONAR_NA_FILA_VAZIA = 3;
+    private static AdicionarNaFilaVazia adicionarNaFilaVazia = AdicionarNaFilaVazia.REPRODUZIR_MUSICA;
+    // Config 4
+    public static final Byte CONF_TELA_PADRAO = 4;
+    private static TelaPadrao telaPadrao = TelaPadrao.J_FILA;
+    // Config 5
+    public static final Byte CONF_ATALHOS_GLOBAIS_ATIVOS = 5;
+    private static Boolean atalhosGlobaisAtivos = false;
     
     // lista de todas as configs
     private static final Object[] configs;
@@ -47,8 +59,16 @@ public class Configuracaoes {
 
     static {
         // inicializa a lista das configs
-        configs = new Object[]{pastasScaner, acaoPadraoFila, acoesFilaVazia};
-//        configs[PASTAS_SCANER] = pastasScaner;
+        configs = new Object[]{
+            pastasScaner,
+            acaoPadraoFila, 
+            acoesFilaVazia,
+            adicionarNaFilaVazia,
+            telaPadrao,
+            atalhosGlobaisAtivos
+        
+        };
+//        configs[CONF_PASTAS_SCANER] = pastasScaner;
         acoes = new HashMap<Byte, Acao>(configs.length);
         ler();
     }
@@ -64,6 +84,10 @@ public class Configuracaoes {
     }
 
     public static void set(Byte indexConf, Integer valor) {
+        configs[indexConf] = valor;
+        gravar();
+    }
+    public static void set(Byte indexConf, boolean valor) {
         configs[indexConf] = valor;
         gravar();
     }
@@ -114,6 +138,9 @@ public class Configuracaoes {
     public static ArrayList<String> getList(Byte index) {
         return (ArrayList) configs[index];
     }
+    public static boolean getBoolean(Byte index) {
+        return (Boolean)configs[index];
+    }
 
     private static void ler() {
         try {
@@ -139,14 +166,15 @@ public class Configuracaoes {
                     ((ArrayList) myConfig).clear();
                     ((ArrayList) myConfig).addAll(Arrays.asList(valores));
                 } else if (myConfig instanceof Musica) {
-                    Musica musica = new Musica();
-                    musica.setId(Integer.parseInt(tokens[1].trim()));
+                    Musica musica = CacheDeMusica.get(Integer.parseInt(tokens[1].trim()));
                     configs[Integer.parseInt(tokens[0])] = musica;
                 } else if (myConfig instanceof Integer) {
                     configs[Integer.parseInt(tokens[0])] = Integer.valueOf(tokens[1].trim());
                 } else if (myConfig instanceof Enum) {
                     configs[Integer.parseInt(tokens[0])] = Enum.valueOf(((Enum) myConfig).getClass(), tokens[1]);
-                } else {
+                } else if(myConfig instanceof Boolean){
+                    configs[Integer.parseInt(tokens[0])] = Boolean.parseBoolean(tokens[1]);
+                }else{
                     configs[Integer.parseInt(tokens[0])] = tokens[1];
                 }
 
@@ -169,7 +197,9 @@ public class Configuracaoes {
                 textFile.append(((Enum) myConfig).name());
             } else if (myConfig instanceof String) {
                 textFile.append(myConfig.toString());
-            } else {
+            } else if(myConfig instanceof Boolean){
+                textFile.append(myConfig.toString());
+            }else{
                 textFile.append(myConfig.toString());
             }
             textFile.append('\n');
