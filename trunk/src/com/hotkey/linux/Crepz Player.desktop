@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Name=Crepz Player
+GenericName=Crepz Player
+Comment=Crepz Player - Um reprodutor de áudio em java.
+Exec=/home/rudieri/aplicativos/CrepzPlayer/open_crepz.sh
+Icon=/home/rudieri/aplicativos/CrepzPlayer/com/img/icon.png
+Terminal=false
+Type=Application
+Categories=AudioVideo;
+X-Ubuntu-Gettext-Domain=/home/rudieri/aplicativos/CrepzPlayer/open_crepz.sh
+Name[pt_BR]=Crepz Player
