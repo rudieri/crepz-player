@@ -4,7 +4,7 @@
  */
 package com.main;
 
-import com.Musiquera.PropriedadesMusica;
+import com.musica.Musiquera.PropriedadesMusica;
 
 /**
  *

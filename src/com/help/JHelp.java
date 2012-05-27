@@ -10,7 +10,7 @@
  */
 package com.help;
 
-import com.JPrincipal;
+import com.main.gui.JPrincipal;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 

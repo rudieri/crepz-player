@@ -10,9 +10,11 @@
  */
 package com.config;
 
-import com.fila.AcaoPadraoFila;
-import com.fila.AcoesFilaVazia;
-import com.musica.ModelReadOnly;
+import com.config.constantes.AcaoPadraoFila;
+import com.config.constantes.AcoesFilaVazia;
+import com.config.constantes.AdicionarNaFilaVazia;
+import com.config.constantes.TelaPadrao;
+import com.utils.model.ModelReadOnly;
 import com.musica.MusicaGerencia;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
@@ -35,6 +37,12 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         setTela();
     }
+    public JConfiguracao(java.awt.Dialog parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
+
+        setTela();
+    }
 
     private void setTela() {
         try {
@@ -49,7 +57,7 @@ public class JConfiguracao extends javax.swing.JDialog {
             tm.addColumn("Pastas em que o Crepz procurará por músicas");
             jTable_pastas.setModel(tm);
             tm.setRowCount(0);
-            ArrayList<String> pastas = Configuracaoes.getList(Configuracaoes.PASTAS_SCANER);
+            ArrayList<String> pastas = Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER);
             for (short i = 0; i < pastas.size(); i++) {
                 if (pastas.get(i) != null && !pastas.get(i).replace(" ", "").isEmpty()) {
                     tm.addRow(new Object[]{pastas.get(i)});
@@ -57,9 +65,20 @@ public class JConfiguracao extends javax.swing.JDialog {
                 }
             }
             jComboBoxAcaoFila.setModel(new DefaultComboBoxModel(AcaoPadraoFila.getNomesFakes()));
-            jComboBoxAcaoFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.ACAO_PADRAO_FILA).ordinal());
+            jComboBoxAcaoFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_ACAO_PADRAO_FILA).ordinal());
             jComboBoxAoEsvaziaFila.setModel(new DefaultComboBoxModel(AcoesFilaVazia.getNomesFakes()));
-            jComboBoxAoEsvaziaFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.ACOES_FILA_VAZIA).ordinal());
+            jComboBoxAoEsvaziaFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_ACOES_FILA_VAZIA).ordinal());
+            jComboBoxAdicionarFilaVazia.setModel(new DefaultComboBoxModel(AdicionarNaFilaVazia.getNomesFakes()));
+            jComboBoxAdicionarFilaVazia.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA).ordinal());
+            jComboBoxTelaPadrao.setModel(new DefaultComboBoxModel(TelaPadrao.getNomesFakes()));
+            jComboBoxTelaPadrao.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_TELA_PADRAO).ordinal());
+            jCheckBox1.setSelected(Configuracaoes.getBoolean(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS));
+            //java -classpath /home/rudieri/NetBeansProjects/CrepzPlayer/build/classes/ com.hotkey.linux.DisparaComando --prev
+            String local = getClass().getResource("/").getFile();
+            jTextFieldPlay.setText("java -classpath "+local+ " com.hotkey.linux.DisparaComando --play");
+            jTextFieldNext.setText("java -classpath "+local+ " com.hotkey.linux.DisparaComando --next");
+            jTextFieldPrev.setText("java -classpath "+local+ " com.hotkey.linux.DisparaComando --prev");
+            jTextFieldStop.setText("java -classpath "+local+ " com.hotkey.linux.DisparaComando --stop");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -130,12 +149,20 @@ public class JConfiguracao extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel_Geral = new javax.swing.JPanel();
+        jPanel15 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        jComboBoxTelaPadrao = new javax.swing.JComboBox();
+        jPanel16 = new javax.swing.JPanel();
+        jPanel_Fila = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jComboBoxAcaoFila = new javax.swing.JComboBox();
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jComboBoxAoEsvaziaFila = new javax.swing.JComboBox();
+        jPanel14 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jComboBoxAdicionarFilaVazia = new javax.swing.JComboBox();
         jPanel3 = new javax.swing.JPanel();
         jPanel_Avancada = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
@@ -162,6 +189,27 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel8 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        jPanel_Atalhos = new javax.swing.JPanel();
+        jPanel17 = new javax.swing.JPanel();
+        jPanelLinux = new javax.swing.JPanel();
+        jPanel19 = new javax.swing.JPanel();
+        jPanelPlay = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
+        jTextFieldPlay = new javax.swing.JTextField();
+        jPanelNext = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        jTextFieldNext = new javax.swing.JTextField();
+        jPanelPrev = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        jTextFieldPrev = new javax.swing.JTextField();
+        jPanelStop = new javax.swing.JPanel();
+        jLabel16 = new javax.swing.JLabel();
+        jTextFieldStop = new javax.swing.JTextField();
+        jPanel23 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextArea2 = new javax.swing.JTextArea();
+        jPanel18 = new javax.swing.JPanel();
+        jCheckBox1 = new javax.swing.JCheckBox();
         jPanel11 = new javax.swing.JPanel();
         jButtonSalvar = new javax.swing.JButton();
         jButtonFechar = new javax.swing.JButton();
@@ -187,6 +235,23 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel_Geral.setLayout(new javax.swing.BoxLayout(jPanel_Geral, javax.swing.BoxLayout.Y_AXIS));
 
+        jPanel15.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel9.setText("Tela Inicial ao Abrir o Crepz:");
+        jPanel15.add(jLabel9);
+
+        jComboBoxTelaPadrao.setToolTipText("O que acontece quando eu clido 2 vezes numa música...");
+        jPanel15.add(jComboBoxTelaPadrao);
+
+        jPanel_Geral.add(jPanel15);
+
+        jPanel16.setLayout(new java.awt.BorderLayout());
+        jPanel_Geral.add(jPanel16);
+
+        jTabbedPane1.addTab("Geral", jPanel_Geral);
+
+        jPanel_Fila.setLayout(new javax.swing.BoxLayout(jPanel_Fila, javax.swing.BoxLayout.Y_AXIS));
+
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         jLabel1.setText("Ao clicar 2 vezes na música:");
@@ -196,22 +261,32 @@ public class JConfiguracao extends javax.swing.JDialog {
         jComboBoxAcaoFila.setToolTipText("O que acontece quando eu clido 2 vezes numa música...");
         jPanel2.add(jComboBoxAcaoFila);
 
-        jPanel_Geral.add(jPanel2);
+        jPanel_Fila.add(jPanel2);
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel6.setText("Quando a Fila Estiver Vazia:");
+        jLabel6.setText("Quando a Fila Ficar Vazia:");
         jPanel1.add(jLabel6);
 
         jComboBoxAoEsvaziaFila.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Não faça nada", "Tocar da lista ao lado (Aleatório)", "Tocar da lista ao lado (Sequencial)" }));
         jPanel1.add(jComboBoxAoEsvaziaFila);
 
-        jPanel_Geral.add(jPanel1);
+        jPanel_Fila.add(jPanel1);
+
+        jPanel14.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel8.setText("Ao adicionar na fila Vazia:");
+        jPanel14.add(jLabel8);
+
+        jComboBoxAdicionarFilaVazia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Não faça nada", "Tocar da lista ao lado (Aleatório)", "Tocar da lista ao lado (Sequencial)" }));
+        jPanel14.add(jComboBoxAdicionarFilaVazia);
+
+        jPanel_Fila.add(jPanel14);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
-        jPanel_Geral.add(jPanel3);
+        jPanel_Fila.add(jPanel3);
 
-        jTabbedPane1.addTab("Fila de Reprodução", jPanel_Geral);
+        jTabbedPane1.addTab("Fila de Reprodução", jPanel_Fila);
 
         jPanel_Avancada.setLayout(new javax.swing.BoxLayout(jPanel_Avancada, javax.swing.BoxLayout.Y_AXIS));
 
@@ -350,6 +425,94 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("Organizador (Inativo)", jPanel_Organizador);
 
+        jPanel_Atalhos.setLayout(new java.awt.BorderLayout());
+
+        jPanel17.setLayout(new java.awt.BorderLayout());
+
+        jPanelLinux.setLayout(new java.awt.BorderLayout());
+
+        jPanel19.setLayout(new javax.swing.BoxLayout(jPanel19, javax.swing.BoxLayout.Y_AXIS));
+
+        jPanelPlay.setLayout(new javax.swing.BoxLayout(jPanelPlay, javax.swing.BoxLayout.LINE_AXIS));
+
+        jLabel10.setText("Reproduzir/Pausar:");
+        jLabel10.setPreferredSize(new java.awt.Dimension(130, 16));
+        jPanelPlay.add(jLabel10);
+
+        jTextFieldPlay.setText("...");
+        jTextFieldPlay.setPreferredSize(new java.awt.Dimension(310, 26));
+        jPanelPlay.add(jTextFieldPlay);
+
+        jPanel19.add(jPanelPlay);
+
+        jPanelNext.setLayout(new javax.swing.BoxLayout(jPanelNext, javax.swing.BoxLayout.LINE_AXIS));
+
+        jLabel12.setText("Próxima:");
+        jLabel12.setPreferredSize(new java.awt.Dimension(130, 16));
+        jPanelNext.add(jLabel12);
+
+        jTextFieldNext.setText("...");
+        jTextFieldNext.setPreferredSize(new java.awt.Dimension(310, 26));
+        jPanelNext.add(jTextFieldNext);
+
+        jPanel19.add(jPanelNext);
+
+        jPanelPrev.setLayout(new javax.swing.BoxLayout(jPanelPrev, javax.swing.BoxLayout.LINE_AXIS));
+
+        jLabel14.setText("Anterior:");
+        jLabel14.setPreferredSize(new java.awt.Dimension(130, 16));
+        jPanelPrev.add(jLabel14);
+
+        jTextFieldPrev.setText("...");
+        jTextFieldPrev.setPreferredSize(new java.awt.Dimension(310, 26));
+        jPanelPrev.add(jTextFieldPrev);
+
+        jPanel19.add(jPanelPrev);
+
+        jPanelStop.setLayout(new javax.swing.BoxLayout(jPanelStop, javax.swing.BoxLayout.LINE_AXIS));
+
+        jLabel16.setText("Parar:");
+        jLabel16.setPreferredSize(new java.awt.Dimension(130, 16));
+        jPanelStop.add(jLabel16);
+
+        jTextFieldStop.setText("...");
+        jTextFieldStop.setPreferredSize(new java.awt.Dimension(310, 26));
+        jPanelStop.add(jTextFieldStop);
+
+        jPanel19.add(jPanelStop);
+
+        jPanel23.setLayout(new java.awt.BorderLayout());
+        jPanel19.add(jPanel23);
+
+        jPanelLinux.add(jPanel19, java.awt.BorderLayout.CENTER);
+
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(222, 40));
+
+        jTextArea2.setColumns(20);
+        jTextArea2.setEditable(false);
+        jTextArea2.setLineWrap(true);
+        jTextArea2.setRows(5);
+        jTextArea2.setText("Configure os atalhos no seu S.O. com os seguintes comandos (Copie e cole):");
+        jTextArea2.setWrapStyleWord(true);
+        jScrollPane3.setViewportView(jTextArea2);
+
+        jPanelLinux.add(jScrollPane3, java.awt.BorderLayout.PAGE_START);
+
+        jPanel17.add(jPanelLinux, java.awt.BorderLayout.CENTER);
+
+        jPanel_Atalhos.add(jPanel17, java.awt.BorderLayout.CENTER);
+
+        jPanel18.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jCheckBox1.setText("Atalhos globais ativos");
+        jPanel18.add(jCheckBox1);
+
+        jPanel_Atalhos.add(jPanel18, java.awt.BorderLayout.PAGE_START);
+
+        jTabbedPane1.addTab("Atalhos", jPanel_Atalhos);
+
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         jPanel11.setPreferredSize(new java.awt.Dimension(400, 35));
@@ -391,9 +554,12 @@ public class JConfiguracao extends javax.swing.JDialog {
             String pasta = (String) jTable_pastas.getValueAt(i, 0);
             pastas.add(pasta);
         }
-        Configuracaoes.set(Configuracaoes.PASTAS_SCANER, pastas);
-        Configuracaoes.set(Configuracaoes.ACAO_PADRAO_FILA, AcaoPadraoFila.values()[jComboBoxAcaoFila.getSelectedIndex()]);
-        Configuracaoes.set(Configuracaoes.ACOES_FILA_VAZIA, AcoesFilaVazia.values()[jComboBoxAoEsvaziaFila.getSelectedIndex()]);
+        Configuracaoes.set(Configuracaoes.CONF_PASTAS_SCANER, pastas);
+        Configuracaoes.set(Configuracaoes.CONF_ACAO_PADRAO_FILA, AcaoPadraoFila.values()[jComboBoxAcaoFila.getSelectedIndex()]);
+        Configuracaoes.set(Configuracaoes.CONF_ACOES_FILA_VAZIA, AcoesFilaVazia.values()[jComboBoxAoEsvaziaFila.getSelectedIndex()]);
+        Configuracaoes.set(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA, AdicionarNaFilaVazia.values()[jComboBoxAdicionarFilaVazia.getSelectedIndex()]);
+        Configuracaoes.set(Configuracaoes.CONF_TELA_PADRAO, TelaPadrao.values()[jComboBoxTelaPadrao.getSelectedIndex()]);
+        Configuracaoes.set(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS, jCheckBox1.isSelected());
         dispose();
 //        setDadosBanco();
 
@@ -440,23 +606,39 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JButton jButtonSalvar;
     private javax.swing.JButton jButton_Add;
     private javax.swing.JButton jButton_Remove;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox_DownloadCapa;
     private javax.swing.JCheckBox jCheckBox_Organizador;
     private javax.swing.JComboBox jComboBoxAcaoFila;
+    private javax.swing.JComboBox jComboBoxAdicionarFilaVazia;
     private javax.swing.JComboBox jComboBoxAoEsvaziaFila;
+    private javax.swing.JComboBox jComboBoxTelaPadrao;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
+    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel23;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -464,14 +646,27 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JPanel jPanelLinux;
+    private javax.swing.JPanel jPanelNext;
+    private javax.swing.JPanel jPanelPlay;
+    private javax.swing.JPanel jPanelPrev;
+    private javax.swing.JPanel jPanelStop;
+    private javax.swing.JPanel jPanel_Atalhos;
     private javax.swing.JPanel jPanel_Avancada;
+    private javax.swing.JPanel jPanel_Fila;
     private javax.swing.JPanel jPanel_Geral;
     private javax.swing.JPanel jPanel_Organizador;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable_pastas;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextField jTextFieldNext;
+    private javax.swing.JTextField jTextFieldPlay;
+    private javax.swing.JTextField jTextFieldPrev;
+    private javax.swing.JTextField jTextFieldStop;
     private javax.swing.JTextField jTextField_DestinoOrg;
     private javax.swing.JTextField jTextField_Pasta;
     // End of variables declaration//GEN-END:variables

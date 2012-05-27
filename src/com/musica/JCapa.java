@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 
 
 /**
@@ -62,7 +63,10 @@ public class JCapa extends javax.swing.JPanel {
 
 
     public static void main(String[] args){
-        new JCapa("","", WIDTH).setVisible(true);
+        JDialog jDialog = new JDialog();
+        jDialog.add(new JCapa("/home/rudieri/Imagens/icones/digger_icon.png","Digger - The game", 16));
+        jDialog.setSize(300, 128);
+        jDialog.setVisible(true);
     }
 
     public void setSelecionado(boolean sel){
@@ -85,8 +89,9 @@ public class JCapa extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jLabel_Titulo1 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
-        jLabel_Qts = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel_Qts = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -95,7 +100,7 @@ public class JCapa extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(112, 91));
         setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
+        jPanel2.setLayout(new java.awt.BorderLayout());
 
         jPanel3.setMaximumSize(new java.awt.Dimension(80, 80));
         jPanel3.setMinimumSize(new java.awt.Dimension(80, 80));
@@ -107,34 +112,31 @@ public class JCapa extends javax.swing.JPanel {
         jLabel_Img.setPreferredSize(new java.awt.Dimension(80, 120));
         jPanel3.add(jLabel_Img);
 
-        jPanel2.add(jPanel3);
+        jPanel2.add(jPanel3, java.awt.BorderLayout.WEST);
 
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.Y_AXIS));
+        jPanel4.setLayout(new java.awt.GridLayout(3, 1, 5, 5));
 
-        jPanel5.setMinimumSize(new java.awt.Dimension(130, 27));
-        jPanel5.setPreferredSize(new java.awt.Dimension(100, 40));
+        jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jLabel_Titulo1.setFont(new java.awt.Font("Comic Sans MS", 1, 11));
+        jLabel_Titulo1.setFont(new java.awt.Font("Comic Sans MS", 1, 11)); // NOI18N
         jLabel_Titulo1.setText("Titulo");
         jLabel_Titulo1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        jLabel_Titulo1.setMinimumSize(new java.awt.Dimension(120, 17));
-        jLabel_Titulo1.setPreferredSize(new java.awt.Dimension(120, 20));
-        jPanel5.add(jLabel_Titulo1);
+        jPanel5.add(jLabel_Titulo1, java.awt.BorderLayout.CENTER);
+        jPanel5.add(jPanel6, java.awt.BorderLayout.WEST);
 
         jPanel4.add(jPanel5);
 
-        jLabel_Qts.setFont(new java.awt.Font("Comic Sans MS", 1, 11));
+        jPanel7.setLayout(new java.awt.BorderLayout());
+        jPanel7.add(jPanel8, java.awt.BorderLayout.WEST);
+
+        jLabel_Qts.setFont(new java.awt.Font("Comic Sans MS", 1, 11)); // NOI18N
         jLabel_Qts.setText("Titulo");
         jLabel_Qts.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        jLabel_Qts.setPreferredSize(new java.awt.Dimension(120, 20));
-        jPanel6.add(jLabel_Qts);
+        jPanel7.add(jLabel_Qts, java.awt.BorderLayout.CENTER);
 
-        jPanel4.add(jPanel6);
-
-        jPanel7.setLayout(new java.awt.BorderLayout());
         jPanel4.add(jPanel7);
 
-        jPanel2.add(jPanel4);
+        jPanel2.add(jPanel4, java.awt.BorderLayout.CENTER);
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -149,5 +151,6 @@ public class JCapa extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     // End of variables declaration//GEN-END:variables
 }

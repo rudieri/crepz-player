@@ -11,6 +11,7 @@
 package com.utils;
 
 import com.conexao.Transacao;
+import com.musica.CacheDeMusica;
 import com.musica.Musica;
 import com.musica.MusicaGerencia;
 import gsearch.Result;
@@ -277,7 +278,7 @@ public class JTrocarImagem extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                Musica m = new Musica();
+                Musica m = CacheDeMusica.get(-1);// Nenhuma música, apenas para pegar uma nova instância
                 m.setAlbum("Appetit for destruction");
                 m.setAutor("Guns");
                 JTrocarImagem dialog = new JTrocarImagem(new javax.swing.JFrame(), true, m);

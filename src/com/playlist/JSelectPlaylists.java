@@ -10,8 +10,7 @@
  */
 package com.playlist;
 
-import com.JPlayList;
-import com.musica.ModelReadOnly;
+import com.utils.model.ModelReadOnly;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.logging.Level;
