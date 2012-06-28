@@ -4,6 +4,7 @@
  */
 package com.musica;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,12 +22,19 @@ public class CacheDeMusica {
     }
 
     public static Musica get(Integer id) {
+        return get(id, null);
+    }
+    public static Musica get(Integer id, ResultSet rs) {
         Musica musica = cache.get(id);
         if (musica == null) {
             try {
                 musica = new Musica();
                 musica.setId(id);
-                MusicaBD.carregar(musica);
+                if (rs==null) {
+                    MusicaBD.carregar(musica);
+                }else{
+                    MusicaBD.carregarObjeto(musica, rs);
+                }
                 System.out.println("Musica não encontrada em cache, carregar " + musica + " com a chave: " + id);
             } catch (Exception ex) {
                 Logger.getLogger(CacheDeMusica.class.getName()).log(Level.SEVERE, null, ex);

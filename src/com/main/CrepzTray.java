@@ -4,13 +4,9 @@
  */
 package com.main;
 
+import com.config.constantes.TelaPadrao;
 import com.musica.Musiquera;
-import java.awt.AWTException;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -34,6 +30,7 @@ public class CrepzTray {
     private final TrayIcon trayIcon;
     private PopupMenu popup;
     private MouseAdapter trayMouseEvents;
+    private boolean onTray;
 
     public CrepzTray(Musiquera musiquera, final Carregador carregador) throws Exception {
         if (!SystemTray.isSupported()) {
@@ -54,6 +51,7 @@ public class CrepzTray {
         try {
             trayIcon.addMouseListener(trayMouseEvents);
             tray.add(trayIcon);
+            onTray = true;
             //carregador.setMiniComoBase();
         } catch (AWTException ex) {
             Logger.getLogger(CrepzTray.class.getName()).log(Level.SEVERE, null, ex);
@@ -62,12 +60,17 @@ public class CrepzTray {
 
     public void someTray() {
         tray.remove(trayIcon);
+        onTray = false;
 //        carregador.setPrincipalComoBase();
     }
 
     public void someTray(int x, int y) {
-        tray.remove(trayIcon);
-//        carregador.setPrincipalComoBase(x, y);
+        carregador.setPrincipalComoBase(x, y);
+        someTray();
+    }
+
+    public boolean isOnTray() {
+        return onTray;
     }
 
     private void createPopupEvents() {
@@ -75,7 +78,7 @@ public class CrepzTray {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                someTray();
+                carregador.setTelaBase(TelaPadrao.J_PRINCIPAL);
             }
         };
         listenerFechar = new ActionListener() {
@@ -127,7 +130,7 @@ public class CrepzTray {
                     }
                 }
                 if (e.getButton() == MouseEvent.BUTTON2) {
-                    someTray();
+                    carregador.setTelaBase(TelaPadrao.J_PRINCIPAL);
                 }
             }
         };

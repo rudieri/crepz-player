@@ -160,7 +160,7 @@ public class Configuracaoes {
                 String[] tokens = linha.split(" ", 2);
                 Object myConfig = configs[Integer.parseInt(tokens[0])];
                 if (myConfig instanceof String) {
-                    myConfig = tokens[1];
+                    configs[Integer.parseInt(tokens[0])] = tokens[1];
                 } else if (myConfig instanceof ArrayList) {
                     String[] valores = tokens[1].split(";");
                     ((ArrayList) myConfig).clear();

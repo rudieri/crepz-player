@@ -256,7 +256,7 @@ public final class Carregador {
     }
 
     public void setPrincipalComoBase() {
-        if (crepzTray != null) {
+        if (crepzTray != null && crepzTray.isOnTray()) {
             ocultarIconeTray();
         }
         telaPadrao = TelaPadrao.J_PRINCIPAL;
@@ -266,7 +266,7 @@ public final class Carregador {
     }
 
     public void setFilaComoBase() {
-        if (crepzTray != null) {
+        if (crepzTray != null && crepzTray.isOnTray()) {
             ocultarIconeTray();
         }
         setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);

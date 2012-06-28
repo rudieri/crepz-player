@@ -56,7 +56,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         initComponents();
         configuracao = new JConfiguracao(this, false);
         this.carregador = carregador;
-        this.setIconImage(new ImageIcon(getClass().getResource("/com/img/icon.png")).getImage());
         //--------------------------
         jButton_Play.setName("jButton_Play");
         jButton_Next.setName("jButton_Next");
@@ -248,6 +247,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         } else {
             jToggle_Repeat.setIcon(carregador.icones.repeatOffIcon32);
         }
+        setIconImage(carregador.icones.crepzIcon.getImage());
     }
 
     @Override

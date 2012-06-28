@@ -6,6 +6,7 @@ import com.musica.CacheDeMusica;
 import java.sql.*;
 import java.util.*;
 import com.musica.Musica;
+import com.musica.MusicaBD;
 import com.playlist.Playlist;
 
 /**
@@ -191,9 +192,10 @@ public class PlayMusicaBD {
 
 
         SQL sql = new SQL();
-        sql.add("SELECT * ");
-        sql.add("FROM " + TBL);
-        sql.add("WHERE 1=1");
+        sql.add("SELECT plm.id as id_plm, plm.musica, plm.playlist ,  m.* ");
+        sql.add("FROM " + TBL+ " plm ");
+        sql.add(", musica m");
+        sql.add("WHERE plm.musica = m.id ");
 
         if (filtro.getPlaylist() != null) {
             sql.add("AND playlist = :playlist");
@@ -208,9 +210,9 @@ public class PlayMusicaBD {
             while (rs.next()) {
                 PlayMusica playMusica = new PlayMusica();
                 playMusica.setId(rs.getInt("id"));
-                Musica m = CacheDeMusica.get(rs.getInt("musica"));
+                Musica m = CacheDeMusica.get(rs.getInt("musica"), rs);
                 playMusica.setMusica(m);
-
+                
                 Playlist p = new Playlist();
                 p.setId(rs.getInt("playlist"));
 

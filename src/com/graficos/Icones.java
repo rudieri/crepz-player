@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
  * @author rudieri
  */
 public class Icones {
+    public static final String CAMINHO_BASE_ICONES = "/com/img/icons/";
 
     /**
     Carrega icones...
@@ -27,30 +28,32 @@ public class Icones {
 
              */
             
-            BufferedImage bf_playIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_play.png"));
-            BufferedImage bf_stopIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_stop.png"));
-            BufferedImage bf_voltaIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_tras.png"));
-            BufferedImage bf_frenteIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_frente.png"));
-            BufferedImage bf_pauseIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_pause.png"));
-            BufferedImage bf_randomOnIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_randon_on.png"));
-            BufferedImage bf_randomOffIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_randon_off.png"));
-            BufferedImage bf_repeatOnIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_repeat_on.png"));
-            BufferedImage bf_repeatOffIcon32 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/32/pl_repeat_off.png"));
-            BufferedImage bf_playIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_play.png"));
-            BufferedImage bf_stopIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_stop.png"));
-            BufferedImage bf_voltaIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_tras.png"));
-            BufferedImage bf_frenteIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_frente.png"));
-            BufferedImage bf_pauseIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_pause.png"));
-            BufferedImage bf_randomOnIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_randon_on.png"));
-            BufferedImage bf_randomOffIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_randon_off.png"));
-            BufferedImage bf_repeatOnIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_repeat_on.png"));
-            BufferedImage bf_repeatOffIcon16 = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/16/pl_repeat_off.png"));
-            BufferedImage bf_topOn = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/mini/c_top_on.png"));
-            BufferedImage bf_topOff = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/mini/c_top_off.png"));
-            BufferedImage bf_menu = ImageIO.read(getClass().getResource("/com/img/icons/" + tipo + "/mini/c_menu.png"));
+            BufferedImage bf_playIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_play.png"));
+            BufferedImage bf_stopIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_stop.png"));
+            BufferedImage bf_voltaIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_tras.png"));
+            BufferedImage bf_frenteIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_frente.png"));
+            BufferedImage bf_pauseIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_pause.png"));
+            BufferedImage bf_randomOnIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_randon_on.png"));
+            BufferedImage bf_randomOffIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_randon_off.png"));
+            BufferedImage bf_repeatOnIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_repeat_on.png"));
+            BufferedImage bf_repeatOffIcon32 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/32/pl_repeat_off.png"));
+            BufferedImage bf_playIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_play.png"));
+            BufferedImage bf_stopIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_stop.png"));
+            BufferedImage bf_voltaIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_tras.png"));
+            BufferedImage bf_frenteIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_frente.png"));
+            BufferedImage bf_pauseIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_pause.png"));
+            BufferedImage bf_randomOnIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_randon_on.png"));
+            BufferedImage bf_randomOffIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_randon_off.png"));
+            BufferedImage bf_repeatOnIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_repeat_on.png"));
+            BufferedImage bf_repeatOffIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_repeat_off.png"));
+            BufferedImage bf_topOn = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/mini/c_top_on.png"));
+            BufferedImage bf_topOff = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/mini/c_top_off.png"));
+            BufferedImage bf_menu = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/mini/c_menu.png"));
             BufferedImage bf_pl = ImageIO.read(getClass().getResource("/com/img/playlist.gif"));
             BufferedImage bf_lib = ImageIO.read(getClass().getResource("/com/img/biblioteca.png"));
             BufferedImage bf_xis = ImageIO.read(getClass().getResource("/com/img/x.png"));
+            
+            crepzIcon = new ImageIcon(getClass().getResource("/com/img/icon.png"));
             
             playIcon32 = new ImageIcon(bf_playIcon32);
             stopIcon32 = new ImageIcon(bf_stopIcon32);
@@ -87,9 +90,10 @@ public class Icones {
         }
     }
 
-    public ImageIcon resizeIcons(BufferedImage im, int l, int a) {
-        return new ImageIcon(im.getScaledInstance(l, a, Image.SCALE_SMOOTH));
+    public ImageIcon resizeIcons(BufferedImage im, int largura, int altura) {
+        return new ImageIcon(im.getScaledInstance(largura, altura, Image.SCALE_SMOOTH));
     }
+    public ImageIcon crepzIcon;
     public ImageIcon playIcon32;
     public ImageIcon pauseIcon32;
     public ImageIcon stopIcon32;

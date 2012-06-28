@@ -181,6 +181,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonSalvar">
                   <Properties>
+                    <Property name="mnemonic" type="int" value="83"/>
                     <Property name="text" type="java.lang.String" value="Salvar"/>
                     <Property name="toolTipText" type="java.lang.String" value="Salva a lista internamente."/>
                   </Properties>

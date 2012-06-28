@@ -11,7 +11,6 @@ import com.utils.Warning;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -181,7 +180,7 @@ public abstract class Musiquera implements BasicPlayerListener {
         } catch (Exception ex) {
             tenteiAbrir++;
             System.out.println(ex.getMessage());
-            if (ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
+            if (ex.getMessage()!=null && ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
                 Warning.print(ex.getMessage());
                 try {
                     MusicaBD.excluir(m);
@@ -335,15 +334,38 @@ public abstract class Musiquera implements BasicPlayerListener {
     @SuppressWarnings("CallToThreadDumpStack")
     public String microSegundosEmMinSeq(long micro) {
         try {
-            Date date = sdf.parse(String.valueOf(micro / 1000000));
-            return formatotempo.format(date);
+            int segundos = (int) (micro / 1000000);
+            int horas = segundos / 3600;
+            segundos -= horas * 3600;
+            int minutos = segundos / 60;
+            segundos -= minutos * 60;
+//            Date date = sdf.parse(String.valueOf(segundos));
+//            return formatotempo.format(date);
+            StringBuilder tempo = new StringBuilder(12);
+            if (horas > 0) {
+                if (horas < 10) {
+                    tempo.append('0').append(horas).append(':');
+                } else {
+                    tempo.append(horas).append(':');
+                }
+            }
+            if (minutos < 10) {
+                tempo.append('0').append(minutos).append(':');
+            } else {
+                tempo.append(minutos).append(':');
+            }
+            if (segundos < 10) {
+                tempo.append('0').append(segundos);
+            } else {
+                tempo.append(segundos);
+            }
+            return tempo.toString();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return "";
     }
 
-    
     @Override
     public void opened(Object stream, Map properties) {
         naoAlterouMusicaAinda = true;
@@ -365,10 +387,11 @@ public abstract class Musiquera implements BasicPlayerListener {
             }
             System.out.println("Tipo: " + tipo);
             String info = properties.get("title") + " " + properties.get("author") + " " + properties.get("album");
+            info = info.trim();
 //            String duracao = microSegundosEmMinSeq((Long) properties.get("duration"));
             int bits = (Integer) properties.get(tipo + ".bitrate.nominal.bps") / 1000;
             int freq = (Integer) properties.get(tipo + ".frequency.hz") / 1000;
-            if (info.trim().isEmpty() || info.trim().equalsIgnoreCase("null null null")) {
+            if (info.isEmpty() || info.equalsIgnoreCase("null null null")) {
                 try {
                     info = getMusica().getNome();
                 } catch (Exception ex) {
