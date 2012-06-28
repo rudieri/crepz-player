@@ -75,6 +75,8 @@ public class JPlayList extends javax.swing.JDialog {
         initTabelaLista(false);
         jTable.getSelectionModel().addListSelectionListener(listSelectionListener);
         jPanelOpcoesLista.setVisible(false);
+        setIconImage(carregador.icones.crepzIcon.getImage());
+        
     }
 
     public void setAleatorio(boolean v) {
@@ -214,8 +216,7 @@ public class JPlayList extends javax.swing.JDialog {
                 Musica m = (Musica) novaLista.get(i);
 
                 Object[] row = new Object[1];
-                row[0] = new JLista(m.getNome(), m.getAutor());
-                row[1] = m;
+                row[0] = m;
                 ts.addRow(row);
             }
             jTable.requestFocus();
@@ -634,6 +635,7 @@ public class JPlayList extends javax.swing.JDialog {
         jTextField_NomePlayList.setPreferredSize(new java.awt.Dimension(200, 25));
         jPanel4.add(jTextField_NomePlayList);
 
+        jButtonSalvar.setMnemonic('S');
         jButtonSalvar.setText("Salvar");
         jButtonSalvar.setToolTipText("Salva a lista internamente.");
         jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {

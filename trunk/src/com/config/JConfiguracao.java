@@ -14,8 +14,8 @@ import com.config.constantes.AcaoPadraoFila;
 import com.config.constantes.AcoesFilaVazia;
 import com.config.constantes.AdicionarNaFilaVazia;
 import com.config.constantes.TelaPadrao;
-import com.utils.model.ModelReadOnly;
 import com.musica.MusicaGerencia;
+import com.utils.model.ModelReadOnly;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
@@ -84,33 +84,6 @@ public class JConfiguracao extends javax.swing.JDialog {
         }
     }
 
-//    private File telaAbrirArquivo() throws Exception {
-//
-//
-//        int res = jFileChooser.showOpenDialog(null);
-//
-//        if (res == JFileChooser.APPROVE_OPTION) {
-//            jTextField_Pasta.setText(jFileChooser.getSelectedFile().getAbsolutePath());
-//            return jFileChooser.getSelectedFile();
-//        }
-//        return null;
-////        else {
-////            throw new Exception("Voce nao selecionou nenhum diretorio.");
-////        }
-//    }
-//    private void addTablePastas() {
-//        try {
-//            telaAbrirArquivo();
-//            if (jTextField_Pasta.getText().isEmpty()) {
-//                return;
-//            }
-//            DefaultTableModel tm = (DefaultTableModel) jTable_pastas.getModel();
-//            tm.addRow(new Object[]{jTextField_Pasta.getText()});
-//            jTextField_Pasta.setText("");
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//    }
     private void setDadosBanco() {
 
         MusicaGerencia.organizarPastas = jCheckBox_Organizador.isSelected();

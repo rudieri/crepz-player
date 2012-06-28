@@ -26,6 +26,11 @@ import org.tritonus.share.sampled.TAudioFormat;
  */
 public class MusicaGerencia {
 
+    public static final ArrayList<String> listaNegra;
+
+    static {
+        listaNegra = new ArrayList<String>();
+    }
     @SuppressWarnings("RedundantStringConstructorCall")
     public static String[] generos = new String("Blues,Classic Rock,Country,Dance,Disco,Funk,Grunge,Hip-Hop,Jazz,Metal,New Age,Oldies,Other,"
             + "Pop,R&B,Rap,Reggae,Rock,Techno,Industrial,Alternative,Ska,Death Metal,Pranks,Soundtrack,Euro-Techno,Ambient,Trip-Hop,"
@@ -186,8 +191,9 @@ public class MusicaGerencia {
             return null;
         }
     }
+
     public static Musica addFiles(File file) {
-        Transacao t= new Transacao();
+        Transacao t = new Transacao();
         try {
             t.begin();
             Musica addFiles = addFiles(file, t);
@@ -202,16 +208,21 @@ public class MusicaGerencia {
 
     @SuppressWarnings("AssignmentToMethodParameter")
     public static Musica addFiles(File file, Transacao t) {
-
         if (ehValido(file)) {
-            Musica m = new Musica();
             if (getExtecao(file).toLowerCase().equals("ogg")) {
                 return adicionaOGG(file, t);
             }
             try {
 
                 String caminho = file.getAbsolutePath().trim().replace('\\', '/');
-                MP3File mp3 = new MP3File(caminho);
+                if (listaNegra.contains(caminho)) {
+                    System.out.println("Não importado, pois está na lista temporária de regeição: " + caminho);
+                    return null;
+                }
+                MP3File mp3;
+                try{
+                 mp3= new MP3File(caminho);
+                Musica m = new Musica();
                 m.setCaminho(normalizarCaminhoArquivo(file));
                 if (organizarPastas) {
                     getMusica(m, mp3, file);
@@ -245,13 +256,30 @@ public class MusicaGerencia {
                     m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
                     MusicaBD.alterar(m, t);
                 }
-
-
+                
+                return m;
+                }catch(Exception ex){
+                    Musica m = new Musica();
+                    m.setCaminho(normalizarCaminhoArquivo(file));
+                    m.setNome(file.getName());
+                    m.setAlbum(file.getParentFile().getName());
+                    m.setAutor(file.getParentFile().getParentFile().getName());
+                    if (MusicaBD.existe(m, t)) {
+                        MusicaBD.carregar(m, t);
+                        m.setDtModArquivo(file.lastModified());
+                        MusicaBD.alterar(m, t);
+                    }else{
+                        m.setDtModArquivo(file.lastModified());
+                        MusicaBD.incluir(m, t);
+                        MusicaBD.carregarPeloEndereco(m, t);
+                    }
+                }
             } catch (Exception e) {
-                System.out.println("Erro ao importar arquivos");
+                System.out.println("Erro ao importar arquivos, foi adiconado na lista negra.");
                 e.printStackTrace();
+                listaNegra.add(file.getAbsolutePath());
             }
-            return m;
+            return null;
         } else {
 //            System.out.println(file.getName() + " Não é um tipo válido.");
             return null;

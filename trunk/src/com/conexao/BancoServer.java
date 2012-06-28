@@ -23,25 +23,27 @@ public class BancoServer {
         s.setDatabaseName(0, "BD");
         s.setDatabasePath(0, new File("").getAbsolutePath() + "/" + bd);
         s.start();
-        new Thread(new Runnable() {
-
-            public void run() {
-                while (ativo) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-                s.shutdown();
-                s.stop();
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//
+//            public void run() {
+//                while (ativo) {
+//                    try {
+//                        Thread.sleep(500);
+//                    } catch (Exception ex) {
+//                        ex.printStackTrace();
+//                    }
+//                }
+//                s.shutdown();
+//                s.stop();
+//            }
+//        }).start();
 
     }
 
     public void stop() {
         ativo = false;
+        s.shutdown();
+        s.stop();
     }
 
     public boolean isAtivo(){

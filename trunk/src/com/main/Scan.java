@@ -11,7 +11,6 @@ import com.musica.MusicaGerencia;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,11 +23,6 @@ public class Scan {
     private static int tempoSegudos;
     Thread thMonitor;
     private final int ESCALA_TEMPO = 1000;
-//    private Transacao t;
-    Timer tScan;
-    ArrayList musicas;
-//    private static ArrayList<String> pastas = new ArrayList(32);
-    File teste = new File("/home/rudieri/Música");
     private HashMap<String, Long> cacheModArquivos;
     private boolean atualizarChache;
 

@@ -213,7 +213,7 @@ public class MusicaBD {
         }
     }
 
-    private static void carregarObjeto(Musica musica, ResultSet rs) throws SQLException {
+    public static void carregarObjeto(Musica musica, ResultSet rs) throws SQLException {
         musica.setId(rs.getInt("id"));
         musica.setCaminho(rs.getString("caminho").replace(ASPAS, "'"));
         musica.setNome(rs.getString("nome"));
