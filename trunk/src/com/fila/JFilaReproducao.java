@@ -10,9 +10,6 @@
  */
 package com.fila;
 
-import com.utils.model.ModelReadOnly;
-import com.musica.Musiquera;
-import com.musica.Musiquera.PropriedadesMusica;
 import com.config.Configuracaoes;
 import com.config.JConfiguracao;
 import com.config.constantes.AcaoPadraoFila;
@@ -21,11 +18,14 @@ import com.config.constantes.AdicionarNaFilaVazia;
 import com.main.Carregador;
 import com.main.Notificavel;
 import com.musica.*;
+import com.musica.Musiquera.PropriedadesMusica;
 import com.utils.ComandosSO;
 import com.utils.DiretorioUtils;
+import com.utils.model.ModelReadOnly;
 import com.utils.model.objetcmodel.ObjectTableModel;
 import com.utils.model.objetcmodel.ObjectTableModelListener;
 import com.utils.model.objetcmodel.ObjectTransferable;
+import com.utils.transferivel.TipoTransferenciaMusica;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -205,7 +205,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                 for (int i = 0; i < rows.length; i++) {
                     musicas.add((Musica) modelFila.getValueAt(rows[i], 0));
                 }
-                return new ObjectTransferable(musicas, "crepz/array-musica");
+                return new ObjectTransferable(musicas, TipoTransferenciaMusica.JFILA_FILA);
 
             }
         });
@@ -215,15 +215,21 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
             public void drop(DropTargetDropEvent dtde) {
                 try {
                     Point location = dtde.getLocation();
-                    if ((dtde.getSourceActions() == TransferHandler.MOVE
-                            || location.y < jTableFila.getHeight())
-                            && jTableFila.getSelectedRows().length > 0) {
-                        Point visibleLocation = jTableFila.getVisibleRect().getLocation();
+                    int posicaoDestino = -1;
+                    if (jTableFila.getSelectedRows().length > 0) {
+                         Point visibleLocation = jTableFila.getVisibleRect().getLocation();
                         visibleLocation.x += location.x;
                         visibleLocation.y += location.y;
-                        int destino = jTableFila.rowAtPoint(visibleLocation);
-                        alterarPosicaoMusicasFila(jTableFila.getSelectedRows(), destino);
-                        return;
+                        posicaoDestino = jTableFila.rowAtPoint(visibleLocation);
+                        
+                        if ((dtde.getSourceActions() == TransferHandler.COPY_OR_MOVE
+                                || location.y < jTableFila.getHeight())) {
+
+                            if (TipoTransferenciaMusica.forDataFlavor(dtde.getCurrentDataFlavors()) == TipoTransferenciaMusica.JFILA_FILA) {
+                                alterarPosicaoMusicasFila(jTableFila.getSelectedRows(), posicaoDestino);
+                                return;
+                            }
+                        }
                     }
                     Transferable transferable = dtde.getTransferable();
                     DataFlavor[] flavors = transferable.getTransferDataFlavors();
@@ -235,9 +241,13 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                         Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, "Crepz tratavel...", ex);
                     }
                     if (data != null && data instanceof Musica) {
-                        ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{data});
+                        if (posicaoDestino != -1) {
+                            ((ModelReadOnly) jTableFila.getModel()).insertRow(posicaoDestino, new Object[]{data});
+                        }else{
+                            ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{data});
+                        }
                     } else if (data != null && data instanceof ArrayList) {
-                        addMusicasToFila(data);
+                        addMusicasToFila(data, posicaoDestino);
                     } else {
                         //Windows
                         if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
@@ -343,14 +353,22 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         }
     }
 
-    private void addMusicasToFila(Object data) {
-        addMusicasToFila((ArrayList) data);
+    
+    private void addMusicasToFila(Object data, int posicao) {
+        addMusicasToFila((ArrayList) data, posicao);
     }
 
     private void addMusicasToFila(ArrayList<Musica> data) {
+        addMusicasToFila(data, -1);
+    }
+    private void addMusicasToFila(ArrayList<Musica> data, int posicao) {
         for (int i = 0; i < data.size(); i++) {
             Musica musica = data.get(i);
-            ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{musica});
+            if (posicao == -1) {
+                ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{musica});
+            }else{
+                ((ModelReadOnly) jTableFila.getModel()).insertRow(posicao, new Object[]{musica});
+            }
         }
         atualizarBarraStausFila();
     }
@@ -381,7 +399,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                 for (int i = 0; i < rows.length; i++) {
                     musicas.add(objModelMusicas.getItem(jTableMusicas.convertRowIndexToModel(rows[i])));
                 }
-                return new ObjectTransferable(musicas, "crepz/array-musica");
+                return new ObjectTransferable(musicas, TipoTransferenciaMusica.JFILA_MUSICA);
 
             }
         });
@@ -581,6 +599,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jMenu1 = new javax.swing.JMenu();
         jMenuItemAbrirBiblioteca = new javax.swing.JMenuItem();
         jMenuItemImportarArquivos = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -916,7 +935,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         getContentPane().add(jPanel8, java.awt.BorderLayout.PAGE_START);
 
-        jMenu1.setText("Importar");
+        jMenu1.setText("Atividades");
 
         jMenuItemAbrirBiblioteca.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.ALT_MASK));
         jMenuItemAbrirBiblioteca.setText("Mostrar Biblioteca");
@@ -935,6 +954,15 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
             }
         });
         jMenu1.add(jMenuItemImportarArquivos);
+
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem2.setText("Sair");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
 
         jMenuBar1.add(jMenu1);
 
@@ -1008,7 +1036,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                     evt.consume();
                     break;
             }
-        } else if(evt.getModifiersEx()==KeyEvent.ALT_DOWN_MASK){
+        } else if (evt.getModifiersEx() == KeyEvent.ALT_DOWN_MASK) {
             // nada por enquanto
         } else {
             final String textoPesquisa = jTextFieldPesquisa.getText();
@@ -1037,13 +1065,13 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                 case KeyEvent.VK_BACK_SPACE:
                     if (textoPesquisa.isEmpty()) {
                         jTextFieldPesquisa.requestFocus();
-                    }else{
-                        jTextFieldPesquisa.setText(textoPesquisa.substring(0, textoPesquisa.length()-1));
+                    } else {
+                        jTextFieldPesquisa.setText(textoPesquisa.substring(0, textoPesquisa.length() - 1));
                     }
                     evt.consume();
                     break;
             }
-            
+
             if (evt.getKeyCode() > KeyEvent.VK_A && evt.getKeyCode() < KeyEvent.VK_Z) {
                 jTextFieldPesquisa.setText(String.valueOf(evt.getKeyChar()));
                 objModelMusicas.setFiltro(textoPesquisa);
@@ -1231,6 +1259,10 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         carregador.addToPlayList(lista);
     }//GEN-LAST:event_jMenuItemAdicionarListaExistenteActionPerformed
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        carregador.sair();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1264,6 +1296,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItemAbrirBiblioteca;
     private javax.swing.JMenuItem jMenuItemAdicionar;
     private javax.swing.JMenuItem jMenuItemAdicionarListaExistente;

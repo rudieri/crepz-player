@@ -105,7 +105,7 @@ public class PlayMusicaBD {
 
         SQL sql = new SQL();
         sql.add("UPDATE " + TBL);
-        sql.add("SET playlist = :playlist, id_musica = :id_musica, seq = :seq,              ");
+        sql.add("SET playlist = :playlist, musica = :musica, seq = :seq,              ");
         sql.add("WHERE id = :id ");
 
         sql.setParam("id", playMusica.getId());
@@ -129,7 +129,26 @@ public class PlayMusicaBD {
         sql.add("DELETE FROM " + TBL);
         sql.add("WHERE id = :id ");
 
-        sql.setParam("id", playMusica.getMusica().getId());
+        sql.setParam("id", playMusica.getId());
+
+        return t.executeUpdate(sql.getSql());
+    }
+    /**
+     * Método que tenta excluir um objeto Musica.
+     *
+     *
+     * @param musica Contendo a musica.
+     * @param t Contendo a transação.
+     * @return int Contendo o numero de linhas afetadas.
+     */
+    public static int excluirPelaBk(PlayMusica playMusica, Transacao t) throws Exception {
+        SQL sql = new SQL();
+        sql.add("DELETE FROM " + TBL);
+        sql.add("WHERE playlist = :playlist  ");
+        sql.add("AND musica = :musica");
+
+        sql.setParam("playlist", playMusica.getPlaylist().getId());
+        sql.setParam("musica", playMusica.getMusica().getId());
 
         return t.executeUpdate(sql.getSql());
     }
@@ -280,6 +299,25 @@ public class PlayMusicaBD {
         try {
             t.begin();
             int r = excluir(playMusica, t);
+            t.commit();
+            return r;
+        } catch (Exception ex) {
+            t.rollback();
+            throw ex;
+        }
+    }
+    /**
+     * Método que tenta excluir um objeto Musica.
+     *
+     *
+     * @param musica Contendo a musica.
+     * @return int Contendo o numero de linhas afetadas.
+     */
+    public static int excluirPelaBk(PlayMusica playMusica) throws Exception {
+        Transacao t = new Transacao();
+        try {
+            t.begin();
+            int r = excluirPelaBk(playMusica, t);
             t.commit();
             return r;
         } catch (Exception ex) {

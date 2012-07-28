@@ -11,7 +11,8 @@ package com.config.constantes;
 public enum TelaPadrao {
     J_PRINCIPAL("Tela Inicial"),
     J_MINI("Modo Miniatura"),
-    J_FILA("Fila de Reprodução");
+    J_FILA("Fila de Reprodução"),
+    COMO_ESTAVA("Onde estava quando fechei");
 
     private final  String nomeFake;
 

@@ -4,22 +4,22 @@
  */
 package com.main;
 
-import com.main.gui.Aguarde;
-import com.main.gui.JBiBlioteca;
-import com.main.gui.JMini;
-import com.main.gui.JPrincipal;
-import com.playlist.JPlayList;
-import com.musica.Musiquera.PropriedadesMusica;
 import com.config.Configuracaoes;
 import com.config.constantes.TelaPadrao;
 import com.fila.JFilaReproducao;
 import com.graficos.Icones;
 import com.hotkey.linux.Ouvinte;
+import com.main.gui.Aguarde;
+import com.main.gui.JBiBlioteca;
+import com.main.gui.JMini;
+import com.main.gui.JPrincipal;
 import com.melloware.jintellitype.JIntellitype;
 import com.musica.LinhaDoTempo;
 import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.Musiquera;
+import com.musica.Musiquera.PropriedadesMusica;
+import com.playlist.JPlayList;
 import com.utils.Warning;
 import java.awt.SystemTray;
 import java.awt.Window;
@@ -49,8 +49,6 @@ public final class Carregador {
     private final JPlayList playList;
     private final JBiBlioteca biblioteca;
     private CrepzTray crepzTray;
-    private boolean random;
-    private boolean repeat = false;
     public final Icones icones;
     private FonteReproducao fonteReproducao;
 
@@ -86,9 +84,6 @@ public final class Carregador {
                 if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
                     return filaReproducao.getProxima();
                 } else {
-                    if (playList.isRandom() != random) {
-                        playList.setAleatorio(random);
-                    }
                     return playList.getProxima();
                 }
             }
@@ -98,7 +93,6 @@ public final class Carregador {
                 if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
                     return filaReproducao.getAnterior();
                 } else {
-                    playList.setAleatorio(random);
                     return playList.getAnterior();
                 }
             }
@@ -158,6 +152,9 @@ public final class Carregador {
     public void setFonteReproducao(FonteReproducao fonteReproducao) {
         this.fonteReproducao = fonteReproducao;
         LinhaDoTempo.setAtiva(fonteReproducao != FonteReproducao.PLAY_LIST);
+        if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
+            telaPadrao = TelaPadrao.J_FILA;
+        }
     }
 
     public static void startBanco() {
@@ -184,6 +181,9 @@ public final class Carregador {
                 break;
             case J_PRINCIPAL:
                 setPrincipalComoBase();
+                break;
+            case COMO_ESTAVA:
+                abrirUltimaConfiguracao();
                 break;
         }
     }
@@ -240,6 +240,17 @@ public final class Carregador {
         return new Notificavel[]{filaReproducao, principal, mini};
     }
 
+    private void abrirUltimaConfiguracao() {
+        principal.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PRINCIPAL));
+        mini.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_MINI));
+        playList.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PLAYLIST));
+        biblioteca.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_BIBLIOTECA));
+        filaReproducao.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_FILA));
+        playList.setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
+        setFonteReproducao((FonteReproducao) Configuracaoes.getEnum(Configuracaoes.CONF_FONTE_REPRODUCAO));
+        musiquera.tocarProxima();
+    }
+
     public void setMiniComoBase() {
         principal.dispose();
         filaReproducao.dispose();
@@ -285,9 +296,17 @@ public final class Carregador {
     }
 
     public void sair() {
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_PRINCIPAL, principal.isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_MINI, mini.isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, biblioteca.isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_FILA, filaReproducao.isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_PLAYLIST, playList.isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_LISTA_ABERTA, playList.getPlaylistAberta() == null ? -1 : playList.getPlaylistAberta().getId());
+        Configuracaoes.set(Configuracaoes.CONF_FONTE_REPRODUCAO, fonteReproducao);
         System.exit(0);
     }
 
+    // Salvar preferencias        
     private void createLog() {
         File mk = new File("nbproject");
         if (!mk.exists()) {
@@ -367,19 +386,19 @@ public final class Carregador {
     }
 
     public boolean isRandom() {
-        return random;
+        return Configuracaoes.getBoolean(Configuracaoes.CONF_RANDOM_ATIVO);
     }
 
     public void setRandom(boolean random) {
-        this.random = random;
+        Configuracaoes.set(Configuracaoes.CONF_RANDOM_ATIVO, random);
     }
 
     public boolean isRepeat() {
-        return repeat;
+        return Configuracaoes.getBoolean(Configuracaoes.CONF_REPEAT_ATIVO);
     }
 
     public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
+        Configuracaoes.set(Configuracaoes.CONF_REPEAT_ATIVO, repeat);
     }
 
     public static void main(String[] args) {
