@@ -55,7 +55,6 @@ public class PlayMusica {
      */
     public void setMusica(com.musica.Musica musica) {
         this.musica = musica;
-        this.id=musica.getId();
     }
 
     /**

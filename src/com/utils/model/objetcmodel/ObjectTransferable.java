@@ -4,6 +4,7 @@
  */
 package com.utils.model.objetcmodel;
 
+import com.utils.transferivel.TipoTransferenciaMusica;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -20,10 +21,10 @@ public class ObjectTransferable<E> implements Transferable {
     DataFlavor[] dataFlavors;
     private final E obj;
 
-    public ObjectTransferable(E obj, String nome) {
+    public ObjectTransferable(E obj, TipoTransferenciaMusica nome) {
         this.obj = obj;
         dataFlavors = new DataFlavor[2];
-        dataFlavors[0] = new DataFlavor(obj.getClass(), nome);
+        dataFlavors[0] = new DataFlavor(obj.getClass(), nome.getNome());
         try {
             dataFlavors[1] = new DataFlavor("text/plain");
 //            dataFlavors[2] = new DataFlavor("text/html");

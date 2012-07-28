@@ -1,7 +1,6 @@
 package com.main.gui;
 
 import com.conexao.BD;
-import com.config.GerenciadorConfig;
 import com.config.JConfiguracao;
 import com.help.JHelp;
 import com.help.JSobre;
@@ -47,7 +46,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private Musiquera musiquera;
     private int estado = 0;
     private JFileChooser jFileChooser = new JFileChooser();
-    GerenciadorConfig _conf = null;//new GerenciadorConfig(this, playList, biblioteca, jmini);
     private int volAnt;
     JConfiguracao configuracao;
     private final Carregador carregador;

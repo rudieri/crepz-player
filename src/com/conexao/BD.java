@@ -92,9 +92,6 @@ public class BD {
 
         if (primeiraVez) {
             primeiraVez = false;
-            if (System.getProperty("java.runtime.name").toString().indexOf("OpenJDK") > -1) {
-                JOptionPane.showMessageDialog(new JDialog(), "Sua Versão JAVA pode não ser compativel.", "DANGER", JOptionPane.ERROR_MESSAGE);
-            }
 
             System.out.println("Primeira Vez Testa Tabelas");
             Statement sti = con.createStatement();

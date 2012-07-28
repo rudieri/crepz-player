@@ -8,6 +8,7 @@ import com.config.constantes.AcaoPadraoFila;
 import com.config.constantes.AcoesFilaVazia;
 import com.config.constantes.AdicionarNaFilaVazia;
 import com.config.constantes.TelaPadrao;
+import com.main.Carregador;
 import com.musica.CacheDeMusica;
 import com.musica.Musica;
 import com.utils.FileUtils;
@@ -51,6 +52,33 @@ public class Configuracaoes {
     // Config 5
     public static final Byte CONF_ATALHOS_GLOBAIS_ATIVOS = 5;
     private static Boolean atalhosGlobaisAtivos = false;
+    // Config 6
+    public static final Byte CONF_RANDOM_ATIVO = 6;
+    private static Boolean randomAtivo = false;
+    // Config 7
+    public static final Byte CONF_REPEAT_ATIVO = 7;
+    private static Boolean repeatAtivo = false;
+    // Config 8
+    public static final Byte CONF_VISIB_PRINCIPAL = 8;
+    private static Boolean visibPrincipal = false;
+    // Config 9
+    public static final Byte CONF_VISIB_MINI = 9;
+    private static Boolean visibMini = false;
+    // Config 10
+    public static final Byte CONF_VISIB_PLAYLIST = 10;
+    private static Boolean visibPlayList = false;
+    // Config 11
+    public static final Byte CONF_VISIB_BIBLIOTECA = 11;
+    private static Boolean visibBiblioteca = false;
+    // Config 12
+    public static final Byte CONF_VISIB_FILA = 12;
+    private static Boolean visibFila = false;
+    // Config 13
+    public static final Byte CONF_LISTA_ABERTA = 13;
+    private static Integer listaAberta  = -1;
+    // Config 14
+    public static final Byte CONF_FONTE_REPRODUCAO = 14;
+    private static Carregador.FonteReproducao fonteReproducao  = Carregador.FonteReproducao.AVULSO;
     
     // lista de todas as configs
     private static final Object[] configs;
@@ -65,7 +93,16 @@ public class Configuracaoes {
             acoesFilaVazia,
             adicionarNaFilaVazia,
             telaPadrao,
-            atalhosGlobaisAtivos
+            atalhosGlobaisAtivos, 
+            randomAtivo,
+            repeatAtivo,
+            visibPrincipal,
+            visibMini,
+            visibPlayList,
+            visibBiblioteca,
+            visibFila,
+            listaAberta,
+            fonteReproducao
         
         };
 //        configs[CONF_PASTAS_SCANER] = pastasScaner;
@@ -141,7 +178,7 @@ public class Configuracaoes {
     public static boolean getBoolean(Byte index) {
         return (Boolean)configs[index];
     }
-
+    
     private static void ler() {
         try {
             if (!new File(ARQUIVO).exists()) {
