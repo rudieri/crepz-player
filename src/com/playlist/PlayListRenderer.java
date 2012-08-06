@@ -20,7 +20,7 @@ public class PlayListRenderer implements TableCellRenderer {
      * Método construtor.
      */
     public PlayListRenderer() {
-        jLista = new JLista(null, null);
+        jLista = new JLista();
     }
 
     /**

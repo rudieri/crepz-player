@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * JLista.java
  *
  * Created on 16/06/2010, 14:39:00
@@ -20,29 +15,47 @@ public class JLista extends javax.swing.JPanel {
 
     /**
      * Creates new form JLista
+     * <br/>Sendo que os valores para nome, artista e tempo
+     * do Construtor {@link JLista#JLista(java.lang.String, java.lang.String, java.lang.String)}
+     * são inicializados com null.
      */
-    public JLista(String n, String a) {
+    public JLista() {
+        this(null, null, null);
+        initComponents();
+    }
+
+    
+    
+    /**
+     * Creates new form JLista
+     * @param nome O texto que irá aparecer no label do nome
+     * @param artista O texto que irá aparecer no label do artista
+     * @param tempo O texto que irá aparecer no label do tempo
+     */
+    public JLista(String nome, String artista, String tempo) {
 
 
         initComponents();
-        jLabel1.setText(n);
-        jLabel2.setText(a);
+        jLabelNome.setText(nome);
+        jLabelArtista.setText(artista);
+        jLabelTempo.setText(tempo);
 
 
     }
     
     public void setMusica(Musica musica){
-        jLabel1.setText(musica.getNome());
-        jLabel2.setText(musica.getAutor());
+        jLabelNome.setText(musica.getNome());
+        jLabelArtista.setText(musica.getAutor());
+        jLabelTempo.setText(musica.getTempo().toString());
     }
 
     @Override
     public void setOpaque(boolean isOpaque) {
-        if (jLabel1 != null) {
-            jLabel1.setOpaque(isOpaque);
+        if (jLabelNome != null) {
+            jLabelNome.setOpaque(isOpaque);
         }
-        if (jLabel2 != null) {
-            jLabel2.setOpaque(isOpaque);
+        if (jLabelArtista != null) {
+            jLabelArtista.setOpaque(isOpaque);
         }
         super.setOpaque(isOpaque);
     }
@@ -56,28 +69,43 @@ public class JLista extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabelNome = new javax.swing.JLabel();
+        jLabelTempo = new javax.swing.JLabel();
+        jLabelArtista = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(238, 146, 54));
         setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.darkGray, java.awt.Color.darkGray, java.awt.Color.black, java.awt.Color.black)));
         setForeground(new java.awt.Color(0, 0, 204));
         setLayout(new java.awt.GridLayout(2, 0));
 
-        jLabel1.setBackground(new java.awt.Color(238, 146, 54));
-        jLabel1.setFont(new java.awt.Font("DejaVu Sans", 1, 11)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(49, 45, 31));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Nome da musica (se não tiver, aparece o nome do arquivo)");
-        add(jLabel1);
+        jPanel1.setOpaque(false);
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jLabel2.setBackground(new java.awt.Color(238, 146, 54));
-        jLabel2.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
-        jLabel2.setText("Artista que fez ou gravou a musica XD");
-        add(jLabel2);
+        jLabelNome.setBackground(new java.awt.Color(238, 146, 54));
+        jLabelNome.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
+        jLabelNome.setForeground(new java.awt.Color(49, 45, 31));
+        jLabelNome.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabelNome.setText("Nome da musica (se não tiver, aparece o nome do arquivo)");
+        jPanel1.add(jLabelNome, java.awt.BorderLayout.CENTER);
+
+        jLabelTempo.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        jLabelTempo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelTempo.setText("00:00:00");
+        jLabelTempo.setPreferredSize(new java.awt.Dimension(55, 16));
+        jPanel1.add(jLabelTempo, java.awt.BorderLayout.EAST);
+
+        add(jPanel1);
+
+        jLabelArtista.setBackground(new java.awt.Color(238, 146, 54));
+        jLabelArtista.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        jLabelArtista.setText("Artista que fez ou gravou a musica XD");
+        add(jLabelArtista);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabelArtista;
+    private javax.swing.JLabel jLabelNome;
+    private javax.swing.JLabel jLabelTempo;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

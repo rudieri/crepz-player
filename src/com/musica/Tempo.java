@@ -29,6 +29,10 @@ public class Tempo implements Serializable {
         return milissegundos;
     }
 
+    /**
+     Retorna a representação do tempo no formato hh:mm:ss, as horas ou minutos
+     * podem ser suprimidos caso seus valores forem (0) zero
+     */
     @Override
     public String toString() {
         return string;

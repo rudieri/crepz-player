@@ -283,6 +283,7 @@ public class JPlayList extends javax.swing.JDialog {
             }
         });
         jTable.setDropTarget(dropTargetPlayList);
+        jScrollPane.setDropTarget(dropTargetPlayList);
     }
 
     /**
@@ -585,6 +586,7 @@ public class JPlayList extends javax.swing.JDialog {
 
 
             t.commit();
+            limpar();
         } catch (Exception ex) {
             t.rollback();
             ex.printStackTrace();
@@ -1230,7 +1232,6 @@ public class JPlayList extends javax.swing.JDialog {
                 PlayMusicaBD.incluir(playMusica, t);
 
 
-                musica.setNumero(getUltimaPosicao());
                 Object[] row = new Object[1];
                 row[0] = musica;
                 if (posicaoInicial == -1 || posicaoInicial >= jTable.getRowCount()) {
@@ -1238,11 +1239,14 @@ public class JPlayList extends javax.swing.JDialog {
                     faltamTocar.add(musica);
                     total.add(musica);
                     pesquisa.add(musica);
+                    musica.setNumero(getUltimaPosicao());
                 }else{
                     ((DefaultTableModel) jTable.getModel()).insertRow(posicao, row);
                     faltamTocar.add(posicao, musica);
                     total.add(posicao, musica);
                     pesquisa.add(posicao, musica);
+                    musica.setNumero(posicao);
+                    posicao++;
                 }
             }
             t.commit();
