@@ -151,7 +151,7 @@ public class JSobre extends javax.swing.JDialog {
         // set the Quaqua Look and Feel in the UIManager
 
         try {
-            UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
         } catch (Exception ex) {
             ex.printStackTrace();

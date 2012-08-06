@@ -378,7 +378,7 @@ public final class Carregador {
 
         System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
         try {
-            UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
         } catch (Exception ex) {
             ex.printStackTrace();
