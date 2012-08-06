@@ -598,6 +598,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemAbrirBiblioteca = new javax.swing.JMenuItem();
+        jMenuItemMostrarPlayList = new javax.swing.JMenuItem();
         jMenuItemImportarArquivos = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
@@ -946,6 +947,15 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         });
         jMenu1.add(jMenuItemAbrirBiblioteca);
 
+        jMenuItemMostrarPlayList.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItemMostrarPlayList.setText("Mostrar Lista de Reprodução");
+        jMenuItemMostrarPlayList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemMostrarPlayListActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItemMostrarPlayList);
+
         jMenuItemImportarArquivos.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_MASK));
         jMenuItemImportarArquivos.setText("Importar Músicas...");
         jMenuItemImportarArquivos.addActionListener(new java.awt.event.ActionListener() {
@@ -1263,6 +1273,11 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         carregador.sair();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void jMenuItemMostrarPlayListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemMostrarPlayListActionPerformed
+        carregador.mostrarPlayList();
+        carregador.setFonteReproducao(Carregador.FonteReproducao.PLAY_LIST);
+    }//GEN-LAST:event_jMenuItemMostrarPlayListActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1308,6 +1323,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private javax.swing.JMenuItem jMenuItemFilaTocar;
     private javax.swing.JMenuItem jMenuItemImportarArquivos;
     private javax.swing.JMenuItem jMenuItemLimpar;
+    private javax.swing.JMenuItem jMenuItemMostrarPlayList;
     private javax.swing.JMenuItem jMenuItemPasta;
     private javax.swing.JMenuItem jMenuItemTocar;
     private javax.swing.JPanel jPanel1;
