@@ -21,7 +21,6 @@ public class JLista extends javax.swing.JPanel {
      */
     public JLista() {
         this(null, null, null);
-        initComponents();
     }
 
     
@@ -57,6 +56,9 @@ public class JLista extends javax.swing.JPanel {
         if (jLabelArtista != null) {
             jLabelArtista.setOpaque(isOpaque);
         }
+        if (jLabelTempo != null) {
+            jLabelTempo.setOpaque(isOpaque);
+        }
         super.setOpaque(isOpaque);
     }
 
@@ -79,6 +81,7 @@ public class JLista extends javax.swing.JPanel {
         setForeground(new java.awt.Color(0, 0, 204));
         setLayout(new java.awt.GridLayout(2, 0));
 
+        jPanel1.setBackground(new java.awt.Color(238, 146, 54));
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -87,8 +90,10 @@ public class JLista extends javax.swing.JPanel {
         jLabelNome.setForeground(new java.awt.Color(49, 45, 31));
         jLabelNome.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabelNome.setText("Nome da musica (se não tiver, aparece o nome do arquivo)");
+        jLabelNome.setOpaque(true);
         jPanel1.add(jLabelNome, java.awt.BorderLayout.CENTER);
 
+        jLabelTempo.setBackground(new java.awt.Color(238, 146, 54));
         jLabelTempo.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         jLabelTempo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelTempo.setText("00:00:00");
