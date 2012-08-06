@@ -680,7 +680,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
                 jPanel2MouseDragged(evt);
             }
         });
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 2, 0));
 
         jButton_Play.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/play.png"))); // NOI18N
         jButton_Play.addMouseListener(new java.awt.event.MouseAdapter() {

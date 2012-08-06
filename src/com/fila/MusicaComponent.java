@@ -17,21 +17,22 @@ import com.musica.Musica;
  * @author rudieri
  */
 public class MusicaComponent extends javax.swing.JPanel {
-    private final Musica musica;
+    private Musica musica;
 
-    /** Creates new form MusicaComponent */
-    public MusicaComponent(Musica musica) {
+    public MusicaComponent() {
         initComponents();
-        this.musica = musica;
-        jLabelTempo.setText(musica.getTempo().toString());
-        jLabelNome.setText(musica.getNome());
-//        jLabelAlbum.setText(musica.getAlbum());
-        jLabelArtista.setText("Por: "+musica.getAutor());
     }
-
     public Musica getMusica() {
         return musica;
     }
+
+    public void setMusica(Musica musica) {
+        this.musica = musica;
+        jLabelTempo.setText(musica.getTempo().toString());
+        jLabelNome.setText(musica.getNome());
+        jLabelArtista.setText("Por: "+musica.getAutor());
+    }
+    
 
 
     /** This method is called from within the constructor to
