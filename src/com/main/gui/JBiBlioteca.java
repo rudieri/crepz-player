@@ -1,32 +1,34 @@
 package com.main.gui;
 
-import com.main.gui.JMini;
-import com.main.gui.JPrincipal;
-import com.musica.Musiquera;
+import com.biblioteca.BibliotecalRenderer;
 import com.conexao.Transacao;
 import com.main.Carregador;
-import java.awt.Dimension;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import com.musica.JCapa;
-import com.biblioteca.BibliotecalRenderer;
-import com.utils.model.ModelReadOnly;
-import com.musica.Musica;
-import com.musica.MusicaBD;
-import com.musica.MusicaGerencia;
-import com.musica.MusicaSC;
+import com.musica.*;
 import com.utils.DiretorioUtils;
 import com.utils.JTrocarImagem;
+import com.utils.model.ModelReadOnly;
+import com.utils.model.objetcmodel.ObjectTransferable;
+import com.utils.transferivel.TipoTransferenciaMusica;
+import java.awt.Dimension;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * To change this template, choose Tools | Templates and open the template in
@@ -49,20 +51,122 @@ public class JBiBlioteca extends javax.swing.JDialog {
      */
     private JPrincipal principal;
     private JFileChooser jFileChooser = new JFileChooser();
-    private JMini mini;
     String genero = "";
     private Musiquera musiquera;
     private final Carregador carregador;
+    private DropTarget dropTargetBiblioteca;
 
     public JBiBlioteca(Musiquera mus, Carregador carregador) {
         initComponents();
         musiquera = mus;
         this.carregador = carregador;
+        inicializaDropTabela();
     }
 
     public void setVisible(boolean b, boolean a) {
         super.setVisible(b);
         super.setAlwaysOnTop(a);
+    }
+
+    private void inicializaDropTabela() {
+        jTable.setDragEnabled(true);
+        jTable.setTransferHandler(new TransferHandler(null) {
+
+            @Override
+            public int getSourceActions(JComponent c) {
+                return COPY_OR_MOVE;
+            }
+
+            @Override
+            protected Transferable createTransferable(JComponent c) {
+                int[] rows = jTable.getSelectedRows();
+                int[] cols = jTable.getSelectedColumns();
+                ArrayList<Musica> musicas = new ArrayList<Musica>(rows.length);
+                for (int i = 0; i < rows.length; i++) {
+                    if (jCheckBox_capa.isSelected()) {
+                        for (int j = 0; j < cols.length; j++) {
+                            int k = cols[j];
+
+                            JCapa capa = (JCapa) jTable.getModel().getValueAt(rows[i], k);
+                            MusicaSC filtro = new MusicaSC();
+                            // if (jPanelFiltrar.isVisible()) {
+                            filtro.setNome(capa.getTXT());
+                            filtro.setAutor(capa.getTXT());
+                            filtro.setAlbum(capa.getTXT());
+                            filtro.setGenero(capa.getTXT());
+                            initTabelaLista();
+                            try {
+                                musicas.addAll(MusicaBD.listar(filtro));
+                            } catch (Exception ex) {
+                                Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    } else {
+                        musicas.add((Musica) jTable.getModel().getValueAt(rows[i], jTable.getModel().getColumnCount() - 1));
+                    }
+                }
+                return new ObjectTransferable(musicas, TipoTransferenciaMusica.JBIBLIOTECA);
+
+            }
+        });
+
+        dropTargetBiblioteca = new DropTarget(jScrollPane, new DropTargetAdapter() {
+
+            @Override
+            public void drop(DropTargetDropEvent dtde) {
+                try {
+                    Transferable transferable = dtde.getTransferable();
+                    DataFlavor[] flavors = transferable.getTransferDataFlavors();
+
+                    //Windows
+                    if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                        ArrayList<File> arquivos = (ArrayList) transferable.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+                        importarArquivos(arquivos);
+                    } else {
+                        // Linux
+                        loop_flavor:
+                        for (int i = 0; i < flavors.length; i++) {
+                            if (flavors[i].isRepresentationClassReader()) {
+                                dtde.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
+
+                                Reader reader = flavors[i].getReaderForText(transferable);
+
+                                BufferedReader br = new BufferedReader(reader);
+                                ArrayList<File> arquivos = new ArrayList<File>(1);
+                                String linhaLida;
+                                while ((linhaLida = br.readLine()) != null) {
+                                    if (!linhaLida.isEmpty()) {
+                                        try {
+                                            arquivos.add(new File(new URI(linhaLida)));
+                                        } catch (URISyntaxException ex) {
+                                            Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                    }
+                                }
+                                importarArquivos(arquivos);
+                                break loop_flavor;
+                            }
+                        }
+
+                    }
+                } catch (UnsupportedFlavorException ex) {
+                    Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            @Override
+            public void dragEnter(DropTargetDragEvent evt) {
+                if (TipoTransferenciaMusica.forDataFlavor(evt.getCurrentDataFlavors()) == TipoTransferenciaMusica.JBIBLIOTECA) {
+                    evt.rejectDrag();
+                }else{
+                    evt.acceptDrag(DnDConstants.ACTION_COPY);
+                }
+            }
+        });
+        jTable.setDropTarget(dropTargetBiblioteca);
+        jScrollPane.setDropTarget(dropTargetBiblioteca);
     }
 
     /**
@@ -249,11 +353,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
                     t.begin();
                     File pasta = telaAbrirArquivo();
                     if (pasta != null) {
-                        long date = new Date().getTime();
-                        int total = DiretorioUtils.calculaQuantidadeArquivos(pasta);
-                        MusicaGerencia.count = 0;
-                        MusicaGerencia.mapearDiretorio(pasta, t, jProgressBar, total);
-                        System.out.println("Tempo decorrido: " + (new Date().getTime() - date));
+                        importarArquivos(pasta, t);
 
 
                     }
@@ -268,6 +368,28 @@ public class JBiBlioteca extends javax.swing.JDialog {
             }
         }).start();
 
+    }
+
+    private void importarArquivos(ArrayList<File> pasta) {
+        Transacao t = new Transacao();
+        try {
+            t.begin();
+            for (int i = 0; i < pasta.size(); i++) {
+                importarArquivos(pasta.get(i), t);
+            }
+            t.commit();
+        } catch (Exception ex) {
+            t.rollback();
+            Logger.getLogger(JBiBlioteca.class.getName()).log(Level.WARNING, "Erro ao importar arquivos arrastados: ", ex);
+        }
+    }
+
+    private void importarArquivos(File pasta, Transacao t) throws Exception {
+        long date = new Date().getTime();
+        int total = DiretorioUtils.calculaQuantidadeArquivos(pasta);
+        MusicaGerencia.count = 0;
+        MusicaGerencia.mapearDiretorio(pasta, t, jProgressBar, total);
+        System.out.println("Tempo decorrido: " + (new Date().getTime() - date));
     }
 
     public void resetText() {

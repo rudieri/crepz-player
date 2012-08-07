@@ -15,7 +15,8 @@ public enum TipoTransferenciaMusica implements Serializable {
 
     JFILA_MUSICA("crepz.fila-musica/array-musica"),
     JFILA_FILA("crepz.fila-fina/array-musica"),
-    JPLAY_LIST("crepz.playlist/array-musica");
+    JPLAY_LIST("crepz.playlist/array-musica"),
+    JBIBLIOTECA("crepz.biblioteca/array-musica");
     private String nome;
 
     private TipoTransferenciaMusica(String nome) {
