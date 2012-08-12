@@ -1,10 +1,10 @@
 package com.playlist;
 
 import com.musica.Musica;
+import com.utils.pele.ColorUtils;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -21,6 +21,7 @@ public class PlayListRenderer implements TableCellRenderer {
      */
     public PlayListRenderer() {
         jLista = new JLista();
+        jLista.setOpaque(true);
     }
 
     /**
@@ -33,20 +34,11 @@ public class PlayListRenderer implements TableCellRenderer {
             jLista.setMusica((Musica)value);
         }
         if (isSelected) {
-            jLista.setOpaque(false);
-            jLista.setForeground(table.getSelectionForeground());
-            jLista.setBackground(table.getSelectionBackground());
+            jLista.setForeground(ColorUtils.getFrenteTabelaSelecionada());
+            jLista.setBackground(ColorUtils.getFundoTabelaSelecionada());
         } else {
-            jLista.setOpaque(true);
-            jLista.setForeground((unselectedForeground != null) ? unselectedForeground : table.getForeground());
-            jLista.setBackground((unselectedBackground != null) ? unselectedBackground : table.getBackground());
-        }
-
-        if (hasFocus) {
-            if (table.isCellEditable(row, column)) {
-                jLista.setForeground(UIManager.getColor("Table.focusCellForeground"));
-                jLista.setBackground(UIManager.getColor("Table.focusCellBackground"));
-            }
+            jLista.setForeground(ColorUtils.getFrenteTabelaNaoSelecionada());
+            jLista.setBackground(ColorUtils.getFundoTabelaNaoSelecionada());
         }
         return jLista;
     }

@@ -11,6 +11,7 @@ import com.utils.Warning;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -126,6 +127,7 @@ public abstract class Musiquera implements BasicPlayerListener {
             this.musica = m;
             if (m == null) {
                 System.out.println("Musica não existe, nullPointer");
+                System.err.print(Arrays.toString(Thread.currentThread().getStackTrace()));
                 return false;
             }
             try {

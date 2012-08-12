@@ -75,7 +75,11 @@ public class JPlayList extends javax.swing.JDialog {
             if (jTable.getSelectedRow() == -1) {
                 return;
             }
-            jTable.scrollRectToVisible(jTable.getCellRect(jTable.getSelectedRow(), 0, false));
+            try{
+                jTable.scrollRectToVisible(jTable.getCellRect(jTable.getSelectedRow(), 0, false));
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
         }
     };
     private DropTarget dropTargetPlayList;
@@ -660,16 +664,8 @@ public class JPlayList extends javax.swing.JDialog {
         if (jf.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File f = jf.getSelectedFile();
             try {
-                String lido = new String(FileUtils.leArquivoCodificacao(f, "WINDOWS-1252")).replace("\r", "");
-                String paths[] = lido.split("\n");
-                File[] files = new File[paths.length];
-                for (int i = 0; i < paths.length; i++) {
-                    String path = paths[i];
-                    if (path.indexOf(":\\") != -1 || path.indexOf('/') == 0) {
-                        files[i] = new File(path.replace("\\\\", "/"));
-                    }
-                }
-                importarMusicas(files);
+                
+                importarMusicas(FileUtils.lerM3u(f));
             } catch (Exception ex) {
 
                 Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
@@ -1087,6 +1083,14 @@ public class JPlayList extends javax.swing.JDialog {
 
             transferFocus();
         } else {
+            if (playlist != null) {
+                playlist.setNome(jTextField_NomePlayList.getText());
+                try {
+                    PlaylistBD.alterar(playlist);
+                } catch (Exception ex) {
+                    Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             salvarPlaylist();
             jToggleButtonOpcoesLista.setSelected(false);
 

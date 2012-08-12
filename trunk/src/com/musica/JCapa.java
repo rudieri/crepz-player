@@ -1,82 +1,60 @@
-
 package com.musica;
 
+import com.biblioteca.Capa;
 import com.utils.SwapCapa;
-import java.awt.Color;
+import com.utils.pele.ColorUtils;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 
+public class JCapa extends javax.swing.JPanel implements Cloneable{
 
-/**
- * Classe que representa o Bico no PDV.
- */
-public class JCapa extends javax.swing.JPanel {
+    public JCapa() {
+        initComponents();
+    }
 
-
-    /** Método construtor. */
-      /** Creates new form JCapa */
-    private String img;
-    private  String titulo;
-    private int qtd;
-    public JCapa(String img, String titulo,Integer qtd) {
+    public void setCapa(Capa capa) {
+        jLabel_Qts.setText("Musicas :" + capa.getQtd());
+        jLabel_Titulo1.setText(capa.getTitulo());
         try {
-            initComponents();
-            this.img = img;
-            this.titulo = titulo;
-            this.qtd = qtd;
-            if(!(img == null)){
+            if (capa.getImg() != null) {
                 ImageIcon imgIcon = null;
-                if(SwapCapa.swap.get(img)!=null){
-                    imgIcon = SwapCapa.swap.get(img);
-                }else{
-                    BufferedImage bf = ImageIO.read(new File(img));
-                    if (bf!=null) {
+                if (SwapCapa.swap.get(capa.getImg()) != null) {
+                    imgIcon = SwapCapa.swap.get(capa.getImg());
+                } else {
+                    BufferedImage bf;
+                    bf = ImageIO.read(new File(capa.getImg()));
+                    if (bf != null) {
                         imgIcon = new javax.swing.ImageIcon(bf.getScaledInstance(80, 120, Image.SCALE_SMOOTH));
-                        SwapCapa.swap.put(img, imgIcon);
+                        SwapCapa.swap.put(capa.getImg(), imgIcon);
                     }
                 }
 
                 jLabel_Img.setIcon(imgIcon);
             }
-            jLabel_Titulo1.setText(titulo);
-            jLabel_Qts.setText("Musicas :" + qtd.toString());
-            this.setFocusable(false);
-            //        this.setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(JCapa.class.getName()).log(Level.SEVERE, null, ex);
         }
-        catch (Exception io){
-            System.out.println("Erro em :"+img);
-            io.printStackTrace();
-        }
-
     }
 
-    public String getImg(){
-        return img;
-    }
     public String getTXT(){
-        return titulo;
+        return jLabel_Titulo1.getText();
     }
 
-
-    public static void main(String[] args){
-        JDialog jDialog = new JDialog();
-        jDialog.add(new JCapa("/home/rudieri/Imagens/icones/digger_icon.png","Digger - The game", 16));
-        jDialog.setSize(300, 128);
-        jDialog.setVisible(true);
-    }
-
-    public void setSelecionado(boolean sel){
-        if(sel){
-            jLabel_Titulo1.setForeground(Color.red);
-        }else{
-            jLabel_Titulo1.setForeground(Color.BLACK);
+    public void setSelecionado(boolean sel) {
+        if (sel) {
+            jLabel_Titulo1.setForeground(ColorUtils.getFrenteTabelaSelecionada());
+            jLabel_Qts.setForeground(ColorUtils.getFrenteTabelaSelecionada());
+        } else {
+            jLabel_Titulo1.setForeground(ColorUtils.getFrenteTabelaNaoSelecionada());
+            jLabel_Qts.setForeground(ColorUtils.getFrenteTabelaNaoSelecionada());
         }
     }
-
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -100,10 +78,12 @@ public class JCapa extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(112, 91));
         setLayout(new java.awt.BorderLayout());
 
+        jPanel2.setOpaque(false);
         jPanel2.setLayout(new java.awt.BorderLayout());
 
         jPanel3.setMaximumSize(new java.awt.Dimension(80, 80));
         jPanel3.setMinimumSize(new java.awt.Dimension(80, 80));
+        jPanel3.setOpaque(false);
         jPanel3.setPreferredSize(new java.awt.Dimension(80, 80));
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
 
@@ -114,19 +94,26 @@ public class JCapa extends javax.swing.JPanel {
 
         jPanel2.add(jPanel3, java.awt.BorderLayout.WEST);
 
+        jPanel4.setOpaque(false);
         jPanel4.setLayout(new java.awt.GridLayout(3, 1, 5, 5));
 
+        jPanel5.setOpaque(false);
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         jLabel_Titulo1.setFont(new java.awt.Font("Comic Sans MS", 1, 11)); // NOI18N
         jLabel_Titulo1.setText("Titulo");
         jLabel_Titulo1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         jPanel5.add(jLabel_Titulo1, java.awt.BorderLayout.CENTER);
+
+        jPanel6.setOpaque(false);
         jPanel5.add(jPanel6, java.awt.BorderLayout.WEST);
 
         jPanel4.add(jPanel5);
 
+        jPanel7.setOpaque(false);
         jPanel7.setLayout(new java.awt.BorderLayout());
+
+        jPanel8.setOpaque(false);
         jPanel7.add(jPanel8, java.awt.BorderLayout.WEST);
 
         jLabel_Qts.setFont(new java.awt.Font("Comic Sans MS", 1, 11)); // NOI18N

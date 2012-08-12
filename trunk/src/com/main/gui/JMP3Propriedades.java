@@ -1,25 +1,20 @@
 package com.main.gui;
 
+import com.musica.Musica;
+import com.musica.MusicaBD;
+import com.musica.MusicaGerencia;
+import com.utils.pele.ColorUtils;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import com.musica.Musica;
-import com.musica.MusicaBD;
-import com.musica.MusicaGerencia;
-import java.io.IOException;
 import org.farng.mp3.MP3File;
 import org.farng.mp3.TagConstant;
 import org.farng.mp3.TagException;
 import org.farng.mp3.TagOptionSingleton;
 import org.farng.mp3.id3.ID3v1;
-
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 
 /*
  * JMP3Propriedades.java
@@ -72,7 +67,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
 
     }
 
-    public void setDadosv2() {
+    private void setDadosv2() {
         try {
             jTextField_Titulo.setText(mp3File.getID3v2Tag().getSongTitle());
             jTextField_Interp.setText(mp3File.getID3v2Tag().getLeadArtist());
@@ -124,7 +119,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
         }
     }
 
-    public void precisaCriar() {
+    private void precisaCriar() {
         //  if (mp3File.hasID3v1Tag()) {
         ID3v1 id = new ID3v1();
         id.setSongTitle(jTextField_Titulo.getText());
@@ -145,16 +140,10 @@ public class JMP3Propriedades extends javax.swing.JDialog {
         }
     }
 
-    public void alterarMusica() {
+    private void alterarMusica() {
         try {
-//            musica.setCaminho(MusicaGerencia.normalizarCaminhoArquivo(mp3File.getMp3file()));
-//            if (MusicaBD.existe(musica)) {
             MusicaGerencia.getMusica(musica, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
             MusicaBD.alterar(musica);
-//            } else {
-//                MusicaGerencia.getMusica(musica, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
-//                MusicaBD.incluir(musica);
-//        }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
             ex.printStackTrace();
@@ -353,38 +342,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         setMp3File();
     }//GEN-LAST:event_jButton1ActionPerformed
-    /**
-     * @param args the command line arguments
-     */
-//    public static void main(String args[]) {
-//        System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
-//
-//        // set the Quaqua Look and Feel in the UIManager
-//        try {
-//            UIManager.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-//
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//
-//            public void run() {
-//                try {
-//                    JMP3Propriedades dialog = new JMP3Propriedades(new javax.swing.JFrame(), true, new File("teste2.mp3"));
-//                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//
-//                        public void windowClosing(java.awt.event.WindowEvent e) {
-//                            System.exit(0);
-//                        }
-//                    });
-//                    dialog.setVisible(true);
-//                } catch (Exception ex) {
-//                    Logger.getLogger(JMP3Propriedades.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//        });
-//    }
+  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

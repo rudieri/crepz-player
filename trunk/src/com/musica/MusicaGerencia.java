@@ -7,6 +7,7 @@ package com.musica;
 import com.conexao.Transacao;
 import com.utils.BuscaGoogle;
 import com.utils.ComandosSO;
+import com.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -204,6 +205,16 @@ public class MusicaGerencia {
             Logger.getLogger(MusicaGerencia.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+    public static ArrayList<Musica> addFilesM3u(File m3uFile, Transacao t){
+        ArrayList<Musica> musicas = new ArrayList<Musica>();
+        if (m3uFile.getName().endsWith("m3u")) {
+            File[] arquivos = FileUtils.lerM3u(m3uFile);
+            for (File arquivo : arquivos) {
+                musicas.add(addFiles(arquivo, t));
+            }
+        }
+        return musicas;
     }
 
     @SuppressWarnings("AssignmentToMethodParameter")

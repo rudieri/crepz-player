@@ -17,6 +17,7 @@ import com.config.constantes.AcoesFilaVazia;
 import com.config.constantes.AdicionarNaFilaVazia;
 import com.main.Carregador;
 import com.main.Notificavel;
+import com.main.gui.JMP3Propriedades;
 import com.musica.*;
 import com.musica.Musiquera.PropriedadesMusica;
 import com.utils.ComandosSO;
@@ -25,9 +26,9 @@ import com.utils.model.ModelReadOnly;
 import com.utils.model.objetcmodel.ObjectTableModel;
 import com.utils.model.objetcmodel.ObjectTableModelListener;
 import com.utils.model.objetcmodel.ObjectTransferable;
+import com.utils.pele.ColorUtils;
 import com.utils.transferivel.TipoTransferenciaMusica;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -40,16 +41,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.TransferHandler;
+import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
@@ -189,6 +184,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         });
         jTableFila.setDefaultRenderer(Object.class, new TableRenderFila());
         jTableFila.setRowHeight(50);
+        jTableFila.getTableHeader().setVisible(false);
         // Código do Cão...
 
         jTableFila.setTransferHandler(new TransferHandler(null) {
@@ -217,11 +213,11 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                     Point location = dtde.getLocation();
                     int posicaoDestino = -1;
                     if (jTableFila.getSelectedRows().length > 0) {
-                         Point visibleLocation = jTableFila.getVisibleRect().getLocation();
+                        Point visibleLocation = jTableFila.getVisibleRect().getLocation();
                         visibleLocation.x += location.x;
                         visibleLocation.y += location.y;
                         posicaoDestino = jTableFila.rowAtPoint(visibleLocation);
-                        
+
                         if ((dtde.getSourceActions() == TransferHandler.COPY_OR_MOVE
                                 || location.y < jTableFila.getHeight())) {
 
@@ -243,7 +239,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
                     if (data != null && data instanceof Musica) {
                         if (posicaoDestino != -1) {
                             ((ModelReadOnly) jTableFila.getModel()).insertRow(posicaoDestino, new Object[]{data});
-                        }else{
+                        } else {
                             ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{data});
                         }
                     } else if (data != null && data instanceof ArrayList) {
@@ -353,7 +349,6 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         }
     }
 
-    
     private void addMusicasToFila(Object data, int posicao) {
         addMusicasToFila((ArrayList) data, posicao);
     }
@@ -361,12 +356,13 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private void addMusicasToFila(ArrayList<Musica> data) {
         addMusicasToFila(data, -1);
     }
+
     private void addMusicasToFila(ArrayList<Musica> data, int posicao) {
         for (int i = 0; i < data.size(); i++) {
             Musica musica = data.get(i);
             if (posicao == -1) {
                 ((ModelReadOnly) jTableFila.getModel()).addRow(new Object[]{musica});
-            }else{
+            } else {
                 ((ModelReadOnly) jTableFila.getModel()).insertRow(posicao, new Object[]{musica});
             }
         }
@@ -384,6 +380,30 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
             }
         });
         sorterMusicas = new TableRowSorter(objModelMusicas);
+        final Comparator comparator = new Comparator() {
+
+            @Override
+            public int compare(Object o1, Object o2) {
+                if (o1 instanceof Comparable) {
+                    return ((Comparable) o1).compareTo(o2);
+                } else {
+                    return o1.toString().compareTo(o2.toString());
+                }
+            }
+        };
+        for (int i = 0; i < jTableMusicas.getColumnCount(); i++) {
+            sorterMusicas.setComparator(i, comparator);
+        }
+        ColorUtils.registrar(jTableMusicas);
+        objModelMusicas.addTableModelListener(new TableModelListener() {
+
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                for (int i = 0; i < jTableMusicas.getColumnCount(); i++) {
+                    sorterMusicas.setComparator(i, comparator);
+                }
+            }
+        });
         jTableMusicas.setRowSorter(sorterMusicas);
         jTableMusicas.setTransferHandler(new TransferHandler(null) {
 
@@ -404,6 +424,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
             }
         });
         jTableMusicas.setDragEnabled(true);
+        jTableMusicas.setRowHeight(20);
     }
 
     private void atualizaTabelaMusica() {
@@ -562,7 +583,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jMenu3 = new javax.swing.JMenu();
         jMenuItemAdicionarListaNova = new javax.swing.JMenuItem();
         jMenuItemAdicionarListaExistente = new javax.swing.JMenuItem();
+        jMenuItemEditar = new javax.swing.JMenuItem();
         jFileChooserImportar = new javax.swing.JFileChooser();
+        jSplitPane1 = new javax.swing.JSplitPane();
         jPanelCentro = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -603,6 +626,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         jMenuItemFilaTocar.setMnemonic('R');
         jMenuItemFilaTocar.setText("Reproduzir");
@@ -704,6 +728,14 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jPopupMenuMusica.add(jMenu3);
 
+        jMenuItemEditar.setText("Propriedades");
+        jMenuItemEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemEditarActionPerformed(evt);
+            }
+        });
+        jPopupMenuMusica.add(jMenuItemEditar);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Fila de Reprodução");
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -713,11 +745,14 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         });
 
         jPanelCentro.setBorder(javax.swing.BorderFactory.createTitledBorder("Musicas"));
+        jPanelCentro.setOpaque(false);
         jPanelCentro.setLayout(new java.awt.BorderLayout());
 
+        jPanel2.setOpaque(false);
         jPanel2.setPreferredSize(new java.awt.Dimension(483, 32));
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.LINE_AXIS));
 
+        jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jPanel3.setPreferredSize(new java.awt.Dimension(483, 30));
@@ -782,6 +817,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jPanelCentro.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        jPanelStatus.setOpaque(false);
         jPanelStatus.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 2));
 
         jLabel2.setText("Numero de Músicas:");
@@ -792,9 +828,10 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jPanelCentro.add(jPanelStatus, java.awt.BorderLayout.PAGE_END);
 
-        getContentPane().add(jPanelCentro, java.awt.BorderLayout.CENTER);
+        jSplitPane1.setRightComponent(jPanelCentro);
 
         jPanel_Esquerdo.setBorder(javax.swing.BorderFactory.createTitledBorder("Fila de Reprodução"));
+        jPanel_Esquerdo.setOpaque(false);
         jPanel_Esquerdo.setPreferredSize(new java.awt.Dimension(250, 382));
         jPanel_Esquerdo.setLayout(new java.awt.BorderLayout());
 
@@ -830,14 +867,17 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jPanel_Esquerdo.add(jScrollPaneFila, java.awt.BorderLayout.CENTER);
 
+        jPanel6.setOpaque(false);
         jPanel6.setLayout(new javax.swing.BoxLayout(jPanel6, javax.swing.BoxLayout.Y_AXIS));
 
+        jPanelProgress.setOpaque(false);
         jPanelProgress.setPreferredSize(new java.awt.Dimension(148, 20));
         jPanelProgress.setLayout(new java.awt.BorderLayout());
         jPanelProgress.add(jProgressBarImportando, java.awt.BorderLayout.CENTER);
 
         jPanel6.add(jPanelProgress);
 
+        jPanel7.setOpaque(false);
         jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 2));
 
         jLabel3.setText("Músicas na Fila: ");
@@ -850,11 +890,15 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jPanel_Esquerdo.add(jPanel6, java.awt.BorderLayout.SOUTH);
 
-        getContentPane().add(jPanel_Esquerdo, java.awt.BorderLayout.WEST);
+        jSplitPane1.setLeftComponent(jPanel_Esquerdo);
 
+        getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
+        jPanel8.setOpaque(false);
         jPanel8.setLayout(new java.awt.BorderLayout());
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Tocando Agora..."));
+        jPanel5.setOpaque(false);
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         jLabelTocando.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
@@ -864,8 +908,10 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jPanel8.add(jPanel5, java.awt.BorderLayout.PAGE_START);
 
+        jPanel9.setOpaque(false);
         jPanel9.setLayout(new java.awt.BorderLayout());
 
+        jPanelControles.setOpaque(false);
         jPanelControles.setPreferredSize(new java.awt.Dimension(250, 36));
         jPanelControles.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 3, 2));
 
@@ -912,6 +958,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jPanel9.add(jPanelControles, java.awt.BorderLayout.WEST);
 
+        jPanel11.setOpaque(false);
         jPanel11.setLayout(new javax.swing.BoxLayout(jPanel11, javax.swing.BoxLayout.LINE_AXIS));
 
         jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
@@ -976,7 +1023,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edtar");
+        jMenu2.setText("Editar");
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
         jMenuItem1.setText("Configurações");
@@ -986,6 +1033,15 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
             }
         });
         jMenu2.add(jMenuItem1);
+
+        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItem3.setText("Tema");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem3);
 
         jMenuBar1.add(jMenu2);
 
@@ -1278,6 +1334,20 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
         carregador.setFonteReproducao(Carregador.FonteReproducao.PLAY_LIST);
     }//GEN-LAST:event_jMenuItemMostrarPlayListActionPerformed
 
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        carregador.mostrarModificadorDeTema();
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItemEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemEditarActionPerformed
+        try {
+            Musica musica = objModelMusicas.getItem(jTableMusicas.getSelectedRow());
+            new JMP3Propriedades(this, true, musica).setVisible(true);
+            objModelMusicas.atualizarItem(musica, jTableMusicas.getSelectedRow());
+        } catch (Exception ex) {
+            Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItemEditarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1312,10 +1382,12 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItemAbrirBiblioteca;
     private javax.swing.JMenuItem jMenuItemAdicionar;
     private javax.swing.JMenuItem jMenuItemAdicionarListaExistente;
     private javax.swing.JMenuItem jMenuItemAdicionarListaNova;
+    private javax.swing.JMenuItem jMenuItemEditar;
     private javax.swing.JMenuItem jMenuItemEmbaralhar;
     private javax.swing.JMenuItem jMenuItemFilaMoveBaixo;
     private javax.swing.JMenuItem jMenuItemFilaMoveCima;
@@ -1346,6 +1418,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneFila;
     private javax.swing.JSlider jSlider_Tempo;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTableFila;
     private javax.swing.JTable jTableMusicas;
     private javax.swing.JTextField jTextFieldPesquisa;

@@ -1,5 +1,6 @@
 package com.musica;
 
+import com.biblioteca.Capa;
 import com.conexao.SQL;
 import com.conexao.Transacao;
 import java.sql.ResultSet;
@@ -10,9 +11,11 @@ import java.util.ArrayList;
  * Classe responsável pela persistência de objetos Musica.
  */
 public class MusicaBD {
-    public static final String ASPAS = "<&aspas>";
 
-    /** Constante que define o nome da tabela. */
+    public static final String ASPAS = "<&aspas>";
+    /**
+     * Constante que define o nome da tabela.
+     */
     public static final String TBL = "musica";
 
     /**
@@ -117,7 +120,8 @@ public class MusicaBD {
     }
 
     /**
-     * Método que verifica pelo BK se o objeto Musica está cadastrado. Se estiver, carrega o ID do objeto.
+     * Método que verifica pelo BK se o objeto Musica está cadastrado. Se
+     * estiver, carrega o ID do objeto.
      *
      *
      * @param musica Contendo a musica.
@@ -201,7 +205,7 @@ public class MusicaBD {
         if (ehDiretorio) {
             sql.add("where caminho LIKE :path");
             sql.setParam("path", path.replace("'", ASPAS) + "%");
-        }else{
+        } else {
             sql.add("where caminho = :path");
             sql.setParam("path", path.replace("'", ASPAS));
         }
@@ -220,16 +224,19 @@ public class MusicaBD {
         musica.setAutor(rs.getString("autor"));
         musica.setGenero(rs.getString("genero"));
         musica.setAlbum(rs.getString("album"));
-        musica.setImg(rs.getString("img")==null?null:rs.getString("img").replace(ASPAS, "'"));
+        musica.setImg(rs.getString("img") == null ? null : rs.getString("img").replace(ASPAS, "'"));
         musica.setTempo(new Tempo(rs.getInt("tempo")));
         musica.setNumeroReproducoes(rs.getShort("nro_reproducoes"));
         musica.setDtModArquivo(rs.getLong("dt_mod_arquivo"));
     }
 
-    /** Método que retorna uma lista de Musicas de acordo com o filtro.
+    /**
+     * Método que retorna uma lista de Musicas de acordo com o filtro.
+     *
      * @param filtro Contendo o filtro.
      * @param t Contendo a transação.
-     * @return ArrayList Contendo uma lista de Musicas. */
+     * @return ArrayList Contendo uma lista de Musicas.
+     */
     public static ArrayList<Musica> listar(MusicaSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
             throw new Exception(" - Filtro não informado.");
@@ -248,17 +255,26 @@ public class MusicaBD {
             c++;
         }
         if (filtro.getAutor() != null && !filtro.getAutor().isEmpty()) {
-            sql.add("OR UCASE (autor) like :autor");
+            if (c > 0) {
+                sql.add("OR");
+            }
+            sql.add("UCASE (autor) like :autor");
             sql.setParam("autor", filtro.getAutor().toUpperCase() + "%");
             c++;
         }
         if (filtro.getAlbum() != null && !filtro.getAlbum().isEmpty()) {
-            sql.add("OR UCASE (album) like :album");
+            if (c > 0) {
+                sql.add("OR");
+            }
+            sql.add("UCASE (album) like :album");
             sql.setParam("album", filtro.getAlbum().toUpperCase() + "%");
             c++;
         }
         if (filtro.getGenero() != null && !filtro.getGenero().isEmpty()) {
-            sql.add("OR UCASE (genero) like :genero");
+            if (c > 0) {
+                sql.add("OR");
+            }
+            sql.add("UCASE (genero) like :genero");
             sql.setParam("genero", filtro.getGenero().toUpperCase() + "%");
             c++;
         }
@@ -336,10 +352,10 @@ public class MusicaBD {
             ArrayList lista = new ArrayList();
             while (rs.next()) {
                 final String enderecoCapa = rs.getString("capa");
-                if (enderecoCapa==null) {
+                if (enderecoCapa == null) {
                     continue;
                 }
-                JCapa capa = new JCapa(enderecoCapa.replace(ASPAS, "'"), rs.getString("agrup"), rs.getInt("m"));
+                Capa capa = new Capa(enderecoCapa.replace(ASPAS, "'"), rs.getString("agrup"), rs.getInt("m"));
 
                 lista.add(capa);
             }
@@ -349,9 +365,10 @@ public class MusicaBD {
         }
     }
 
-    /*#########################################
-    METODOS SEM TRANSACAO
-     *#########################################*/
+    /*
+     * ######################################### METODOS SEM TRANSACAO
+     *#########################################
+     */
     /**
      * Método que tenta incluir um objeto Musica.
      *
@@ -413,7 +430,8 @@ public class MusicaBD {
     }
 
     /**
-     * Método que verifica pelo BK se o objeto Musica está cadastrado. Se estiver, carrega o ID do objeto.
+     * Método que verifica pelo BK se o objeto Musica está cadastrado. Se
+     * estiver, carrega o ID do objeto.
      *
      *
      * @param musica Contendo a musica.
@@ -452,9 +470,12 @@ public class MusicaBD {
         }
     }
 
-    /** Método que retorna uma lista de Musicas de acordo com o filtro.
+    /**
+     * Método que retorna uma lista de Musicas de acordo com o filtro.
+     *
      * @param filtro Contendo o filtro.
-     * @return ArrayList Contendo uma lista de Musicas. */
+     * @return ArrayList Contendo uma lista de Musicas.
+     */
     public static ArrayList<Musica> listar(MusicaSC filtro) throws Exception {
         Transacao t = new Transacao();
         try {

@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,6 +25,7 @@ public class FileUtils {
 
     /**
      * Metodo Que le um Arquivo é retorna seu conteudo Generico
+     *
      * @param arquivo
      * @return
      * @throws Exception
@@ -34,6 +37,7 @@ public class FileUtils {
 
     /**
      * Metodo Que grava um Arquivo Generico
+     *
      * @param conteudo
      * @param destino
      * @throws Exception
@@ -44,6 +48,7 @@ public class FileUtils {
 
     /**
      * Metodo Que grava um Arquivo Generico
+     *
      * @param conteudo
      * @param destino
      * @param addFinal
@@ -56,6 +61,7 @@ public class FileUtils {
 
     /**
      * Le Arquivo Passando Codificação
+     *
      * @param arquivo
      * @param codificacao
      * @return
@@ -77,7 +83,7 @@ public class FileUtils {
         return stringBuilder;
     }
 
-      public static StringBuilder leArquivoCodificacao(InputStream arquivo, String codificacao) throws Exception {
+    public static StringBuilder leArquivoCodificacao(InputStream arquivo, String codificacao) throws Exception {
         StringBuilder stringBuffer = new StringBuilder(1024);
 
         InputStreamReader in = new InputStreamReader(arquivo, codificacao);
@@ -92,6 +98,7 @@ public class FileUtils {
 
     /**
      * Grava Arquivo passando Codificacao
+     *
      * @param conteudo
      * @param destino
      * @param codificacao
@@ -112,6 +119,24 @@ public class FileUtils {
         escritorBuf.close();
         escritor.close();
         return true;
+    }
+
+    public static File[] lerM3u(File m3uFile) {
+        try {
+            String lido = new String(FileUtils.leArquivoCodificacao(m3uFile, "WINDOWS-1252")).replace("\r", "");
+            String paths[] = lido.split("\n");
+            File[] files = new File[paths.length];
+            for (int i = 0; i < paths.length; i++) {
+                String path = paths[i];
+                if (path.indexOf(":\\") != -1 || path.indexOf('/') == 0) {
+                    files[i] = new File(path.replace("\\\\", "/"));
+                }
+            }
+            return files;
+        } catch (Exception ex) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+            return new File[0];
+        }
     }
 
     public static void main(String arqs[]) {
