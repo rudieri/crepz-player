@@ -13,6 +13,7 @@ import com.musica.MusicaGerencia;
 import com.musica.Musiquera;
 import com.musica.Musiquera.PropriedadesMusica;
 import com.utils.Warning;
+import com.utils.pele.JPele;
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
@@ -424,6 +425,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
+        jMenuItem9 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
@@ -887,6 +889,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         });
         jMenu2.add(jMenuItem8);
 
+        jMenuItem9.setText("Tema");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem9);
+
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Sobre");
@@ -1263,6 +1273,10 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         }
     }//GEN-LAST:event_jLabelFilaReproducaoMouseClicked
 
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        carregador.mostrarModificadorDeTema();
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1308,6 +1322,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JMenuItem jMenuItem_Arquivo;
     private javax.swing.JMenuItem jMenuItem_Arquivo1;
     private javax.swing.JPanel jPanel1;

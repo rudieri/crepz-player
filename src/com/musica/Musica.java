@@ -26,6 +26,7 @@ public class Musica implements Serializable, Filtravel {
     private String album;
     @ObjetoTabela(nomeColuna = "Tempo")
     private Tempo tempo;
+    @ObjetoTabela(nomeColuna = "Nº Reproduções")
     private short numeroReproducoes = 0;
     private String caminho;
     private long dtModArquivo;

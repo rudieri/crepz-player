@@ -79,6 +79,12 @@ public class Configuracaoes {
     // Config 14
     public static final Byte CONF_FONTE_REPRODUCAO = 14;
     private static Carregador.FonteReproducao fonteReproducao  = Carregador.FonteReproducao.AVULSO;
+    // Config 15
+    public static final Byte CONF_PELES = 15;
+    private static ArrayList<String> peles  = new ArrayList<String>();
+    // Config 15
+    public static final Byte CONF_PELE_ATUAL = 16;
+    private static String peleAtual  = "";
     
     // lista de todas as configs
     private static final Object[] configs;
@@ -102,7 +108,9 @@ public class Configuracaoes {
             visibBiblioteca,
             visibFila,
             listaAberta,
-            fonteReproducao
+            fonteReproducao,
+            peles,
+            peleAtual
         
         };
 //        configs[CONF_PASTAS_SCANER] = pastasScaner;
@@ -199,7 +207,10 @@ public class Configuracaoes {
                 if (myConfig instanceof String) {
                     configs[Integer.parseInt(tokens[0])] = tokens[1];
                 } else if (myConfig instanceof ArrayList) {
-                    String[] valores = tokens[1].split(";");
+                    if (tokens[1].trim().isEmpty()) {
+                        continue;
+                    }
+                    String[] valores = tokens[1].split(",");
                     ((ArrayList) myConfig).clear();
                     ((ArrayList) myConfig).addAll(Arrays.asList(valores));
                 } else if (myConfig instanceof Musica) {

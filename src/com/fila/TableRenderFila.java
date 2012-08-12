@@ -14,19 +14,25 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author rudieri
  */
-public class TableRenderFila implements  TableCellRenderer{
+public class TableRenderFila implements TableCellRenderer {
+
     private MusicaComponent mc = new MusicaComponent();
     private JLabel label = new JLabel();
+
+    public TableRenderFila() {
+        mc.setOpaque(true);
+    }
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value instanceof Musica) {
-             mc.setMusica((Musica) value);
+            mc.setMusica((Musica) value);
+            mc.setSelecionado(isSelected);
             return mc;
-        }else{
+        } else {
             label.setText(value.toString());
             return label;
         }
 
     }
-
 }

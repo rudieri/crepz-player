@@ -82,6 +82,8 @@ public class Scan {
                         Thread.sleep(tempoSegudos * ESCALA_TEMPO);
                         if (getPastas().isEmpty()) {
                             continue;
+                        }else{
+                            System.out.println("Tenho " + getPastas().size() + " configuradas...");
                         }
                         t.begin();
                         for (int i = 0; i < getPastas().size(); i++) {

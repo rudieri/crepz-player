@@ -21,6 +21,8 @@ import com.musica.Musiquera;
 import com.musica.Musiquera.PropriedadesMusica;
 import com.playlist.JPlayList;
 import com.utils.Warning;
+import com.utils.pele.ColorUtils;
+import com.utils.pele.JPele;
 import java.awt.SystemTray;
 import java.awt.Window;
 import java.io.File;
@@ -48,6 +50,7 @@ public final class Carregador {
     private JFilaReproducao filaReproducao;
     private final JPlayList playList;
     private final JBiBlioteca biblioteca;
+    private final JPele jPele;
     private CrepzTray crepzTray;
     public final Icones icones;
     private FonteReproducao fonteReproducao;
@@ -81,6 +84,7 @@ public final class Carregador {
 
             @Override
             public Musica getNextMusica() {
+                System.out.println("Buscando música em: " + fonteReproducao);
                 if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
                     return filaReproducao.getProxima();
                 } else {
@@ -130,6 +134,7 @@ public final class Carregador {
         mini = new JMini(musiquera, this);
         playList = new JPlayList(musiquera, this);
         biblioteca = new JBiBlioteca(musiquera, this);
+        jPele = new JPele();
         filaReproducao = new JFilaReproducao(musiquera, this);
 
         try {
@@ -143,10 +148,21 @@ public final class Carregador {
         startMultimidiaKeys();
         aguarde.dispose();
         // Deixa a tela padrão visível.
+        ColorUtils.registrar(mini);
+        ColorUtils.registrar(playList);
+        ColorUtils.registrar(principal);
+        ColorUtils.registrar(filaReproducao);
+        ColorUtils.registrar(biblioteca);
+        ColorUtils.registrar(jPele);
+        ColorUtils.aplicarTema();
         setTelaBase(telaPadrao);
 
         scan = new Scan();
 
+    }
+    
+    public void mostrarModificadorDeTema(){
+        jPele.setVisible(true);
     }
 
     public void setFonteReproducao(FonteReproducao fonteReproducao) {
@@ -342,7 +358,9 @@ public final class Carregador {
 
     private void mostrarIconeTray() {
         if (SystemTray.isSupported()) {
-            crepzTray.toTray();
+            if (!crepzTray.isOnTray()) {
+                crepzTray.toTray();
+            }
         }
     }
 
