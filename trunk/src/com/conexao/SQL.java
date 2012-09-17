@@ -1,50 +1,50 @@
 package com.conexao;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
-import java.text.*;
 
-/** Classe que representa uma instruÁ„o SQL. */
+/** Classe que representa uma instru√ß√£o SQL. */
 public final class SQL {
 
-    /** Atributo que mantÈm a instruÁ„o SQL. */
+    /** Atributo que mant√©m a instru√ß√£o SQL. */
     private StringBuilder sql = new StringBuilder(50);
-    /** Atributo que mantÈm uma lista com todos os par‚metros e seus valores do SQL em quest„o. */
+    /** Atributo que mant√©m uma lista com todos os par√¢metros e seus valores do SQL em quest√£o. */
     private HashMap params = new HashMap(8);
-    /** Atributo que mantÈm o ultimo sqlOK. */
+    /** Atributo que mant√©m o ultimo sqlOK. */
     private StringBuilder sqlOk;
-    /** Atributo que mantÈm a flag modificado. */
+    /** Atributo que mant√©m a flag modificado. */
     private boolean modificado;
     private static final SimpleDateFormat MMddyyyy = new SimpleDateFormat("MM/dd/yyyy");
     private static final SimpleDateFormat MMddyyyyHHmmss = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
-    /** MÈtodo que retorna um SQL sem transaÁ„o. */
+    /** M√©todo que retorna um SQL sem transa√ß√£o. */
     public static SQL getInstanciaSemTransacao() {
         return new SQL();
     }
 
-    /** MÈtodo construtor principal. */
+    /** M√©todo construtor principal. */
     public SQL() {
     }
 
-    /** MÈtodo construtor que inicializa a instruÁ„o SQL.*/
+    /** M√©todo construtor que inicializa a instru√ß√£o SQL.*/
     public SQL(String sql) {
         add(sql);
     }
 
-    /** MÈtodo que limpa o sql atual.*/
+    /** M√©todo que limpa o sql atual.*/
     public void clear() {
         modificado = true;
         sql = new StringBuilder(50);
     }
 
-    /** MÈtodo que adiciona uma parte ou todo a instruÁ„o SQL.
-     * @param sql Contendo parte ou a instruÁ„o SQL.*/
+    /** M√©todo que adiciona uma parte ou todo a instru√ß√£o SQL.
+     * @param sql Contendo parte ou a instru√ß√£o SQL.*/
     public void add(String sql) {
         modificado = true;
         this.sql.append(sql.trim()).append("\n");
     }
 
-    /** MÈtodo que seta valor no parametro.
+    /** M√©todo que seta valor no parametro.
      * @param param Contem o parametro a ser setado o valor.
      * @param value Contem o valor a ser atribuido ao parametro, do tipo Object. */
     public void setParam(String param, Object value) throws Exception {
@@ -58,22 +58,22 @@ public final class SQL {
         String v;
         if (value == null) {
             v = "null";
-        } else if (value instanceof String) {
+        } else if (value.getClass() == String.class) {
             v = "'" + value.toString().replaceAll("'", "") + "'";
         } else if (value instanceof Integer || value instanceof Double || value instanceof Float || value instanceof Long) {
             v = value.toString();
-        } else if (value instanceof java.sql.Date || value instanceof java.util.Date) {
+        } else if (value.getClass() == java.sql.Date.class || value.getClass() == java.util.Date.class) {
             v = "'" + dateToString(value, MMddyyyy) + "'";
-        } else if (value instanceof java.sql.Timestamp) {
+        } else if (value.getClass() == java.sql.Timestamp.class) {
             v = "'" + dateToString(value, MMddyyyyHHmmss) + "'";
         } else {
-            throw new Exception("classe " + value.getClass().getName() + " n„o tratada em SQL.");
+            throw new Exception("classe " + value.getClass().getName() + " n√£o tratada em SQL.");
         }
 
         params.put(p, v);
     }
 
-    /** MÈtodo que seta valor ao parametro.
+    /** M√©todo que seta valor ao parametro.
      * @param param Contem o parametro a ser setado o valor.
      * @param value Contem o valor a ser atribuido ao parametro, do tipo int. */
     public void setParam(String param, int value) throws Exception {
@@ -86,7 +86,7 @@ public final class SQL {
         params.put(p, Long.toString(value));
     }
 
-    /** MÈtodo que seta valor ao parametro.
+    /** M√©todo que seta valor ao parametro.
      * @param param Contem o parametro a ser setado o valor.
      * @param value Contem o valor a ser atribuido ao parametro, do tipo float. */
     public void setParam(String param, float value) throws Exception {
@@ -94,7 +94,7 @@ public final class SQL {
         params.put(p, Float.toString(value));
     }
 
-    /** MÈtodo que seta valor ao parametro.
+    /** M√©todo que seta valor ao parametro.
      * @param param Contem o parametro a ser setado o valor.
      * @param value Contem o valor a ser atribuido ao parametro, do tipo double. */
     public void setParam(String param, double value) throws Exception {
@@ -102,7 +102,7 @@ public final class SQL {
         params.put(p, Double.toString(value));
     }
 
-    /** MÈtodo que retorna o SQL original, sem os valores dos par‚metros.
+    /** M√©todo que retorna o SQL original, sem os valores dos par√¢metros.
      * @return String Contendo o sql original. */
     public String getSqlOriginal() {
         return sql.toString();
@@ -141,12 +141,12 @@ public final class SQL {
         return sql2;
     }
 
-    /** MÈtodo que imprime o sql na saida padrao. */
+    /** M√©todo que imprime o sql na saida padrao. */
     public void print() {
         System.out.println(getSql());
     }
 
-    /** MÈtodo que retorna uma data como uma String. */
+    /** M√©todo que retorna uma data como uma String. */
     private String dateToString(Object data, SimpleDateFormat formato) {
         return formato.format(data);
     }

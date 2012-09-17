@@ -26,7 +26,7 @@ public class Musica implements Serializable, Filtravel {
     private String album;
     @ObjetoTabela(nomeColuna = "Tempo")
     private Tempo tempo;
-    @ObjetoTabela(nomeColuna = "Nº Reproduções")
+    @ObjetoTabela(nomeColuna = "NÂº ReproduÃ§Ãµes")
     private short numeroReproducoes = 0;
     private String caminho;
     private long dtModArquivo;
@@ -35,7 +35,7 @@ public class Musica implements Serializable, Filtravel {
     private int number;
 
     /**
-     Limitar o número de objetos, para usar melhor a cache em {@link CacheDeMusica}
+     Limitar o nÃºmero de objetos, para usar melhor a cache em {@link CacheDeMusica}
      */
     protected Musica() {
     }
@@ -148,9 +148,9 @@ public class Musica implements Serializable, Filtravel {
     }
 
     /**
-     * Obs: Faça um replace('\\','/') em nahorade importar
+     * Obs: FaÃ§a um replace('\\','/') em nahorade importar
      *
-     * @param img O endereço da imagem
+     * @param img O endereÃ§o da imagem
      */
     public void setImg(String img) {
         this.img = img;
@@ -214,7 +214,7 @@ public class Musica implements Serializable, Filtravel {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof Musica) {
+        if (obj != null && obj.getClass() == Musica.class) {
             return ((Musica) obj).id == id;
         }
         return false;

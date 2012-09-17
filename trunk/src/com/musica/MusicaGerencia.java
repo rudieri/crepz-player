@@ -144,7 +144,7 @@ public class MusicaGerencia {
             if (musica != null) {
                 container.add(musica);
                 jProgressBar.setValue(container.size() * 100 / total);
-                jProgressBar.setString(container.size() + " m˙sicas de " + total + " arquivos.");
+                jProgressBar.setString(container.size() + " m√∫sicas de " + total + " arquivos.");
             } else {
             }
         }
@@ -227,7 +227,7 @@ public class MusicaGerencia {
 
                 String caminho = file.getAbsolutePath().trim().replace('\\', '/');
                 if (listaNegra.contains(caminho)) {
-                    System.out.println("N„o importado, pois est· na lista tempor·ria de regeiÁ„o: " + caminho);
+                    System.out.println("N√£o importado, pois est√° na lista tempor√°ria de regei√ß√£o: " + caminho);
                     return null;
                 }
                 MP3File mp3;
@@ -292,7 +292,7 @@ public class MusicaGerencia {
             }
             return null;
         } else {
-//            System.out.println(file.getName() + " N„o È um tipo v·lido.");
+//            System.out.println(file.getName() + " N√£o √© um tipo v√°lido.");
             return null;
         }
 
@@ -379,7 +379,7 @@ public class MusicaGerencia {
             return "";
         }
 
-        String ret = st.replaceAll("[^0-9a-zA-Z/_.:;Á\\-+()*&@#$!%·‚„ÈÍÌÙıÛ˙ ]", "");
+        String ret = st.replaceAll("[^0-9a-zA-Z/_.:;√ß\\-+()*&@#$!%√°√¢√£√©√™√≠√¥√µ√≥√∫ ]", "");
         return ret;
     }
 }

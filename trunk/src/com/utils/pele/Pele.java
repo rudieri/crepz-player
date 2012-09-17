@@ -4,11 +4,7 @@
  */
 package com.utils.pele;
 
-import com.sun.java.swing.plaf.windows.DesktopProperty;
 import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.SystemColor;
-import java.awt.Toolkit;
 
 /**
  *
@@ -16,6 +12,7 @@ import java.awt.Toolkit;
  */
 public class Pele {
 
+    public static final Pele PELE_PADRAO = new Pele("Padrão");
     private Color frenteTabelaSelecionada;
     private Color frenteTabelaNaoSelecionada;
     private Color fundoTabelaSelecionada;
@@ -28,12 +25,12 @@ public class Pele {
         this.nome = nome;
         
 
-        fundoTabelaNaoSelecionada = new Color(238, 146, 54, 255);
+        fundoTabelaNaoSelecionada =  Color.BLACK;
         frenteTabelaNaoSelecionada = Color.DARK_GRAY;
-        fundoTabelaSelecionada = Color.DARK_GRAY;
-        frenteTabelaSelecionada = new Color(238, 146, 16, 205);
-        fundoJanela = Color.DARK_GRAY;
-        frenteJanela= Color.WHITE;
+        fundoTabelaSelecionada = new Color(255, 51, 0, 255);
+        frenteTabelaSelecionada = Color.BLACK;
+        fundoJanela = Color.BLACK;
+        frenteJanela= Color.BLUE;
     }
 
     public Color getFrenteTabelaNaoSelecionada() {
@@ -91,9 +88,12 @@ public class Pele {
     
     public static Pele carregarPele(String configs){
         int idxFimNome = configs.indexOf(" :=>");
-        String nome = configs.substring(0, idxFimNome);
+        String nome = configs.substring(0, idxFimNome).trim();
+        if (nome.equals(PELE_PADRAO.getNome())) {
+            return PELE_PADRAO;
+        }
         String[] dados = configs.substring(idxFimNome+4, configs.length()).split("[|]");
-        Pele pele =new Pele(nome.trim());
+        Pele pele =new Pele(nome);
         pele.setFrenteTabelaSelecionada(new Color(Integer.valueOf(dados[0]), true));
         pele.setFrenteTabelaNaoSelecionada(new Color(Integer.valueOf(dados[1]), true));
         pele.setFundoTabelaSelecionada(new Color(Integer.valueOf(dados[2]), true));

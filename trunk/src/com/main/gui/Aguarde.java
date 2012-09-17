@@ -41,7 +41,7 @@ public class Aguarde extends javax.swing.JFrame {
 
     public void mostrar() {
         if (isVisible()) {
-            String war="Warning: essa tela j· esta ativa.\n";
+            String war="Warning: essa tela j√° esta ativa.\n";
             try {
                 System.err.write(war.getBytes());
             } catch (IOException ex) {
@@ -85,7 +85,7 @@ public class Aguarde extends javax.swing.JFrame {
                                 jProgressBar1.setString("RRuuuuuu.... uiiiiiiii");
                                 break;
                             case 16:
-                                jProgressBar1.setString("N„o Aperte Ctrl+Alt+Del");
+                                jProgressBar1.setString("N√£o Aperte Ctrl+Alt+Del");
                                 break;
                             case 19:
                                 jProgressBar1.setString("Eu Consigo....");
@@ -94,13 +94,13 @@ public class Aguarde extends javax.swing.JFrame {
                                 jProgressBar1.setString("Ta Quase conseguindo...");
                                 break;
                             case 25:
-                                jProgressBar1.setString("Ou N„o");
+                                jProgressBar1.setString("Ou N√£o");
                                 break;
                             case 28:
                                 jProgressBar1.setString("Espere um pouco mais...");
                                 break;
                             case 31:
-                                jProgressBar1.setString("Est· difÌcil...");
+                                jProgressBar1.setString("Est√° dif√≠cil...");
                                 break;
                             case 34:
                                 jProgressBar1.setString("To Quase Desistindo");
@@ -109,10 +109,10 @@ public class Aguarde extends javax.swing.JFrame {
                                 jProgressBar1.setString("Sou Brasileiro");
                                 break;
                             case 40:
-                                jProgressBar1.setString("N„o Desisto Nunca");
+                                jProgressBar1.setString("N√£o Desisto Nunca");
                                 break;
                             case 50:
-                                jProgressBar1.setString("T· Bom Pode Fecha.");
+                                jProgressBar1.setString("T√° Bom Pode Fecha.");
                                 break;
                             default:
                                 break;

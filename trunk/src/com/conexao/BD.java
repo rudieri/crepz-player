@@ -98,12 +98,12 @@ public class BD {
             try {
                 sti.execute("select * from musica limit 1");
             } catch (Exception e) {
-                //Se Deu erro pq n„o tem as tabelas
+                //Se Deu erro pq n√£o tem as tabelas
 //                if (e.getMessage().equals("user lacks privilege or object not found: MUSICA")) {
                     try {
                         criaTabelas(con);
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Crepz fatal!\nN„o consegui criar as tabelas");
+                        JOptionPane.showMessageDialog(null, "Crepz fatal!\nN√£o consegui criar as tabelas");
                         System.out.println("Crepz Fatal.");
                         ex.printStackTrace();
                     }
@@ -117,13 +117,13 @@ public class BD {
             String banco = new BD().getArquivosBanco();
             File properties = new File(banco + ".properties");
             if (!properties.delete()) {
-                System.out.println("N„o deu pra excluir o BD.properties");
+                System.out.println("N√£o deu pra excluir o BD.properties");
             }
             BD bd = new BD();
             bd.criaTabelas(bd.getConexao());
             File script = new File(banco + ".script");
             if (!script.delete()) {
-                System.out.println("N„o deu pra excluir o BD.script");
+                System.out.println("N√£o deu pra excluir o BD.script");
             }
         } catch (Exception ex) {
             Logger.getLogger(BD.class.getName()).log(Level.SEVERE, null, ex);

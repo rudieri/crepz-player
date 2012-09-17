@@ -9,8 +9,8 @@ package com.config.constantes;
  * @author rudieri
  */
 public enum AdicionarNaFilaVazia {
-    REPRODUZIR_MUSICA("Tocar imediatamente a música"),
-    NADA("Não faça nada"),
+    REPRODUZIR_MUSICA("Tocar imediatamente a mÃºsica"),
+    NADA("NÃ£o faÃ§a nada"),
     ;
     private String nomeFake;
     

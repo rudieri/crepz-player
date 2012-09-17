@@ -23,12 +23,12 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
     private String filtro;
     private ArrayList<ObjectTableModelListener> listeners;
 
-    public ObjectTableModel(Class<E> modelo) {
+    public ObjectTableModel(Class<E> classeModelo) {
         tableModelListeners = new ArrayList<TableModelListener>(2);
         listeners = new ArrayList<ObjectTableModelListener>(1);
         itens = new ArrayList<E>(10);
         itensFiltrados = new ArrayList<E>(10);
-        this.modelo = modelo;
+        this.modelo = classeModelo;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
 
     @Override
     public String getColumnName(int columnIndex) {
-        return ObjetoTabeaUtils.getNomeColuna(modelo, columnIndex);
+        return ObjetoTabelaUtils.getNomeColuna(modelo, columnIndex);
 //        return ((ObjetoTabela) modelo.getClass().getAnnotations()[columnIndex]).nomeColuna();
     }
 
@@ -75,18 +75,18 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
     @Deprecated
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (filtro == null) {
-            return ObjetoTabeaUtils.getValueAt(itens.get(rowIndex), columnIndex);
+            return ObjetoTabelaUtils.getValueAt(itens.get(rowIndex), columnIndex);
         } else {
             if (itensFiltrados.isEmpty()) {
                 return null;
             }
-            return ObjetoTabeaUtils.getValueAt(itensFiltrados.get(rowIndex), columnIndex);
+            return ObjetoTabelaUtils.getValueAt(itensFiltrados.get(rowIndex), columnIndex);
         }
     }
 
     /**
 
-     * @deprecated Ser· usado apenas internamente, substituÌdo por {@link ObjectTableModel}
+     * @deprecated Ser√° usado apenas internamente, substitu√≠do por {@link ObjectTableModel}
      */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {

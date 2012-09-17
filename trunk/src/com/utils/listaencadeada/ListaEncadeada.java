@@ -33,7 +33,7 @@ public class ListaEncadeada<E> implements Iterable<E>, Iterator<E> {
 
     public E getValorA(int indice) {
         if (indice >= tamanho || indice < 0) {
-            throw new IllegalStateException("O Ìndice deve estar entre [0 e TAMANHO], Ìndice: " + indice + " tamanho: " + tamanho);
+            throw new IllegalStateException("O √≠ndice deve estar entre [0 e TAMANHO], √≠ndice: " + indice + " tamanho: " + tamanho);
         }
         iteratorIndex = indice;
         if (indice < tamanho >> 2) {
@@ -71,7 +71,7 @@ public class ListaEncadeada<E> implements Iterable<E>, Iterator<E> {
                 adicionar(valor);
                 return;
             }
-            throw new IllegalStateException("O Ìndice deve estar entre [0 e TAMANHO], Ìndice: " + indice + " tamanho: " + tamanho);
+            throw new IllegalStateException("O √≠ndice deve estar entre [0 e TAMANHO], √≠ndice: " + indice + " tamanho: " + tamanho);
         }
         No novoNo = new No(valor);
         if (indice < tamanho >> 2) {
@@ -220,7 +220,7 @@ public class ListaEncadeada<E> implements Iterable<E>, Iterator<E> {
 
     @Override
     public void remove() {
-        throw new UnsupportedOperationException("RemoÁ„o por iterador n„o implementada.");
+        throw new UnsupportedOperationException("Remo√ß√£o por iterador n√£o implementada.");
 //        if (iteratorNo.anterior!=null) {
 //            if (iteratorNo.proximo!=null) {
 //                iteratorNo.anterior.proximo=iteratorNo.proximo;

@@ -136,7 +136,7 @@ public class JPlayList extends javax.swing.JDialog {
                 addMusica(MusicaGerencia.addFiles(s, t));
             }
         } catch (Exception ex) {
-            Logger.getLogger(getClass().getName()).log(Level.ALL, "Erro ao adicionar música.", ex);
+            Logger.getLogger(getClass().getName()).log(Level.ALL, "Erro ao adicionar mÃºsica.", ex);
         }
     }
 
@@ -155,7 +155,7 @@ public class JPlayList extends javax.swing.JDialog {
     }
 
     /**
-     * Método que inicializa a tela.
+     * MÃ©todo que inicializa a tela.
      */
     private void initTabelaLista() {
 
@@ -231,16 +231,16 @@ public class JPlayList extends javax.swing.JDialog {
                     try {
                         data = transferable.getTransferData(transferable.getTransferDataFlavors()[0]);
                     } catch (Exception ex) {
-                        // irá cair no drop do linux e la encontrará alguns arquivos :D
+                        // irÃ¡ cair no drop do linux e la encontrarÃ¡ alguns arquivos :D
                         Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, "Crepz tratavel...", ex);
                     }
-                    if (data != null && data instanceof Musica) {
+                    if (data != null && data.getClass() == Musica.class) {
                         if (posicaoDestino != -1) {
                             ((ModelReadOnly) jTable.getModel()).insertRow(posicaoDestino, new Object[]{data});
                         }else{
                             ((ModelReadOnly) jTable.getModel()).addRow(new Object[]{data});
                         }
-                    } else if (data != null && data instanceof ArrayList) {
+                    } else if (data != null && data.getClass() == ArrayList.class) {
                         addMusicas((ArrayList) data, posicaoDestino);
                     } else {
                         //Windows
@@ -291,7 +291,7 @@ public class JPlayList extends javax.swing.JDialog {
     }
 
     /**
-     * Método que atualiza a consulta atual.
+     * MÃ©todo que atualiza a consulta atual.
      */
     public void atualizarTabelaLista() {
         pesquisa.clear();
@@ -337,7 +337,7 @@ public class JPlayList extends javax.swing.JDialog {
 
         } catch (Exception ex) {
             t.rollback();
-            // JOptionPane.showMessageDialog(this, "Erro ao Filtrar \\õ/");
+            // JOptionPane.showMessageDialog(this, "Erro ao Filtrar \\Ãµ/");
             ex.printStackTrace();
         }
     }
@@ -437,7 +437,7 @@ public class JPlayList extends javax.swing.JDialog {
             return null;
         }
         if (contaErro > total.size()) {
-            JOptionPane.showMessageDialog(this, "Nenhum arquivo foi encontrado... Você montou sua unidades?");
+            JOptionPane.showMessageDialog(this, "Nenhum arquivo foi encontrado... VocÃª montou sua unidades?");
             contaErro = 0;
             return null;
         }
@@ -489,7 +489,7 @@ public class JPlayList extends javax.swing.JDialog {
                         return (Musica) jTable.getModel().getValueAt(mAtual - 1, 0);
                     }
                 }
-                System.out.println("Não tem mais musicas, retornando null.");
+                System.out.println("NÃ£o tem mais musicas, retornando null.");
                 return null;
             } else {
                 if (jahFoi.indexOf(musiquera.getMusica()) > 0) {
@@ -676,7 +676,7 @@ public class JPlayList extends javax.swing.JDialog {
 
     private void salvarPlaylistAtual() {
         if (jTextField_NomePlayList.getText() == null || jTextField_NomePlayList.getText().isEmpty()) {
-            jTextField_NomePlayList.setText("Execução " + formatoPadraoData.format(new Date()));
+            jTextField_NomePlayList.setText("ExecuÃ§Ã£o " + formatoPadraoData.format(new Date()));
         }
         salvarPlaylist();
 
@@ -912,7 +912,7 @@ public class JPlayList extends javax.swing.JDialog {
         jPanel6.add(jButtonRemover);
 
         jToggleButtonOpcoesLista.setMnemonic('o');
-        jToggleButtonOpcoesLista.setText("Opções da lista");
+        jToggleButtonOpcoesLista.setText("OpÃ§Ãµes da lista");
         jToggleButtonOpcoesLista.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jToggleButtonOpcoesListaStateChanged(evt);
@@ -942,7 +942,7 @@ public class JPlayList extends javax.swing.JDialog {
         getContentPane().add(jPanel3, java.awt.BorderLayout.PAGE_END);
 
         jMenu1.setMnemonic('F');
-        jMenu1.setText("Funções");
+        jMenu1.setText("FunÃ§Ãµes");
 
         jMenuItemAbrirPlayList.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
         jMenuItemAbrirPlayList.setText("Abrir PlayList *.m3u");

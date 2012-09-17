@@ -25,7 +25,7 @@ public class DiretorioUtils {
 //        try {
 //            copyDirectory(new File(new File("").getAbsoluteFile() + "/temp"), new File(new File("").getAbsolutePath()));
 //        } catch (IOException ex) {
-//            JOptionPane.showMessageDialog(new JFrame(), "Erro ao Atualizar Sistema", "Atualização Sistema", JOptionPane.WARNING_MESSAGE);
+//            JOptionPane.showMessageDialog(new JFrame(), "Erro ao Atualizar Sistema", "Atualizaçao Sistema", JOptionPane.WARNING_MESSAGE);
 //        }
     }
 

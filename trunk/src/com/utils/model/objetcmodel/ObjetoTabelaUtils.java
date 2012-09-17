@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  *
  * @author rudieri
  */
-public class ObjetoTabeaUtils {
+public class ObjetoTabelaUtils {
 
     public static Object getValueAt(Object alvo, int coluna) {
         if (alvo != null) {
@@ -30,9 +30,9 @@ public class ObjetoTabeaUtils {
                                 campo.setAccessible(true);
                                 return campo.get(alvo);
                             } catch (IllegalArgumentException ex) {
-                                Logger.getLogger(ObjetoTabeaUtils.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(ObjetoTabelaUtils.class.getName()).log(Level.SEVERE, null, ex);
                             } catch (IllegalAccessException ex) {
-                                Logger.getLogger(ObjetoTabeaUtils.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(ObjetoTabelaUtils.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                         i++;
@@ -59,7 +59,7 @@ public class ObjetoTabeaUtils {
                                 try {
                                     return anotacao.nomeColuna();
                                 } catch (IllegalArgumentException ex) {
-                                    Logger.getLogger(ObjetoTabeaUtils.class.getName()).log(Level.SEVERE, null, ex);
+                                    Logger.getLogger(ObjetoTabelaUtils.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             }
                         }

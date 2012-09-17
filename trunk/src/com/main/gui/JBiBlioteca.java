@@ -11,7 +11,6 @@ import com.utils.model.ModelReadOnly;
 import com.utils.model.objetcmodel.ObjectTransferable;
 import com.utils.pele.ColorUtils;
 import com.utils.transferivel.TipoTransferenciaMusica;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -175,7 +174,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     }
 
     /**
-     * Método que inicializa a tela.
+     * MÃ©todo que inicializa a tela.
      */
     private void initTabelaLista() {
 
@@ -221,7 +220,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     }
 
     /**
-     * Método que atualiza a consulta atual.
+     * MÃ©todo que atualiza a consulta atual.
      */
     public void atualizarTabelaLista() {
 
@@ -264,7 +263,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     }
 
     /**
-     * Método que inicializa a tela.
+     * MÃ©todo que inicializa a tela.
      */
     private void initTabelaCapa() {
 
@@ -299,7 +298,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
     }
 
     /**
-     * Método que atualiza a consulta atual.
+     * MÃ©todo que atualiza a consulta atual.
      */
     public void atualizarTabelaCapa() {
 
@@ -531,7 +530,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jPanel4.setMinimumSize(new java.awt.Dimension(80, 28));
         jPanel4.setPreferredSize(new java.awt.Dimension(0, 60));
 
-        jLabel1.setText("Seleção");
+        jLabel1.setText("SeleÃ§Ã£o");
         jPanel4.add(jLabel1);
 
         jComboBox_selecao.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Executar", "Playlist" }));
@@ -644,7 +643,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
 
         getContentPane().add(jPanel7, java.awt.BorderLayout.PAGE_END);
 
-        jMenu1.setText("Funções");
+        jMenu1.setText("FunÃ§Ãµes");
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         jMenuItem1.setText("Pesquisar");

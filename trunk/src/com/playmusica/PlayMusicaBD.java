@@ -19,19 +19,19 @@ public class PlayMusicaBD {
     public static final String TBL = "playmusica";
 
     /**
-     * MÈtodo que consiste a BK de Musica.
+     * M√©todo que consiste a BK de Musica.
      */
     public static void consistirBK(PlayMusica playMusica) throws Exception {
         if (playMusica == null) {
-            throw new Exception(" - PlayList n„o informado.");
+            throw new Exception(" - PlayList n√£o informado.");
         }
 
         if (playMusica.getPlaylist() == null) {
-            throw new Exception(" - Playlsit n„o informado.");
+            throw new Exception(" - Playlsit n√£o informado.");
         }
 
         if (playMusica.getMusica() == null) {
-            throw new Exception(" - Musica n„o informada.");
+            throw new Exception(" - Musica n√£o informada.");
         }
 
 
@@ -39,23 +39,23 @@ public class PlayMusicaBD {
     }
 
     /**
-     * MÈtodo que consiste os dados de Musica.
+     * M√©todo que consiste os dados de Musica.
      */
     public static void consistir(PlayMusica playMusica) throws Exception {
         consistirBK(playMusica);
 
         if (playMusica.getSeq() < 0 ) {
-            throw new Exception(" - SequÍncia n„o informado.");
+            throw new Exception(" - Sequ√™ncia n√£o informado.");
         }
 
     }
 
     /**
-     * MÈtodo que tenta incluir um objeto Musica.
+     * M√©todo que tenta incluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
+     * @param t Contendo a transa√ß√£o.
      * @return int Contendo o numero de linhas afetadas.
      */
     public static int incluir(PlayMusica playMusica, Transacao t) throws Exception {
@@ -93,11 +93,11 @@ public class PlayMusicaBD {
         return t.executeUpdate(sql.getSql());
     }
     /**
-     * MÈtodo que tenta alterar um objeto Musica.
+     * M√©todo que tenta alterar um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
+     * @param t Contendo a transa√ß√£o.
      * @return int Contendo o numero de linhas afetadas.
      */
     public static int alterar(PlayMusica playMusica, Transacao t) throws Exception {
@@ -117,11 +117,11 @@ public class PlayMusicaBD {
     }
 
     /**
-     * MÈtodo que tenta excluir um objeto Musica.
+     * M√©todo que tenta excluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
+     * @param t Contendo a transa√ß√£o.
      * @return int Contendo o numero de linhas afetadas.
      */
     public static int excluir(PlayMusica playMusica, Transacao t) throws Exception {
@@ -134,11 +134,11 @@ public class PlayMusicaBD {
         return t.executeUpdate(sql.getSql());
     }
     /**
-     * MÈtodo que tenta excluir um objeto Musica.
+     * M√©todo que tenta excluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
+     * @param t Contendo a transa√ß√£o.
      * @return int Contendo o numero de linhas afetadas.
      */
     public static int excluirPelaBk(PlayMusica playMusica, Transacao t) throws Exception {
@@ -164,12 +164,12 @@ public class PlayMusicaBD {
     }
 
     /**
-     * MÈtodo que carrega o objeto Musica pelo ID.
+     * M√©todo que carrega o objeto Musica pelo ID.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
-     * @return boolean Contendo TRUE se est· cadastrado e FALSE se n„o estiver.
+     * @param t Contendo a transa√ß√£o.
+     * @return boolean Contendo TRUE se est√° cadastrado e FALSE se n√£o estiver.
      */
     public static boolean carregar(PlayMusica playMusica, Transacao t) throws Exception {
         SQL sql = new SQL();
@@ -200,13 +200,13 @@ public class PlayMusicaBD {
         }
     }
 
-//    /** MÈtodo que retorna uma lista de Musicas de acordo com o filtro.
+//    /** M√©todo que retorna uma lista de Musicas de acordo com o filtro.
 //     * @param filtro Contendo o filtro.
-//     * @param t Contendo a transaÁ„o.
+//     * @param t Contendo a transa√ß√£o.
 //     * @return ArrayList Contendo uma lista de Musicas. */
     public static ArrayList listar(PlayMusicaSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
-            throw new Exception(" - Filtro n„o informado.");
+            throw new Exception(" - Filtro n√£o informado.");
         }
 
 
@@ -248,7 +248,7 @@ public class PlayMusicaBD {
     METODOS SEM TRANSACAO
      *#########################################*/
     /**
-     * MÈtodo que tenta incluir um objeto Musica.
+     * M√©todo que tenta incluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
@@ -268,7 +268,7 @@ public class PlayMusicaBD {
     }
 
     /**
-     * MÈtodo que tenta alterar um objeto Musica.
+     * M√©todo que tenta alterar um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
@@ -288,7 +288,7 @@ public class PlayMusicaBD {
     }
 
     /**
-     * MÈtodo que tenta excluir um objeto Musica.
+     * M√©todo que tenta excluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
@@ -307,7 +307,7 @@ public class PlayMusicaBD {
         }
     }
     /**
-     * MÈtodo que tenta excluir um objeto Musica.
+     * M√©todo que tenta excluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
@@ -328,11 +328,11 @@ public class PlayMusicaBD {
 
 
     /**
-     * MÈtodo que carrega o objeto Musica pelo ID.
+     * M√©todo que carrega o objeto Musica pelo ID.
      *
      *
      * @param musica Contendo a musica.
-     * @return boolean Contendo TRUE se est· cadastrado e FALSE se n„o estiver.
+     * @return boolean Contendo TRUE se est√° cadastrado e FALSE se n√£o estiver.
      */
     public static boolean carregar(PlayMusica playMusica) throws Exception {
         Transacao t = new Transacao();
@@ -346,7 +346,7 @@ public class PlayMusicaBD {
             throw ex;
         }
     }
-    /** MÈtodo que retorna uma lista de Musicas de acordo com o filtro.
+    /** M√©todo que retorna uma lista de Musicas de acordo com o filtro.
      * @param filtro Contendo o filtro.
     //     * @return ArrayList Contendo uma lista de Musicas. */
 //    public static ArrayList listar(MusicaSC filtro) throws Exception {

@@ -1,11 +1,9 @@
 package com.hotkey.linux;
 
-import com.musica.Musiquera;
 import com.config.Configuracaoes;
 import com.main.Carregador;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import com.musica.Musiquera;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -66,7 +64,8 @@ public class Ouvinte {
         while (true) {
             final Socket accept = server.accept();
             try {
-                BufferedReader bin = new BufferedReader(new InputStreamReader(accept.getInputStream()));
+                InputStreamReader inputStreamReader = new InputStreamReader(accept.getInputStream());
+                BufferedReader bin = new BufferedReader(inputStreamReader);
                 String linha;
                 while ((linha = bin.readLine()) != null) {
                     if (linha.equals("--play") || linha.equals("--pause")) {
@@ -81,9 +80,12 @@ public class Ouvinte {
                     if (linha.equals("--prev")) {
                         musiquera.tocarAnterior();
                     }
+                    if (linha.equals("--list-music")) {
+                        throw new UnsupportedOperationException("N√£o implementado ainda...");
+                    }
                     if (linha.equals("--open-crepz")) {
                         if (carregador != null) {
-                            int r = JOptionPane.showConfirmDialog(null, "O crepz aparentemente est· aberto... Se estamos enganados, clique em \"Sim\" para abrÌ-lo.");
+                            int r = JOptionPane.showConfirmDialog(null, "O crepz aparentemente est√° aberto... Se estamos enganados, clique em \"Sim\" para abr√≠-lo.");
                             if (r != JOptionPane.YES_OPTION) {
                                 return;
                             }
@@ -97,6 +99,8 @@ public class Ouvinte {
                         }).start();
                     }
                 }
+                bin.close();
+                inputStreamReader.close();
 
 
             } catch (IOException ex) {
@@ -104,5 +108,14 @@ public class Ouvinte {
             }
             System.out.println("Aceito...");
         }
+    }
+    
+    public void retornarMsg(Socket socket, Serializable object) throws IOException{
+        OutputStream outputStream = socket.getOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        objectOutputStream.writeObject(object);
+        objectOutputStream.flush();
+        objectOutputStream.close();
+        outputStream.close();
     }
 }

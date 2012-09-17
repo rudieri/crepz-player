@@ -30,30 +30,21 @@ public class CacheDeMusica {
             try {
                 musica = new Musica();
                 musica.setId(id);
-                if (rs==null) {
+                if (rs == null) {
                     MusicaBD.carregar(musica);
                 }else{
                     MusicaBD.carregarObjeto(musica, rs);
                 }
-                System.out.println("Musica não encontrada em cache, carregar " + musica + " com a chave: " + id);
             } catch (Exception ex) {
                 Logger.getLogger(CacheDeMusica.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else{
-            System.out.println("Musica encontrada em cache " + musica + " com a chave: " + id);
         }
         return musica;
     }
 
     public static void adicionar(Musica musica) {
         if (musica == null) {
-            throw new IllegalStateException("Agrumento não pode ser nulo.");
-        }
-        if (cache.containsKey(musica.getId())) {
-            System.out.println("Música ja tinha na cache " + musica + " com a chave: " + musica.getId());
-        } else {
-            System.out.println("Musica adicionada na cache " + musica + " com a chave: " + musica.getId());
-
+            throw new IllegalStateException("Agrumento nÃ£o pode ser nulo.");
         }
         cache.put(musica.getId(), musica);
     }

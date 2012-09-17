@@ -2,7 +2,7 @@
 [Desktop Entry]
 Name=Crepz Player
 GenericName=Crepz Player
-Comment=Crepz Player - Um reprodutor de Ã¡udio em java.
+Comment=Crepz Player - Um reprodutor de _til_a_¡udio em java.
 Exec=/home/rudieri/aplicativos/CrepzPlayer/open_crepz.sh
 Icon=/home/rudieri/aplicativos/CrepzPlayer/com/img/icon.png
 Terminal=false

@@ -17,7 +17,7 @@ public class JLista extends javax.swing.JPanel {
     /**
      * Creates new form JLista <br/>Sendo que os valores para nome, artista e
      * tempo do Construtor {@link JLista#JLista(java.lang.String, java.lang.String, java.lang.String)}
-     * s„o inicializados com null.
+     * s√£o inicializados com null.
      */
     public JLista() {
         this(null, null, null);
@@ -26,9 +26,9 @@ public class JLista extends javax.swing.JPanel {
     /**
      * Creates new form JLista
      *
-     * @param nome O texto que ir· aparecer no label do nome
-     * @param artista O texto que ir· aparecer no label do artista
-     * @param tempo O texto que ir· aparecer no label do tempo
+     * @param nome O texto que ir√° aparecer no label do nome
+     * @param artista O texto que ir√° aparecer no label do artista
+     * @param tempo O texto que ir√° aparecer no label do tempo
      */
     public JLista(String nome, String artista, String tempo) {
 
@@ -81,7 +81,7 @@ public class JLista extends javax.swing.JPanel {
         jLabelNome.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
         jLabelNome.setForeground(new java.awt.Color(49, 45, 31));
         jLabelNome.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabelNome.setText("Nome da musica (se n„o tiver, aparece o nome do arquivo)");
+        jLabelNome.setText("Nome da musica (se n√£o tiver, aparece o nome do arquivo)");
         jPanel1.add(jLabelNome, java.awt.BorderLayout.CENTER);
 
         jLabelTempo.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
