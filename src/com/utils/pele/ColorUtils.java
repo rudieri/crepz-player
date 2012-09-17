@@ -25,8 +25,7 @@ public class ColorUtils {
     private static final ArrayList<Pele> listaPelesConhecidas;
     private static final ArrayList<JTable> listaTabelas;
     private static final ArrayList<Component> listaComponentes;
-    private static final Pele PELE_PADRAO = new Pele("Padrão");
-    private static Pele peleAtual = PELE_PADRAO;
+    private static Pele peleAtual = Pele.PELE_PADRAO;
 
     static {
         listaTabelas = new ArrayList<JTable>();
@@ -43,7 +42,7 @@ public class ColorUtils {
             }
         }
         if (listaPelesConhecidas.isEmpty()) {
-            listaPelesConhecidas.add(PELE_PADRAO);
+            listaPelesConhecidas.add(Pele.PELE_PADRAO);
         } else {
             setPeleAtual(Configuracaoes.getString(Configuracaoes.CONF_PELE_ATUAL).trim());
         }
@@ -52,12 +51,17 @@ public class ColorUtils {
 
     public static void aplicarTema() {
         // Primeiro os componentes das janelas
+        if (peleAtual == Pele.PELE_PADRAO) {
+            Configuracaoes.set(Configuracaoes.CONF_PELE_ATUAL, peleAtual.getNome());
+            return;
+        }
         for (int i = 0; i < listaComponentes.size(); i++) {
             Component component = listaComponentes.get(i);
-            inicializaCoresComponentes(component);
+            inicializaCoresComponentes(component, ColorUtils.getFrenteJanela(), ColorUtils.getFundoJanela());
         }
         for (int i = 0; i < listaTabelas.size(); i++) {
             JTable jTable = listaTabelas.get(i);
+
             jTable.setForeground(getFrenteTabelaNaoSelecionada());
             jTable.setSelectionForeground(getFrenteTabelaSelecionada());
             jTable.setBackground(getFundoTabelaNaoSelecionada());
@@ -73,29 +77,29 @@ public class ColorUtils {
 
     }
 
-    private static void inicializaCoresComponentes(Component component) {
+    private static void inicializaCoresComponentes(Component component, Color corFrenteJanela, Color corFundoJanele) {
         try {
 
-            component.setBackground(ColorUtils.getFundoJanela());
-            component.setForeground(ColorUtils.getFrenteJanela());
+            component.setBackground(corFundoJanele);
+            component.setForeground(corFrenteJanela);
 
             if (component instanceof JPanel) {
                 Border border = ((JPanel) component).getBorder();
                 if (border instanceof TitledBorder) {
-                    ((TitledBorder) border).setTitleColor(ColorUtils.getFrenteJanela());
+                    ((TitledBorder) border).setTitleColor(corFrenteJanela);
                 }
             } else if (component instanceof JTable) {
                 JTableHeader tableHeader = ((JTable) component).getTableHeader();
                 if (tableHeader != null) {
-                    tableHeader.setBackground(ColorUtils.getFundoJanela());
-                    tableHeader.setForeground(ColorUtils.getFrenteJanela());
+                    tableHeader.setBackground(corFundoJanele);
+                    tableHeader.setForeground(corFrenteJanela);
                 }
             }
 
             if (component instanceof Container) {
                 Component[] components = ((Container) component).getComponents();
                 for (Component filho : components) {
-                    inicializaCoresComponentes(filho);
+                    inicializaCoresComponentes(filho, corFrenteJanela, corFundoJanele);
                 }
             }
         } catch (Exception ex) {
@@ -201,10 +205,11 @@ public class ColorUtils {
         if (peleAtual == null) {
             peleAtual = new Pele(novoNome);
             listaPelesConhecidas.add(peleAtual);
-        } else if (peleAtual == PELE_PADRAO) {
-            peleAtual = new Pele("MOD " + novoNome);
-            listaPelesConhecidas.add(peleAtual);
         }
+//        else if (peleAtual == PELE_PADRAO) {
+//            peleAtual = new Pele("MOD " + novoNome);
+//            listaPelesConhecidas.add(peleAtual);
+//        }
 
     }
 }

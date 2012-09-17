@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class FileUtils {
 
     /**
-     * Metodo Que le um Arquivo é retorna seu conteudo Generico
+     * Metodo Que lê um Arquivo e retorna seu conteudo Genérico
      *
      * @param arquivo
      * @return
@@ -60,7 +60,7 @@ public class FileUtils {
     }
 
     /**
-     * Le Arquivo Passando Codificação
+     * Le Arquivo Passando Codificaã§ã£o
      *
      * @param arquivo
      * @param codificacao

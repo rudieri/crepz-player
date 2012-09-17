@@ -7,20 +7,20 @@ import java.sql.Connection;
 /** Classe que representa uma transacao no bando de dados. */
 public class Transacao {
 
-    /** Atributo que mantÈm uma conex„o com o bando de dados. */
+    /** Atributo que mant√©m uma conex√£o com o bando de dados. */
     private Connection conn;
     private Statement stmt;
 
-    /** MÈtodo construtor default. */
+    /** M√©todo construtor default. */
     public Transacao() {
     }
 
-    /** MÈtodo que retorna a conex„o. */
+    /** M√©todo que retorna a conex√£o. */
     public Connection getConexao() {
         return conn;
     }
 
-    /** MÈtodo que inicia a transaÁ„o. */
+    /** M√©todo que inicia a transa√ß√£o. */
     public void begin() throws Exception {
         conn = new BD().getConexao();
         conn.setAutoCommit(true);
@@ -28,14 +28,14 @@ public class Transacao {
 
     }
 
-    /** MÈtodo que realiza o commit na transaÁ„o. */
+    /** M√©todo que realiza o commit na transa√ß√£o. */
     public void commit() throws Exception {
         conn.commit();
 //        conn.close();
 //        conn.createStatement().execute("SHUTDOWN");
     }
 
-    /** MÈtodo que realiza o rollback na transaÁ„o. */
+    /** M√©todo que realiza o rollback na transa√ß√£o. */
     public void rollback() {
         try {
             conn.rollback();
@@ -46,7 +46,7 @@ public class Transacao {
 
     }
 
-    /** MÈtodo que realiza a execuÁ„o de um comando de atualizaÁ„o sql, a saber, insert, update, delete. */
+    /** M√©todo que realiza a execu√ß√£o de um comando de atualiza√ß√£o sql, a saber, insert, update, delete. */
     public int executeUpdate(String sql) throws Exception {
 
         int r = 0;
@@ -62,12 +62,12 @@ public class Transacao {
         return r;
     }
 
-    /** MÈtodo que realiza a execuÁ„o de um comando sql de consulta, a saber, selects. */
+    /** M√©todo que realiza a execu√ß√£o de um comando sql de consulta, a saber, selects. */
     public java.sql.ResultSet executeQuery(String sql) throws Exception {
 
         return conn.createStatement().executeQuery(sql);
     }
-    /** MÈtodo que realiza a execuÁ„o de um comando sql de consulta, a saber, selects. */
+    /** M√©todo que realiza a execu√ß√£o de um comando sql de consulta, a saber, selects. */
     public java.sql.ResultSet executeQuery(SQL sql) throws Exception {
         return executeQuery(sql.getSql());
     }

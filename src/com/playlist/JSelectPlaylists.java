@@ -36,14 +36,14 @@ public class JSelectPlaylists extends javax.swing.JDialog {
         atualizarTabelaLista();
     }
 
-    /** Método que inicializa a tela. */
+    /** MÃ©todo que inicializa a tela. */
     private void initTabelaLista() {
 
         // Definindo as colunas...
         ModelReadOnly tm = new ModelReadOnly();
         tm.addColumn("Cod");
         tm.addColumn("Nome");
-        tm.addColumn("Músicas");
+        tm.addColumn("MÃºsicas");
         tm.addColumn("Obj");
 
         jTable.setModel(tm);
@@ -51,7 +51,7 @@ public class JSelectPlaylists extends javax.swing.JDialog {
         // Definindo a largura das colunas...
         jTable.getColumn("Cod").setPreferredWidth(50);
         jTable.getColumn("Nome").setPreferredWidth(200);
-        jTable.getColumn("Músicas").setPreferredWidth(100);
+        jTable.getColumn("MÃºsicas").setPreferredWidth(100);
 
         // Removendo a coluna do objeto da view...
         jTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer());
@@ -85,7 +85,7 @@ public class JSelectPlaylists extends javax.swing.JDialog {
         return playlist;
     }
 
-    /** Método que atualiza a consulta atual. */
+    /** MÃ©todo que atualiza a consulta atual. */
     public void atualizarTabelaLista() {
 
         try {
@@ -226,7 +226,7 @@ public class JSelectPlaylists extends javax.swing.JDialog {
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
-        jMenu1.setText("Funções");
+        jMenu1.setText("FunÃ§Ãµes");
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         jMenuItem1.setText("Pesquisar");

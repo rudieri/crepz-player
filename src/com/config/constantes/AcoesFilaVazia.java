@@ -9,8 +9,8 @@ package com.config.constantes;
  * @author rudieri
  */
 public enum AcoesFilaVazia {
-    NADA("Não faça nada"),
-    TOCAR_RANDOM("Tocar da lista ao lado (Aleatório)"),
+    NADA("NÃ£o faÃ§a nada"),
+    TOCAR_RANDOM("Tocar da lista ao lado (AleatÃ³rio)"),
     TOCAR_SEQ("Tocar da lista ao lado (Sequencial)"),
     ;
     private String nomeFake;

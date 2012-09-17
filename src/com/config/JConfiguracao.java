@@ -54,7 +54,7 @@ public class JConfiguracao extends javax.swing.JDialog {
             jCheckBox_Organizador.setSelected(MusicaGerencia.organizarPastas);
             jTextField_DestinoOrg.setText(MusicaGerencia.destino);
             ModelReadOnly tm = new ModelReadOnly();
-            tm.addColumn("Pastas em que o Crepz procurará por músicas");
+            tm.addColumn("Pastas em que o Crepz procurarÃ¡ por mÃºsicas");
             jTable_pastas.setModel(tm);
             tm.setRowCount(0);
             ArrayList<String> pastas = Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER);
@@ -198,7 +198,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel4.setPreferredSize(new java.awt.Dimension(400, 25));
 
         jLabel2.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
-        jLabel2.setText("Configurações");
+        jLabel2.setText("ConfiguraÃ§Ãµes");
         jPanel4.add(jLabel2);
 
         getContentPane().add(jPanel4, java.awt.BorderLayout.PAGE_START);
@@ -213,7 +213,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jLabel9.setText("Tela Inicial ao Abrir o Crepz:");
         jPanel15.add(jLabel9);
 
-        jComboBoxTelaPadrao.setToolTipText("O que acontece quando eu clido 2 vezes numa música...");
+        jComboBoxTelaPadrao.setToolTipText("O que acontece quando eu clido 2 vezes numa mÃºsica...");
         jPanel15.add(jComboBoxTelaPadrao);
 
         jPanel_Geral.add(jPanel15);
@@ -227,11 +227,11 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel1.setText("Ao clicar 2 vezes na música:");
+        jLabel1.setText("Ao clicar 2 vezes na mÃºsica:");
         jPanel2.add(jLabel1);
 
         jComboBoxAcaoFila.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Adicionar a Fila", "Reproduzir" }));
-        jComboBoxAcaoFila.setToolTipText("O que acontece quando eu clido 2 vezes numa música...");
+        jComboBoxAcaoFila.setToolTipText("O que acontece quando eu clido 2 vezes numa mÃºsica...");
         jPanel2.add(jComboBoxAcaoFila);
 
         jPanel_Fila.add(jPanel2);
@@ -241,7 +241,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jLabel6.setText("Quando a Fila Ficar Vazia:");
         jPanel1.add(jLabel6);
 
-        jComboBoxAoEsvaziaFila.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Não faça nada", "Tocar da lista ao lado (Aleatório)", "Tocar da lista ao lado (Sequencial)" }));
+        jComboBoxAoEsvaziaFila.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NÃ£o faÃ§a nada", "Tocar da lista ao lado (AleatÃ³rio)", "Tocar da lista ao lado (Sequencial)" }));
         jPanel1.add(jComboBoxAoEsvaziaFila);
 
         jPanel_Fila.add(jPanel1);
@@ -251,7 +251,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jLabel8.setText("Ao adicionar na fila Vazia:");
         jPanel14.add(jLabel8);
 
-        jComboBoxAdicionarFilaVazia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Não faça nada", "Tocar da lista ao lado (Aleatório)", "Tocar da lista ao lado (Sequencial)" }));
+        jComboBoxAdicionarFilaVazia.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NÃ£o faÃ§a nada", "Tocar da lista ao lado (AleatÃ³rio)", "Tocar da lista ao lado (Sequencial)" }));
         jPanel14.add(jComboBoxAdicionarFilaVazia);
 
         jPanel_Fila.add(jPanel14);
@@ -259,7 +259,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel3.setLayout(new java.awt.BorderLayout());
         jPanel_Fila.add(jPanel3);
 
-        jTabbedPane1.addTab("Fila de Reprodução", jPanel_Fila);
+        jTabbedPane1.addTab("Fila de ReproduÃ§Ã£o", jPanel_Fila);
 
         jPanel_Avancada.setLayout(new javax.swing.BoxLayout(jPanel_Avancada, javax.swing.BoxLayout.Y_AXIS));
 
@@ -273,7 +273,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Pastas em que o Crepz procurará por músicas"
+                "Pastas em que o Crepz procurarÃ¡ por mÃºsicas"
             }
         ) {
             Class[] types = new Class [] {
@@ -315,7 +315,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jButton_Add.setMnemonic('A');
         jButton_Add.setText("Adicionar");
-        jButton_Add.setToolTipText("Adicionar endereço na lista. (Alt + A)");
+        jButton_Add.setToolTipText("Adicionar endereÃ§o na lista. (Alt + A)");
         jButton_Add.setPreferredSize(new java.awt.Dimension(60, 30));
         jButton_Add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -387,7 +387,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jTextArea1.setEditable(false);
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
-        jTextArea1.setText("O modo organizador ativado, o sitema ao ler uma musica ira organiza-la na pasta de destino, mais as pastas\n         Artista\n         Album\nCom download de capa ativo o sistema ira buscar uma capa, para o álbum caso o mesmo não tenha");
+        jTextArea1.setText("O modo organizador ativado, o sitema ao ler uma musica ira organiza-la na pasta de destino, mais as pastas\n         Artista\n         Album\nCom download de capa ativo o sistema ira buscar uma capa, para o Ã¡lbum caso o mesmo nÃ£o tenha");
         jTextArea1.setEnabled(false);
         jTextArea1.setFocusable(false);
         jScrollPane2.setViewportView(jTextArea1);
@@ -420,7 +420,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanelNext.setLayout(new javax.swing.BoxLayout(jPanelNext, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel12.setText("Próxima:");
+        jLabel12.setText("PrÃ³xima:");
         jLabel12.setPreferredSize(new java.awt.Dimension(130, 16));
         jPanelNext.add(jLabel12);
 
@@ -492,7 +492,7 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jButtonSalvar.setMnemonic('S');
         jButtonSalvar.setText("Salvar");
-        jButtonSalvar.setToolTipText("Salvar configurações. (Alt + S )");
+        jButtonSalvar.setToolTipText("Salvar configuraÃ§Ãµes. (Alt + S )");
         jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSalvarActionPerformed(evt);

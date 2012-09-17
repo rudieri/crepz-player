@@ -45,9 +45,10 @@ public abstract class Musiquera implements BasicPlayerListener {
     private final SimpleDateFormat sdf = new SimpleDateFormat("ss");
     private final SimpleDateFormat formatotempo = new SimpleDateFormat("HH:mm:ss");
     /**
-     * Vari·vel usada para saber se o n˙ermo de reproduÁıes j· foi alterado.
+     * Vari√°vel usada para saber se o n√∫ermo de reprodu√ß√µes j√° foi alterado.
      */
     private boolean naoAlterouMusicaAinda;
+    private int contaFalhas;
 
     @SuppressWarnings("LeakingThisInConstructor")
     public Musiquera(Carregador carregador) {
@@ -78,7 +79,9 @@ public abstract class Musiquera implements BasicPlayerListener {
         volume = v;
 
         try {
+            System.out.println(new Double(v) / 100);
             player.setGain(new Double(v) / 100);
+            
         } catch (BasicPlayerException ex) {
             Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -121,12 +124,12 @@ public abstract class Musiquera implements BasicPlayerListener {
     public boolean isPaused() {
         return paused;
     }
-
+    
     public boolean apenasAbrir(Musica m) throws BasicPlayerException {
         try {
             this.musica = m;
             if (m == null) {
-                System.out.println("Musica n„o existe, nullPointer");
+                System.out.println("Musica n√£o existe, nullPointer");
                 System.err.print(Arrays.toString(Thread.currentThread().getStackTrace()));
                 return false;
             }
@@ -182,7 +185,7 @@ public abstract class Musiquera implements BasicPlayerListener {
         } catch (Exception ex) {
             tenteiAbrir++;
             System.out.println(ex.getMessage());
-            if (ex.getMessage()!=null && ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
+            if (ex.getMessage() != null && ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
                 Warning.print(ex.getMessage());
                 try {
                     MusicaBD.excluir(m);
@@ -199,10 +202,10 @@ public abstract class Musiquera implements BasicPlayerListener {
                     return abrirForaLinhaTempo(m, posicao, abrirComPausa);
 
                 case 3:
-                    System.out.println("Falha ao abrir, passando para a prÛxima m˙sica!");
+                    System.out.println("Falha ao abrir, passando para a pr√≥xima m√∫sica!");
                     return abrirForaLinhaTempo(getNextMusica(), 0, false);
                 case 4:
-                    System.out.println("Falha ao abrir (est·gio 2), tentando novamente!");
+                    System.out.println("Falha ao abrir (est√°gio 2), tentando novamente!");
                     return abrirForaLinhaTempo(m, posicao, abrirComPausa);
                 default:
                     System.out.println("Todas as tentativas falharam... :(");
@@ -215,7 +218,15 @@ public abstract class Musiquera implements BasicPlayerListener {
     public void tocarProxima() {
         Musica proxima = LinhaDoTempo.getProxima();
         if (proxima != null) {
-            abrirForaLinhaTempo(proxima, 0, false);
+            boolean conseguiu = abrirForaLinhaTempo(proxima, 0, false);
+            if (!conseguiu) {
+                contaFalhas++;
+            if (contaFalhas < 5) {
+                tocarProxima();
+            }
+            } else {
+                contaFalhas = 0;
+            }
         } else {
             abrir(getNextMusica(), 0, false);
         }
@@ -285,10 +296,10 @@ public abstract class Musiquera implements BasicPlayerListener {
                     tocarPausar();
                     break;
                 case 3:
-                    System.out.println("Falha ao tocar, passando para a prÛxima m˙sica!");
+                    System.out.println("Falha ao tocar, passando para a pr√≥xima m√∫sica!");
                     break;
                 case 4:
-                    System.out.println("Falha ao tocar (est·gio 2), tentando novamente!");
+                    System.out.println("Falha ao tocar (est√°gio 2), tentando novamente!");
                     try {
                         Thread.sleep(40);
                     } catch (InterruptedException ex1) {
@@ -475,7 +486,7 @@ public abstract class Musiquera implements BasicPlayerListener {
                     try {
                         player.setPan(new Double(balanco) / 100);
                     } catch (BasicPlayerException ex) {
-                        System.out.println("Erro ao mudar o balanÁo");
+                        System.out.println("Erro ao mudar o balan√ßo");
                     }
                 }
                 break;

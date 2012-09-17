@@ -28,9 +28,9 @@ public class Configuracaoes {
     //Aqui!!!!!!!!
 
     /*
-    Declare aqui todas as configurações com seus determinados tipos;
+    Declare aqui todas as configuraÃ§Ãµes com seus determinados tipos;
      * Fazer dessa forma:
-    public static final Byte NOME_DA_CONFIG = ordinal_da_config; // é sequencial, deve ser o indice da config no array
+    public static final Byte NOME_DA_CONFIG = ordinal_da_config; // Ã© sequencial, deve ser o indice da config no array
     private static final Tipo nomeDaConfig = new Tipo();
      *
      */
@@ -204,16 +204,16 @@ public class Configuracaoes {
                 String linha = linhas[i];
                 String[] tokens = linha.split(" ", 2);
                 Object myConfig = configs[Integer.parseInt(tokens[0])];
-                if (myConfig instanceof String) {
+                if (myConfig.getClass() == String.class) {
                     configs[Integer.parseInt(tokens[0])] = tokens[1];
-                } else if (myConfig instanceof ArrayList) {
+                } else if (myConfig.getClass() == ArrayList.class) {
                     if (tokens[1].trim().isEmpty()) {
                         continue;
                     }
                     String[] valores = tokens[1].split(",");
                     ((ArrayList) myConfig).clear();
                     ((ArrayList) myConfig).addAll(Arrays.asList(valores));
-                } else if (myConfig instanceof Musica) {
+                } else if (myConfig.getClass() == Musica.class) {
                     Musica musica = CacheDeMusica.get(Integer.parseInt(tokens[1].trim()));
                     configs[Integer.parseInt(tokens[0])] = musica;
                 } else if (myConfig instanceof Integer) {
@@ -237,9 +237,9 @@ public class Configuracaoes {
         for (int i = 0; i < configs.length; i++) {
             Object myConfig = configs[i];
             textFile.append(i).append(' ');
-            if (myConfig instanceof ArrayList) {
+            if (myConfig.getClass() == ArrayList.class) {
                 textFile.append(((ArrayList) myConfig).toString().replaceAll("[\\[\\]]", ""));
-            } else if (myConfig instanceof Musica) {
+            } else if (myConfig.getClass() == Musica.class) {
                 textFile.append(((Musica) myConfig).getId());
             } else if (myConfig instanceof Enum) {
                 textFile.append(((Enum) myConfig).name());

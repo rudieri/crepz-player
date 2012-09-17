@@ -222,7 +222,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }
 
     private void inicializaIcones() {
-        //Estado inicial do bot„o (est· Stop);
+        //Estado inicial do bot√£o (est√° Stop);
         jButton_Play.setIcon(carregador.icones.playIcon32);
         //Se tiver tocando
         if (musiquera.isPlaying()) {
@@ -431,7 +431,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
 
-        jCMenuReproduz.setText("ReproduÁ„o");
+        jCMenuReproduz.setText("Reprodu√ß√£o");
 
         jCIMenuPlay.setText("Tocar");
         jCIMenuPlay.addActionListener(new java.awt.event.ActionListener() {
@@ -451,7 +451,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         jMenuDeContexto.add(jCMenuReproduz);
 
-        jCMenuVisual.setText("VisualizaÁ„o");
+        jCMenuVisual.setText("Visualiza√ß√£o");
 
         jCCheckBarraTitulos.setSelected(true);
         jCCheckBarraTitulos.setText("Mostrar barra de titulos");
@@ -791,7 +791,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         jSlider_Balanco.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Balanco.setMinimum(-100);
-        jSlider_Balanco.setToolTipText("balanÁo");
+        jSlider_Balanco.setToolTipText("balan√ßo");
         jSlider_Balanco.setValue(0);
         jSlider_Balanco.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -881,7 +881,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jMenu2.add(jMenuItem2);
 
         jMenuItem8.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
-        jMenuItem8.setText("ConfiguraÁıes");
+        jMenuItem8.setText("Configura√ß√µes");
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem8ActionPerformed(evt);
@@ -919,7 +919,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         });
         jMenu3.add(jMenuItem5);
 
-        jMenuItem7.setText("Restaurar ConfiguraÁ„o Original");
+        jMenuItem7.setText("Restaurar Configura√ß√£o Original");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -1242,7 +1242,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }//GEN-LAST:event_jLabelHelpMouseClicked
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Isso limpar· a biblioteca e a playlist.\nO Crepz Player ser· fechado.\n Est· certo disso ??") == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(this, "Isso limpar√° a biblioteca e a playlist.\nO Crepz Player ser√° fechado.\n Est√° certo disso ??") == JOptionPane.YES_OPTION) {
             try {
                 BD.hadukem();
 //                ConfigFile.excluir();

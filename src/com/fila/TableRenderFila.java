@@ -25,7 +25,7 @@ public class TableRenderFila implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        if (value instanceof Musica) {
+        if (value.getClass() == Musica.class) {
             mc.setMusica((Musica) value);
             mc.setSelecionado(isSelected);
             return mc;

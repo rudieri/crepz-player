@@ -17,7 +17,7 @@ public class PlayListRenderer implements TableCellRenderer {
     private JLista jLista;
     
     /**
-     * Método construtor.
+     * MÃ©todo construtor.
      */
     public PlayListRenderer() {
         jLista = new JLista();
@@ -25,12 +25,12 @@ public class PlayListRenderer implements TableCellRenderer {
     }
 
     /**
-     * Método sobreescrito de TableCellRenderer.
+     * MÃ©todo sobreescrito de TableCellRenderer.
      */
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
-        if (value instanceof Musica) {
+        if (value.getClass() == Musica.class) {
             jLista.setMusica((Musica)value);
         }
         if (isSelected) {

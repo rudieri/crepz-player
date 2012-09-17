@@ -251,7 +251,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
     }
 
     /**Faz o efeito de MouseEntered (circula o icones)
-    @param Componente circular que você quer circular.
+    @param Componente circular que vocÃª quer circular.
      */
     public void objetoRollOver(JLabel c) {
         Icon aux = c.getIcon();
@@ -270,9 +270,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         c.getGraphics().drawRect(2, 3, aux.getIconWidth(), aux.getIconHeight());
     }
 
-    /**Deixa o JMini visivel ou não
-    @param b boolean que indica se a janela é estará visivel.
-    @param e MouseEvent é usado apenas quando o SO não for Windows
+    /**Deixa o JMini visivel ou nÃ£o
+    @param b boolean que indica se a janela Ã© estarÃ¡ visivel.
+    @param e MouseEvent Ã© usado apenas quando o SO nÃ£o for Windows
      */
     public void setVisible(boolean b, MouseEvent e) {
         if (!super.isVisible()) {
@@ -364,7 +364,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
         jMenuItemConfiguracoes.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
         jMenuItemConfiguracoes.setMnemonic('C');
-        jMenuItemConfiguracoes.setText("Configurações");
+        jMenuItemConfiguracoes.setText("ConfiguraÃ§Ãµes");
         jMenuItemConfiguracoes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemConfiguracoesActionPerformed(evt);
@@ -374,9 +374,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jPopupMenu1.add(jSeparator2);
 
         jMenuVisualizacoes.setMnemonic('v');
-        jMenuVisualizacoes.setText("Visualizações");
+        jMenuVisualizacoes.setText("VisualizaÃ§Ãµes");
 
-        jCheckBox_top.setText("Sempre Visível");
+        jCheckBox_top.setText("Sempre VisÃ­vel");
         jCheckBox_top.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jCheckBox_topStateChanged(evt);
@@ -403,9 +403,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jPopupMenu1.add(jMenuVisualizacoes);
 
         jMenuBalanco.setMnemonic('o');
-        jMenuBalanco.setText("Opções");
+        jMenuBalanco.setText("OpÃ§Ãµes");
 
-        jMenu3.setText("Balanço");
+        jMenu3.setText("BalanÃ§o");
 
         buttonGrou_Balanco.add(jRadioButtonMenuItem1);
         jRadioButtonMenuItem1.setText("Dierito");
@@ -593,8 +593,8 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         });
         jPanel1.add(jButton_Ant);
 
-        jButton_Next.setText("Avançar");
-        jButton_Next.setToolTipText("Avançar");
+        jButton_Next.setText("AvanÃ§ar");
+        jButton_Next.setToolTipText("AvanÃ§ar");
         jButton_Next.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jButton_Next.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -609,7 +609,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jPanel1.add(jButton_Next);
 
         jToggleButton1.setText("Random");
-        jToggleButton1.setToolTipText("Aleatório");
+        jToggleButton1.setToolTipText("AleatÃ³rio");
         jToggleButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jToggleButton1.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -677,7 +677,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 1, 0));
 
         jLabel_popup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/c_menu.png"))); // NOI18N
-        jLabel_popup.setToolTipText("Menu de opções");
+        jLabel_popup.setToolTipText("Menu de opÃ§Ãµes");
         jLabel_popup.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel_popup.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -707,7 +707,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jPanel3.add(jLabel_lib);
 
         jLabel_top.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/tipo2/c_top_off.png"))); // NOI18N
-        jLabel_top.setToolTipText("Sempre Visível");
+        jLabel_top.setToolTipText("Sempre VisÃ­vel");
         jLabel_top.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel_top.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -744,7 +744,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jPanel6.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
 
         jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
-        jLabelNomeMusica.setText("Nenhuma música sendo reproduzida...");
+        jLabelNomeMusica.setText("Nenhuma mÃºsica sendo reproduzida...");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);

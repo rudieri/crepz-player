@@ -30,7 +30,7 @@ public class Tempo implements Serializable {
     }
 
     /**
-     Retorna a representação do tempo no formato hh:mm:ss, as horas ou minutos
+     Retorna a representaÃ§Ã£o do tempo no formato hh:mm:ss, as horas ou minutos
      * podem ser suprimidos caso seus valores forem (0) zero
      */
     @Override

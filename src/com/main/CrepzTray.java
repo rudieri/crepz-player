@@ -34,7 +34,7 @@ public class CrepzTray {
 
     public CrepzTray(Musiquera musiquera, final Carregador carregador) throws Exception {
         if (!SystemTray.isSupported()) {
-            throw new Exception("SystemTray n„o suportado.");
+            throw new Exception("SystemTray n√£o suportado.");
         }
         tray = SystemTray.getSystemTray();
         this.musiquera = musiquera;

@@ -278,7 +278,7 @@ public class JTrocarImagem extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                Musica m = CacheDeMusica.get(-1);// Nenhuma música, apenas para pegar uma nova instância
+                Musica m = CacheDeMusica.get(-1);// Nenhuma mÃºsica, apenas para pegar uma nova instÃ¢ncia
                 m.setAlbum("Appetit for destruction");
                 m.setAutor("Guns");
                 JTrocarImagem dialog = new JTrocarImagem(new javax.swing.JFrame(), true, m);

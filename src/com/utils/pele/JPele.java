@@ -4,10 +4,13 @@
  */
 package com.utils.pele;
 
+import com.main.Carregador;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 
 /**
@@ -22,20 +25,21 @@ public class JPele extends javax.swing.JDialog {
     private JSelecionaCor jSelecionaCor;
     private JLabel componenteSelecionado;
     private DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
+    private final Carregador carregador;
 
-    public JPele() {
+    public JPele(Carregador carregador) {
         initComponents();
         jSelecionaCor = new JSelecionaCor(null, false);
         jSelecionaCor.addCorSelecionadaListener(new CorSelecionadaListener() {
-
             @Override
             public void corSelecionada(Color cor) {
                 if (componenteSelecionado == null) {
-                    throw new IllegalStateException("O componente selecionado n�o pode ser nulo.");
+                    throw new IllegalStateException("O componente selecionado não pode ser nulo.");
                 }
                 componenteSelecionado.setBackground(cor);
             }
         });
+        this.carregador = carregador;
     }
 
     @Override
@@ -61,6 +65,7 @@ public class JPele extends javax.swing.JDialog {
     }
 
     private void setPele(Pele pele) {
+        jPanelEditarCores.setVisible(pele != Pele.PELE_PADRAO);
         jLabelCorFundoObjetos.setBackground(pele.getFundoTabelaNaoSelecionada());
         jLabelCorFundoSelecionado.setBackground(pele.getFundoTabelaSelecionada());
         jLabelCorTextoObjetos.setBackground(pele.getFrenteTabelaNaoSelecionada());
@@ -68,6 +73,7 @@ public class JPele extends javax.swing.JDialog {
         jLabelCorFundoJanela.setBackground(pele.getFundoJanela());
         jLabelCorFundoJanela.setBorder(new BevelBorder(BevelBorder.LOWERED, ColorUtils.getFrenteJanela(), ColorUtils.getFrenteJanela()));
         jLabelCorTextoJanela.setBackground(pele.getFrenteJanela());
+        jLabelCorTextoJanela.setBorder(new BevelBorder(BevelBorder.LOWERED, ColorUtils.getFundoJanela(), ColorUtils.getFundoJanela()));
     }
 
     /**
@@ -83,6 +89,8 @@ public class JPele extends javax.swing.JDialog {
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
+        jButton3 = new javax.swing.JButton();
+        jPanelEditarCores = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabelCorFundoJanela = new javax.swing.JLabel();
@@ -109,7 +117,7 @@ public class JPele extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -124,9 +132,24 @@ public class JPele extends javax.swing.JDialog {
                 jComboBox1ItemStateChanged(evt);
             }
         });
+        jComboBox1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jComboBox1KeyPressed(evt);
+            }
+        });
         jPanel5.add(jComboBox1);
 
-        jPanel1.add(jPanel5);
+        jButton3.setText("Novo");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jPanel5.add(jButton3);
+
+        jPanel1.add(jPanel5, java.awt.BorderLayout.NORTH);
+
+        jPanelEditarCores.setLayout(new javax.swing.BoxLayout(jPanelEditarCores, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -145,7 +168,7 @@ public class JPele extends javax.swing.JDialog {
         });
         jPanel4.add(jLabelCorFundoJanela);
 
-        jPanel1.add(jPanel4);
+        jPanelEditarCores.add(jPanel4);
 
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -164,7 +187,7 @@ public class JPele extends javax.swing.JDialog {
         });
         jPanel6.add(jLabelCorTextoJanela);
 
-        jPanel1.add(jPanel6);
+        jPanelEditarCores.add(jPanel6);
 
         jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -183,7 +206,7 @@ public class JPele extends javax.swing.JDialog {
         });
         jPanel7.add(jLabelCorFundoSelecionado);
 
-        jPanel1.add(jPanel7);
+        jPanelEditarCores.add(jPanel7);
 
         jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -202,7 +225,7 @@ public class JPele extends javax.swing.JDialog {
         });
         jPanel8.add(jLabelCorTextoSelecionado);
 
-        jPanel1.add(jPanel8);
+        jPanelEditarCores.add(jPanel8);
 
         jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -221,7 +244,7 @@ public class JPele extends javax.swing.JDialog {
         });
         jPanel9.add(jLabelCorFundoObjetos);
 
-        jPanel1.add(jPanel9);
+        jPanelEditarCores.add(jPanel9);
 
         jPanel11.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
@@ -240,10 +263,12 @@ public class JPele extends javax.swing.JDialog {
         });
         jPanel11.add(jLabelCorTextoObjetos);
 
-        jPanel1.add(jPanel11);
+        jPanelEditarCores.add(jPanel11);
 
         jPanel10.setLayout(new java.awt.BorderLayout());
-        jPanel1.add(jPanel10);
+        jPanelEditarCores.add(jPanel10);
+
+        jPanel1.add(jPanelEditarCores, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_START);
@@ -282,6 +307,12 @@ public class JPele extends javax.swing.JDialog {
         ColorUtils.setFrenteJanela(jLabelCorTextoJanela.getBackground());
         ColorUtils.setFundoJanela(jLabelCorFundoJanela.getBackground());
         ColorUtils.aplicarTema();
+        if (ColorUtils.getPeleAtual() == Pele.PELE_PADRAO) {
+            int showConfirmDialog = JOptionPane.showConfirmDialog(this, "O Crepz deve ser reiniciado.\nDeseja fechá-lo agora?", "Fechar crepz...", JOptionPane.YES_NO_OPTION);
+            if (showConfirmDialog == JOptionPane.YES_OPTION) {
+                carregador.sair();
+            }
+        }
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -309,7 +340,7 @@ public class JPele extends javax.swing.JDialog {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             Pele pele = ColorUtils.getPelePorNome(evt.getItem().toString());
             if (pele == null) {
-                pele = ColorUtils.getPeleAtual();
+                pele = new Pele(jComboBox1.getSelectedItem().toString());
             }
             setPele(pele);
         }
@@ -320,6 +351,23 @@ public class JPele extends javax.swing.JDialog {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jComboBox1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBox1KeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            Pele pele = ColorUtils.getPelePorNome(jComboBox1.getSelectedItem().toString());
+            if (pele == null) {
+                pele = new Pele(jComboBox1.getSelectedItem().toString());
+            }
+            setPele(pele);
+        }
+    }//GEN-LAST:event_jComboBox1KeyPressed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        Pele pele = new Pele("Novo...");
+        jComboBox1.addItem(pele.getNome());
+        jComboBox1.setSelectedItem(pele.getNome());
+        setPele(pele);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -356,11 +404,9 @@ public class JPele extends javax.swing.JDialog {
          * Create and display the dialog
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             public void run() {
-                JPele dialog = new JPele();
+                JPele dialog = new JPele(null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);
@@ -373,6 +419,7 @@ public class JPele extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -398,5 +445,6 @@ public class JPele extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JPanel jPanelEditarCores;
     // End of variables declaration//GEN-END:variables
 }

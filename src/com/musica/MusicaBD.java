@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Classe respons·vel pela persistÍncia de objetos Musica.
+ * Classe respons√°vel pela persist√™ncia de objetos Musica.
  */
 public class MusicaBD {
 
@@ -19,31 +19,31 @@ public class MusicaBD {
     public static final String TBL = "musica";
 
     /**
-     * MÈtodo que consiste a BK de Musica.
+     * M√©todo que consiste a BK de Musica.
      */
     public static void consistirBK(Musica musica) throws Exception {
         if (musica == null) {
-            throw new Exception(" - Musica n„o informado.");
+            throw new Exception(" - Musica n√£o informado.");
         }
 
         if (musica.getCaminho() == null || musica.getCaminho().isEmpty()) {
-            throw new Exception(" - Caminho da Musica n„o informado.");
+            throw new Exception(" - Caminho da Musica n√£o informado.");
         }
     }
 
     /**
-     * MÈtodo que consiste os dados de Musica.
+     * M√©todo que consiste os dados de Musica.
      */
     public static void consistir(Musica musica) throws Exception {
         consistirBK(musica);
     }
 
     /**
-     * MÈtodo que tenta incluir um objeto Musica.
+     * M√©todo que tenta incluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
+     * @param t Contendo a transa√ß√£o.
      * @return int Contendo o numero de linhas afetadas.
      */
     public static int incluir(Musica musica, Transacao t) throws Exception {
@@ -69,11 +69,11 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que tenta alterar um objeto Musica.
+     * M√©todo que tenta alterar um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
+     * @param t Contendo a transa√ß√£o.
      * @return int Contendo o numero de linhas afetadas.
      */
     public static int alterar(Musica musica, Transacao t) throws Exception {
@@ -101,11 +101,11 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que tenta excluir um objeto Musica.
+     * M√©todo que tenta excluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
+     * @param t Contendo a transa√ß√£o.
      * @return int Contendo o numero de linhas afetadas.
      */
     public static int excluir(Musica musica, Transacao t) throws Exception {
@@ -120,13 +120,13 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que verifica pelo BK se o objeto Musica est· cadastrado. Se
+     * M√©todo que verifica pelo BK se o objeto Musica est√° cadastrado. Se
      * estiver, carrega o ID do objeto.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
-     * @return boolean Contendo TRUE se est· cadastrado e FALSE se n„o estiver.
+     * @param t Contendo a transa√ß√£o.
+     * @return boolean Contendo TRUE se est√° cadastrado e FALSE se n√£o estiver.
      */
     public static boolean existe(Musica musica, Transacao t) throws Exception {
         consistirBK(musica);
@@ -152,12 +152,12 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que carrega o objeto Musica pelo ID.
+     * M√©todo que carrega o objeto Musica pelo ID.
      *
      *
      * @param musica Contendo a musica.
-     * @param t Contendo a transaÁ„o.
-     * @return boolean Contendo TRUE se est· cadastrado e FALSE se n„o estiver.
+     * @param t Contendo a transa√ß√£o.
+     * @return boolean Contendo TRUE se est√° cadastrado e FALSE se n√£o estiver.
      */
     public static boolean carregar(Musica musica, Transacao t) throws Exception {
         SQL sql = new SQL();
@@ -231,15 +231,15 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que retorna uma lista de Musicas de acordo com o filtro.
+     * M√©todo que retorna uma lista de Musicas de acordo com o filtro.
      *
      * @param filtro Contendo o filtro.
-     * @param t Contendo a transaÁ„o.
+     * @param t Contendo a transa√ß√£o.
      * @return ArrayList Contendo uma lista de Musicas.
      */
     public static ArrayList<Musica> listar(MusicaSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
-            throw new Exception(" - Filtro n„o informado.");
+            throw new Exception(" - Filtro n√£o informado.");
         }
 
 
@@ -315,7 +315,7 @@ public class MusicaBD {
 
     public static ArrayList listarAgrupado(MusicaSC filtro, String agrupar, Transacao t) throws Exception {
         if (filtro == null) {
-            throw new Exception(" - Filtro n„o informado.");
+            throw new Exception(" - Filtro n√£o informado.");
         }
 
 
@@ -370,7 +370,7 @@ public class MusicaBD {
      *#########################################
      */
     /**
-     * MÈtodo que tenta incluir um objeto Musica.
+     * M√©todo que tenta incluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
@@ -390,7 +390,7 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que tenta alterar um objeto Musica.
+     * M√©todo que tenta alterar um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
@@ -410,7 +410,7 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que tenta excluir um objeto Musica.
+     * M√©todo que tenta excluir um objeto Musica.
      *
      *
      * @param musica Contendo a musica.
@@ -430,12 +430,12 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que verifica pelo BK se o objeto Musica est· cadastrado. Se
+     * M√©todo que verifica pelo BK se o objeto Musica est√° cadastrado. Se
      * estiver, carrega o ID do objeto.
      *
      *
      * @param musica Contendo a musica.
-     * @return boolean Contendo TRUE se est· cadastrado e FALSE se n„o estiver.
+     * @return boolean Contendo TRUE se est√° cadastrado e FALSE se n√£o estiver.
      */
     public static boolean existe(Musica musica) throws Exception {
         Transacao t = new Transacao();
@@ -451,11 +451,11 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que carrega o objeto Musica pelo ID.
+     * M√©todo que carrega o objeto Musica pelo ID.
      *
      *
      * @param musica Contendo a musica.
-     * @return boolean Contendo TRUE se est· cadastrado e FALSE se n„o estiver.
+     * @return boolean Contendo TRUE se est√° cadastrado e FALSE se n√£o estiver.
      */
     public static boolean carregar(Musica musica) throws Exception {
         Transacao t = new Transacao();
@@ -471,7 +471,7 @@ public class MusicaBD {
     }
 
     /**
-     * MÈtodo que retorna uma lista de Musicas de acordo com o filtro.
+     * M√©todo que retorna uma lista de Musicas de acordo com o filtro.
      *
      * @param filtro Contendo o filtro.
      * @return ArrayList Contendo uma lista de Musicas.

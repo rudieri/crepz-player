@@ -13,7 +13,7 @@ public class BibliotecalRenderer implements TableCellRenderer {
     private JCapa jCapa = new JCapa();
 
     /**
-     * Método construtor.
+     * Mï¿½todo construtor.
      */
     public BibliotecalRenderer() {
         super();
@@ -23,7 +23,7 @@ public class BibliotecalRenderer implements TableCellRenderer {
     }
 
     /**
-     * Método sobreescrito de TableCellRenderer.
+     * Mï¿½todo sobreescrito de TableCellRenderer.
      */
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

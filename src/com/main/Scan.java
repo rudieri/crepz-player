@@ -78,7 +78,6 @@ public class Scan {
                 Transacao t = new Transacao();
                 while (true) {
                     try {
-                        System.out.println("Esperando: " + tempoSegudos + " segundos.");
                         Thread.sleep(tempoSegudos * ESCALA_TEMPO);
                         if (getPastas().isEmpty()) {
                             continue;
@@ -119,7 +118,7 @@ public class Scan {
     private void verificarModicicacoes(File path, Transacao t) {
         try {
             boolean ehDiretorio = path.isDirectory();
-            //TODO verificar datade modificação
+            //TODO verificar datade modificaÃ§Ã£o
             if (ehDiretorio) {
                 long ultimaModificacao = path.lastModified();
                 File[] files = path.listFiles();
@@ -164,51 +163,4 @@ public class Scan {
             Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//    private void verifica(File end, Transacao t) {
-//        if (end.isDirectory()) {
-//            trace("Dir: " + end.getAbsolutePath());
-//            try {
-//                Thread.sleep(170);
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//            File[] files = end.listFiles(new FileFilter() {
-//
-//                public boolean accept(File pathname) {
-//                    return MusicaGerencia.ehValido(pathname) || pathname.isDirectory();
-//                }
-//            });
-//
-//            for (int i = 0; i < files.length; i++) {
-//                verifica(files[i], t);
-//            }
-//
-//        } else {
-//            if (!MusicaGerencia.ehValido(end)) {
-//                return;
-//            }
-//
-//            if (musicas.indexOf(end.getAbsolutePath()) == -1) {
-//
-//                MusicaGerencia.addFiles(end, t);
-//            } else {
-//                trace("já tem!");
-//            }
-//        }
-//
-//
-//    }
-//    private void atualiza() {
-//        SQL sql = new SQL();
-//        sql.add("SELECT caminho FROM musica");
-//        musicas = new ArrayList(1000);
-//        try {
-//            ResultSet rs = t.executeQuery(sql.getSql());
-//            while (rs.next()) {
-//                musicas.add(rs.getString("caminho"));
-//            }
-//        } catch (Exception ex) {
-//            Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
 }

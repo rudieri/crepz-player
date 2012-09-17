@@ -24,7 +24,7 @@ public class modeloManipulaSQL {
             t.begin();
 
 
-            MusicaGerencia.mapearDiretorio(new File("D:/Users/manchini/Music/Minhas músicas/"), t,null,0);
+            MusicaGerencia.mapearDiretorio(new File("D:/Users/manchini/Music/Minhas mÃºsicas/"), t,null,0);
 
             SQL sql = new SQL();
             sql.add("SELECT * from musica");

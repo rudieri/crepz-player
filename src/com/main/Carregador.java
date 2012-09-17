@@ -84,7 +84,7 @@ public final class Carregador {
 
             @Override
             public Musica getNextMusica() {
-                System.out.println("Buscando m˙sica em: " + fonteReproducao);
+                System.out.println("Buscando m√∫sica em: " + fonteReproducao);
                 if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
                     return filaReproducao.getProxima();
                 } else {
@@ -134,20 +134,20 @@ public final class Carregador {
         mini = new JMini(musiquera, this);
         playList = new JPlayList(musiquera, this);
         biblioteca = new JBiBlioteca(musiquera, this);
-        jPele = new JPele();
+        jPele = new JPele(this);
         filaReproducao = new JFilaReproducao(musiquera, this);
 
         try {
             crepzTray = new CrepzTray(musiquera, this);
         } catch (Exception ex) {
-            Warning.print("System tray n„o supostado.");
+            Warning.print("System tray n√£o supostado.");
             ex.printStackTrace(System.err);
             crepzTray = null;
         }
 
         startMultimidiaKeys();
         aguarde.dispose();
-        // Deixa a tela padr„o visÌvel.
+        // Deixa a tela padr√£o vis√≠vel.
         ColorUtils.registrar(mini);
         ColorUtils.registrar(playList);
         ColorUtils.registrar(principal);
