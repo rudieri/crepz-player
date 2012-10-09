@@ -24,11 +24,6 @@ public class JHelp extends javax.swing.JDialog {
     public JHelp(JFrame parent) {
         super(parent,false);
         initComponents();
-        try{
-        JPrincipal.aguarde.intro();
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
 //        jEditorPane1 = new JEditorPane(new File(getClass().getResource("/com/help/Help.html").toURI()).toURL());
 
     }

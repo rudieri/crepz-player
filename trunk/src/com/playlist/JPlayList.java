@@ -92,7 +92,7 @@ public class JPlayList extends javax.swing.JDialog {
         initTabelaLista();
 
         jPanelOpcoesLista.setVisible(false);
-        setIconImage(carregador.icones.crepzIcon.getImage());
+        setIconImage(carregador.getIcones().crepzIcon.getImage());
 
     }
 
@@ -174,7 +174,6 @@ public class JPlayList extends javax.swing.JDialog {
         jTable.setEditingRow(-1);
 
         jTable.setDefaultRenderer(Object.class, new PlayListRenderer());
-        jTable.setBackground(Color.DARK_GRAY);
         jTable.setIntercellSpacing(new Dimension(1, 2));
         jTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jTable.setShowHorizontalLines(false);

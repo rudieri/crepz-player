@@ -94,32 +94,32 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         jToggleButton1.setText("");
         jToggle_Repete.setText("");
 
-        jButton_Stop.setIcon(carregador.icones.stopIcon16);
-        jButton_Ant.setIcon(carregador.icones.voltaIcon16);
-        jButton_Next.setIcon(carregador.icones.frenteIcon16);
-        jLabel_Playlist.setIcon(carregador.icones.pl);
-        jLabel_lib.setIcon(carregador.icones.lib);
-        jLabel_popup.setIcon(carregador.icones.menu);
-        jLabel1.setIcon(carregador.icones.xis);
+        jButton_Stop.setIcon(carregador.getIcones().stopIcon16);
+        jButton_Ant.setIcon(carregador.getIcones().voltaIcon16);
+        jButton_Next.setIcon(carregador.getIcones().frenteIcon16);
+        jLabel_Playlist.setIcon(carregador.getIcones().pl);
+        jLabel_lib.setIcon(carregador.getIcones().lib);
+        jLabel_popup.setIcon(carregador.getIcones().menu);
+        jLabel1.setIcon(carregador.getIcones().xis);
         if (musiquera.isPaused()) {
-            jButton_Play.setIcon(carregador.icones.playIcon16);
+            jButton_Play.setIcon(carregador.getIcones().playIcon16);
         } else {
-            jButton_Play.setIcon(carregador.icones.pauseIcon16);
+            jButton_Play.setIcon(carregador.getIcones().pauseIcon16);
         }
         if (carregador.isRandom()) {
-            jToggleButton1.setIcon(carregador.icones.randomOnIcon16);
+            jToggleButton1.setIcon(carregador.getIcones().randomOnIcon16);
         } else {
-            jToggleButton1.setIcon(carregador.icones.randomOffIcon16);
+            jToggleButton1.setIcon(carregador.getIcones().randomOffIcon16);
         }
         if (carregador.isRepeat()) {
-            jToggle_Repete.setIcon(carregador.icones.repeatOnIcon16);
+            jToggle_Repete.setIcon(carregador.getIcones().repeatOnIcon16);
         } else {
-            jToggle_Repete.setIcon(carregador.icones.repeatOffIcon16);
+            jToggle_Repete.setIcon(carregador.getIcones().repeatOffIcon16);
         }
         if (isAlwaysOnTop()) {
-            jLabel_top.setIcon(carregador.icones.topOn);
+            jLabel_top.setIcon(carregador.getIcones().topOn);
         } else {
-            jLabel_top.setIcon(carregador.icones.topOff);
+            jLabel_top.setIcon(carregador.getIcones().topOff);
         }
     }
     MouseAdapter mouseAdapterPopUp = new MouseAdapter() {
@@ -278,14 +278,14 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         if (!super.isVisible()) {
 
             if (carregador.isRandom()) {
-                jToggleButton1.setIcon(carregador.icones.randomOnIcon16);
+                jToggleButton1.setIcon(carregador.getIcones().randomOnIcon16);
             } else {
-                jToggleButton1.setIcon(carregador.icones.randomOffIcon16);
+                jToggleButton1.setIcon(carregador.getIcones().randomOffIcon16);
             }
             if (carregador.isRepeat()) {
-                jToggle_Repete.setIcon(carregador.icones.repeatOnIcon16);
+                jToggle_Repete.setIcon(carregador.getIcones().repeatOnIcon16);
             } else {
-                jToggle_Repete.setIcon(carregador.icones.repeatOffIcon16);
+                jToggle_Repete.setIcon(carregador.getIcones().repeatOffIcon16);
             }
         }
 
@@ -851,9 +851,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
                 carregador.setRandom(!carregador.isRandom());
                 if (carregador.isRandom()) {
-                    jToggleButton1.setIcon(carregador.icones.randomOnIcon16);
+                    jToggleButton1.setIcon(carregador.getIcones().randomOnIcon16);
                 } else {
-                    jToggleButton1.setIcon(carregador.icones.randomOffIcon16);
+                    jToggleButton1.setIcon(carregador.getIcones().randomOffIcon16);
                 }
             }
         }
@@ -927,9 +927,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
 
                 carregador.setRepeat(!carregador.isRepeat());
                 if (carregador.isRepeat()) {
-                    jToggle_Repete.setIcon(carregador.icones.repeatOnIcon16);
+                    jToggle_Repete.setIcon(carregador.getIcones().repeatOnIcon16);
                 } else {
-                    jToggle_Repete.setIcon(carregador.icones.repeatOffIcon16);
+                    jToggle_Repete.setIcon(carregador.getIcones().repeatOffIcon16);
                 }
             }
         }
@@ -1054,9 +1054,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel {
         // TODO add your handling code here:
         setAlwaysOnTop(jCheckBox_top.isSelected());
         if (isAlwaysOnTop()) {
-            jLabel_top.setIcon(carregador.icones.topOn);
+            jLabel_top.setIcon(carregador.getIcones().topOn);
         } else {
-            jLabel_top.setIcon(carregador.icones.topOff);
+            jLabel_top.setIcon(carregador.getIcones().topOff);
         }
     }//GEN-LAST:event_jCheckBox_topStateChanged
 

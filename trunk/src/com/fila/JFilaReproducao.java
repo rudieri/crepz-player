@@ -304,26 +304,26 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
 //        jButton_Ant.setText("");
         jToggle_Repete.setText("");
 
-        jButton_Stop.setIcon(carregador.icones.stopIcon32);
-//        jButton_Ant.setIcon(carregador.icones.voltaIcon32);
-        jButton_Next.setIcon(carregador.icones.frenteIcon32);
+        jButton_Stop.setIcon(carregador.getIcones().stopIcon32);
+//        jButton_Ant.setIcon(carregador.getIcones().voltaIcon32);
+        jButton_Next.setIcon(carregador.getIcones().frenteIcon32);
         if (musiquera.isPaused()) {
-            jButton_Play.setIcon(carregador.icones.playIcon32);
+            jButton_Play.setIcon(carregador.getIcones().playIcon32);
         } else {
-            jButton_Play.setIcon(carregador.icones.pauseIcon32);
+            jButton_Play.setIcon(carregador.getIcones().pauseIcon32);
         }
         if (carregador.isRepeat()) {
-            jToggle_Repete.setIcon(carregador.icones.repeatOnIcon32);
+            jToggle_Repete.setIcon(carregador.getIcones().repeatOnIcon32);
         } else {
-            jToggle_Repete.setIcon(carregador.icones.repeatOffIcon32);
+            jToggle_Repete.setIcon(carregador.getIcones().repeatOffIcon32);
         }
 
         // menus popup
-        jMenuItemFilaTocar.setIcon(carregador.icones.playIcon16);
-        jMenuItemFilaRemover.setIcon(carregador.icones.xis);
-        jMenuItemEmbaralhar.setIcon(carregador.icones.randomOnIcon16);
-//        jMenuItemFilaTocar.setIcon(carregador.icones.playIcon16);
-//        jMenuItemFilaTocar.setIcon(carregador.icones.playIcon16);
+        jMenuItemFilaTocar.setIcon(carregador.getIcones().playIcon16);
+        jMenuItemFilaRemover.setIcon(carregador.getIcones().xis);
+        jMenuItemEmbaralhar.setIcon(carregador.getIcones().randomOnIcon16);
+//        jMenuItemFilaTocar.setIcon(carregador.getIcones().playIcon16);
+//        jMenuItemFilaTocar.setIcon(carregador.getIcones().playIcon16);
 
     }
 
@@ -1241,9 +1241,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel {
     private void jToggle_RepeteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggle_RepeteMouseClicked
         carregador.setRepeat(!carregador.isRepeat());
         if (carregador.isRepeat()) {
-            jToggle_Repete.setIcon(carregador.icones.repeatOnIcon32);
+            jToggle_Repete.setIcon(carregador.getIcones().repeatOnIcon32);
         } else {
-            jToggle_Repete.setIcon(carregador.icones.repeatOffIcon32);
+            jToggle_Repete.setIcon(carregador.getIcones().repeatOffIcon32);
         }
     }//GEN-LAST:event_jToggle_RepeteMouseClicked
 

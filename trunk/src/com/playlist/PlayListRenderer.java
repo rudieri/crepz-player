@@ -2,6 +2,8 @@ package com.playlist;
 
 import com.musica.Musica;
 import com.utils.pele.ColorUtils;
+import com.utils.pele.JPele;
+import com.utils.pele.Pele;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;
@@ -15,7 +17,7 @@ public class PlayListRenderer implements TableCellRenderer {
     private Color unselectedForeground = Color.WHITE;
     private Color unselectedBackground = Color.BLACK;
     private JLista jLista;
-    
+
     /**
      * Método construtor.
      */
@@ -29,16 +31,27 @@ public class PlayListRenderer implements TableCellRenderer {
      */
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        
+
         if (value.getClass() == Musica.class) {
-            jLista.setMusica((Musica)value);
+            jLista.setMusica((Musica) value);
         }
-        if (isSelected) {
-            jLista.setForeground(ColorUtils.getFrenteTabelaSelecionada());
-            jLista.setBackground(ColorUtils.getFundoTabelaSelecionada());
+        //Aqui
+        if (ColorUtils.getPeleAtual() == Pele.PELE_PADRAO) {
+            if (isSelected) {
+                jLista.setForeground(Color.WHITE);
+                jLista.setBackground( new Color(255, 51, 0, 255));
+            } else {
+                jLista.setForeground(Color.BLACK);
+                jLista.setBackground(Color.WHITE);
+            }
         } else {
-            jLista.setForeground(ColorUtils.getFrenteTabelaNaoSelecionada());
-            jLista.setBackground(ColorUtils.getFundoTabelaNaoSelecionada());
+            if (isSelected) {
+                jLista.setForeground(ColorUtils.getFrenteTabelaSelecionada());
+                jLista.setBackground(ColorUtils.getFundoTabelaSelecionada());
+            } else {
+                jLista.setForeground(ColorUtils.getFrenteTabelaNaoSelecionada());
+                jLista.setBackground(ColorUtils.getFundoTabelaNaoSelecionada());
+            }
         }
         return jLista;
     }
