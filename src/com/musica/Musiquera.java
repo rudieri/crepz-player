@@ -81,7 +81,7 @@ public abstract class Musiquera implements BasicPlayerListener {
         try {
             System.out.println(new Double(v) / 100);
             player.setGain(new Double(v) / 100);
-            
+
         } catch (BasicPlayerException ex) {
             Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -124,7 +124,7 @@ public abstract class Musiquera implements BasicPlayerListener {
     public boolean isPaused() {
         return paused;
     }
-    
+
     public boolean apenasAbrir(Musica m) throws BasicPlayerException {
         try {
             this.musica = m;
@@ -151,6 +151,19 @@ public abstract class Musiquera implements BasicPlayerListener {
 
     public void abrirETocar() {
         abrir(getNextMusica(), 0, false);
+    }
+
+    public final void abrirArquivo(String f) {
+        abrirArquivo(new File(f));
+    }
+
+    public void abrirArquivo(File f) {
+        try {
+            player.open(f);
+            player.play();
+        } catch (BasicPlayerException ex) {
+            Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @SuppressWarnings("CallToThreadDumpStack")
@@ -221,9 +234,9 @@ public abstract class Musiquera implements BasicPlayerListener {
             boolean conseguiu = abrirForaLinhaTempo(proxima, 0, false);
             if (!conseguiu) {
                 contaFalhas++;
-            if (contaFalhas < 5) {
-                tocarProxima();
-            }
+                if (contaFalhas < 5) {
+                    tocarProxima();
+                }
             } else {
                 contaFalhas = 0;
             }

@@ -10,19 +10,13 @@ import com.fila.JFilaReproducao;
 import com.graficos.Icones;
 import com.hotkey.linux.Ouvinte;
 import com.main.gui.Aguarde;
-import com.main.gui.JBiBlioteca;
 import com.main.gui.JMini;
-import com.main.gui.JPrincipal;
 import com.melloware.jintellitype.JIntellitype;
 import com.musica.LinhaDoTempo;
 import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.Musiquera;
 import com.musica.Musiquera.PropriedadesMusica;
-import com.playlist.JPlayList;
-import com.utils.Warning;
-import com.utils.pele.ColorUtils;
-import com.utils.pele.JPele;
 import java.awt.SystemTray;
 import java.awt.Window;
 import java.io.File;
@@ -42,32 +36,20 @@ import org.hsqldb.server.Server;
  */
 public final class Carregador {
 
-    Musiquera musiquera;
-    JPrincipal principal;
-    JMini mini;
-    Scan scan;
-    private TelaPadrao telaPadrao;
-    private JFilaReproducao filaReproducao;
-    private final JPlayList playList;
-    private final JBiBlioteca biblioteca;
-    private final JPele jPele;
-    private CrepzTray crepzTray;
-    public final Icones icones;
+    private static Carregador me;
+    private Musiquera musiquera;
+    private Icones icones;
     private FonteReproducao fonteReproducao;
+    private static TelaPadrao telaPadrao;
 
     public Carregador() {
 
         Aguarde aguarde = new Aguarde();
         aguarde.mostrar();
-        initLookAndFeel();
-        startBanco();
-        icones = new Icones();
-        icones.loadIcons("crepz");
-        createLog();
+        aguarde.intro();
         fonteReproducao = FonteReproducao.AVULSO;
         telaPadrao = (TelaPadrao) Configuracaoes.getEnum(Configuracaoes.CONF_TELA_PADRAO);
         musiquera = new Musiquera(this) {
-
             @Override
             public void numberTempoChange(double s) {
                 getTelaPrincipal().tempoEh(s);
@@ -86,25 +68,21 @@ public final class Carregador {
             public Musica getNextMusica() {
                 System.out.println("Buscando música em: " + fonteReproducao);
                 if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
-                    return filaReproducao.getProxima();
+                    return GerenciadorTelas.getFilaReproducao().getProxima();
                 } else {
-                    return playList.getProxima();
+                    return GerenciadorTelas.getPlayList().getProxima();
                 }
             }
 
             @Override
             public Musica getPreviousMusica() {
                 if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
-                    return filaReproducao.getAnterior();
+                    return GerenciadorTelas.getFilaReproducao().getProxima();
                 } else {
-                    return playList.getAnterior();
+                    return GerenciadorTelas.getPlayList().getProxima();
                 }
             }
 
-//            @Override
-//            public void stringTempoTotalChange(String hms) {
-//                getTelaPrincipal().tempoTotalEhHMS(hms);
-//            }
             @Override
             public void atualizaLabels(String nome, int bits, String tempo, int freq) {
                 for (int i = 0; i < getTodasTelas().length; i++) {
@@ -125,44 +103,34 @@ public final class Carregador {
                 }
                 getTelaPrincipal().propriedadesMusicaChanged(propriedadesMusica);
                 if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
-                    filaReproducao.propriedadesMusicaChanged(propriedadesMusica);
+                    GerenciadorTelas.getFilaReproducao().propriedadesMusicaChanged(propriedadesMusica);
                 }
             }
         };
-        Ouvinte ouvinte = new Ouvinte(musiquera);
-        principal = new JPrincipal(musiquera, this);
-        mini = new JMini(musiquera, this);
-        playList = new JPlayList(musiquera, this);
-        biblioteca = new JBiBlioteca(musiquera, this);
-        jPele = new JPele(this);
-        filaReproducao = new JFilaReproducao(musiquera, this);
-
-        try {
-            crepzTray = new CrepzTray(musiquera, this);
-        } catch (Exception ex) {
-            Warning.print("System tray não supostado.");
-            ex.printStackTrace(System.err);
-            crepzTray = null;
-        }
-
-        startMultimidiaKeys();
+        initLookAndFeel();
+        startBanco();
+        createLog();
         aguarde.dispose();
         // Deixa a tela padrão visível.
-        ColorUtils.registrar(mini);
-        ColorUtils.registrar(playList);
-        ColorUtils.registrar(principal);
-        ColorUtils.registrar(filaReproducao);
-        ColorUtils.registrar(biblioteca);
-        ColorUtils.registrar(jPele);
-        ColorUtils.aplicarTema();
-        setTelaBase(telaPadrao);
 
-        scan = new Scan();
 
     }
-    
-    public void mostrarModificadorDeTema(){
-        jPele.setVisible(true);
+
+    private void inicializarConfiguracoes() {
+        icones = new Icones();
+        icones.loadIcons("crepz");
+        startMultimidiaKeys();
+        setTelaBase(telaPadrao);
+        if (!Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER).isEmpty()) {
+            GerenciadorTelas.getScan();
+        }
+
+        Ouvinte ouvinte = new Ouvinte(musiquera);
+
+    }
+
+    public void mostrarModificadorDeTema() {
+        GerenciadorTelas.getPele().setVisible(true);
     }
 
     public void setFonteReproducao(FonteReproducao fonteReproducao) {
@@ -208,116 +176,130 @@ public final class Carregador {
 //        if (isFilaReproducaoVisivel()) {
 //            ocultarFilaReproducao();
 //        }
-        playList.setLocation(getWindowPrincipal().getX() - playList.getWidth() - 5, getWindowPrincipal().getY());
-        playList.setVisible(true);
+        GerenciadorTelas.getPlayList().setLocation(getWindowPrincipal().getX() - GerenciadorTelas.getPlayList().getWidth() - 5, getWindowPrincipal().getY());
+        GerenciadorTelas.getPlayList().setVisible(true);
         setFonteReproducao(FonteReproducao.PLAY_LIST);
     }
 
     public void ocultarPlayList() {
-        playList.setVisible(false);
+        GerenciadorTelas.getPlayList().setVisible(false);
     }
 
     public void mostrarBiblioteca() {
-        biblioteca.setLocation(getWindowPrincipal().getX() - biblioteca.getWidth() - 5, getWindowPrincipal().getY());
-        biblioteca.setVisible(true);
+        GerenciadorTelas.getBiblioteca().setLocation(getWindowPrincipal().getX() - GerenciadorTelas.getBiblioteca().getWidth() - 5,
+                getWindowPrincipal().getY());
+        GerenciadorTelas.getBiblioteca().setVisible(true);
     }
 
     public void ocultarBiblioteca() {
-        playList.setVisible(false);
+        GerenciadorTelas.getPlayList().setVisible(false);
     }
 
     public Window getWindowPrincipal() {
         switch (telaPadrao) {
             case J_FILA:
-                return filaReproducao;
+                return GerenciadorTelas.getFilaReproducao();
             case J_PRINCIPAL:
-                return principal;
+                return GerenciadorTelas.getPrincipal();
             case J_MINI:
-                return mini;
+                return GerenciadorTelas.getMini();
 
         }
-        return principal;
+        return GerenciadorTelas.getPrincipal();
     }
 
     public Notificavel getTelaPrincipal() {
         switch (telaPadrao) {
             case J_FILA:
-                return filaReproducao;
+                return GerenciadorTelas.getFilaReproducao();
             case J_PRINCIPAL:
-                return principal;
+                return GerenciadorTelas.getPrincipal();
             case J_MINI:
-                return mini;
+                return GerenciadorTelas.getMini();
 
         }
-        return principal;
+        return GerenciadorTelas.getPrincipal();
     }
 
     public Notificavel[] getTodasTelas() {
-        return new Notificavel[]{filaReproducao, principal, mini};
+        return new Notificavel[]{GerenciadorTelas.getFilaReproducao(), GerenciadorTelas.getPrincipal(), GerenciadorTelas.getMini()};
     }
 
     private void abrirUltimaConfiguracao() {
-        principal.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PRINCIPAL));
-        mini.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_MINI));
-        playList.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PLAYLIST));
-        biblioteca.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_BIBLIOTECA));
-        filaReproducao.setVisible(Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_FILA));
-        playList.setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
+        if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PRINCIPAL)) {
+            GerenciadorTelas.getPrincipal().setVisible(true);
+            
+        }
+        if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_MINI)) {
+            GerenciadorTelas.getMini().setVisible(true);
+            
+        }
+        if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PLAYLIST)) {
+            GerenciadorTelas.getPlayList().setVisible(true);
+        }
+        if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_BIBLIOTECA)) {
+            GerenciadorTelas.getBiblioteca().setVisible(true);
+        }
+        if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_FILA)) {
+            GerenciadorTelas.getFilaReproducao().setVisible(true);
+            
+        }
+        GerenciadorTelas.getPlayList().setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
         setFonteReproducao((FonteReproducao) Configuracaoes.getEnum(Configuracaoes.CONF_FONTE_REPRODUCAO));
         musiquera.tocarProxima();
     }
 
     public void setMiniComoBase() {
-        principal.dispose();
-        filaReproducao.dispose();
-        mini.setVisible(true);
+        GerenciadorTelas.getPrincipal().dispose();
+        GerenciadorTelas.getFilaReproducao().dispose();
+        GerenciadorTelas.getMini().setVisible(true);
         telaPadrao = TelaPadrao.J_MINI;
-        if (crepzTray != null) {
+        if (GerenciadorTelas.getCrepzTray() != null) {
             mostrarIconeTray();
         }
     }
 
     public void setPrincipalComoBase(int x, int y) {
-        principal.setLocation(x, y);
+        GerenciadorTelas.getPrincipal().setLocation(x, y);
         setPrincipalComoBase();
     }
 
     public void setPrincipalComoBase() {
-        if (crepzTray != null && crepzTray.isOnTray()) {
+        if (GerenciadorTelas.getCrepzTray() != null && GerenciadorTelas.getCrepzTray().isOnTray()) {
             ocultarIconeTray();
         }
         telaPadrao = TelaPadrao.J_PRINCIPAL;
-        mini.dispose();
-        filaReproducao.dispose();
-        principal.setVisible(true);
+        GerenciadorTelas.getMini().dispose();
+        GerenciadorTelas.getFilaReproducao().dispose();
+        GerenciadorTelas.getPrincipal().setVisible(true);
     }
 
     public void setFilaComoBase() {
-        if (crepzTray != null && crepzTray.isOnTray()) {
+        if (GerenciadorTelas.getCrepzTray() != null && GerenciadorTelas.getCrepzTray().isOnTray()) {
             ocultarIconeTray();
         }
         setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);
         telaPadrao = TelaPadrao.J_FILA;
-        mini.dispose();
-        principal.dispose();
-        filaReproducao.setVisible(true);
+        GerenciadorTelas.getMini().dispose();
+        GerenciadorTelas.getPrincipal().dispose();
+        GerenciadorTelas.getFilaReproducao().setVisible(true);
     }
 
     public boolean isPlayListVisible() {
-        return playList.isVisible();
+        return GerenciadorTelas.getPlayList().isVisible();
     }
 
     public boolean isBibliotecaVisible() {
-        return biblioteca.isVisible();
+        return GerenciadorTelas.getBiblioteca().isVisible();
     }
 
     public void sair() {
-        Configuracaoes.set(Configuracaoes.CONF_VISIB_PRINCIPAL, principal.isVisible());
-        Configuracaoes.set(Configuracaoes.CONF_VISIB_MINI, mini.isVisible());
-        Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, biblioteca.isVisible());
-        Configuracaoes.set(Configuracaoes.CONF_VISIB_FILA, filaReproducao.isVisible());
-        Configuracaoes.set(Configuracaoes.CONF_VISIB_PLAYLIST, playList.isVisible());
-        Configuracaoes.set(Configuracaoes.CONF_LISTA_ABERTA, playList.getPlaylistAberta() == null ? -1 : playList.getPlaylistAberta().getId());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_PRINCIPAL, GerenciadorTelas.getPrincipal().isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_MINI, GerenciadorTelas.getMini().isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, GerenciadorTelas.getBiblioteca().isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_FILA, GerenciadorTelas.getFilaReproducao().isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_VISIB_PLAYLIST, GerenciadorTelas.getPlayList().isVisible());
+        Configuracaoes.set(Configuracaoes.CONF_LISTA_ABERTA, GerenciadorTelas.getPlayList().getPlaylistAberta() == null ? -1 : GerenciadorTelas.getPlayList().getPlaylistAberta().getId());
         Configuracaoes.set(Configuracaoes.CONF_FONTE_REPRODUCAO, fonteReproducao);
         System.exit(0);
     }
@@ -349,24 +331,24 @@ public final class Carregador {
     }
 
     public void addToPlayList(ArrayList<Musica> musicas) {
-        playList.addMusicas(musicas);
+        GerenciadorTelas.getPlayList().addMusicas(musicas);
     }
 
     public void addToPlayList(Musica musica) {
-        playList.addMusica(musica);
+        GerenciadorTelas.getPlayList().addMusica(musica);
     }
 
     private void mostrarIconeTray() {
         if (SystemTray.isSupported()) {
-            if (!crepzTray.isOnTray()) {
-                crepzTray.toTray();
+            if (!GerenciadorTelas.getCrepzTray().isOnTray()) {
+                GerenciadorTelas.getCrepzTray().toTray();
             }
         }
     }
 
     private void ocultarIconeTray() {
         if (SystemTray.isSupported()) {
-            crepzTray.someTray();
+            GerenciadorTelas.getCrepzTray().someTray();
         }
     }
 
@@ -374,9 +356,9 @@ public final class Carregador {
         try {
             if (System.getProperty("os.name").indexOf("Windows") > -1) {
                 if (System.getProperty("sun.arch.data.model").equals("64")) {
-                    JIntellitype.setLibraryLocation(principal.getClass().getResource("com/hotkey/windows/JIntellitype64.dll").getFile());
+                    JIntellitype.setLibraryLocation(GerenciadorTelas.getPrincipal().getClass().getResource("com/hotkey/windows/JIntellitype64.dll").getFile());
                 } else {
-                    JIntellitype.setLibraryLocation(principal.getClass().getResource("com/hotkey/windows/JIntellitype.dll").getFile());
+                    JIntellitype.setLibraryLocation(GerenciadorTelas.getPrincipal().getClass().getResource("com/hotkey/windows/JIntellitype.dll").getFile());
                 }
 
                 if (JIntellitype.checkInstanceAlreadyRunning("JIntellitype Test Application")) {
@@ -385,7 +367,7 @@ public final class Carregador {
                 if (!JIntellitype.isJIntellitypeSupported()) {
                     System.exit(1);
                 }
-                principal.initJIntellitype();
+                GerenciadorTelas.getPrincipal().initJIntellitype();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -420,7 +402,8 @@ public final class Carregador {
     }
 
     public static void main(String[] args) {
-        Carregador carregador = new Carregador();
+        me = new Carregador();
+        me.inicializarConfiguracoes();
     }
 
     public void mostrarFilaReproducao() {
@@ -429,11 +412,11 @@ public final class Carregador {
 
     public void ocultarFilaReproducao() {
         setPrincipalComoBase();
-//        filaReproducao.setVisible(false);
+//        GerenciadorTelas.getFilaReproducao().setVisible(false);
     }
 
     public boolean isFilaReproducaoVisivel() {
-        return filaReproducao.isVisible();
+        return GerenciadorTelas.getFilaReproducao().isVisible();
     }
 
     public enum FonteReproducao {
@@ -442,4 +425,17 @@ public final class Carregador {
         FILA_REPRODUCAO,
         AVULSO
     }
+
+    protected static Carregador getMe() {
+        return me;
+    }
+
+    protected Musiquera getMusiquera() {
+        return musiquera;
+    }
+
+    public Icones getIcones() {
+        return icones;
+    }
+    
 }
