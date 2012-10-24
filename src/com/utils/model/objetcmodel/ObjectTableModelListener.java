@@ -10,5 +10,5 @@ package com.utils.model.objetcmodel;
  */
 public interface  ObjectTableModelListener {
 
-    public void sizeChanged(int newSize);
+    public void sizeChanged(Object source, int newSize);
 }

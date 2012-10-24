@@ -46,9 +46,9 @@ public class Icones {
             BufferedImage bf_randomOffIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_randon_off.png"));
             BufferedImage bf_repeatOnIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_repeat_on.png"));
             BufferedImage bf_repeatOffIcon16 = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/16/pl_repeat_off.png"));
-            BufferedImage bf_topOn = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/mini/c_top_on.png"));
-            BufferedImage bf_topOff = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/mini/c_top_off.png"));
-            BufferedImage bf_menu = ImageIO.read(getClass().getResource(CAMINHO_BASE_ICONES + tipo + "/mini/c_menu.png"));
+            BufferedImage bf_topOn = ImageIO.read(getClass().getResource("/com/img/c_top_on.png"));
+            BufferedImage bf_topOff = ImageIO.read(getClass().getResource("/com/img/c_top_off.png"));
+            BufferedImage bf_menu = ImageIO.read(getClass().getResource("/com/img/c_menu.png"));
             BufferedImage bf_pl = ImageIO.read(getClass().getResource("/com/img/playlist.gif"));
             BufferedImage bf_lib = ImageIO.read(getClass().getResource("/com/img/biblioteca.png"));
             BufferedImage bf_xis = ImageIO.read(getClass().getResource("/com/img/x.png"));

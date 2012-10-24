@@ -5,8 +5,8 @@ import com.biblioteca.Capa;
 import com.conexao.Transacao;
 import com.main.Carregador;
 import com.musica.*;
-import com.utils.DiretorioUtils;
 import com.utils.JTrocarImagem;
+import com.utils.file.DiretorioUtils;
 import com.utils.model.ModelReadOnly;
 import com.utils.model.objetcmodel.ObjectTransferable;
 import com.utils.pele.ColorUtils;
@@ -16,6 +16,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -46,25 +48,24 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author manchini
  */
-public class JBiBlioteca extends javax.swing.JDialog {
-    private final BibliotecalRenderer bibliotecalRenderer;
+public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, Runnable {
 
+    private final BibliotecalRenderer bibliotecalRenderer;
     /**
      * Creates new form JBiBlioteca
      */
     private JPrincipal principal;
     private JFileChooser jFileChooser = new JFileChooser();
     String genero = "";
-    private Musiquera musiquera;
     private final Carregador carregador;
     private DropTarget dropTargetBiblioteca;
 
-    public JBiBlioteca(Musiquera mus, Carregador carregador) {
+    public JBiBlioteca(Carregador carregador) {
         bibliotecalRenderer = new BibliotecalRenderer();
         initComponents();
-        musiquera = mus;
         this.carregador = carregador;
         inicializaDropTabela();
+        startEvents();
     }
 
     public void setVisible(boolean b, boolean a) {
@@ -75,7 +76,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private void inicializaDropTabela() {
         jTable.setDragEnabled(true);
         jTable.setTransferHandler(new TransferHandler(null) {
-
             @Override
             public int getSourceActions(JComponent c) {
                 return COPY_OR_MOVE;
@@ -115,7 +115,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         });
 
         dropTargetBiblioteca = new DropTarget(jScrollPane, new DropTargetAdapter() {
-
             @Override
             public void drop(DropTargetDropEvent dtde) {
                 try {
@@ -164,7 +163,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
             public void dragEnter(DropTargetDragEvent evt) {
                 if (TipoTransferenciaMusica.forDataFlavor(evt.getCurrentDataFlavors()) == TipoTransferenciaMusica.JBIBLIOTECA) {
                     evt.rejectDrag();
-                }else{
+                } else {
                     evt.acceptDrag(DnDConstants.ACTION_COPY);
                 }
             }
@@ -258,7 +257,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Filtrar");
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -290,7 +289,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jTable.setDefaultRenderer(Object.class, bibliotecalRenderer);
         jTable.getTableHeader().setVisible(false);
         jTable.setRowHeight(100);
-        if (jTable.getRowCount()>0) {
+        if (jTable.getRowCount() > 0) {
             jTable.changeSelection(0, 0, false, false);
         }
 
@@ -332,7 +331,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
             JOptionPane.showMessageDialog(this, "Erro ao Filtrar");
         }
     }
@@ -355,30 +354,30 @@ public class JBiBlioteca extends javax.swing.JDialog {
     }
 
     private void importarArquivos() {
-        new Thread(new Runnable() {
+        new Thread(this).start();
 
-            public void run() {
-                Transacao t = new Transacao();
-                jProgressBar.setVisible(true);
-                try {
-                    t.begin();
-                    File pasta = telaAbrirArquivo();
-                    if (pasta != null) {
-                        importarArquivos(pasta, t);
+    }
+
+    @Override
+    public void run() {
+        Transacao t = new Transacao();
+        jProgressBar.setVisible(true);
+        try {
+            t.begin();
+            File pasta = telaAbrirArquivo();
+            if (pasta != null) {
+                importarArquivos(pasta, t);
 
 
-                    }
-                    t.commit();
-                    atualizarTabelaCapa();
-                } catch (Exception ex) {
-                    t.rollback();
-                    ex.printStackTrace();
-                } finally {
-                    jProgressBar.setVisible(false);
-                }
             }
-        }).start();
-
+            t.commit();
+            atualizarTabelaCapa();
+        } catch (Exception ex) {
+            t.rollback();
+            ex.printStackTrace(System.err);
+        } finally {
+            jProgressBar.setVisible(false);
+        }
     }
 
     private void importarArquivos(ArrayList<File> pasta) {
@@ -408,6 +407,70 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jTextField_Album.requestFocus();
 
         genero = "";
+    }
+
+    private void startEvents() {
+        jButton_PK4.addActionListener(this);
+        jButton2.addActionListener(this);
+        jComboBox_selecao.addActionListener(this);
+        jComboBox_Agrupar.addActionListener(this);
+        jCheckBox_capa.addActionListener(this);
+        jButton1.addActionListener(this);
+        jMenuItem1.addActionListener(this);
+        jMenuItem2.addActionListener(this);
+        jMenuItem3.addActionListener(this);
+        jMenuItem4.addActionListener(this);
+        jMenuItem5.addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == jButton_PK4) {
+            atualizarTabelas();
+        } else if (e.getSource() == jButton2) {
+            jPanelFiltrar.setVisible(false);
+            atualizarTabelas();
+        } else if (e.getSource() == jComboBox_selecao) {
+            atualizarTabelas();
+        } else if (e.getSource() == jComboBox_Agrupar) {
+            atualizarTabelas();
+        } else if (e.getSource() == jCheckBox_capa) {
+            atualizarTabelas();
+        } else if (e.getSource() == jButton1) {
+            importarArquivos();
+        } else if (e.getSource() == jMenuItem1) {
+            if (jPanelFiltrar.isVisible()) {
+                atualizarTabelas();
+            } else {
+                resetText();
+                jPanelFiltrar.setVisible(true);
+            }
+            jTextField_Album.requestFocus();
+        } else if (e.getSource() == jMenuItem2) {
+            resetText();
+        } else if (e.getSource() == jMenuItem3) {
+            if (jTable.getSelectedRow() != -1) {
+                carregador.addToPlayList(
+                        (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount()));
+            }
+        } else if (e.getSource() == jMenuItem4) {
+            for (int i = 0; i < jTable.getRowCount(); i++) {
+                Musica m = (Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount());
+                carregador.addToPlayList(m);
+            }
+        } else if (e.getSource() == jMenuItem5) {
+            if (jTable.getSelectedRow() > -1 && jTable.getSelectedColumn() > -1) {
+                if (jCheckBox_capa.isSelected()) {
+                    Capa capa = (Capa) jTable.getValueAt(jTable.getSelectedRow(), jTable.getSelectedColumn());
+                    jTextField_Album.setText(capa.getTitulo());
+                    atualizarTabelaLista();
+                }
+                Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
+                new JTrocarImagem(principal, true, m).setVisible(true);
+                jCheckBox_capa.setSelected(true);
+                atualizarTabelaCapa();
+            }
+        }
     }
 
     /**
@@ -457,11 +520,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Crepz Player");
         setMinimumSize(new java.awt.Dimension(500, 212));
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
 
         jPanelFiltrar.setPreferredSize(new java.awt.Dimension(400, 40));
         jPanelFiltrar.setLayout(new javax.swing.BoxLayout(jPanelFiltrar, javax.swing.BoxLayout.Y_AXIS));
@@ -497,27 +555,9 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jButton_PK4.setMaximumSize(new java.awt.Dimension(22, 20));
         jButton_PK4.setMinimumSize(new java.awt.Dimension(22, 20));
         jButton_PK4.setPreferredSize(new java.awt.Dimension(30, 30));
-        jButton_PK4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_PK4ActionPerformed(evt);
-            }
-        });
-        jButton_PK4.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jButton_PK4FocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jButton_PK4FocusLost(evt);
-            }
-        });
         jPanel_Nome4.add(jButton_PK4);
 
         jButton2.setText("Cancelar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
         jPanel_Nome4.add(jButton2);
 
         jPanelFiltrar.add(jPanel_Nome4);
@@ -534,11 +574,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jPanel4.add(jLabel1);
 
         jComboBox_selecao.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Executar", "Playlist" }));
-        jComboBox_selecao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox_selecaoActionPerformed(evt);
-            }
-        });
         jPanel4.add(jComboBox_selecao);
 
         jPanel2.add(jPanel4);
@@ -550,11 +585,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jPanel6.add(jLabel2);
 
         jComboBox_Agrupar.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Autor", "Album", "Genero" }));
-        jComboBox_Agrupar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox_AgruparActionPerformed(evt);
-            }
-        });
         jPanel6.add(jComboBox_Agrupar);
 
         jPanel2.add(jPanel6);
@@ -566,11 +596,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jPanel10.add(jLabel4);
 
         jCheckBox_capa.setSelected(true);
-        jCheckBox_capa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox_capaActionPerformed(evt);
-            }
-        });
         jPanel10.add(jCheckBox_capa);
 
         jPanel2.add(jPanel10);
@@ -586,11 +611,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         jScrollPane.setAutoscrolls(true);
         jScrollPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jScrollPane.setRequestFocusEnabled(false);
-        jScrollPane.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jScrollPaneFocusGained(evt);
-            }
-        });
 
         jTable.setAutoCreateRowSorter(true);
         jTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -626,11 +646,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
 
         jButton1.setText("ADD");
         jButton1.setPreferredSize(new java.awt.Dimension(60, 30));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
         jPanel8.add(jButton1);
 
         jPanel7.add(jPanel8);
@@ -647,47 +662,22 @@ public class JBiBlioteca extends javax.swing.JDialog {
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         jMenuItem1.setText("Pesquisar");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
         jMenuItem2.setText("Limpar");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
-            }
-        });
         jMenu1.add(jMenuItem2);
 
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem3.setText("Add Playlist");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
         jMenu1.add(jMenuItem3);
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem4.setText("Add Todas Playlist");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
-            }
-        });
         jMenu1.add(jMenuItem4);
 
         jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
         jMenuItem5.setText("Trocar Capa");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
-            }
-        });
         jMenu1.add(jMenuItem5);
 
         jMenuBar1.add(jMenu1);
@@ -697,11 +687,6 @@ public class JBiBlioteca extends javax.swing.JDialog {
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         setBounds((screenSize.width-495)/2, (screenSize.height-419)/2, 495, 419);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jScrollPaneFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jScrollPaneFocusGained
-        jTable.requestFocus();
-        jTable.changeSelection(0, 0, false, false);
-}//GEN-LAST:event_jScrollPaneFocusGained
 
     private void jTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableKeyPressed
         if (jTable.getSelectedRow() > -1) {
@@ -724,7 +709,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
                     if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                         try {
                             Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
-                            musiquera.abrir(m, 0, false);
+                            carregador.abrir(m, 0, false);
                             jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                         } catch (Exception ex) {
                             Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
@@ -764,7 +749,7 @@ public class JBiBlioteca extends javax.swing.JDialog {
                 if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                     try {
                         Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-                        musiquera.abrir(m, 0, false);
+                        carregador.abrir(m, 0, false);
                         jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                     } catch (Exception ex) {
                         Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
@@ -777,121 +762,15 @@ public class JBiBlioteca extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jTableMouseClicked
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        importarArquivos();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        resetText();
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // jButton_PK4ActionPerformed(evt);
-        if (jPanelFiltrar.isVisible()) {
-            jButton_PK4ActionPerformed(evt);
-        } else {
-            resetText();
-            jPanelFiltrar.setVisible(true);
-//            if (jCheckBox_capa.isSelected()) {
-//                atualizarTabelaCapa();
-//            } else {
-//                atualizarTabelaLista();
-//            }
-        }
-        jTextField_Album.requestFocus();
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
-
-    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        for (int i = 0; i < jTable.getRowCount(); i++) {
-            Musica m = (Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount());
-            carregador.addToPlayList(m);
-        }
-    }//GEN-LAST:event_jMenuItem4ActionPerformed
-
-    private void jCheckBox_capaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_capaActionPerformed
-        // TODO add your handling code here:
-        if (jCheckBox_capa.isSelected()) {
-            atualizarTabelaCapa();
-        } else {
-            atualizarTabelaLista();
-        }
-    }//GEN-LAST:event_jCheckBox_capaActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        jPanelFiltrar.setVisible(false);
-        if (jCheckBox_capa.isSelected()) {
-            atualizarTabelaCapa();
-        } else {
-            atualizarTabelaLista();
-        }
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jComboBox_AgruparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_AgruparActionPerformed
-        // TODO add your handling code here:
-        if (jCheckBox_capa.isSelected()) {
-            atualizarTabelaCapa();
-        } else {
-            atualizarTabelaLista();
-        }
-    }//GEN-LAST:event_jComboBox_AgruparActionPerformed
-
-    private void jComboBox_selecaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_selecaoActionPerformed
-        // TODO add your handling code here:
-        if (jCheckBox_capa.isSelected()) {
-            atualizarTabelaCapa();
-        } else {
-            atualizarTabelaLista();
-        }
-    }//GEN-LAST:event_jComboBox_selecaoActionPerformed
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // TODO add your handling code here:
-    }//GEN-LAST:event_formWindowClosing
-
     private void jTextField_AlbumKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_AlbumKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            jButton_PK4ActionPerformed(null);
+            atualizarTabelas();
         }
     }//GEN-LAST:event_jTextField_AlbumKeyPressed
-
-    private void jButton_PK4FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jButton_PK4FocusLost
-        // TODO add your handling code here:
-}//GEN-LAST:event_jButton_PK4FocusLost
-
-    private void jButton_PK4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jButton_PK4FocusGained
-        // TODO add your handling code here:
-}//GEN-LAST:event_jButton_PK4FocusGained
-
-    private void jButton_PK4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_PK4ActionPerformed
-        if (jCheckBox_capa.isSelected()) {
-            atualizarTabelaCapa();
-        } else {
-            atualizarTabelaLista();
-        }
-}//GEN-LAST:event_jButton_PK4ActionPerformed
 
     private void jTextField_AlbumFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_AlbumFocusGained
         jTextField_Album.selectAll();
     }//GEN-LAST:event_jTextField_AlbumFocusGained
-
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        if (jTable.getSelectedRow() > -1 && jTable.getSelectedColumn() > -1) {
-            if (jCheckBox_capa.isSelected()) {
-                Capa capa = (Capa) jTable.getValueAt(jTable.getSelectedRow(), jTable.getSelectedColumn());
-                jTextField_Album.setText(capa.getTitulo());
-                atualizarTabelaLista();
-            }
-            Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-            new JTrocarImagem(principal, true, m).setVisible(true);
-            jCheckBox_capa.setSelected(true);
-            atualizarTabelaCapa();
-        }
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -928,4 +807,12 @@ public class JBiBlioteca extends javax.swing.JDialog {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField_Album;
     // End of variables declaration//GEN-END:variables
+
+    private void atualizarTabelas() {
+        if (jCheckBox_capa.isSelected()) {
+            atualizarTabelaCapa();
+        } else {
+            atualizarTabelaLista();
+        }
+    }
 }

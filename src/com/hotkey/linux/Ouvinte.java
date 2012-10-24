@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  *
  * @author rudieri
  */
-public class Ouvinte {
+public class Ouvinte implements Runnable {
 
     private final Musiquera musiquera;
     private Carregador carregador;
@@ -46,17 +46,16 @@ public class Ouvinte {
     }
 
     private void initSocket() {
-        new Thread(new Runnable() {
+        new Thread(this).start();
+    }
 
-            @Override
-            public void run() {
-                try {
-                    initSocketRun();
-                } catch (IOException ex) {
-                    Logger.getLogger(Ouvinte.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }).start();
+    @Override
+    public void run() {
+        try {
+            initSocketRun();
+        } catch (IOException ex) {
+            Logger.getLogger(Ouvinte.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void initSocketRun() throws IOException {
@@ -83,21 +82,6 @@ public class Ouvinte {
                     if (linha.equals("--list-music")) {
                         throw new UnsupportedOperationException("Não implementado ainda...");
                     }
-                    if (linha.equals("--open-crepz")) {
-                        if (carregador != null) {
-                            int r = JOptionPane.showConfirmDialog(null, "O crepz aparentemente está aberto... Se estamos enganados, clique em \"Sim\" para abrí-lo.");
-                            if (r != JOptionPane.YES_OPTION) {
-                                return;
-                            }
-                        }
-                        new Thread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                carregador = new Carregador();
-                            }
-                        }).start();
-                    }
                 }
                 bin.close();
                 inputStreamReader.close();
@@ -109,8 +93,8 @@ public class Ouvinte {
             System.out.println("Aceito...");
         }
     }
-    
-    public void retornarMsg(Socket socket, Serializable object) throws IOException{
+
+    public void retornarMsg(Socket socket, Serializable object) throws IOException {
         OutputStream outputStream = socket.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(object);

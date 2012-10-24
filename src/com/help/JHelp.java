@@ -10,7 +10,6 @@
  */
 package com.help;
 
-import com.main.gui.JPrincipal;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 
@@ -55,17 +54,6 @@ public class JHelp extends javax.swing.JDialog {
         setBounds((screenSize.width-557)/2, (screenSize.height-598)/2, 557, 598);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new JHelp(new JFrame()).setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JScrollPane jScrollPane1;

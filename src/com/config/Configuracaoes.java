@@ -11,7 +11,7 @@ import com.config.constantes.TelaPadrao;
 import com.main.Carregador;
 import com.musica.CacheDeMusica;
 import com.musica.Musica;
-import com.utils.FileUtils;
+import com.utils.file.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;

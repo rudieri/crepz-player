@@ -4,6 +4,7 @@
  */
 package com.musica;
 
+import com.config.Configuracaoes;
 import com.graficos.Icones;
 import com.main.Carregador;
 import com.main.gui.JPrincipal;
@@ -41,7 +42,6 @@ public abstract class Musiquera implements BasicPlayerListener {
     BasicPlayer player;
     private Musica musica;
     private File in;
-    private final Carregador carregador;
     private final SimpleDateFormat sdf = new SimpleDateFormat("ss");
     private final SimpleDateFormat formatotempo = new SimpleDateFormat("HH:mm:ss");
     /**
@@ -51,13 +51,12 @@ public abstract class Musiquera implements BasicPlayerListener {
     private int contaFalhas;
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public Musiquera(Carregador carregador) {
+    public Musiquera() {
         player = new BasicPlayer();
         player.addBasicPlayerListener(this);
         player.setSleepTime(15);
         volume = 50;
         balanco = 50;
-        this.carregador = carregador;
     }
 
     public abstract void numberTempoChange(double s);
@@ -512,7 +511,7 @@ public abstract class Musiquera implements BasicPlayerListener {
                 paused = false;
                 break;
             case BasicPlayerEvent.EOM:
-                if (carregador.isRepeat()) {
+                if (isRepeat()) {
                     abrirForaLinhaTempo(musica, 0, false);
                 } else {
                     tocarProxima();
@@ -521,6 +520,10 @@ public abstract class Musiquera implements BasicPlayerListener {
 
         }
 
+    }
+    
+    public boolean isRepeat() {
+        return Configuracaoes.getBoolean(Configuracaoes.CONF_REPEAT_ATIVO);
     }
 
     @Override
