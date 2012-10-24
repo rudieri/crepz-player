@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author rudieri
  */
-public class Scan {
+public class Scan implements Runnable {
 
     private static int tempoSegudos;
     Thread thMonitor;
@@ -37,88 +37,62 @@ public class Scan {
             cacheModArquivos = new HashMap<String, Long>(100);
         }
         tempoSegudos = t;
-//        pastas.add(teste.getAbsolutePath());
         this.start();
     }
 
-//    public static void setPastas(ArrayList<String> dirs) {
-//        System.out.println("Novs locais definidos para o scan:");
-//        for (int i = 0; i < dirs.size(); i++) {
-//            System.out.println("L" + i + ": " + dirs.get(i));
-//        }
-//        pastas = dirs;
-//    }
-//    public static ArrayList<String> getPastas() {
-//        return pastas;
-//    }
-//    public static void setTempo(int t) {
-//
-//        tempoSegudos = t;
-//        System.out.println("Novo tepo: " + tempoSegudos);
-//    }
     public static Integer getTempo() {
         return tempoSegudos;
     }
 
     private void start() {
-//        t = new Transacao();
-//        try {
-//            t.begin();
-//        } catch (Exception ex) {
-//            Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
-        thMonitor = new Thread(new Runnable() {
-
-            int count = 0;
-
-            @SuppressWarnings("SleepWhileInLoop")
-            @Override
-            public void run() {
-                Transacao t = new Transacao();
-                while (true) {
-                    try {
-                        Thread.sleep(tempoSegudos * ESCALA_TEMPO);
-                        if (getPastas().isEmpty()) {
-                            continue;
-                        }else{
-                            System.out.println("Tenho " + getPastas().size() + " configuradas...");
-                        }
-                        t.begin();
-                        for (int i = 0; i < getPastas().size(); i++) {
-                            verificarModicicacoes(new File(getPastas().get(i)), t);
-                        }
-                        atualizarChache = false;
-                        t.commit();
-                    } catch (Exception ex) {
-                        Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
-                        t.rollback();
-                    }
-                    if (count == 5) {
-                        //TODO fazer isso
-//                        limparNaoExistentes();
-                    }
-                    if (count++ == 10) {
-                        atualizarChache = true;
-                        count = 0;
-                    }
-
-                }
-
-            }
-
-            private ArrayList<String> getPastas() {
-                return Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER);
-            }
-        });
+        thMonitor = new Thread(this);
         thMonitor.setPriority(Thread.MIN_PRIORITY);
         thMonitor.start();
+    }
+
+    @SuppressWarnings("SleepWhileInLoop")
+    @Override
+    public void run() {
+        int count = 0;
+        Transacao t = new Transacao();
+        while (true) {
+            try {
+                Thread.sleep(tempoSegudos * ESCALA_TEMPO);
+                if (getPastas().isEmpty()) {
+                    continue;
+                } else {
+                    System.out.println("Tenho " + getPastas().size() + " configuradas...");
+                }
+                t.begin();
+                for (int i = 0; i < getPastas().size(); i++) {
+                    verificarModicicacoes(new File(getPastas().get(i)), t);
+                }
+                atualizarChache = false;
+                t.commit();
+            } catch (Exception ex) {
+                Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
+                t.rollback();
+            }
+            if (count == 5) {
+                //TODO fazer isso
+//                        limparNaoExistentes();
+            }
+            if (count++ == 10) {
+                atualizarChache = true;
+                count = 0;
+            }
+
+        }
+
+    }
+
+    private ArrayList<String> getPastas() {
+        return Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER);
     }
 
     private void verificarModicicacoes(File path, Transacao t) {
         try {
             boolean ehDiretorio = path.isDirectory();
-            //TODO verificar datade modificação
             if (ehDiretorio) {
                 long ultimaModificacao = path.lastModified();
                 File[] files = path.listFiles();

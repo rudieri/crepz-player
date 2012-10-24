@@ -4,6 +4,8 @@ import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
 import com.utils.pele.ColorUtils;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -25,7 +27,7 @@ import org.farng.mp3.id3.ID3v1;
  *
  * @author manchini
  */
-public class JMP3Propriedades extends javax.swing.JDialog {
+public class JMP3Propriedades extends javax.swing.JDialog implements ActionListener {
 
     /**
      * Creates new form JMP3Propriedades
@@ -45,6 +47,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
         } catch (Exception ex) {
             throw new Exception("-Erro ao Carregar Propriedades do arquivo " + mp3File.getMp3file().getName() + " \n", ex);
         }
+        startEvents();
     }
 
     private void montarGeneros() {
@@ -76,7 +79,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
             jTextField_ano.setText(mp3File.getID3v2Tag().getYearReleased());//.getText());
             jTextField_Comentario.setText(mp3File.getID3v2Tag().getSongComment());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -95,7 +98,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
                 mp3File.getID3v1Tag().setYear(jTextField_ano.getText());
                 mp3File.getID3v1Tag().setComment(jTextField_Comentario.getText());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.err);
             }
 
             try {
@@ -106,7 +109,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
                 mp3File.getID3v2Tag().setYearReleased(jTextField_ano.getText());
                 mp3File.getID3v2Tag().setSongComment(jTextField_Comentario.getText());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.err);
             }
             TagOptionSingleton.getInstance().setFilenameTagSave(true);
             mp3File.save(TagConstant.MP3_FILE_SAVE_OVERWRITE);
@@ -115,7 +118,7 @@ public class JMP3Propriedades extends javax.swing.JDialog {
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -146,7 +149,22 @@ public class JMP3Propriedades extends javax.swing.JDialog {
             MusicaBD.alterar(musica);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    private void startEvents() {
+        jButton1.addActionListener(this);
+        jButton2.addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == jButton1) {
+            setMp3File();
+        } else if (e.getSource() == jButton2) {
+            this.setVisible(false);
+            this.dispose();
         }
     }
 
@@ -311,19 +329,9 @@ public class JMP3Propriedades extends javax.swing.JDialog {
         jPanel2.setPreferredSize(new java.awt.Dimension(400, 50));
 
         jButton1.setText("Salvar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
         jPanel2.add(jButton1);
 
         jButton2.setText("Fechar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
         jPanel2.add(jButton2);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
@@ -334,15 +342,6 @@ public class JMP3Propriedades extends javax.swing.JDialog {
         setLocation((screenSize.width-dialogSize.width)/2,(screenSize.height-dialogSize.height)/2);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        this.setVisible(false);
-        this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        setMp3File();
-    }//GEN-LAST:event_jButton1ActionPerformed
-  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

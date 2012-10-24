@@ -13,52 +13,34 @@
             <Property name="mnemonic" type="int" value="82"/>
             <Property name="text" type="java.lang.String" value="Reproduzir"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemFilaTocarActionPerformed"/>
-          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItemFilaRemover">
           <Properties>
             <Property name="mnemonic" type="int" value="101"/>
             <Property name="text" type="java.lang.String" value="Remover da Fila"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemFilaRemoverActionPerformed"/>
-          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItemEmbaralhar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Embaralhar Fila"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemEmbaralharActionPerformed"/>
-          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItemFilaMoveCima">
           <Properties>
             <Property name="mnemonic" type="int" value="67"/>
             <Property name="text" type="java.lang.String" value="Mover para Cima"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemFilaMoveCimaActionPerformed"/>
-          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItemFilaMoveBaixo">
           <Properties>
             <Property name="mnemonic" type="int" value="66"/>
             <Property name="text" type="java.lang.String" value="Mover para Baixo"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemFilaMoveBaixoActionPerformed"/>
-          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItemLimpar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Limpar Fila"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemLimparActionPerformed"/>
-          </Events>
         </MenuItem>
       </SubComponents>
     </Container>
@@ -73,27 +55,18 @@
             <Property name="mnemonic" type="int" value="82"/>
             <Property name="text" type="java.lang.String" value="Reproduzir"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemTocarActionPerformed"/>
-          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItemAdicionar">
           <Properties>
             <Property name="mnemonic" type="int" value="70"/>
             <Property name="text" type="java.lang.String" value="Adicionar na Fila"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemAdicionarActionPerformed"/>
-          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="jMenuItemPasta">
           <Properties>
             <Property name="mnemonic" type="int" value="112"/>
             <Property name="text" type="java.lang.String" value="Abrir Pasta da M&#xfa;sica"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemPastaActionPerformed"/>
-          </Events>
         </MenuItem>
         <Menu class="javax.swing.JMenu" name="jMenu3">
           <Properties>
@@ -119,9 +92,6 @@
                 <Property name="mnemonic" type="int" value="69"/>
                 <Property name="text" type="java.lang.String" value="Adicionar lista exestente"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemAdicionarListaExistenteActionPerformed"/>
-              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -129,9 +99,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Propriedades"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemEditarActionPerformed"/>
-          </Events>
         </MenuItem>
       </SubComponents>
     </Container>
@@ -151,9 +118,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Mostrar Biblioteca"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemAbrirBibliotecaActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemMostrarPlayList">
               <Properties>
@@ -162,9 +126,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Mostrar Lista de Reprodu&#xe7;&#xe3;o"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemMostrarPlayListActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemImportarArquivos">
               <Properties>
@@ -173,9 +134,14 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Importar M&#xfa;sicas..."/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemImportarArquivosActionPerformed"/>
-              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemVoltarTelaPrincipal">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Alt+P"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Voltar para a tela Principal"/>
+              </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
               <Properties>
@@ -184,9 +150,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Sair"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem2ActionPerformed"/>
-              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -202,9 +165,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Configura&#xe7;&#xf5;es"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
               <Properties>
@@ -213,9 +173,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Tema"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem3ActionPerformed"/>
-              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -321,10 +278,6 @@
                           </Properties>
                         </Component>
                         <Component class="javax.swing.JTextField" name="jTextFieldPesquisa">
-                          <Events>
-                            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldPesquisaKeyPressed"/>
-                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextFieldPesquisaKeyReleased"/>
-                          </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="jButtonLimparPesquisa">
                           <Properties>
@@ -332,9 +285,6 @@
                             <Property name="text" type="java.lang.String" value="Limpar"/>
                             <Property name="toolTipText" type="java.lang.String" value="Limpar filtro. (Alt + L)"/>
                           </Properties>
-                          <Events>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonLimparPesquisaActionPerformed"/>
-                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -367,11 +317,6 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableMusicasMousePressed"/>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableMusicasMouseClicked"/>
-                    <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTableMusicasKeyPressed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -449,12 +394,6 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableFilaMousePressed"/>
-                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableFilaMouseReleased"/>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableFilaMouseClicked"/>
-                    <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTableFilaKeyPressed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -607,9 +546,6 @@
                       <Color id="Cursor Default"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton_PlayMouseClicked"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jButton_Stop">
                   <Properties>
@@ -619,9 +555,6 @@
                       <Color id="Cursor Default"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton_StopMouseClicked"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jButton_Next">
                   <Properties>
@@ -631,18 +564,12 @@
                       <Color id="Cursor Default"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton_NextMouseClicked"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jToggle_Repete">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Repeat"/>
                     <Property name="toolTipText" type="java.lang.String" value="Repetir Musica"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jToggle_RepeteMouseClicked"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -673,10 +600,6 @@
                       <Dimension value="[36, 14]"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jSlider_TempoMousePressed"/>
-                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jSlider_TempoMouseReleased"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>

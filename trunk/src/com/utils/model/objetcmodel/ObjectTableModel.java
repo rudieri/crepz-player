@@ -156,7 +156,7 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
 
     private void dispararSizeChanged() {
         for (int i = 0; i < listeners.size(); i++) {
-            listeners.get(i).sizeChanged(getRowCount());
+            listeners.get(i).sizeChanged(this, getRowCount());
         }
     }
 

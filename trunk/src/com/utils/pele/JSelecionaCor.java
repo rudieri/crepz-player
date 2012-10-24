@@ -4,16 +4,15 @@
  */
 package com.utils.pele;
 
-import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  *
  * @author rudieri
  */
-public class JSelecionaCor extends javax.swing.JDialog {
+public class JSelecionaCor extends javax.swing.JDialog implements ActionListener {
 
     /**
      * Creates new form JPele
@@ -23,8 +22,8 @@ public class JSelecionaCor extends javax.swing.JDialog {
     public JSelecionaCor(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-     
         corSelecionadaListeners = new ArrayList<CorSelecionadaListener>();
+        startEvents();
     }
 
     public void addCorSelecionadaListener(CorSelecionadaListener corSelecionadaListener) {
@@ -33,6 +32,23 @@ public class JSelecionaCor extends javax.swing.JDialog {
 
     public boolean removeCorSelecionadaListener(CorSelecionadaListener corSelecionadaListener) {
         return corSelecionadaListeners.remove(corSelecionadaListener);
+    }
+
+    private void startEvents() {
+        jButtonOK.addActionListener(this);
+        jButtonCancelar.addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == jButtonOK) {
+            dispose();
+            for (int i = 0; i < corSelecionadaListeners.size(); i++) {
+                corSelecionadaListeners.get(i).corSelecionada(jColorChooser1.getColor());
+            }
+        } else if (e.getSource() == jButtonCancelar) {
+            dispose();
+        }
     }
 
     /**
@@ -53,19 +69,9 @@ public class JSelecionaCor extends javax.swing.JDialog {
         getContentPane().add(jColorChooser1, java.awt.BorderLayout.CENTER);
 
         jButtonOK.setText("OK");
-        jButtonOK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonOKActionPerformed(evt);
-            }
-        });
         jPanel1.add(jButtonOK);
 
         jButtonCancelar.setText("Cancelar");
-        jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCancelarActionPerformed(evt);
-            }
-        });
         jPanel1.add(jButtonCancelar);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
@@ -73,66 +79,6 @@ public class JSelecionaCor extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOKActionPerformed
-        dispose();
-        for (int i = 0; i < corSelecionadaListeners.size(); i++) {
-            corSelecionadaListeners.get(i).corSelecionada(jColorChooser1.getColor());
-        }
-    }//GEN-LAST:event_jButtonOKActionPerformed
-
-    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        dispose();
-    }//GEN-LAST:event_jButtonCancelarActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JSelecionaCor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JSelecionaCor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JSelecionaCor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JSelecionaCor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /*
-         * Create and display the dialog
-         */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                JSelecionaCor dialog = new JSelecionaCor(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonOK;

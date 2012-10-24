@@ -45,9 +45,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Abrir PlayList *.m3u"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemAbrirPlayListActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemSalvar">
               <Properties>
@@ -56,9 +53,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Salvar"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemSalvarActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemLimparLista">
               <Properties>
@@ -67,9 +61,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Limpar"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemLimparListaActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemConsultar">
               <Properties>
@@ -78,9 +69,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Consultar Lista"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemConsultarActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemExcluirLista">
               <Properties>
@@ -89,9 +77,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Excluir Lista"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemExcluirListaActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemFechar">
               <Properties>
@@ -100,9 +85,6 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Fechar"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemFecharActionPerformed"/>
-              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -185,9 +167,6 @@
                     <Property name="text" type="java.lang.String" value="Salvar"/>
                     <Property name="toolTipText" type="java.lang.String" value="Salva a lista internamente."/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSalvarActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonExportar">
                   <Properties>
@@ -195,9 +174,6 @@
                     <Property name="text" type="java.lang.String" value="Expotar M3u"/>
                     <Property name="toolTipText" type="java.lang.String" value="Exporta lista como um arquivo M3U"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonExportarActionPerformed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -212,36 +188,24 @@
                     <Property name="text" type="java.lang.String" value="Abrir M3U"/>
                     <Property name="toolTipText" type="java.lang.String" value="Abre um arquivo m3u"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAbrirActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonConsultar">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Consultar Lista"/>
                     <Property name="toolTipText" type="java.lang.String" value="Consulta na lista salva internamente."/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonConsultarActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonDeletar">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Deletar"/>
                     <Property name="toolTipText" type="java.lang.String" value="Excluir lista salva internamente."/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDeletarActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonLimpar">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Limpar"/>
                     <Property name="toolTipText" type="java.lang.String" value="Limpa a lista..."/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonLimparActionPerformed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -271,9 +235,6 @@
             </Property>
             <Property name="requestFocusEnabled" type="boolean" value="false"/>
           </Properties>
-          <Events>
-            <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jScrollPaneFocusGained"/>
-          </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
               <BorderConstraints direction="Center"/>
@@ -331,17 +292,11 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="+"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAdicionarActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="jButtonRemover">
               <Properties>
                 <Property name="text" type="java.lang.String" value="-"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonRemoverActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JToggleButton" name="jToggleButtonOpcoesLista">
               <Properties>
@@ -352,11 +307,10 @@
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jToggleButtonOpcoesListaStateChanged"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JTextField" name="jTextEntrada">
+            <Component class="javax.swing.JTextField" name="jTextField_Pesquisa">
               <Events>
-                <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="jTextEntradaCaretUpdate"/>
-                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jTextEntradaPropertyChange"/>
-                <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextEntradaKeyPressed"/>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_PesquisaKeyTyped"/>
+                <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_PesquisaKeyPressed"/>
               </Events>
             </Component>
           </SubComponents>

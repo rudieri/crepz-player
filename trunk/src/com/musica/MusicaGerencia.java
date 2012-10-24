@@ -7,7 +7,7 @@ package com.musica;
 import com.conexao.Transacao;
 import com.utils.BuscaGoogle;
 import com.utils.ComandosSO;
-import com.utils.FileUtils;
+import com.utils.file.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

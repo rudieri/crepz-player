@@ -6,8 +6,12 @@ package com.utils.pele;
 
 import com.main.Carregador;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,7 +21,7 @@ import javax.swing.border.BevelBorder;
  *
  * @author rudieri
  */
-public class JPele extends javax.swing.JDialog {
+public class JPele extends javax.swing.JDialog implements CorSelecionadaListener, ActionListener, MouseListener {
 
     /**
      * Creates new form JPele
@@ -30,16 +34,16 @@ public class JPele extends javax.swing.JDialog {
     public JPele(Carregador carregador) {
         initComponents();
         jSelecionaCor = new JSelecionaCor(null, false);
-        jSelecionaCor.addCorSelecionadaListener(new CorSelecionadaListener() {
-            @Override
-            public void corSelecionada(Color cor) {
-                if (componenteSelecionado == null) {
-                    throw new IllegalStateException("O componente selecionado não pode ser nulo.");
-                }
-                componenteSelecionado.setBackground(cor);
-            }
-        });
         this.carregador = carregador;
+        startEvents();
+    }
+
+    @Override
+    public void corSelecionada(Color cor) {
+        if (componenteSelecionado == null) {
+            throw new IllegalStateException("O componente selecionado não pode ser nulo.");
+        }
+        componenteSelecionado.setBackground(cor);
     }
 
     @Override
@@ -55,7 +59,7 @@ public class JPele extends javax.swing.JDialog {
             jComboBox1.setSelectedItem(ColorUtils.getPeleAtual().getNome());
             setPele(ColorUtils.getPeleAtual());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -76,6 +80,78 @@ public class JPele extends javax.swing.JDialog {
         jLabelCorTextoJanela.setBorder(new BevelBorder(BevelBorder.LOWERED, ColorUtils.getFundoJanela(), ColorUtils.getFundoJanela()));
     }
 
+    private void startEvents() {
+        // action
+        jSelecionaCor.addCorSelecionadaListener(this);
+        jButtonSalvar.addActionListener(this);
+        jButtonCancelar.addActionListener(this);
+        jButtonNovo.addActionListener(this);
+        
+        // mouse listener
+        jLabelCorFundoJanela.addMouseListener(this);
+        jLabelCorTextoJanela.addMouseListener(this);
+        jLabelCorFundoSelecionado.addMouseListener(this);
+        jLabelCorTextoSelecionado.addMouseListener(this);
+        jLabelCorFundoObjetos.addMouseListener(this);
+        jLabelCorTextoObjetos.addMouseListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == jButtonSalvar) {
+            ColorUtils.setNomePele(jComboBox1.getSelectedItem().toString());
+            ColorUtils.setFrenteTabelaSelecionada(jLabelCorTextoSelecionado.getBackground());
+            ColorUtils.setFrenteTabelaNaoSelecionada(jLabelCorTextoObjetos.getBackground());
+            ColorUtils.setFundoTabelaSelecionada(jLabelCorFundoSelecionado.getBackground());
+            ColorUtils.setFundoTabelaNaoSelecionada(jLabelCorFundoObjetos.getBackground());
+            ColorUtils.setFrenteJanela(jLabelCorTextoJanela.getBackground());
+            ColorUtils.setFundoJanela(jLabelCorFundoJanela.getBackground());
+            ColorUtils.aplicarTema();
+            if (ColorUtils.getPeleAtual() == Pele.PELE_PADRAO) {
+                int showConfirmDialog = JOptionPane.showConfirmDialog(this, "O Crepz deve ser reiniciado.\nDeseja fechá-lo agora?", "Fechar crepz...", JOptionPane.YES_NO_OPTION);
+                if (showConfirmDialog == JOptionPane.YES_OPTION) {
+                    carregador.sair();
+                }
+            }
+            dispose();
+        } else if (e.getSource() == jButtonCancelar) {
+            dispose();
+        } else if (e.getSource() == jButtonNovo) {
+            Pele pele = new Pele("Novo...");
+            jComboBox1.addItem(pele.getNome());
+            jComboBox1.setSelectedItem(pele.getNome());
+            setPele(pele);
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource() == jLabelCorFundoJanela 
+                || e.getSource() == jLabelCorTextoJanela
+                || e.getSource() == jLabelCorFundoSelecionado 
+                || e.getSource() == jLabelCorTextoSelecionado
+                || e.getSource() == jLabelCorFundoObjetos 
+                || e.getSource() == jLabelCorTextoObjetos) {
+            selecionarCor(e.getSource());
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -89,7 +165,7 @@ public class JPele extends javax.swing.JDialog {
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
-        jButton3 = new javax.swing.JButton();
+        jButtonNovo = new javax.swing.JButton();
         jPanelEditarCores = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -112,8 +188,8 @@ public class JPele extends javax.swing.JDialog {
         jPanel10 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jButtonSalvar = new javax.swing.JButton();
+        jButtonCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -139,13 +215,8 @@ public class JPele extends javax.swing.JDialog {
         });
         jPanel5.add(jComboBox1);
 
-        jButton3.setText("Novo");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-        jPanel5.add(jButton3);
+        jButtonNovo.setText("Novo");
+        jPanel5.add(jButtonNovo);
 
         jPanel1.add(jPanel5, java.awt.BorderLayout.NORTH);
 
@@ -161,11 +232,6 @@ public class JPele extends javax.swing.JDialog {
         jLabelCorFundoJanela.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelCorFundoJanela.setOpaque(true);
         jLabelCorFundoJanela.setPreferredSize(new java.awt.Dimension(22, 20));
-        jLabelCorFundoJanela.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelCorFundoJanelaMouseClicked(evt);
-            }
-        });
         jPanel4.add(jLabelCorFundoJanela);
 
         jPanelEditarCores.add(jPanel4);
@@ -180,11 +246,6 @@ public class JPele extends javax.swing.JDialog {
         jLabelCorTextoJanela.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelCorTextoJanela.setOpaque(true);
         jLabelCorTextoJanela.setPreferredSize(new java.awt.Dimension(22, 20));
-        jLabelCorTextoJanela.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelCorTextoJanelaMouseClicked(evt);
-            }
-        });
         jPanel6.add(jLabelCorTextoJanela);
 
         jPanelEditarCores.add(jPanel6);
@@ -199,11 +260,6 @@ public class JPele extends javax.swing.JDialog {
         jLabelCorFundoSelecionado.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelCorFundoSelecionado.setOpaque(true);
         jLabelCorFundoSelecionado.setPreferredSize(new java.awt.Dimension(22, 20));
-        jLabelCorFundoSelecionado.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelCorFundoSelecionadoMouseClicked(evt);
-            }
-        });
         jPanel7.add(jLabelCorFundoSelecionado);
 
         jPanelEditarCores.add(jPanel7);
@@ -218,11 +274,6 @@ public class JPele extends javax.swing.JDialog {
         jLabelCorTextoSelecionado.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelCorTextoSelecionado.setOpaque(true);
         jLabelCorTextoSelecionado.setPreferredSize(new java.awt.Dimension(22, 20));
-        jLabelCorTextoSelecionado.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelCorTextoSelecionadoMouseClicked(evt);
-            }
-        });
         jPanel8.add(jLabelCorTextoSelecionado);
 
         jPanelEditarCores.add(jPanel8);
@@ -237,11 +288,6 @@ public class JPele extends javax.swing.JDialog {
         jLabelCorFundoObjetos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelCorFundoObjetos.setOpaque(true);
         jLabelCorFundoObjetos.setPreferredSize(new java.awt.Dimension(22, 20));
-        jLabelCorFundoObjetos.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelCorFundoObjetosMouseClicked(evt);
-            }
-        });
         jPanel9.add(jLabelCorFundoObjetos);
 
         jPanelEditarCores.add(jPanel9);
@@ -256,11 +302,6 @@ public class JPele extends javax.swing.JDialog {
         jLabelCorTextoObjetos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelCorTextoObjetos.setOpaque(true);
         jLabelCorTextoObjetos.setPreferredSize(new java.awt.Dimension(22, 20));
-        jLabelCorTextoObjetos.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelCorTextoObjetosMouseClicked(evt);
-            }
-        });
         jPanel11.add(jLabelCorTextoObjetos);
 
         jPanelEditarCores.add(jPanel11);
@@ -273,68 +314,16 @@ public class JPele extends javax.swing.JDialog {
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_START);
 
-        jButton1.setText("OK");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jPanel3.add(jButton1);
+        jButtonSalvar.setText("OK");
+        jPanel3.add(jButtonSalvar);
 
-        jButton2.setText("Cancelar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jPanel3.add(jButton2);
+        jButtonCancelar.setText("Cancelar");
+        jPanel3.add(jButtonCancelar);
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.PAGE_END);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jLabelCorFundoJanelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCorFundoJanelaMouseClicked
-        selecionarCor(evt.getSource());
-    }//GEN-LAST:event_jLabelCorFundoJanelaMouseClicked
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ColorUtils.setNomePele(jComboBox1.getSelectedItem().toString());
-        ColorUtils.setFrenteTabelaSelecionada(jLabelCorTextoSelecionado.getBackground());
-        ColorUtils.setFrenteTabelaNaoSelecionada(jLabelCorTextoObjetos.getBackground());
-        ColorUtils.setFundoTabelaSelecionada(jLabelCorFundoSelecionado.getBackground());
-        ColorUtils.setFundoTabelaNaoSelecionada(jLabelCorFundoObjetos.getBackground());
-        ColorUtils.setFrenteJanela(jLabelCorTextoJanela.getBackground());
-        ColorUtils.setFundoJanela(jLabelCorFundoJanela.getBackground());
-        ColorUtils.aplicarTema();
-        if (ColorUtils.getPeleAtual() == Pele.PELE_PADRAO) {
-            int showConfirmDialog = JOptionPane.showConfirmDialog(this, "O Crepz deve ser reiniciado.\nDeseja fechá-lo agora?", "Fechar crepz...", JOptionPane.YES_NO_OPTION);
-            if (showConfirmDialog == JOptionPane.YES_OPTION) {
-                carregador.sair();
-            }
-        }
-        dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jLabelCorTextoJanelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCorTextoJanelaMouseClicked
-        selecionarCor(evt.getSource());
-    }//GEN-LAST:event_jLabelCorTextoJanelaMouseClicked
-
-    private void jLabelCorFundoSelecionadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCorFundoSelecionadoMouseClicked
-        selecionarCor(evt.getSource());
-    }//GEN-LAST:event_jLabelCorFundoSelecionadoMouseClicked
-
-    private void jLabelCorTextoSelecionadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCorTextoSelecionadoMouseClicked
-        selecionarCor(evt.getSource());
-    }//GEN-LAST:event_jLabelCorTextoSelecionadoMouseClicked
-
-    private void jLabelCorFundoObjetosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCorFundoObjetosMouseClicked
-        selecionarCor(evt.getSource());
-    }//GEN-LAST:event_jLabelCorFundoObjetosMouseClicked
-
-    private void jLabelCorTextoObjetosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelCorTextoObjetosMouseClicked
-        selecionarCor(evt.getSource());
-    }//GEN-LAST:event_jLabelCorTextoObjetosMouseClicked
 
     private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -348,10 +337,6 @@ public class JPele extends javax.swing.JDialog {
 
     }//GEN-LAST:event_jComboBox1ItemStateChanged
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
     private void jComboBox1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBox1KeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             Pele pele = ColorUtils.getPelePorNome(jComboBox1.getSelectedItem().toString());
@@ -361,65 +346,10 @@ public class JPele extends javax.swing.JDialog {
             setPele(pele);
         }
     }//GEN-LAST:event_jComboBox1KeyPressed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Pele pele = new Pele("Novo...");
-        jComboBox1.addItem(pele.getNome());
-        jComboBox1.setSelectedItem(pele.getNome());
-        setPele(pele);
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JPele.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JPele.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JPele.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JPele.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /*
-         * Create and display the dialog
-         */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                JPele dialog = new JPele(null);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButtonCancelar;
+    private javax.swing.JButton jButtonNovo;
+    private javax.swing.JButton jButtonSalvar;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

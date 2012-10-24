@@ -30,7 +30,8 @@ public class GerenciadorTelas {
 
     public static JPrincipal getPrincipal() {
         if (principal == null) {
-            principal = new JPrincipal(Carregador.getMe().getMusiquera(), Carregador.getMe());
+            carregandoDebug("Principal");
+            principal = new JPrincipal(Carregador.getMe());
             ColorUtils.registrar(principal);
             ColorUtils.aplicarTema();
         }
@@ -39,7 +40,8 @@ public class GerenciadorTelas {
 
     public static JMini getMini() {
         if (mini == null) {
-            mini = new JMini(Carregador.getMe().getMusiquera(), Carregador.getMe());
+            carregandoDebug("Mini");
+            mini = new JMini(Carregador.getMe());
             ColorUtils.registrar(mini);
             ColorUtils.aplicarTema();
         }
@@ -48,6 +50,7 @@ public class GerenciadorTelas {
 
     public static Scan getScan() {
         if (scan == null) {
+            carregandoDebug("Scan");
             scan = new Scan();
         }
         return scan;
@@ -55,16 +58,19 @@ public class GerenciadorTelas {
 
     public static JFilaReproducao getFilaReproducao() {
         if (filaReproducao == null) {
-            filaReproducao = new JFilaReproducao(Carregador.getMe().getMusiquera(), Carregador.getMe());
+            carregandoDebug("Fila de Reprodução");
+            filaReproducao = new JFilaReproducao(Carregador.getMe());
             ColorUtils.registrar(filaReproducao);
             ColorUtils.aplicarTema();
+            
         }
         return filaReproducao;
     }
 
     public static JPlayList getPlayList() {
         if (playList == null) {
-            playList = new JPlayList(Carregador.getMe().getMusiquera(), Carregador.getMe());
+            carregandoDebug("Play List");
+            playList = new JPlayList(Carregador.getMe());
             ColorUtils.registrar(playList);
             ColorUtils.aplicarTema();
         }
@@ -73,13 +79,15 @@ public class GerenciadorTelas {
 
     public static JBiBlioteca getBiblioteca() {
         if (biblioteca == null) {
-            biblioteca = new JBiBlioteca(Carregador.getMe().getMusiquera(), Carregador.getMe());
+            carregandoDebug("Biblioteca");
+            biblioteca = new JBiBlioteca(Carregador.getMe());
         }
         return biblioteca;
     }
 
     public static JPele getPele() {
         if (pele == null) {
+            carregandoDebug("Pele");
             pele = new JPele(Carregador.getMe());
             ColorUtils.registrar(pele);
             ColorUtils.aplicarTema();
@@ -90,7 +98,8 @@ public class GerenciadorTelas {
     public static CrepzTray getCrepzTray() {
         if (crepzTray == null) {
             try {
-                crepzTray = new CrepzTray(Carregador.getMe().getMusiquera(), Carregador.getMe());
+                carregandoDebug("Crepz Tray");
+                crepzTray = new CrepzTray(Carregador.getMe());
             } catch (Exception ex) {
                 Warning.print("System tray não supostado.");
                 ex.printStackTrace(System.err);
@@ -99,5 +108,28 @@ public class GerenciadorTelas {
 
         }
         return crepzTray;
+    }
+    
+    private static void carregandoDebug(String nomeDoObjetoCarregado){
+        StringBuilder saida = new StringBuilder(300);
+        saida.append("Carregando: ").append(nomeDoObjetoCarregado).append(" ==>\n");
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (StackTraceElement stackTraceElement : stackTrace) {
+            saida.append(stackTraceElement.toString()).append('\n');
+        }
+        System.out.println(saida);
+    }
+
+    public static boolean isFilaReproducaoCarregada() {
+        return filaReproducao != null;
+    }
+    public static boolean isMiniCarregado() {
+        return mini != null;
+    }
+    public static boolean isPrincipalCarregado() {
+        return principal != null;
+    }
+    public static boolean isPlayListCarregado() {
+        return playList != null;
     }
 }
