@@ -6,10 +6,10 @@ package com.musica;
 
 import com.config.Configuracaoes;
 import com.graficos.Icones;
-import com.main.Carregador;
 import com.main.gui.JPrincipal;
 import com.utils.Warning;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -196,32 +196,33 @@ public abstract class Musiquera implements BasicPlayerListener {
             return true;
         } catch (Exception ex) {
             tenteiAbrir++;
-            System.out.println(ex.getMessage());
-            if (ex.getMessage() != null && ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
-                Warning.print(ex.getMessage());
+            if (ex instanceof FileNotFoundException || ex.getMessage() != null && ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
                 try {
-                    MusicaBD.excluir(m);
+                    m.setPerdida(true);
+                    MusicaBD.alterar(musica);
+                    CacheDeMusica.remover(musica);
                     //                Operacoes.moverMusicaParaEstragadas(m);
                 } catch (Exception ex1) {
                     Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex1);
                 }
             }
-            ex.printStackTrace();
-            switch (tenteiAbrir) {
-                case 1:
-                case 2:
-                    System.out.println("Falha ao abrir, tentando novamente!");
-                    return abrirForaLinhaTempo(m, posicao, abrirComPausa);
-
-                case 3:
-                    System.out.println("Falha ao abrir, passando para a próxima música!");
-                    return abrirForaLinhaTempo(getNextMusica(), 0, false);
-                case 4:
-                    System.out.println("Falha ao abrir (estágio 2), tentando novamente!");
-                    return abrirForaLinhaTempo(m, posicao, abrirComPausa);
-                default:
-                    System.out.println("Todas as tentativas falharam... :(");
-                    return false;
+            ex.printStackTrace(System.err);
+            if (tenteiAbrir <= 2) {
+                System.out.println("Falha ao abrir, tentando novamente!");
+                return abrirForaLinhaTempo(m, posicao, abrirComPausa);
+            }else if(tenteiAbrir == 3){
+                System.out.println("Falha ao abrir, passando para a próxima música!");
+                return abrirForaLinhaTempo(getNextMusica(), 0, false);
+            } else if(tenteiAbrir == 4){
+                System.out.println("Falha ao abrir (estágio 2), tentando novamente!");
+                return abrirForaLinhaTempo(m, posicao, abrirComPausa);
+            }else if (tenteiAbrir <= 30) {
+                System.out.println("Falha ao abrir (está ficando \"danger\"), tentando novamente!");
+                return abrirForaLinhaTempo(getNextMusica(), posicao, abrirComPausa);
+            }else{
+                System.out.println("Todas as tentativas falharam... :(");
+                tenteiAbrir = 0;
+                return false;
             }
         }
 
@@ -521,7 +522,7 @@ public abstract class Musiquera implements BasicPlayerListener {
         }
 
     }
-    
+
     public boolean isRepeat() {
         return Configuracaoes.getBoolean(Configuracaoes.CONF_REPEAT_ATIVO);
     }

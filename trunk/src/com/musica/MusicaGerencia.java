@@ -255,6 +255,7 @@ public class MusicaGerencia {
                     MusicaBD.carregar(m, t);
                     getMusica(m, mp3, file);
                     m.setDtModArquivo(file.lastModified());
+                    m.setPerdida(false);
                     MusicaBD.alterar(m, t);
                 } else {
                     getMusica(m, mp3, file);
@@ -278,6 +279,7 @@ public class MusicaGerencia {
                     if (MusicaBD.existe(m, t)) {
                         MusicaBD.carregar(m, t);
                         m.setDtModArquivo(file.lastModified());
+                        m.setPerdida(false);
                         MusicaBD.alterar(m, t);
                     }else{
                         m.setDtModArquivo(file.lastModified());
@@ -307,6 +309,7 @@ public class MusicaGerencia {
             if (MusicaBD.existe(m, t)) {
                 MusicaBD.carregar(m, t);
                 getMusica(m, dir);
+                m.setPerdida(false);
                 MusicaBD.alterar(m, t);
             } else {
                 //  getMusica(m, mp3, dir);

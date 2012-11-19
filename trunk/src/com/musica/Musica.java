@@ -33,6 +33,8 @@ public class Musica implements Serializable, Filtravel {
     private String img;
     private int size;
     private int number;
+    /**Caso o arquivo da música não seja encontrado.*/
+    private boolean perdida = false;
 
     /**
      Limitar o número de objetos, para usar melhor a cache em {@link CacheDeMusica}
@@ -99,7 +101,7 @@ public class Musica implements Serializable, Filtravel {
                     String replace = normalizeGenero.replaceAll("[^0-9]", "");
                     setGenero(new Integer(replace));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    ex.printStackTrace(System.err);
                 }
             } else {
                 this.genero = normalizeGenero;
@@ -179,7 +181,7 @@ public class Musica implements Serializable, Filtravel {
             genero = MusicaGerencia.generos[genre];
         } catch (Exception b) {
             genero = "";
-            b.printStackTrace();
+            b.printStackTrace(System.err);
         }
     }
 
@@ -241,4 +243,13 @@ public class Musica implements Serializable, Filtravel {
     public void setNumeroReproducoes(short numeroReproducoes) {
         this.numeroReproducoes = numeroReproducoes;
     }
+
+    public boolean isPerdida() {
+        return perdida;
+    }
+
+    public void setPerdida(boolean perdida) {
+        this.perdida = perdida;
+    }
+    
 }

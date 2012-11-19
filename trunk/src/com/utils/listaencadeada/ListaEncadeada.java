@@ -110,7 +110,7 @@ public class ListaEncadeada<E> implements Iterable<E>, Iterator<E> {
             }
         }
         tamanho++;
-        imprimir();
+//        imprimir();
     }
 
     public boolean removerPrimeiro(E valor) {

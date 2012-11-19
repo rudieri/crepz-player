@@ -467,7 +467,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
             }
             return getMusicaDaLista(selectedRow);
         } else {
-            final int rand = (int) (Math.random() * objModelMusicas.getRowCount());
+            final int rand = (int) (Math.random() * jTableMusicas.getRowCount());
             return getMusicaDaLista(rand);
         }
     }
@@ -715,6 +715,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
                 if (acaoPadraoFila == AcaoPadraoFila.ADICIONAR_FILA) {
                     adicionarMusicasSelecionadas();
                 } else if (acaoPadraoFila == AcaoPadraoFila.REPRODUZIR) {
+                    carregador.setFonteReproducao(Carregador.FonteReproducao.FILA_REPRODUCAO);    
                     tocarMusicaSelecionada();
                 } else {
                     tocarMusicaSelecionada();

@@ -3,11 +3,10 @@ package com.playmusica;
 import com.conexao.SQL;
 import com.conexao.Transacao;
 import com.musica.CacheDeMusica;
+import com.musica.Musica;
+import com.playlist.Playlist;
 import java.sql.*;
 import java.util.*;
-import com.musica.Musica;
-import com.musica.MusicaBD;
-import com.playlist.Playlist;
 
 /**
  *
@@ -215,7 +214,7 @@ public class PlayMusicaBD {
         sql.add("FROM " + TBL+ " plm ");
         sql.add(", musica m");
         sql.add("WHERE plm.musica = m.id ");
-
+        sql.add("AND m.perdida <> 1");
         if (filtro.getPlaylist() != null) {
             sql.add("AND playlist = :playlist");
             sql.setParam("playlist", filtro.getPlaylist().getId());
