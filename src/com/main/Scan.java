@@ -53,7 +53,8 @@ public class Scan implements Runnable {
     @SuppressWarnings("SleepWhileInLoop")
     @Override
     public void run() {
-        int count = 0;
+        int contadorAtualizar = 0;
+//        int contadorLimpar = 0;
         Transacao t = new Transacao();
         while (true) {
             try {
@@ -73,18 +74,19 @@ public class Scan implements Runnable {
                 Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
                 t.rollback();
             }
-            if (count == 5) {
-                //TODO fazer isso
-//                        limparNaoExistentes();
-            }
-            if (count++ == 10) {
+//            if (contadorLimpar++ == 600) {
+//                //TODO fazer isso
+//                limparArquivosExcluido();
+//            }
+            if (contadorAtualizar++ == 15) {
                 atualizarChache = true;
-                count = 0;
+                contadorAtualizar = 0;
             }
 
         }
 
     }
+    
 
     private ArrayList<String> getPastas() {
         return Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER);
@@ -93,8 +95,8 @@ public class Scan implements Runnable {
     private void verificarModicicacoes(File path, Transacao t) {
         try {
             boolean ehDiretorio = path.isDirectory();
+            long ultimaModificacao = path.lastModified();
             if (ehDiretorio) {
-                long ultimaModificacao = path.lastModified();
                 File[] files = path.listFiles();
                 boolean contemDiretorio = false;
                 for (int i = 0; !contemDiretorio && i < files.length; i++) {
@@ -119,7 +121,6 @@ public class Scan implements Runnable {
                     }
                 }
             } else {
-                long ultimaModificacao = path.lastModified();
                 if (MusicaGerencia.ehValido(path)) {
                     String nomeArq = path.getAbsolutePath();
                     Long maxDtModArquivo;

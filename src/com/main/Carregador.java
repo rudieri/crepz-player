@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -426,8 +427,6 @@ public final class Carregador extends Musiquera {
         Configuracaoes.set(Configuracaoes.CONF_REPEAT_ATIVO, repeat);
     }
 
-   
-
     public void mostrarFilaReproducao() {
         setFilaComoBase();
     }
@@ -458,8 +457,8 @@ public final class Carregador extends Musiquera {
     public Icones getIcones() {
         return icones;
     }
-    
-     public static void main(String[] args) {
+
+    public static void main(String[] args) {
         me = new Carregador();
         me.inicializarConfiguracoes();
     }

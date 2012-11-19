@@ -51,9 +51,9 @@ public class MusicaBD {
 
         SQL sql = new SQL();
         sql.add("INSERT INTO " + TBL);
-        sql.add(" (id, caminho, nome, autor, genero, album, img, tempo, nro_reproducoes, dt_mod_arquivo) ");
+        sql.add(" (id, caminho, nome, autor, genero, album, img, tempo, nro_reproducoes, dt_mod_arquivo, perdida) ");
         sql.add("VALUES ");
-        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img, :tempo, :nro_reproducoes, :dt_mod_arquivo)");
+        sql.add(" (:id, :caminho, :nome, :autor, :genero, :album, :img, :tempo, :nro_reproducoes, :dt_mod_arquivo, :perdida)");
 
         sql.setParam("id", null);
         sql.setParam("caminho", musica.getCaminho().replace("'", ASPAS));
@@ -64,6 +64,7 @@ public class MusicaBD {
         sql.setParam("img", musica.getImg() == null ? null : musica.getImg().replace("'", ASPAS));
         sql.setParam("nro_reproducoes", musica.getNumeroReproducoes());
         sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
+        sql.setParam("perdida", musica.isPerdida() ? 1 : 0);
 
         return t.executeUpdate(sql.getSql());
     }
@@ -82,7 +83,8 @@ public class MusicaBD {
         SQL sql = new SQL();
         sql.add("UPDATE " + TBL);
         sql.add("SET nome = :nome, autor = :autor, genero =:genero, album = :album, img = :img,");
-        sql.add("caminho = :caminho, tempo=:tempo, nro_reproducoes=:nro_reproducoes, dt_mod_arquivo=:dt_mod_arquivo");
+        sql.add("caminho = :caminho, tempo=:tempo, nro_reproducoes=:nro_reproducoes, dt_mod_arquivo=:dt_mod_arquivo,");
+        sql.add("perdida = :perdida");
         sql.add("WHERE id = :id ");
 
         sql.setParam("id", musica.getId());
@@ -95,6 +97,7 @@ public class MusicaBD {
         sql.setParam("img", musica.getImg() == null ? null : musica.getImg().replace("'", ASPAS));
         sql.setParam("nro_reproducoes", musica.getNumeroReproducoes());
         sql.setParam("dt_mod_arquivo", musica.getDtModArquivo());
+        sql.setParam("perdida", musica.isPerdida() ? 1 : 0);
         int numLinhas = t.executeUpdate(sql.getSql());
         CacheDeMusica.adicionar(musica);
         return numLinhas;
@@ -228,6 +231,7 @@ public class MusicaBD {
         musica.setTempo(new Tempo(rs.getInt("tempo")));
         musica.setNumeroReproducoes(rs.getShort("nro_reproducoes"));
         musica.setDtModArquivo(rs.getLong("dt_mod_arquivo"));
+        musica.setPerdida(rs.getByte("perdida") == 1);
     }
 
     /**
@@ -246,7 +250,7 @@ public class MusicaBD {
         SQL sql = new SQL();
         sql.add("SELECT * ");
         sql.add("FROM " + TBL);
-        sql.add("WHERE");
+        sql.add("WHERE perdida <> 1 AND (");
         int c = 0;
 
         if (filtro.getNome() != null && !filtro.getNome().isEmpty()) {
@@ -281,7 +285,9 @@ public class MusicaBD {
 
 
         if (c == 0) {
-            sql.add("1=1");
+            sql.add("1 = 1 )");
+        }else{
+            sql.add(" )"); // fecha o OR
         }
         sql.add("ORDER BY nome ");
 
@@ -322,7 +328,7 @@ public class MusicaBD {
         SQL sql = new SQL();
         sql.add("SELECT " + agrupar + " as agrup , count(*) as m, max(img) as capa");
         sql.add("FROM " + TBL);
-        sql.add("WHERE ");
+        sql.add("WHERE perdida <> 1 AND (");
         int c = 0;
         if (filtro.getNome() != null && !filtro.getNome().isEmpty()) {
             sql.add("UCASE (nome) like :nome");
@@ -330,17 +336,25 @@ public class MusicaBD {
             c++;
         }
         if (filtro.getAutor() != null && !filtro.getAutor().isEmpty()) {
-            sql.add("OR UCASE (autor) like :autor");
+            if (c > 0) {
+                sql.add("OR");
+            }
+            sql.add("UCASE (autor) like :autor");
             sql.setParam("autor", filtro.getAutor().toUpperCase() + "%");
             c++;
         }
         if (filtro.getAlbum() != null && !filtro.getAlbum().isEmpty()) {
-            sql.add("OR UCASE (album) like :album");
+            if (c > 0) {
+                sql.add("OR");
+            }
+            sql.add("UCASE (album) like :album");
             sql.setParam("album", filtro.getAlbum().toUpperCase() + "%");
             c++;
         }
         if (c == 0) {
-            sql.add("1=1");
+            sql.add("1=1 )");
+        }else{
+            sql.add(")");
         }
 
         sql.add("GROUP BY " + agrupar);

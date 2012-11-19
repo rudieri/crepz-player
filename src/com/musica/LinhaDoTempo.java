@@ -42,7 +42,6 @@ public class LinhaDoTempo {
     }
 
     public static Musica getProxima() {
-        System.out.println("Linha do tempo ativa: " + ativa);
         if (!ativa) {
             return null;
         }
