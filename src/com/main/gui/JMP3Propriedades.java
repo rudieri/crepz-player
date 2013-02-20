@@ -3,7 +3,6 @@ package com.main.gui;
 import com.musica.Musica;
 import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
-import com.utils.pele.ColorUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -32,7 +31,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
     /**
      * Creates new form JMP3Propriedades
      */
-    MP3File mp3File;
+    private MP3File mp3File;
     private Musica musica;
 
     public JMP3Propriedades(java.awt.Frame parent, boolean modal, Musica musica) throws Exception {
@@ -176,11 +175,9 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel3 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
         jPanel13 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -210,71 +207,62 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Editor de Propriedades");
 
-        jPanel3.setPreferredSize(new java.awt.Dimension(400, 30));
-
-        jLabel1.setText("Editor de Propriedades");
-        jPanel3.add(jLabel1);
-
-        getContentPane().add(jPanel3, java.awt.BorderLayout.PAGE_START);
-
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Propriedades da Música"));
         jPanel1.setPreferredSize(new java.awt.Dimension(400, 250));
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
-
-        jScrollPane1.setHorizontalScrollBar(null);
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(350, 212));
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         jPanel13.setLayout(new javax.swing.BoxLayout(jPanel13, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel4.setLayout(new java.awt.BorderLayout());
 
         jLabel2.setText("Arquivo:");
-        jLabel2.setPreferredSize(new java.awt.Dimension(70, 14));
-        jPanel4.add(jLabel2);
+        jLabel2.setPreferredSize(new java.awt.Dimension(90, 14));
+        jPanel4.add(jLabel2, java.awt.BorderLayout.WEST);
 
         jTextField_Arquivo.setEditable(false);
-        jTextField_Arquivo.setPreferredSize(new java.awt.Dimension(300, 25));
-        jPanel4.add(jTextField_Arquivo);
+        jPanel4.add(jTextField_Arquivo, java.awt.BorderLayout.CENTER);
 
         jPanel13.add(jPanel4);
 
-        jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel7.setLayout(new java.awt.BorderLayout());
 
         jLabel3.setText("Titulo:");
-        jLabel3.setPreferredSize(new java.awt.Dimension(70, 14));
-        jPanel7.add(jLabel3);
+        jLabel3.setPreferredSize(new java.awt.Dimension(90, 14));
+        jPanel7.add(jLabel3, java.awt.BorderLayout.WEST);
 
-        jTextField_Titulo.setPreferredSize(new java.awt.Dimension(300, 25));
-        jPanel7.add(jTextField_Titulo);
+        jTextField_Titulo.setPreferredSize(new java.awt.Dimension(300, 27));
+        jPanel7.add(jTextField_Titulo, java.awt.BorderLayout.CENTER);
 
         jPanel13.add(jPanel7);
 
-        jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel9.setLayout(new javax.swing.BoxLayout(jPanel9, javax.swing.BoxLayout.LINE_AXIS));
 
         jLabel5.setText("Interprete:");
-        jLabel5.setPreferredSize(new java.awt.Dimension(70, 14));
+        jLabel5.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel9.add(jLabel5);
 
-        jTextField_Interp.setPreferredSize(new java.awt.Dimension(300, 25));
+        jTextField_Interp.setPreferredSize(new java.awt.Dimension(300, 27));
         jPanel9.add(jTextField_Interp);
 
         jPanel13.add(jPanel9);
 
-        jPanel10.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel10.setLayout(new javax.swing.BoxLayout(jPanel10, javax.swing.BoxLayout.LINE_AXIS));
 
         jLabel6.setText("Album:");
-        jLabel6.setPreferredSize(new java.awt.Dimension(70, 14));
+        jLabel6.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel10.add(jLabel6);
 
-        jTextField_Album.setPreferredSize(new java.awt.Dimension(300, 25));
+        jTextField_Album.setPreferredSize(new java.awt.Dimension(300, 27));
         jPanel10.add(jTextField_Album);
 
         jPanel13.add(jPanel10);
 
-        jPanel11.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel11.setLayout(new javax.swing.BoxLayout(jPanel11, javax.swing.BoxLayout.LINE_AXIS));
 
         jLabel7.setText("Genero:");
-        jLabel7.setPreferredSize(new java.awt.Dimension(70, 14));
+        jLabel7.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel11.add(jLabel7);
 
         jComboBoxGenero.setPreferredSize(new java.awt.Dimension(150, 25));
@@ -282,24 +270,24 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel13.add(jPanel11);
 
-        jPanel12.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel12.setLayout(new javax.swing.BoxLayout(jPanel12, javax.swing.BoxLayout.LINE_AXIS));
 
         jLabel8.setText("Ano:");
-        jLabel8.setPreferredSize(new java.awt.Dimension(70, 14));
+        jLabel8.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel12.add(jLabel8);
 
-        jTextField_ano.setPreferredSize(new java.awt.Dimension(300, 25));
+        jTextField_ano.setPreferredSize(new java.awt.Dimension(300, 27));
         jPanel12.add(jTextField_ano);
 
         jPanel13.add(jPanel12);
 
-        jPanel14.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel14.setLayout(new javax.swing.BoxLayout(jPanel14, javax.swing.BoxLayout.LINE_AXIS));
 
         jLabel9.setText("Comentario:");
-        jLabel9.setPreferredSize(new java.awt.Dimension(70, 14));
+        jLabel9.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel14.add(jLabel9);
 
-        jTextField_Comentario.setPreferredSize(new java.awt.Dimension(300, 25));
+        jTextField_Comentario.setPreferredSize(new java.awt.Dimension(300, 27));
         jPanel14.add(jTextField_Comentario);
 
         jPanel13.add(jPanel14);
@@ -308,7 +296,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 452, Short.MAX_VALUE)
+            .addGap(0, 578, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -320,9 +308,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jPanel6.setLayout(new java.awt.BorderLayout());
         jPanel13.add(jPanel6);
 
-        jScrollPane1.setViewportView(jPanel13);
-
-        jPanel1.add(jScrollPane1);
+        jPanel1.add(jPanel13, java.awt.BorderLayout.PAGE_START);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -336,17 +322,13 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
-        pack();
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        java.awt.Dimension dialogSize = getSize();
-        setLocation((screenSize.width-dialogSize.width)/2,(screenSize.height-dialogSize.height)/2);
+        setBounds((screenSize.width-598)/2, (screenSize.height-333)/2, 598, 333);
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBoxGenero;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
@@ -361,13 +343,11 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField_Album;
     private javax.swing.JTextField jTextField_Arquivo;
     private javax.swing.JTextField jTextField_Comentario;

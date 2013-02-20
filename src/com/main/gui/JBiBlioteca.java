@@ -8,7 +8,7 @@ import com.musica.*;
 import com.utils.JTrocarImagem;
 import com.utils.file.DiretorioUtils;
 import com.utils.model.ModelReadOnly;
-import com.utils.model.objetcmodel.ObjectTransferable;
+import com.utils.model.tablemodel.ObjectTransferable;
 import com.utils.pele.ColorUtils;
 import com.utils.transferivel.TipoTransferenciaMusica;
 import java.awt.Dimension;

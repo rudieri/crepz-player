@@ -4,8 +4,9 @@
  */
 package com.musica;
 
-import com.utils.model.objetcmodel.Filtravel;
-import com.utils.model.objetcmodel.ObjetoTabela;
+import com.utils.campo.NomeCampo;
+import com.utils.model.tablemodel.Filtravel;
+import com.utils.model.tablemodel.ObjetoTabela;
 import java.io.Serializable;
 
 /**
@@ -16,18 +17,25 @@ public class Musica implements Serializable, Filtravel {
 
     private static final char ESPACO = ' ';
     private int id;
-    @ObjetoTabela(nomeColuna = "Nome")
+    @ObjetoTabela()
+    @NomeCampo(nome = "Nome")
     private String nome;
-    @ObjetoTabela(nomeColuna = "Autor")
+    @ObjetoTabela()
+    @NomeCampo(nome = "Autor")
     private String autor;
-    @ObjetoTabela(nomeColuna = "Genero")
+    @ObjetoTabela()
+    @NomeCampo(nome = "Genero")
     private String genero;
-    @ObjetoTabela(nomeColuna = "Album")
+    @ObjetoTabela()
+    @NomeCampo(nome = "Album")
     private String album;
-    @ObjetoTabela(nomeColuna = "Tempo")
+    @ObjetoTabela()
+    @NomeCampo(nome = "Tempo")
     private Tempo tempo;
-    @ObjetoTabela(nomeColuna = "Nº Reproduções")
+    @ObjetoTabela()
+    @NomeCampo(nome = "Nº Reproduções")
     private short numeroReproducoes = 0;
+    @NomeCampo(nome = "Caminho do Arquivo")
     private String caminho;
     private long dtModArquivo;
     private String img;
@@ -217,7 +225,7 @@ public class Musica implements Serializable, Filtravel {
     @Override
     public boolean equals(Object obj) {
         if (obj != null && obj.getClass() == Musica.class) {
-            return ((Musica) obj).id == id;
+            return ((Musica) obj).getId() == id;
         }
         return false;
     }

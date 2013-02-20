@@ -25,10 +25,10 @@ public class Pele {
         this.nome = nome;
         
 
-        fundoTabelaNaoSelecionada =  Color.BLACK;
-        frenteTabelaNaoSelecionada = Color.DARK_GRAY;
-        fundoTabelaSelecionada = new Color(255, 51, 0, 255);
-        frenteTabelaSelecionada = Color.BLACK;
+        fundoTabelaNaoSelecionada =  new Color(255, 106, 0, 255);
+        frenteTabelaNaoSelecionada = Color.BLACK;
+        fundoTabelaSelecionada = Color.BLACK;
+        frenteTabelaSelecionada = new Color(255, 106, 0, 255);
         fundoJanela = Color.BLACK;
         frenteJanela= Color.BLUE;
     }

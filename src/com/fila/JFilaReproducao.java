@@ -24,10 +24,11 @@ import com.utils.ComandosSO;
 import com.utils.file.DiretorioUtils;
 import com.utils.file.filtros.FiltroMusica;
 import com.utils.model.ModelReadOnly;
-import com.utils.model.objetcmodel.ObjectTableModel;
-import com.utils.model.objetcmodel.ObjectTableModelListener;
-import com.utils.model.objetcmodel.ObjectTransferable;
+import com.utils.model.tablemodel.ObjectTableModel;
+import com.utils.model.tablemodel.ObjectTableModelListener;
+import com.utils.model.tablemodel.ObjectTransferable;
 import com.utils.pele.ColorUtils;
+import com.utils.renderer.DefaultTableRenderer;
 import com.utils.transferivel.TipoTransferenciaMusica;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -52,6 +53,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -70,6 +72,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 
     /**
      * Creates new form JFilaReproducao
+     * @param carregador 
      */
     public JFilaReproducao(Carregador carregador) {
         initComponents();
@@ -166,7 +169,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         modelFila.addColumn("");
         modelFila.setRowCount(0);
         modelFila.addTableModelListener(this);
-        jTableFila.setDefaultRenderer(Object.class, new TableRenderFila());
+        jTableFila.setDefaultRenderer(Object.class, new TableRendererFila());
         jTableFila.setRowHeight(50);
         jTableFila.getTableHeader().setVisible(false);
         // Código do Cão...
@@ -368,7 +371,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         for (int i = 0; i < jTableMusicas.getColumnCount(); i++) {
             sorterMusicas.setComparator(i, comparator);
         }
-        ColorUtils.registrar(jTableMusicas);
+//        ColorUtils.registrar(jTableMusicas);
         objModelMusicas.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -377,6 +380,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
                 }
             }
         });
+        jTableMusicas.setDefaultRenderer(Object.class, new DefaultTableRenderer());
         jTableMusicas.setRowSorter(sorterMusicas);
         jTableMusicas.setTransferHandler(new TransferHandler(null) {
             @Override
