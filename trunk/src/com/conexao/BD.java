@@ -100,13 +100,13 @@ public class BD {
             } catch (Exception e) {
                 //Se Deu erro pq não tem as tabelas
 //                if (e.getMessage().equals("user lacks privilege or object not found: MUSICA")) {
-                    try {
-                        criaTabelas(con);
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Crepz fatal!\nNão consegui criar as tabelas");
-                        System.out.println("Crepz Fatal.");
-                        ex.printStackTrace();
-                    }
+                try {
+                    criaTabelas(con);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Crepz fatal!\nNão consegui criar as tabelas");
+                    System.out.println("Crepz Fatal.");
+                    ex.printStackTrace();
+                }
 //                }
             }
         }
@@ -133,10 +133,11 @@ public class BD {
     public void criaTabelas(Connection conn) throws Exception {
         //dai cria
         Statement st = conn.createStatement();
-         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/musica.sql").toURI())).toString());
+        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/musica.sql").toURI())).toString());
         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playlist/playlist.sql").toURI())).toString());
+        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playlist/listainteligente/condicao/Condicao.sql").toURI())).toString());
         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/playmusica/playmusica.sql").toURI())).toString());
-         st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/indices.sql").toURI())).toString());
+        st.executeUpdate(FileUtils.leArquivo(new File(getClass().getResource("/com/musica/indices.sql").toURI())).toString());
 
     }
 

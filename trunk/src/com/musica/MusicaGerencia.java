@@ -63,7 +63,7 @@ public class MusicaGerencia {
         }
 //        getID3v1
         if (mp3.hasID3v1Tag()) {
-            if (m.getNome() == null) {
+            if (m.getNome() == null || m.getNome().isEmpty()) {
                 m.setNome(mp3.getID3v1Tag().getTitle());
             }
             m.setSize(mp3.getID3v1Tag().getSize());

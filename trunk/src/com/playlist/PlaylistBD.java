@@ -16,13 +16,15 @@ public class PlaylistBD {
 
     /**
      * Método que consiste a BK de Musica.
+     * @param playlist
+     * @throws Exception  
      */
     public static void consistirBK(Playlist playlist) throws Exception {
         if (playlist == null) {
             throw new Exception(" - Playlist não informado.");
         }
 
-        if (playlist.getNome() == null || playlist.getNome().equals("")) {
+        if (playlist.getNome() == null || playlist.getNome().isEmpty()) {
             throw new Exception(" - Nome da playlist não informado.");
         }
 
@@ -50,13 +52,14 @@ public class PlaylistBD {
 
         SQL sql = new SQL();
         sql.add("INSERT INTO " + TBL);
-        sql.add(" (id, nome, nrMus) ");
+        sql.add(" (id, nome, nrMus, tipo) ");
         sql.add("VALUES ");
-        sql.add(" (:id, :nome, :nrMus)");
+        sql.add(" (:id, :nome, :nrMus, :tipo)");
 
         sql.setParam("id", null);
         sql.setParam("nome", playlist.getNome());
         sql.setParam("nrMus", playlist.getNrMusicas());
+        sql.setParam("tipo", playlist.getTipoPlayList().ordinal());
 
         return t.executeUpdate(sql.getSql());
     }
@@ -74,12 +77,13 @@ public class PlaylistBD {
 
         SQL sql = new SQL();
         sql.add("UPDATE " + TBL);
-        sql.add("SET nome = :nome, nrMus = :nrMus");
+        sql.add("SET nome = :nome, nrMus = :nrMus, tipo = :tipo");
         sql.add("WHERE id = :id");
 
         sql.setParam("id", playlist.getId());
         sql.setParam("nome", playlist.getNome());
         sql.setParam("nrMus", playlist.getNrMusicas());
+        sql.setParam("tipo", playlist.getTipoPlayList().ordinal());
 
         return t.executeUpdate(sql.getSql());
     }
@@ -156,6 +160,7 @@ public class PlaylistBD {
             playlist.setId(rs.getInt("id"));
             playlist.setNome(rs.getString("nome"));
             playlist.setNrMusicas(rs.getInt("nrMus"));
+            playlist.setTipoPlayList(TipoPlayList.values()[rs.getInt("tipo")]);
 
             return true;
         } finally {
@@ -192,6 +197,7 @@ public class PlaylistBD {
                     playlist.setId(rs.getInt("id"));
                     playlist.setNome(rs.getString("nome"));
                     playlist.setNrMusicas(rs.getInt("nrMus"));
+                    playlist.setTipoPlayList(TipoPlayList.values()[rs.getInt("tipo")]);
                     lista.add(playlist);
 
                 }
@@ -219,6 +225,7 @@ public class PlaylistBD {
                     playlist.setId(rs.getInt("id"));
                     playlist.setNome(rs.getString("nome"));
                     playlist.setNrMusicas(rs.getInt("nrMus"));
+                    playlist.setTipoPlayList(TipoPlayList.values()[rs.getInt("tipo")]);
                     lista.add(playlist);
                 }
                 return lista;
@@ -345,5 +352,8 @@ public class PlaylistBD {
             t.rollback();
             throw ex;
         }
+    }
+
+    private PlaylistBD() {
     }
 }

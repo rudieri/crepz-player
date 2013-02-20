@@ -36,15 +36,16 @@ public class PlayListRenderer implements TableCellRenderer {
             jLista.setMusica((Musica) value);
         }
         //Aqui
-        if (ColorUtils.getPeleAtual() == Pele.PELE_PADRAO) {
-            if (isSelected) {
-                jLista.setForeground(Color.WHITE);
-                jLista.setBackground( new Color(255, 51, 0, 255));
-            } else {
-                jLista.setForeground(Color.BLACK);
-                jLista.setBackground(Color.WHITE);
-            }
-        } else {
+//        if (ColorUtils.getPeleAtual() == Pele.PELE_PADRAO) {
+//            if (isSelected) {
+//                jLista.setBackground(Color.BLACK);
+//                jLista.setForeground( new Color(255, 51, 0, 255));
+//            } else {
+//                jLista.setForeground(Color.BLACK);
+//                jLista.setBackground( new Color(255, 106, 0, 255));
+////                jLista.setBackground(Color.WHITE);
+//            }
+//        } else {
             if (isSelected) {
                 jLista.setForeground(ColorUtils.getFrenteTabelaSelecionada());
                 jLista.setBackground(ColorUtils.getFundoTabelaSelecionada());
@@ -52,7 +53,7 @@ public class PlayListRenderer implements TableCellRenderer {
                 jLista.setForeground(ColorUtils.getFrenteTabelaNaoSelecionada());
                 jLista.setBackground(ColorUtils.getFundoTabelaNaoSelecionada());
             }
-        }
+//        }
         return jLista;
     }
 }

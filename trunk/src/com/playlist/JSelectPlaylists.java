@@ -128,7 +128,7 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
 
     public void rodarPlaylist(Playlist p) {
         playlist.limpar();
-        playlist.tocar(p, true);
+        playlist.tocar(p);
     }
     
     private void startEvents(){

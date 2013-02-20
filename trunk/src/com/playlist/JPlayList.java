@@ -7,13 +7,17 @@ import com.fila.JFilaReproducao;
 import com.main.Carregador;
 import com.main.gui.JPrincipal;
 import com.musica.*;
+import com.playlist.listainteligente.condicao.Condicao;
+import com.playlist.listainteligente.condicao.CondicaoBD;
+import com.playlist.listainteligente.condicao.CondicaoSC;
+import com.playlist.listainteligente.condicao.JListaInteligenteEditor;
 import com.playmusica.PlayMusica;
 import com.playmusica.PlayMusicaBD;
 import com.playmusica.PlayMusicaSC;
 import com.utils.file.FileUtils;
 import com.utils.file.filtros.FiltroListaReproducao;
 import com.utils.model.ModelReadOnly;
-import com.utils.model.objetcmodel.ObjectTransferable;
+import com.utils.model.tablemodel.ObjectTransferable;
 import com.utils.transferivel.TipoTransferenciaMusica;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -54,7 +58,7 @@ import javax.swing.table.DefaultTableModel;
  * @author manchini
  */
 public class JPlayList extends javax.swing.JDialog implements ActionListener, ListSelectionListener {
-    
+
     private final SimpleDateFormat formatoPadraoData;
     /**
      * Creates new form JPlayList
@@ -71,18 +75,18 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     private Playlist playlist;
     private DropTarget dropTargetPlayList;
     private JCopiador jCopiador;
-    
+
     public JPlayList(Carregador carregador) {
         formatoPadraoData = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         initComponents();
         this.carregador = carregador;
         initTabelaLista();
-        
+
         jPanelOpcoesLista.setVisible(false);
         setIconImage(carregador.getIcones().crepzIcon.getImage());
         startEvents();
     }
-    
+
     public void setPlayListAberta(Integer id) {
         if (id == null) {
             playlist = null;
@@ -92,17 +96,17 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             playlist = new Playlist();
             playlist.setId(id);
             PlaylistBD.carregar(playlist);
-            tocar(playlist, false);
+            abrir(playlist);
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     public Playlist getPlaylistAberta() {
         return playlist;
     }
-    
+
     private void importarMusicas(File[] files) {
         Transacao t = new Transacao();
         try {
@@ -114,7 +118,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void importarMusicas(File[] files, Transacao t) {
         try {
             for (File s : files) {
@@ -129,7 +133,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             Logger.getLogger(getClass().getName()).log(Level.ALL, "Erro ao adicionar música.", ex);
         }
     }
-    
+
     private void tocarSelecionada() {
         try {
             Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 0);
@@ -162,7 +166,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         jTable.setShowVerticalLines(true);
         jTable.setEditingColumn(-1);
         jTable.setEditingRow(-1);
-        
+
         jTable.setDefaultRenderer(Object.class, new PlayListRenderer());
         jTable.setIntercellSpacing(new Dimension(1, 2));
         jTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -178,7 +182,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             public int getSourceActions(JComponent c) {
                 return COPY_OR_MOVE;
             }
-            
+
             @Override
             protected Transferable createTransferable(JComponent c) {
                 int[] rows = jTable.getSelectedRows();
@@ -187,10 +191,10 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                     musicas.add((Musica) jTable.getModel().getValueAt(rows[i], 0));
                 }
                 return new ObjectTransferable(musicas, TipoTransferenciaMusica.JPLAY_LIST);
-                
+
             }
         });
-        
+
         dropTargetPlayList = new DropTarget(jScrollPane, new DropTargetAdapter() {
             @Override
             public void drop(DropTargetDropEvent dtde) {
@@ -202,10 +206,10 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                         visibleLocation.x += location.x;
                         visibleLocation.y += location.y;
                         posicaoDestino = jTable.rowAtPoint(visibleLocation);
-                        
+
                         if ((dtde.getSourceActions() == TransferHandler.MOVE
                                 || location.y < jTable.getHeight())) {
-                            
+
                             if (TipoTransferenciaMusica.forDataFlavor(dtde.getCurrentDataFlavors()) == TipoTransferenciaMusica.JPLAY_LIST) {
                                 alterarPosicaoMusicasPlayList(jTable.getSelectedRows(), posicaoDestino);
                                 return;
@@ -240,9 +244,9 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                             for (int i = 0; i < flavors.length; i++) {
                                 if (flavors[i].isRepresentationClassReader()) {
                                     dtde.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
-                                    
+
                                     Reader reader = flavors[i].getReaderForText(transferable);
-                                    
+
                                     BufferedReader br = new BufferedReader(reader);
                                     ArrayList<File> arquivos = new ArrayList<File>(10);
                                     String linhaLida;
@@ -267,7 +271,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                     Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
+
             @Override
             public void dragEnter(DropTargetDragEvent evt) {
                 evt.acceptDrag(DnDConstants.ACTION_COPY);
@@ -285,7 +289,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         if (jTextField_NomePlayList.getText().isEmpty()) {
             return;
         }
-        
+
         Transacao t = new Transacao();
         try {
             t.begin();
@@ -294,26 +298,51 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             ModelReadOnly model = (ModelReadOnly) jTable.getModel();
             model.setRowCount(0);
             // Filtro...
-            PlayMusicaSC filtro = new PlayMusicaSC();
-            Playlist p = new Playlist();
-            p.setNome(jTextField_NomePlayList.getText());
-            PlaylistBD.existe(p, t);
-            filtro.setPlaylist(p);
-            
-            ArrayList lista = PlayMusicaBD.listar(filtro, t);
-            for (int i = 0; i < lista.size(); i++) {
-                PlayMusica m = (PlayMusica) lista.get(i);
-                if (m.getMusica().getCaminho() == null) {
-                    MusicaBD.carregar(m.getMusica(), t);
+//            Playlist p = new Playlist();
+//            p.setNome(jTextField_NomePlayList.getText());
+//            PlaylistBD.existe(p, t);
+            if (playlist.getTipoPlayList() != null && playlist.getTipoPlayList() == TipoPlayList.INTELIGENTE) {
+                ArrayList<Musica> musicas = MusicaBD.listar(new MusicaSC(), t);
+                CondicaoSC filtroCond = new CondicaoSC();
+                filtroCond.setPlaylist(playlist);
+                ArrayList<Condicao> condicaos = CondicaoBD.listar(filtroCond, t);
+                for (int i = 0; i < musicas.size(); i++) {
+                    Musica musica = musicas.get(i);
+                    boolean todasAsCondicoes = true;
+                    for (int j = 0; todasAsCondicoes && j < condicaos.size(); j++) {
+                        Condicao condicao = condicaos.get(j);
+                        todasAsCondicoes &= condicao.resolver(musica);
+                    }
+                    if (todasAsCondicoes) {
+                        musica.setNumero(model.getRowCount());
+                        Object[] row = new Object[1];
+                        row[0] = musica;
+                        model.addRow(row);
+                        faltamTocar.add(musica);
+                        total.add(musica);
+                        pesquisa.add(musica);
+
+                    }
                 }
-                m.getMusica().setNumero(i);
-                Object[] row = new Object[1];
-                row[0] = m.getMusica();
-                model.addRow(row);
-                faltamTocar.add(m.getMusica());
-                total.add(m.getMusica());
-                
-                pesquisa.add(m.getMusica());
+
+            } else {
+                PlayMusicaSC filtro = new PlayMusicaSC();
+                filtro.setPlaylist(playlist);
+                ArrayList<PlayMusica> lista = PlayMusicaBD.listar(filtro, t);
+                for (int i = 0; i < lista.size(); i++) {
+                    PlayMusica m = (PlayMusica) lista.get(i);
+                    if (m.getMusica().getCaminho() == null) {
+                        MusicaBD.carregar(m.getMusica(), t);
+                    }
+                    m.getMusica().setNumero(i);
+                    Object[] row = new Object[1];
+                    row[0] = m.getMusica();
+                    model.addRow(row);
+                    faltamTocar.add(m.getMusica());
+                    total.add(m.getMusica());
+                    pesquisa.add(m.getMusica());
+                }
+
             }
             jTable.requestFocus();
             if (jTable.getRowCount() > 0) {
@@ -321,14 +350,14 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             }
             t.commit();
             setTitle(jTextField_NomePlayList.getText());
-            
+
         } catch (Exception ex) {
             t.rollback();
             // JOptionPane.showMessageDialog(this, "Erro ao Filtrar \\õ/");
             ex.printStackTrace(System.err);
         }
     }
-    
+
     public void atualizarTabelaLista(ArrayList novaLista) {
         try {
 
@@ -337,7 +366,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             ts.setRowCount(0);
             for (int i = 0; i < novaLista.size(); i++) {
                 Musica m = (Musica) novaLista.get(i);
-                
+
                 Object[] row = new Object[1];
                 row[0] = m;
                 ts.addRow(row);
@@ -347,13 +376,13 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 jTable.changeSelection(0, 0, false, false);
             }
             setTitle(jTextField_NomePlayList.getText());
-            
+
         } catch (Exception ex) {
             //  JOptionPane.showMessageDialog(this, "Erro ao Filtrar! OO");
             ex.printStackTrace(System.err);
         }
     }
-    
+
     @SuppressWarnings("AssignmentToMethodParameter")
     private void alterarPosicaoMusicasPlayList(int[] indices, int novaPosicao) {
         int inicio = -1;
@@ -380,12 +409,12 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         }
         jTable.clearSelection();
     }
-    
+
     public void setVisible(boolean b, boolean a) {
         super.setVisible(b);
         super.setAlwaysOnTop(a);
     }
-    
+
     public Musica getAleatorio(Musica atual) {
         if (faltamTocar.isEmpty()) {
             if (Configuracaoes.getBoolean(Configuracaoes.CONF_REPEAT_ATIVO)) {
@@ -403,17 +432,21 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 int random = (int) (Math.random() * faltamTocar.size());
                 Musica m = faltamTocar.remove(random);
                 jahFoi.add(m);
-                jTable.setRowSelectionInterval(m.getNumero(), m.getNumero());
+                if (jTable.getRowCount() > m.getNumero()) {
+                    jTable.setRowSelectionInterval(m.getNumero(), m.getNumero());
+                } else {
+                    System.err.println("Não foi possível selecionar a Musica " + m + ". Na posição " + m.getNumero());
+                }
                 return m;
             }
         }
-        
+
     }
-    
+
     public Musica getProxima() {
         return getProxima(false);
     }
-    
+
     private Musica getProxima(boolean erro) {
         if (!erro) {
             contaErro = 0;
@@ -435,32 +468,32 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 if (atual != null) {
                     mAtual = atual.getNumero();
                 }
-                
+
                 if (mAtual < 0) {
                     jTable.setRowSelectionInterval(0, 0);
                     return (Musica) jTable.getModel().getValueAt(0, 0);
                 }
-                
+
                 if (mAtual + 1 >= jTable.getRowCount()) {
                     jTable.setRowSelectionInterval(0, 0);
                     return (Musica) jTable.getModel().getValueAt(0, 0);
-                    
+
                 } else {
                     jTable.setRowSelectionInterval(mAtual + 1, mAtual + 1);
                     return (Musica) jTable.getModel().getValueAt(mAtual + 1, 0);
-                    
+
                 }
             } else {
                 return getAleatorio(atual);
             }
-            
+
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-        
+
     }
-    
+
     public Musica getAnterior() {
         try {
             Musica atual = carregador.getMusica();
@@ -488,9 +521,9 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-        
+
     }
-    
+
     private void exportarPlayList() {
         JFileChooser jf = new JFileChooser();
         int foi = jf.showSaveDialog(this);
@@ -521,12 +554,12 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             } catch (IOException ex) {
                 ex.printStackTrace(System.err);
             }
-            
+
             System.out.println(f.getAbsolutePath());
         }
-        
+
     }
-    
+
     private void salvarPlaylist() {
         Transacao t = new Transacao();
         try {
@@ -550,23 +583,23 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 PlayMusicaBD.incluir(plm, t);
             }
             playlist.setNrMusicas(total.size());
-            
+
             PlaylistBD.alterar(playlist, t);
             setTitle(jTextField_NomePlayList.getText());
-            
+
             t.commit();
         } catch (Exception ex) {
             t.rollback();
             ex.printStackTrace(System.err);
         }
-        
+
     }
-    
+
     private void deletar() {
         Transacao t = new Transacao();
         try {
             t.begin();
-            
+
             Playlist playList = new Playlist();
             playList.setNome(jTextField_NomePlayList.getText());
             if (PlaylistBD.existe(playList, t)) {
@@ -574,8 +607,8 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             }
             PlayMusicaBD.excluirMusica(playList, t);
             PlaylistBD.excluir(playList, t);
-            
-            
+
+
             t.commit();
             limpar();
         } catch (Exception ex) {
@@ -583,7 +616,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             ex.printStackTrace(System.err);
         }
     }
-    
+
     public void limpar() {
         this.playlist = null;
         jTextField_NomePlayList.setText("");
@@ -592,51 +625,54 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         faltamTocar = new ArrayList(200);
         total = new ArrayList(200);
     }
-    
-    public void tocar(Playlist playlist, boolean tocarMesmo) {
+
+    public void abrir(Playlist playlist) {
         this.playlist = playlist;
+        jTextField_NomePlayList.setText(playlist.getNome());
+        setTitle(playlist.getNome());
+        atualizarTabelaLista();
+
+    }
+
+    public void tocar(Playlist playlist) {
         try {
-            jTextField_NomePlayList.setText(playlist.getNome());
-            setTitle(playlist.getNome());
-            atualizarTabelaLista();
-            if (tocarMesmo) {
-                carregador.abrir(getProxima(false), 0, false);
-            }
+            abrir(playlist);
+            carregador.abrir(getProxima(false), 0, false);
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void adicionarMusica() {
         Transacao t = new Transacao();
         try {
             File in = principal.telaAbrirArquivo();
-            
+
             t.begin();
-            
+
             Musica m = MusicaGerencia.addFiles(in, t);
             t.commit();
             //trace("ID: " +m.getId());
             MusicaSC filtro = new MusicaSC();
             filtro.setCaminho(m.getCaminho().trim());
-            
-            
+
+
             m = MusicaBD.listar(filtro).get(0);
 //
             addMusica(m);
-            
-            
+
+
         } catch (Exception ex) {
             t.rollback();
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void removerMusica() {
         DefaultTableModel tm = (DefaultTableModel) jTable.getModel();
         int selecteds[] = jTable.getSelectedRows();
         for (int i = selecteds.length - 1; i >= 0; i--) {
-            
+
             Musica m = (Musica) tm.getValueAt(selecteds[i], 0);
             faltamTocar.remove(m);
             pesquisa.remove(m);
@@ -652,7 +688,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             }
         }
     }
-    
+
     private void openM3u() {
         JFileChooser jf = new JFileChooser();
         jf.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -661,35 +697,35 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         if (jf.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File f = jf.getSelectedFile();
             try {
-                
+
                 importarMusicas(FileUtils.lerM3u(f));
             } catch (Exception ex) {
-                
+
                 Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
     }
-    
+
     private void salvarPlaylistAtual() {
         if (jTextField_NomePlayList.getText() == null || jTextField_NomePlayList.getText().isEmpty()) {
             jTextField_NomePlayList.setText("Execução " + formatoPadraoData.format(new Date()));
         }
         salvarPlaylist();
-        
+
     }
-    
+
     private void consultarPlayList() {
         JSelectPlaylists jPlayLists = new JSelectPlaylists(principal, true, this);
         jPlayLists.setVisible(true);
     }
-    
+
     private void salvarPlayList() {
         jToggleButtonOpcoesLista.setSelected(true);
         if (jTextField_NomePlayList.getText() == null || jTextField_NomePlayList.getText().isEmpty() || jTextField_NomePlayList.getText().equals("Coloque um nome!")) {
             jTextField_NomePlayList.setText("Coloque um nome!");
             jTextField_NomePlayList.selectAll();
-            
+
             transferFocus();
         } else {
             if (playlist != null) {
@@ -702,12 +738,12 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             }
             salvarPlaylist();
             jToggleButtonOpcoesLista.setSelected(false);
-            
+
         }
     }
-    
+
     public void filtraTexto(int code) {
-        
+
         jTextField_Pesquisa.setVisible(true);
         repaint();
         // jPanel6.repaint();
@@ -715,7 +751,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         jTextField_Pesquisa.requestFocus();
         jTextField_Pesquisa.setText("");
     }
-    
+
     private void onTableKeyPressed(KeyEvent evt) {
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_DELETE:
@@ -744,7 +780,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             jTextField_Pesquisa.requestFocus();
         }
     }
-    
+
     private void startEvents() {
         jButtonSalvar.addActionListener(this);
         jButtonExportar.addActionListener(this);
@@ -760,8 +796,10 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         jMenuItemConsultar.addActionListener(this);
         jMenuItemExcluirLista.addActionListener(this);
         jMenuItemFechar.addActionListener(this);
+        jMenuItem_NovaListaAutomatica.addActionListener(this);
+        jMenuItem_EditarListaAutomatica.addActionListener(this);
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == jButtonSalvar) {
@@ -792,9 +830,22 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             deletar();
         } else if (e.getSource() == jMenuItemFechar) {
             setVisible(false);
+        } else if (e.getSource() == jMenuItem_NovaListaAutomatica) {
+            limpar();
+            JListaInteligenteEditor editor = new JListaInteligenteEditor(principal, true);
+            editor.setPlaylist(null);
+            editor.setVisible(true);
+            if (editor.getPlaylist() != null) {
+                abrir(editor.getPlaylist());
+            }
+        } else if (e.getSource() == jMenuItem_EditarListaAutomatica) {
+            JListaInteligenteEditor editor = new JListaInteligenteEditor(principal, true);
+            editor.setPlaylist(playlist);
+            editor.setVisible(true);
+            abrir(editor.getPlaylist());
         }
     }
-    
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (jTable.getSelectedRow() == -1) {
@@ -806,7 +857,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             ex.printStackTrace(System.err);
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -851,6 +902,9 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         jMenuItemConsultar = new javax.swing.JMenuItem();
         jMenuItemExcluirLista = new javax.swing.JMenuItem();
         jMenuItemFechar = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem_NovaListaAutomatica = new javax.swing.JMenuItem();
+        jMenuItem_EditarListaAutomatica = new javax.swing.JMenuItem();
 
         cMenu_Tocar.setText("jMenuItem7");
         Conteto_Playlist.add(cMenu_Tocar);
@@ -891,7 +945,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
         jPanel8.add(jPanel4);
 
-        jPanel5.setLayout(new java.awt.GridLayout());
+        jPanel5.setLayout(new java.awt.GridLayout(1, 0));
 
         jButtonAbrir.setText("Abrir M3U");
         jButtonAbrir.setToolTipText("Abre um arquivo m3u");
@@ -1017,6 +1071,17 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
         jMenuBar1.add(jMenu1);
 
+        jMenu2.setText("Lista Automática");
+
+        jMenuItem_NovaListaAutomatica.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem_NovaListaAutomatica.setText("Nova Lista Automática");
+        jMenu2.add(jMenuItem_NovaListaAutomatica);
+
+        jMenuItem_EditarListaAutomatica.setText("Editar Lista Automática");
+        jMenu2.add(jMenuItem_EditarListaAutomatica);
+
+        jMenuBar1.add(jMenu2);
+
         setJMenuBar(jMenuBar1);
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -1026,18 +1091,18 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     private void jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseClicked
         if (evt.getClickCount() == 2) {
             tocarSelecionada();
-            
+
         }
 }//GEN-LAST:event_jTableMouseClicked
-    
+
     private void jTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableKeyPressed
         onTableKeyPressed(evt);
 }//GEN-LAST:event_jTableKeyPressed
-    
+
     private void jToggleButtonOpcoesListaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jToggleButtonOpcoesListaStateChanged
         jPanelOpcoesLista.setVisible(jToggleButtonOpcoesLista.isSelected());
     }//GEN-LAST:event_jToggleButtonOpcoesListaStateChanged
-    
+
     private void jTextField_PesquisaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_PesquisaKeyPressed
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ESCAPE:
@@ -1065,10 +1130,10 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 if (jTable.getSelectedRow() == 0) {
                     jTable.getSelectionModel().setSelectionInterval(jTable.getRowCount() - 1, jTable.getRowCount() - 1);
                 } else {
-                    
+
                     jTable.getSelectionModel().setSelectionInterval(RowSelct2 - 1, RowSelct2 - 1);
                 }
-                
+
                 break;
             case KeyEvent.VK_SHIFT:
                 jTable.requestFocus();
@@ -1080,7 +1145,6 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 //        }
 
     }//GEN-LAST:event_jTextField_PesquisaKeyPressed
-    int dot = 0;
     private void jTextField_PesquisaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_PesquisaKeyTyped
         ArrayList<Musica> novaLista = new ArrayList<Musica>(200);
         char keyChar = Character.toLowerCase(evt.getKeyChar());
@@ -1103,7 +1167,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         }
         jTextField_Pesquisa.requestFocus();
     }//GEN-LAST:event_jTextField_PesquisaKeyTyped
-    
+
     private void jMenuItemCopiarTudoParaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopiarTudoParaActionPerformed
         if (jCopiador == null) {
             jCopiador = new JCopiador(this, false);
@@ -1112,7 +1176,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         jCopiador.setNomePLayList(playlist.getNome());
         jCopiador.setVisible(true);
     }//GEN-LAST:event_jMenuItemCopiarTudoParaActionPerformed
-    
+
     public void addMusica(Musica m) {
         if (playlist == null) {
             salvarPlaylistAtual();
@@ -1126,7 +1190,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         m.setNumero(jTable.getModel().getRowCount());
         Object[] row = new Object[1];
         row[0] = m;
@@ -1135,11 +1199,11 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         total.add(m);
         pesquisa.add(m);
     }
-    
+
     public void addMusicas(ArrayList<Musica> musicas) {
         addMusicas(musicas, jTable.getRowCount());
     }
-    
+
     public void addMusicas(ArrayList<Musica> musicas, int posicaoInicial) {
         if (playlist == null) {
             salvarPlaylistAtual();
@@ -1155,8 +1219,8 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 playMusica.setPlaylist(playlist);
                 playMusica.setSeq(jTable.getModel().getRowCount());
                 PlayMusicaBD.incluir(playMusica, t);
-                
-                
+
+
                 Object[] row = new Object[1];
                 row[0] = musica;
                 if (posicaoInicial == -1 || posicaoInicial >= jTable.getRowCount()) {
@@ -1179,9 +1243,9 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             t.rollback();
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     private int getUltimaPosicao() {
         return faltamTocar.size() + jahFoi.size();
     }
@@ -1201,6 +1265,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     private javax.swing.JButton jButtonSalvar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItemAbrirPlayList;
     private javax.swing.JMenuItem jMenuItemConsultar;
@@ -1209,6 +1274,8 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     private javax.swing.JMenuItem jMenuItemFechar;
     private javax.swing.JMenuItem jMenuItemLimparLista;
     private javax.swing.JMenuItem jMenuItemSalvar;
+    private javax.swing.JMenuItem jMenuItem_EditarListaAutomatica;
+    private javax.swing.JMenuItem jMenuItem_NovaListaAutomatica;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

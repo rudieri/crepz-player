@@ -12,6 +12,7 @@ package com.playlist;
 public class Playlist {
     private int id;
     private String nome;
+    private TipoPlayList tipoPlayList;
     private int nrMusicas;
 
     /**
@@ -55,5 +56,14 @@ public class Playlist {
     public void setNrMusicas(int nrMusicas) {
         this.nrMusicas = nrMusicas;
     }
+
+    public TipoPlayList getTipoPlayList() {
+        return tipoPlayList;
+    }
+
+    public void setTipoPlayList(TipoPlayList tipoPlayList) {
+        this.tipoPlayList = tipoPlayList;
+    }
+    
 
 }
