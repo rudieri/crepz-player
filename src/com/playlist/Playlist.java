@@ -58,7 +58,7 @@ public class Playlist {
     }
 
     public TipoPlayList getTipoPlayList() {
-        return tipoPlayList;
+        return tipoPlayList == null ? TipoPlayList.NORMAL : tipoPlayList;
     }
 
     public void setTipoPlayList(TipoPlayList tipoPlayList) {

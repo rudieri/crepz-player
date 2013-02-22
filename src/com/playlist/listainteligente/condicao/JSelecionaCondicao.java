@@ -4,7 +4,6 @@
  */
 package com.playlist.listainteligente.condicao;
 // com.playlist.listainteligente.condicao.JSelecionaCondicao
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;

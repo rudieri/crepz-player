@@ -7,7 +7,6 @@ package com.musica;
 import com.config.Configuracaoes;
 import com.graficos.Icones;
 import com.main.gui.JPrincipal;
-import com.utils.Warning;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,8 +37,7 @@ public abstract class Musiquera implements BasicPlayerListener {
     private int tenteiAbrir = 0;
     private long totalTempo = 1;
     private int totalBytes = 1;
-    Icones icones;
-    BasicPlayer player;
+    private BasicPlayer player;
     private Musica musica;
     private File in;
     private final SimpleDateFormat sdf = new SimpleDateFormat("ss");

@@ -16,6 +16,7 @@ import com.config.constantes.AcaoPadraoFila;
 import com.config.constantes.AcoesFilaVazia;
 import com.config.constantes.AdicionarNaFilaVazia;
 import com.main.Carregador;
+import com.main.FonteReproducao;
 import com.main.Notificavel;
 import com.main.gui.JMP3Propriedades;
 import com.musica.*;
@@ -27,7 +28,6 @@ import com.utils.model.ModelReadOnly;
 import com.utils.model.tablemodel.ObjectTableModel;
 import com.utils.model.tablemodel.ObjectTableModelListener;
 import com.utils.model.tablemodel.ObjectTransferable;
-import com.utils.pele.ColorUtils;
 import com.utils.renderer.DefaultTableRenderer;
 import com.utils.transferivel.TipoTransferenciaMusica;
 import java.awt.*;
@@ -53,7 +53,6 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -285,24 +284,24 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 //        jButton_Ant.setText("");
         jToggle_Repete.setText("");
 
-        jButton_Stop.setIcon(carregador.getIcones().stopIcon32);
+        jButton_Stop.setIcon(carregador.getIcones().getStopIcon32());
 //        jButton_Ant.setIcon(carregador.getIcones().voltaIcon32);
-        jButton_Next.setIcon(carregador.getIcones().frenteIcon32);
+        jButton_Next.setIcon(carregador.getIcones().getFrenteIcon32());
         if (carregador.isPaused()) {
-            jButton_Play.setIcon(carregador.getIcones().playIcon32);
+            jButton_Play.setIcon(carregador.getIcones().getPlayIcon32());
         } else {
-            jButton_Play.setIcon(carregador.getIcones().pauseIcon32);
+            jButton_Play.setIcon(carregador.getIcones().getPauseIcon32());
         }
         if (carregador.isRepeat()) {
-            jToggle_Repete.setIcon(carregador.getIcones().repeatOnIcon32);
+            jToggle_Repete.setIcon(carregador.getIcones().getRepeatOnIcon32());
         } else {
-            jToggle_Repete.setIcon(carregador.getIcones().repeatOffIcon32);
+            jToggle_Repete.setIcon(carregador.getIcones().getRepeatOffIcon32());
         }
 
         // menus popup
-        jMenuItemFilaTocar.setIcon(carregador.getIcones().playIcon16);
-        jMenuItemFilaRemover.setIcon(carregador.getIcones().xis);
-        jMenuItemEmbaralhar.setIcon(carregador.getIcones().randomOnIcon16);
+        jMenuItemFilaTocar.setIcon(carregador.getIcones().getPlayIcon16());
+        jMenuItemFilaRemover.setIcon(carregador.getIcones().getXis());
+        jMenuItemEmbaralhar.setIcon(carregador.getIcones().getRandomOnIcon16());
 //        jMenuItemFilaTocar.setIcon(carregador.getIcones().playIcon16);
 //        jMenuItemFilaTocar.setIcon(carregador.getIcones().playIcon16);
 
@@ -689,7 +688,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
             carregador.mostrarBiblioteca();
         } else if (e.getSource() == jMenuItemMostrarPlayList) {
             carregador.mostrarPlayList();
-            carregador.setFonteReproducao(Carregador.FonteReproducao.PLAY_LIST);
+            carregador.setFonteReproducao(FonteReproducao.PLAY_LIST);
         } else if (e.getSource() == jMenuItemImportarArquivos) {
             int result = jFileChooserImportar.showOpenDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
@@ -719,7 +718,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
                 if (acaoPadraoFila == AcaoPadraoFila.ADICIONAR_FILA) {
                     adicionarMusicasSelecionadas();
                 } else if (acaoPadraoFila == AcaoPadraoFila.REPRODUZIR) {
-                    carregador.setFonteReproducao(Carregador.FonteReproducao.FILA_REPRODUCAO);    
+                    carregador.setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);    
                     tocarMusicaSelecionada();
                 } else {
                     tocarMusicaSelecionada();
@@ -744,9 +743,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         } else if (e.getSource() == jToggle_Repete) {
             carregador.setRepeat(!carregador.isRepeat());
             if (carregador.isRepeat()) {
-                jToggle_Repete.setIcon(carregador.getIcones().repeatOnIcon32);
+                jToggle_Repete.setIcon(carregador.getIcones().getRepeatOnIcon32());
             } else {
-                jToggle_Repete.setIcon(carregador.getIcones().repeatOffIcon32);
+                jToggle_Repete.setIcon(carregador.getIcones().getRepeatOffIcon32());
             }
         }
     }
@@ -849,7 +848,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
     public void tableChanged(TableModelEvent e) {
         if (e.getSource() == jTableFila.getModel()) {
             if (e.getType() == TableModelEvent.INSERT) {
-                carregador.setFonteReproducao(Carregador.FonteReproducao.FILA_REPRODUCAO);
+                carregador.setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);
                 if (!carregador.isPlaying()
                         && Configuracaoes.getEnum(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA) == AdicionarNaFilaVazia.REPRODUZIR_MUSICA) {
                     carregador.abrirETocar();
@@ -1195,6 +1194,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.ALT_MASK));
         jMenuItem3.setText("Tema");
+        jMenuItem3.setEnabled(false);
         jMenu2.add(jMenuItem3);
 
         jMenuBar1.add(jMenu2);

@@ -2,37 +2,41 @@
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
-    <Container class="javax.swing.JPopupMenu" name="Conteto_Playlist">
+    <Container class="javax.swing.JPopupMenu" name="jPopupMenu_Playlist">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <MenuItem class="javax.swing.JMenuItem" name="cMenu_Tocar">
+        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_Tocar">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jMenuItem7"/>
+            <Property name="text" type="java.lang.String" value="Reproduzir"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem_TocarActionPerformed"/>
+          </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="cMenu_Editar_prop">
+        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_Editar">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jMenuItem7"/>
+            <Property name="text" type="java.lang.String" value="Propriedades"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem_EditarActionPerformed"/>
+          </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="cMenu_ExcluirLista">
+        <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_ExcluirLista">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jMenuItem7"/>
+            <Property name="text" type="java.lang.String" value="Remover da Lista"/>
           </Properties>
-        </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="cMenu_ExcluirDisco">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="jMenuItem7"/>
-          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem_ExcluirListaActionPerformed"/>
+          </Events>
         </MenuItem>
       </SubComponents>
     </Container>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
+        <Menu class="javax.swing.JMenu" name="jMenuFuncoes">
           <Properties>
             <Property name="mnemonic" type="int" value="70"/>
             <Property name="text" type="java.lang.String" value="Fun&#xe7;&#xf5;es"/>
@@ -99,7 +103,7 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu2">
+        <Menu class="javax.swing.JMenu" name="jMenuListaAutomatica">
           <Properties>
             <Property name="text" type="java.lang.String" value="Lista Autom&#xe1;tica"/>
           </Properties>
@@ -287,6 +291,7 @@
                 <Property name="surrendersFocusOnKeystroke" type="boolean" value="true"/>
               </Properties>
               <Events>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableMousePressed"/>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableMouseClicked"/>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTableKeyPressed"/>
               </Events>

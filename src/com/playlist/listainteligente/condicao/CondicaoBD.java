@@ -151,15 +151,21 @@ public class CondicaoBD {
         return numLinhas;
     }
 
-//    public static int excluir(Playlist playlist, Transacao t) throws Exception {
-//        SQL sql = new SQL();
-//        sql.add("DELETE FROM " + TBL);
-//        sql.add("WHERE playlist = :playlist ");
-//
-//        sql.setParam("playlist", playlist.getId());
-//        int numLinhas = t.executeUpdate(sql.getSql());
-//        return numLinhas;
-//    }
+    public static int excluir(Playlist playlist, Transacao t) throws Exception {
+        SQL sql = new SQL();
+        sql.add("SELECT * FROM " + TBL);
+        sql.add("WHERE playlist = :playlist ");
+
+        sql.setParam("playlist", playlist.getId());
+        ResultSet rs = t.executeQuery(sql.getSql());
+        int numLinhas = 0;
+        while (rs.next()) {
+            Condicao c = new Condicao(rs.getInt("id"));
+            carregarObjeto(c, rs, t);
+            numLinhas += excluir(c, t);
+        }
+        return numLinhas;
+    }
 //   
     /**
      * Método que carrega o objeto Condicao pelo ID.

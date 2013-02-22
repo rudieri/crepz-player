@@ -131,6 +131,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem_Tema">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Tema"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -233,7 +234,10 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabelFilaReproducao">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Fila"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/img/fila.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Fila de Reprodu&#xe7;&#xe3;od"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel_Edit">
@@ -532,6 +536,7 @@
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
+            <Property name="paintTicks" type="boolean" value="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Volume"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[100, 23]"/>
@@ -566,6 +571,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="minimum" type="int" value="-100"/>
+                <Property name="paintTicks" type="boolean" value="true"/>
                 <Property name="toolTipText" type="java.lang.String" value="balan&#xe7;o"/>
                 <Property name="value" type="int" value="0"/>
               </Properties>

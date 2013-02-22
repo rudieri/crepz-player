@@ -9,6 +9,7 @@ import com.config.constantes.AcoesFilaVazia;
 import com.config.constantes.AdicionarNaFilaVazia;
 import com.config.constantes.TelaPadrao;
 import com.main.Carregador;
+import com.main.FonteReproducao;
 import com.musica.CacheDeMusica;
 import com.musica.Musica;
 import com.utils.file.FileUtils;
@@ -78,7 +79,7 @@ public class Configuracaoes {
     private static Integer listaAberta  = -1;
     // Config 14
     public static final Byte CONF_FONTE_REPRODUCAO = 14;
-    private static Carregador.FonteReproducao fonteReproducao  = Carregador.FonteReproducao.AVULSO;
+    private static FonteReproducao fonteReproducao  = FonteReproducao.AVULSO;
     // Config 15
     public static final Byte CONF_PELES = 15;
     private static ArrayList<String> peles  = new ArrayList<String>();
