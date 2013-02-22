@@ -378,6 +378,22 @@ public class MusicaBD {
             rs.close();
         }
     }
+    
+    public static ArrayList<Musica> listarMusicasSemTempo(Transacao t) throws Exception{
+        SQL sql = new SQL();
+        sql.add("SELECT * ");
+        sql.add("FROM  " + TBL);
+        sql.add("WHERE perdida = 0 ");
+        sql.add("AND tempo IS NULL ");
+        ResultSet rs = t.executeQuery(sql.getSql());
+        ArrayList<Musica>  musicas = new ArrayList<Musica>(50);
+        while (rs.next()) {
+            Musica musica = CacheDeMusica.get(rs.getInt("id"), rs);
+            musicas.add(musica);
+        }
+        return musicas;
+        
+    }
 
     /*
      * ######################################### METODOS SEM TRANSACAO

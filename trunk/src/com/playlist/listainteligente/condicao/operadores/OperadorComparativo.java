@@ -47,17 +47,18 @@ public enum OperadorComparativo implements Operador<ValorCondicao> {
         }
         switch (this) {
             case IGUAL:
-                return v1 == v2 || v1.equals(v2);
+                return v1 == v2 || v1.equals(v2)
+                        || v1.toString().toLowerCase().equals(v2.toString().toLowerCase());
             case DIFERENTE:
                 return v1 != null && v2 != null && v1.equals(v2);
             case CONTEM:
-                return v1.toString().contains(v2.toString());
+                return v1.toString().toLowerCase().contains(v2.toString().toLowerCase());
             case NAO_CONTEM:
-                return !v1.toString().contains(v2.toString());
+                return !v1.toString().toLowerCase().contains(v2.toString().toLowerCase());
             case COMECA_COM:
-                return v1.toString().startsWith(v2.toString());
+                return v1.toString().toLowerCase().startsWith(v2.toString().toLowerCase());
             case TERMINA_COM:
-                return v1.toString().endsWith(v2.toString());
+                return v1.toString().toLowerCase().endsWith(v2.toString().toLowerCase());
             case MAIOR:
                 return v1 instanceof Comparable && v2 instanceof Comparable ? ((Comparable) v1).compareTo(v2) > 0 : v1.hashCode() > v2.hashCode();
             case MAIOR_IGUAL:

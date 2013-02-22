@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +34,7 @@ import org.hsqldb.server.Server;
  *
  * @author rudieri
  */
-public final class Carregador extends Musiquera {
+public class Carregador extends Musiquera {
 
     private static Carregador me;
     private Icones icones;
@@ -437,13 +436,6 @@ public final class Carregador extends Musiquera {
 
     public boolean isFilaReproducaoVisivel() {
         return GerenciadorTelas.getFilaReproducao().isVisible();
-    }
-
-    public enum FonteReproducao {
-
-        PLAY_LIST,
-        FILA_REPRODUCAO,
-        AVULSO
     }
 
     protected static Carregador getMe() {

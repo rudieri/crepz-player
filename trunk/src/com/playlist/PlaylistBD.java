@@ -2,6 +2,7 @@ package com.playlist;
 
 import com.conexao.SQL;
 import com.conexao.Transacao;
+import com.playlist.listainteligente.condicao.CondicaoBD;
 import java.sql.*;
 import java.util.*;
 
@@ -33,6 +34,8 @@ public class PlaylistBD {
 
     /**
      * Método que consiste os dados de Musica.
+     * @param playlist
+     * @throws Exception  
      */
     public static void consistir(Playlist playlist) throws Exception {
         consistirBK(playlist);
@@ -43,9 +46,10 @@ public class PlaylistBD {
      * Método que tenta incluir um objeto Musica.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @param t Contendo a transação.
      * @return int Contendo o numero de linhas afetadas.
+     * @throws Exception  
      */
     public static int incluir(Playlist playlist, Transacao t) throws Exception {
         consistir(playlist);
@@ -68,9 +72,10 @@ public class PlaylistBD {
      * Método que tenta alterar um objeto Musica.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @param t Contendo a transação.
      * @return int Contendo o numero de linhas afetadas.
+     * @throws Exception  
      */
     public static int alterar(Playlist playlist, Transacao t) throws Exception {
         consistir(playlist);
@@ -92,14 +97,16 @@ public class PlaylistBD {
      * Método que tenta excluir um objeto Musica.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @param t Contendo a transação.
      * @return int Contendo o numero de linhas afetadas.
+     * @throws Exception  
      */
     public static int excluir(Playlist playlist, Transacao t) throws Exception {
         SQL sql = new SQL();
         sql.add("DELETE FROM " + TBL);
         sql.add("WHERE id = :id");
+        CondicaoBD.excluir(playlist, t);
 
         sql.setParam("id", playlist.getId());
 
@@ -110,9 +117,10 @@ public class PlaylistBD {
      * Método que verifica pelo BK se o objeto Musica está cadastrado. Se estiver, carrega o ID do objeto.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @param t Contendo a transação.
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
+     * @throws Exception  
      */
     public static boolean existe(Playlist playlist, Transacao t) throws Exception {
         consistirBK(playlist);
@@ -140,9 +148,10 @@ public class PlaylistBD {
      * Método que carrega o objeto Musica pelo ID.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @param t Contendo a transação.
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
+     * @throws Exception  
      */
     public static boolean carregar(Playlist playlist, Transacao t) throws Exception {
         SQL sql = new SQL();
@@ -171,7 +180,9 @@ public class PlaylistBD {
     /** Método que retorna uma lista de Musicas de acordo com o filtro.
      * @param filtro Contendo o filtro.
      * @param t Contendo a transação.
-     * @return ArrayList Contendo uma lista de Musicas. */
+     * @return ArrayList Contendo uma lista de Musicas.
+     * @throws Exception 
+     */
     public static ArrayList listar(PlaylistSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
             throw new Exception(" - Filtro não informado.");
@@ -190,7 +201,7 @@ public class PlaylistBD {
             sql.setParam("id", filtro.getId());
             ResultSet rs = t.executeQuery(sql.getSql());
             try {
-                ArrayList lista = new ArrayList();
+                ArrayList lista = new ArrayList(13);
                 while (rs.next()) {
                     Playlist playlist = new Playlist();
 
@@ -207,7 +218,7 @@ public class PlaylistBD {
                 rs.close();
             }
         } else {
-            if (filtro.getNome() != null && !filtro.getNome().equals("")) {
+            if (filtro.getNome() != null && !filtro.getNome().isEmpty()) {
                 sql.add("AND UCASE (nome) like :nome");
                 sql.setParam("nome", filtro.getNome().toUpperCase() + "%");
             }
@@ -218,7 +229,7 @@ public class PlaylistBD {
 
             ResultSet rs = t.executeQuery(sql.getSql());
             try {
-                ArrayList lista = new ArrayList();
+                ArrayList lista = new ArrayList(13);
                 while (rs.next()) {
                     Playlist playlist = new Playlist();
 
@@ -242,8 +253,9 @@ public class PlaylistBD {
      * Método que tenta incluir um objeto Musica.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @return int Contendo o numero de linhas afetadas.
+     * @throws Exception  
      */
     public static int incluir(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -262,8 +274,9 @@ public class PlaylistBD {
      * Método que tenta alterar um objeto Musica.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @return int Contendo o numero de linhas afetadas.
+     * @throws Exception  
      */
     public static int alterar(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -282,8 +295,9 @@ public class PlaylistBD {
      * Método que tenta excluir um objeto Musica.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @return int Contendo o numero de linhas afetadas.
+     * @throws Exception  
      */
     public static int excluir(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -302,8 +316,9 @@ public class PlaylistBD {
      * Método que verifica pelo BK se o objeto Musica está cadastrado. Se estiver, carrega o ID do objeto.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
+     * @throws Exception  
      */
     public static boolean existe(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -322,8 +337,9 @@ public class PlaylistBD {
      * Método que carrega o objeto Musica pelo ID.
      *
      *
-     * @param musica Contendo a musica.
+     * @param playlist 
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
+     * @throws Exception  
      */
     public static boolean carregar(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -340,7 +356,9 @@ public class PlaylistBD {
 
     /** Método que retorna uma lista de Musicas de acordo com o filtro.
      * @param filtro Contendo o filtro.
-     * @return ArrayList Contendo uma lista de Musicas. */
+     * @return ArrayList Contendo uma lista de Musicas.
+     * @throws Exception 
+     */
     public static ArrayList listar(PlaylistSC filtro) throws Exception {
         Transacao t = new Transacao();
         try {

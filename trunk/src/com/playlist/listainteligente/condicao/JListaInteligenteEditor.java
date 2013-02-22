@@ -10,15 +10,17 @@ import com.playlist.PlaylistBD;
 import com.playlist.TipoPlayList;
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author rudieri
  */
-public class JListaInteligenteEditor extends javax.swing.JDialog implements ActionListener {
+public class JListaInteligenteEditor extends javax.swing.JDialog implements ActionListener, WindowListener {
 
     private Playlist playlist;
     
@@ -71,8 +73,11 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
     private void salvar() {
         Transacao t = new Transacao();
         try {
+            if (jTextField_Nome.getText().isEmpty()) {
+                throw new IllegalStateException("Informa um nome para sua nova lista.");
+            }
             t.begin();
-            if (playlist.getNome() == null) {
+            if (playlist.getNome() == null || playlist.getNome().isEmpty()) {
                 playlist.setNome(jTextField_Nome.getText());
             }
             if (PlaylistBD.existe(playlist, t)) {
@@ -86,6 +91,9 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
             }else{
                 playlist.setNome(jTextField_Nome.getText());
                 PlaylistBD.incluir(playlist, t);
+                if (!PlaylistBD.existe(playlist, t)) {
+                    throw new IllegalStateException("Droga! Não está funcionando...");
+                }
             }
             
             for (int i = 0; i < jPanel_Condicoes.getComponentCount(); i++) {
@@ -96,8 +104,12 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
                     CondicaoBD.incluir(condicao, t);
                 }
             }
+            t.commit();
+            dispose();
         } catch (Exception ex) {
-            Logger.getLogger(JListaInteligenteEditor.class.getName()).log(Level.SEVERE, null, ex);
+            if (ex instanceof IllegalStateException) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
     }
 
@@ -122,6 +134,7 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
         jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(this);
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
@@ -172,15 +185,39 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
         else if (evt.getSource() == jButton3) {
             JListaInteligenteEditor.this.jButton3ActionPerformed(evt);
         }
+    }
+
+    public void windowActivated(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowClosed(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowClosing(java.awt.event.WindowEvent evt) {
+        if (evt.getSource() == JListaInteligenteEditor.this) {
+            JListaInteligenteEditor.this.formWindowClosing(evt);
+        }
+    }
+
+    public void windowDeactivated(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowDeiconified(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowIconified(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowOpened(java.awt.event.WindowEvent evt) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        playlist = null;
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         salvar();
-        dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -192,6 +229,10 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
 //        System.out.println(visibleRect);
 //        jScrollPane1.scrollRectToVisible(visibleRect);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        playlist = null;
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

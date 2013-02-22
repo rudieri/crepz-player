@@ -172,6 +172,7 @@
                   <KeyStroke key="Alt+T"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Tema"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
           </SubComponents>

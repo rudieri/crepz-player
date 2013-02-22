@@ -23,7 +23,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -51,7 +50,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private int estado = 0;
     private JFileChooser jFileChooser;
     private int volAnt;
-    JConfiguracao configuracao;
+    private JConfiguracao configuracao;
     private final Carregador carregador;
 
     public JPrincipal(Carregador carregador) {
@@ -138,7 +137,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
      * Muda o icones do label que contenha o nome indicado.
      *
      * @param quem nome do label.
-     * @param icones nome icones.nomeDoIcone
+     * @param _icone  
      */
     public void atualizaIcone(String quem, Icon _icone) {
         atualizaIcone(this.getContentPane(), quem, _icone);
@@ -166,6 +165,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     /**
      * Muda o ToolTipText do label que contenha o nome indicado.
      *
+     * @param root 
      * @param quem nome do label.
      * @param texto texto a ser colocado como tooltip
      */
@@ -228,30 +228,30 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void inicializaIcones() {
         //Estado inicial do botão (está Stop);
-        jButton_Play.setIcon(carregador.getIcones().playIcon32);
+        jButton_Play.setIcon(carregador.getIcones().getPlayIcon32());
         //Se tiver tocando
         if (carregador.isPlaying()) {
-            jButton_Play.setIcon(carregador.getIcones().pauseIcon32);
+            jButton_Play.setIcon(carregador.getIcones().getPauseIcon32());
         }
         //Se tiver pause
         if (carregador.isPlaying()) {
-            jButton_Play.setIcon(carregador.getIcones().playIcon32);
+            jButton_Play.setIcon(carregador.getIcones().getPlayIcon32());
         }
-        jButton_Stop.setIcon(carregador.getIcones().stopIcon32);
-        jButton_Next.setIcon(carregador.getIcones().frenteIcon32);
-        jButton_Ant.setIcon(carregador.getIcones().voltaIcon32);
+        jButton_Stop.setIcon(carregador.getIcones().getStopIcon32());
+        jButton_Next.setIcon(carregador.getIcones().getFrenteIcon32());
+        jButton_Ant.setIcon(carregador.getIcones().getVoltaIcon32());
 
         if (carregador.isRandom()) {
-            jToggle_Random.setIcon(carregador.getIcones().randomOnIcon32);
+            jToggle_Random.setIcon(carregador.getIcones().getRandomOnIcon32());
         } else {
-            jToggle_Random.setIcon(carregador.getIcones().randomOffIcon32);
+            jToggle_Random.setIcon(carregador.getIcones().getRandomOffIcon32());
         }
         if (carregador.isRepeat()) {
-            jToggle_Repeat.setIcon(carregador.getIcones().repeatOnIcon32);
+            jToggle_Repeat.setIcon(carregador.getIcones().getRepeatOnIcon32());
         } else {
-            jToggle_Repeat.setIcon(carregador.getIcones().repeatOffIcon32);
+            jToggle_Repeat.setIcon(carregador.getIcones().getRepeatOffIcon32());
         }
-        setIconImage(carregador.getIcones().crepzIcon.getImage());
+        setIconImage(carregador.getIcones().getCrepzIcon().getImage());
     }
 
     public ImageIcon resizeIcons(BufferedImage im) {
@@ -328,14 +328,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     public void setVisible(boolean b) {
         super.setVisible(b);
         if (carregador.isRandom()) {
-            jToggle_Random.setIcon(carregador.getIcones().randomOnIcon32);
+            jToggle_Random.setIcon(carregador.getIcones().getRandomOnIcon32());
         } else {
-            jToggle_Random.setIcon(carregador.getIcones().randomOffIcon32);
+            jToggle_Random.setIcon(carregador.getIcones().getRandomOffIcon32());
         }
         if (carregador.isRepeat()) {
-            jToggle_Repeat.setIcon(carregador.getIcones().repeatOnIcon32);
+            jToggle_Repeat.setIcon(carregador.getIcones().getRepeatOnIcon32());
         } else {
-            jToggle_Repeat.setIcon(carregador.getIcones().repeatOffIcon32);
+            jToggle_Repeat.setIcon(carregador.getIcones().getRepeatOffIcon32());
         }
         jSlider_vol.setValue(carregador.getVolume());
     }
@@ -557,16 +557,16 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
             } else if (evt.getSource() == jToggle_Random) {
                 carregador.setRandom(!carregador.isRandom());
                 if (carregador.isRandom()) {
-                    jToggle_Random.setIcon(carregador.getIcones().randomOnIcon32);
+                    jToggle_Random.setIcon(carregador.getIcones().getRandomOnIcon32());
                 } else {
-                    jToggle_Random.setIcon(carregador.getIcones().randomOffIcon32);
+                    jToggle_Random.setIcon(carregador.getIcones().getRandomOffIcon32());
                 }
             } else if (evt.getSource() == jToggle_Repeat) {
                 carregador.setRepeat(!carregador.isRepeat());
                 if (carregador.isRepeat()) {
-                    jToggle_Repeat.setIcon(carregador.getIcones().repeatOnIcon32);
+                    jToggle_Repeat.setIcon(carregador.getIcones().getRepeatOnIcon32());
                 } else {
-                    jToggle_Repeat.setIcon(carregador.getIcones().repeatOffIcon32);
+                    jToggle_Repeat.setIcon(carregador.getIcones().getRepeatOffIcon32());
                 }
             }
 
@@ -709,7 +709,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jLabel_Playlist.setToolTipText("Playlist");
         jPanel17.add(jLabel_Playlist);
 
-        jLabelFilaReproducao.setText("Fila");
+        jLabelFilaReproducao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/fila.png"))); // NOI18N
+        jLabelFilaReproducao.setToolTipText("Fila de Reproduçãod");
         jPanel17.add(jLabelFilaReproducao);
 
         jLabel_Edit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/edit.png"))); // NOI18N
@@ -828,6 +829,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel2.add(jToggle_Repeat);
 
         jSlider_vol.setBackground(new java.awt.Color(255, 255, 255));
+        jSlider_vol.setPaintTicks(true);
         jSlider_vol.setToolTipText("Volume");
         jSlider_vol.setPreferredSize(new java.awt.Dimension(100, 23));
         jSlider_vol.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
@@ -850,6 +852,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         jSlider_Balanco.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Balanco.setMinimum(-100);
+        jSlider_Balanco.setPaintTicks(true);
         jSlider_Balanco.setToolTipText("balanço");
         jSlider_Balanco.setValue(0);
         jSlider_Balanco.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
@@ -903,6 +906,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jMenu2.add(jMenuItem_Configuracoes);
 
         jMenuItem_Tema.setText("Tema");
+        jMenuItem_Tema.setEnabled(false);
         jMenu2.add(jMenuItem_Tema);
 
         jMenuBar1.add(jMenu2);
@@ -954,13 +958,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
     }//GEN-LAST:event_jSlider_volStateChanged
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) throws ParseException {
-//            }
-//        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup GrupoSpiner;
     private javax.swing.JLabel jButton_Ant;
@@ -1026,8 +1023,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private javax.swing.JLabel jToggle_Repeat;
     // End of variables declaration//GEN-END:variables
     private boolean ajusteDeTempo = false;
-    int initX;
-    int initY;
-    int thisX;
-    int thisY;
+    private int initX;
+    private int initY;
+    private int thisX;
+    private int thisY;
 }

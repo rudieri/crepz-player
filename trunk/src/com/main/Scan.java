@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class Scan implements Runnable {
 
     private static int tempoSegudos;
-    Thread thMonitor;
+    private Thread thMonitor;
     private final int ESCALA_TEMPO = 1000;
     private HashMap<String, Long> cacheModArquivos;
     private boolean atualizarChache;
@@ -86,7 +86,6 @@ public class Scan implements Runnable {
         }
 
     }
-    
 
     private ArrayList<String> getPastas() {
         return Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER);

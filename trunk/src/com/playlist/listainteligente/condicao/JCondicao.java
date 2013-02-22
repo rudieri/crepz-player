@@ -23,6 +23,7 @@ import javax.swing.JDialog;
 public class JCondicao extends javax.swing.JPanel implements ItemListener {
 
     private static final String ESCOLHA_UM_OPERADOR = "Escolha um operador";
+    private static final String ESCOLHA_UM_CAMPO = "Escolha um campo";
     private ComboBoxModelEditavel comboBoxModelValor1;
     private ComboBoxModelEditavel comboBoxModelOperadorComparativo;
     private ComboBoxModelEditavel comboBoxModelOperadorLogico;
@@ -39,7 +40,7 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
 
         comboBoxModelValor1 = new ComboBoxModelEditavel();
         jComboBox_Valor1.setModel(comboBoxModelValor1);
-        comboBoxModelValor1.setTextoNenhumItemSelecionado("Escolha um campo");
+        comboBoxModelValor1.setTextoNenhumItemSelecionado(ESCOLHA_UM_CAMPO);
 
         comboBoxModelOperadorComparativo = new ComboBoxModelEditavel();
         comboBoxModelOperadorComparativo.setTextoNenhumItemSelecionado(ESCOLHA_UM_OPERADOR);
@@ -82,6 +83,12 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
             if(comboBoxModelOperadorComparativo.getSelectedItem() == ESCOLHA_UM_OPERADOR){
                 throw new IllegalStateException("Operador não escolhido.");
             }
+            if (jComboBox_Valor1.getSelectedItem() == ESCOLHA_UM_CAMPO) {
+                throw new IllegalStateException("Campo da música não escolhido.");
+            }
+            if (jTextField_Valor2.getText().isEmpty()) {
+                throw new IllegalStateException("Valor do segundo campo da condição não informado.");
+            }
             Condicao condicao = new Condicao();
             OperadorComparativo operador = (OperadorComparativo) comboBoxModelOperadorComparativo.getSelectedItem();
             ValorCondicao valor1 = new ValorCondicao((Campo) jComboBox_Valor1.getSelectedItem());
@@ -101,8 +108,12 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
             condicao.setValoresCondicao(operador, valor1, valor2);
             return condicao;
         } else {
+            Object selectedItem =  comboBoxModelOperadorLogico.getSelectedItem();
+            if (selectedItem.equals(ESCOLHA_UM_OPERADOR)) {
+                 throw new IllegalStateException("Operador não escolhido.");
+            }
             Condicao condicao = new Condicao();
-            OperadorLogico operador = (OperadorLogico) comboBoxModelOperadorLogico.getSelectedItem();
+            OperadorLogico operador = (OperadorLogico) selectedItem;
             condicao.setValoresCondicao(operador, jSelecionaCondicao1.getCondicao(), jSelecionaCondicao2.getCondicao());
             return condicao;
         }
