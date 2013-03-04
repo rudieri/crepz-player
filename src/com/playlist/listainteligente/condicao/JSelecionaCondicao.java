@@ -79,7 +79,8 @@ public class JSelecionaCondicao extends javax.swing.JPanel implements ActionList
         JButton jButton_Cancel = new JButton("Cancelar");
         jPanelBts.add(jButton_Cancel);
         jDialog.getRootPane().add(jPanelBts);
-        jDialog.setSize(500, 120);
+        jDialog.pack();
+//        jDialog.setSize(500, 120);
         Window windowAncestor = SwingUtilities.getWindowAncestor(this);
 
         Rectangle bounds = windowAncestor.getBounds();

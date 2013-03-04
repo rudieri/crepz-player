@@ -102,6 +102,7 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
             case ESTRUTURA_DADOS_MUSICA:
                 for (int i = 0; i < musicas.size(); i++) {
                     jProgressBar1.setValue(i);
+                    jProgressBar1.setString("Copiando... [" + i + " de " + musicas.size() + "] ");
                     Musica musica = musicas.get(i);
                     try {
                         File original = new File(musica.getCaminho());
@@ -135,6 +136,7 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
             case ESTRUTURA_ORIGINAL:
                 for (int i = 0; i < musicas.size(); i++) {
                     jProgressBar1.setValue(i);
+                    jProgressBar1.setString("Copiando... [" + i + " de " + musicas.size() + "] ");
                     Musica musica = musicas.get(i);
                     try {
                         File original = new File(musica.getCaminho());
@@ -160,6 +162,7 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
             case SEM_ESTRUTURA_DIRETORIO:
                 for (int i = 0; i < musicas.size(); i++) {
                     jProgressBar1.setValue(i);
+                    jProgressBar1.setString("Copiando... [" + i + " de " + musicas.size() + "] ");
                     Musica musica = musicas.get(i);
                     try {
                         File original = new File(musica.getCaminho());
@@ -170,7 +173,6 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
                         }
                         Files.copy(original.toPath(), novo.toPath(), StandardCopyOption.COPY_ATTRIBUTES,
                                 StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Copiando... [" + i + " de " + musicas.size() + "] ");
                     } catch (IOException ex) {
                         if (mostrarMensagemErro(ex, i, musica)) {
                             return;
@@ -348,11 +350,11 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
         jPanelOpcoesSemEstrutura.setLayout(jPanelOpcoesSemEstruturaLayout);
         jPanelOpcoesSemEstruturaLayout.setHorizontalGroup(
             jPanelOpcoesSemEstruturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 508, Short.MAX_VALUE)
+            .addGap(0, 600, Short.MAX_VALUE)
         );
         jPanelOpcoesSemEstruturaLayout.setVerticalGroup(
             jPanelOpcoesSemEstruturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 112, Short.MAX_VALUE)
+            .addGap(0, 135, Short.MAX_VALUE)
         );
 
         jPanel6.add(jPanelOpcoesSemEstrutura, "card4");
@@ -405,8 +407,8 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.PAGE_END);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-530)/2, (screenSize.height-406)/2, 530, 406);
+        setSize(new java.awt.Dimension(624, 463));
+        setLocationRelativeTo(null);
     }
 
     // Code for dispatching events from components to event handlers.

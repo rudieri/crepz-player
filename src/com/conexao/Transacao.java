@@ -41,7 +41,7 @@ public class Transacao {
             conn.rollback();
             conn.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
 
     }
@@ -56,7 +56,7 @@ public class Transacao {
             if (ex.getMessage().indexOf("foreign key") == -1) {
                 throw ex;
             } else {
-                throw new Exception(" - Existem registros associados.Mensagem do BD: \n - " + ex.getMessage());
+                throw new Exception(" - Existem registros associados.Mensagem do BD: \n - " , ex);
             }
         }
         return r;

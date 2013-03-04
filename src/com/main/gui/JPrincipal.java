@@ -615,7 +615,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jLabel_Minimizar = new javax.swing.JLabel();
         jLabelHelp = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
         jPanel15 = new javax.swing.JPanel();
         jLabel_Musica = new javax.swing.JLabel();
         jPanel14 = new javax.swing.JPanel();
@@ -632,7 +631,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel8 = new javax.swing.JPanel();
         jLabel_tempo = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
         jSlider_Tempo = new javax.swing.JSlider();
         jPanel2 = new javax.swing.JPanel();
         jButton_Play = new javax.swing.JLabel();
@@ -642,7 +640,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jToggle_Random = new javax.swing.JLabel();
         jToggle_Repeat = new javax.swing.JLabel();
         jSlider_vol = new javax.swing.JSlider();
-        jPanel16 = new javax.swing.JPanel();
         jSlider_Balanco = new javax.swing.JSlider();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -690,7 +687,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Crepz Player 1.0");
-        setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -698,7 +694,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
             }
         });
 
-        jPanel17.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel17.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
         jPanel17.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
         jLabel_bib.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/biblioteca.png"))); // NOI18N
@@ -726,50 +722,56 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         getContentPane().add(jPanel17, java.awt.BorderLayout.PAGE_START);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
         jPanel1.setPreferredSize(new java.awt.Dimension(375, 130));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel15.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel15.setPreferredSize(new java.awt.Dimension(397, 30));
+        jPanel15.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
+        jPanel15.setOpaque(false);
+        jPanel15.setPreferredSize(new java.awt.Dimension(397, 60));
         jPanel15.add(jLabel_Musica);
 
-        jPanel3.add(jPanel15);
+        jPanel1.add(jPanel15);
 
-        jPanel14.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel14.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
+        jPanel14.setPreferredSize(new java.awt.Dimension(305, 170));
         jPanel14.setLayout(new javax.swing.BoxLayout(jPanel14, javax.swing.BoxLayout.X_AXIS));
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel5.setOpaque(false);
         jPanel5.setPreferredSize(new java.awt.Dimension(132, 100));
         jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel11.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel11.setOpaque(false);
         jPanel11.add(jLabel_bit);
 
         jPanel5.add(jPanel11);
 
         jPanel12.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel12.setOpaque(false);
         jPanel12.add(jLabel_freq);
 
         jPanel5.add(jPanel12);
 
         jPanel13.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel13.setOpaque(false);
         jPanel13.setLayout(new java.awt.BorderLayout());
         jPanel5.add(jPanel13);
 
         jPanel14.add(jPanel5);
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel6.setOpaque(false);
         jPanel6.setPreferredSize(new java.awt.Dimension(132, 120));
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
         jPanel14.add(jPanel6);
 
+        jPanel7.setOpaque(false);
         jPanel7.setLayout(new javax.swing.BoxLayout(jPanel7, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel10.setOpaque(false);
 
         jLabel_tempoTotal.setText("0:00");
         jPanel10.add(jLabel_tempoTotal);
@@ -777,6 +779,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel7.add(jPanel10);
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel8.setOpaque(false);
 
         jLabel_tempo.setText("0:00");
         jPanel8.add(jLabel_tempo);
@@ -784,32 +787,30 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel7.add(jPanel8);
 
         jPanel9.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel9.setOpaque(false);
         jPanel9.setLayout(new java.awt.BorderLayout());
         jPanel7.add(jPanel9);
 
         jPanel14.add(jPanel7);
 
-        jPanel3.add(jPanel14);
-
-        jPanel1.add(jPanel3);
-
-        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel4.setPreferredSize(new java.awt.Dimension(202, 22));
-        jPanel4.setLayout(new java.awt.BorderLayout());
+        jPanel1.add(jPanel14);
 
         jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
+        jSlider_Tempo.setFont(new java.awt.Font("Cantarell", 0, 3)); // NOI18N
         jSlider_Tempo.setMaximum(1000);
         jSlider_Tempo.setToolTipText("0:00");
         jSlider_Tempo.setValue(0);
-        jSlider_Tempo.setPreferredSize(new java.awt.Dimension(202, 15));
-        jPanel4.add(jSlider_Tempo, java.awt.BorderLayout.CENTER);
-
-        jPanel1.add(jPanel4);
+        jSlider_Tempo.setExtent(60);
+        jSlider_Tempo.setMinimumSize(new java.awt.Dimension(34, 23));
+        jSlider_Tempo.setPreferredSize(new java.awt.Dimension(202, 23));
+        jPanel1.add(jSlider_Tempo);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
         jPanel2.setMinimumSize(new java.awt.Dimension(248, 35));
+        jPanel2.setOpaque(false);
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 2, 0));
 
         jButton_Play.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/icons/crepz/32/pl_play.png"))); // NOI18N
@@ -831,6 +832,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel2.add(jToggle_Repeat);
 
         jSlider_vol.setBackground(new java.awt.Color(255, 255, 255));
+        jSlider_vol.setFont(new java.awt.Font("Cantarell", 0, 3)); // NOI18N
         jSlider_vol.setPaintTicks(true);
         jSlider_vol.setToolTipText("Volume");
         jSlider_vol.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -846,17 +848,13 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         });
         jPanel2.add(jSlider_vol);
 
-        jPanel16.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel16.setMaximumSize(new java.awt.Dimension(50, 2147483647));
-        jPanel16.setMinimumSize(new java.awt.Dimension(20, 24));
-        jPanel16.setPreferredSize(new java.awt.Dimension(50, 20));
-        jPanel16.setLayout(new java.awt.BorderLayout());
-
         jSlider_Balanco.setBackground(new java.awt.Color(255, 255, 255));
+        jSlider_Balanco.setFont(new java.awt.Font("Cantarell", 0, 3)); // NOI18N
         jSlider_Balanco.setMinimum(-100);
         jSlider_Balanco.setPaintTicks(true);
         jSlider_Balanco.setToolTipText("balanço");
         jSlider_Balanco.setValue(0);
+        jSlider_Balanco.setPreferredSize(new java.awt.Dimension(70, 23));
         jSlider_Balanco.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 jSlider_BalancoMouseWheelMoved(evt);
@@ -867,9 +865,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
                 jSlider_BalancoStateChanged(evt);
             }
         });
-        jPanel16.add(jSlider_Balanco, java.awt.BorderLayout.CENTER);
-
-        jPanel2.add(jPanel16);
+        jPanel2.add(jSlider_Balanco);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
@@ -930,8 +926,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
         setJMenuBar(jMenuBar1);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-398)/2, (screenSize.height-231)/2, 398, 231);
+        setSize(new java.awt.Dimension(398, 231));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jSlider_volMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_volMouseWheelMoved
@@ -1008,11 +1004,8 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
