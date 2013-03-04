@@ -14,33 +14,42 @@ import java.util.logging.Logger;
  * @author rudieri
  */
 public class ValorCondicao {
+
     private Object valor;
     private Campo campo;
+
+    public ValorCondicao(Boolean valor) {
+        this.valor = valor;
+    }
 
     public ValorCondicao(String valor) {
         this.valor = valor;
     }
+
     public ValorCondicao(Byte valor) {
         this.valor = valor;
     }
+
     public ValorCondicao(Short valor) {
         this.valor = valor;
     }
+
     public ValorCondicao(Integer valor) {
         this.valor = valor;
     }
+
     public ValorCondicao(Long valor) {
         this.valor = valor;
     }
 
     public ValorCondicao(Campo campo) {
-            this.campo = campo;
+        this.campo = campo;
     }
-    
-    public Object getValor(Musica musica){
+
+    public Object getValor(Musica musica) {
         if (valor != null) {
             return valor;
-        }else{
+        } else {
             try {
                 return campo.getField().get(musica);
             } catch (IllegalArgumentException ex) {
@@ -50,21 +59,23 @@ public class ValorCondicao {
             }
             return null;
         }
-            
+
     }
-    
-    public TipoValorCondicao getTipoValorCondicao(){
+
+    public TipoValorCondicao getTipoValorCondicao() {
         if (valor == null) {
             return TipoValorCondicao.CAMPO;
-        }else if(valor instanceof String){
+        } else if (valor instanceof String) {
             return TipoValorCondicao.STRING;
-        }else if(valor instanceof Byte){
+        } else if (valor instanceof Byte) {
             return TipoValorCondicao.BYTE;
-        }else if(valor instanceof Short){
+        } else if (valor instanceof Short) {
             return TipoValorCondicao.SHORT;
-        }else if(valor instanceof Long){
+        } else if (valor instanceof Long) {
             return TipoValorCondicao.LONG;
-        }else{
+        } else if (valor instanceof Boolean) {
+            return TipoValorCondicao.BOOLEAN;
+        } else {
             return TipoValorCondicao.INTEGER;
         }
     }
@@ -73,14 +84,15 @@ public class ValorCondicao {
     public String toString() {
         if (valor == null) {
             return campo.toString();
-        }else{
+        } else {
             return valor.toString();
         }
     }
+
     public String toBD() {
         if (valor == null) {
             return campo.getField().getName();
-        }else{
+        } else {
             return valor.toString();
         }
     }
@@ -88,8 +100,4 @@ public class ValorCondicao {
     public Campo getCampo() {
         return campo;
     }
-    
-    
-    
-    
 }

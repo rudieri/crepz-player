@@ -794,12 +794,14 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel1.add(jPanel3);
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel4.setPreferredSize(new java.awt.Dimension(202, 22));
         jPanel4.setLayout(new java.awt.BorderLayout());
 
         jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Tempo.setMaximum(1000);
         jSlider_Tempo.setToolTipText("0:00");
         jSlider_Tempo.setValue(0);
+        jSlider_Tempo.setPreferredSize(new java.awt.Dimension(202, 15));
         jPanel4.add(jSlider_Tempo, java.awt.BorderLayout.CENTER);
 
         jPanel1.add(jPanel4);

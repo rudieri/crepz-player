@@ -42,6 +42,7 @@ public class Musica implements Serializable, Filtravel {
     private int size;
     private int number;
     /**Caso o arquivo da música não seja encontrado.*/
+    @NomeCampo(nome = "Música Perdida")
     private boolean perdida = false;
 
     /**

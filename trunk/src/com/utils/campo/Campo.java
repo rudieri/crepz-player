@@ -50,6 +50,10 @@ public class Campo {
         return field.getType() == long.class || field.getType() == Long.class;
 
     }
+    public boolean isBoolean() {
+        return field.getType() == boolean.class || field.getType() == Boolean.class;
+
+    }
 
     public boolean isInteger() {
         return field.getType() == int.class || field.getType() == Integer.class;

@@ -4,6 +4,7 @@
  */
 package com.main;
 
+import com.config.Configuracaoes;
 import com.fila.JFilaReproducao;
 import com.main.gui.JBiBlioteca;
 import com.main.gui.JMini;
@@ -31,7 +32,12 @@ public class GerenciadorTelas {
     public static JPrincipal getPrincipal() {
         if (principal == null) {
             carregandoDebug("Principal");
-            principal = new JPrincipal(Carregador.getMe());
+            try {
+                principal = new JPrincipal(Carregador.getMe());
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+                principal = new JPrincipal(Carregador.getMe());
+            }
             ColorUtils.registrar(principal);
             ColorUtils.aplicarTema();
         }
@@ -62,7 +68,7 @@ public class GerenciadorTelas {
             filaReproducao = new JFilaReproducao(Carregador.getMe());
             ColorUtils.registrar(filaReproducao);
             ColorUtils.aplicarTema();
-            
+
         }
         return filaReproducao;
     }
@@ -71,6 +77,7 @@ public class GerenciadorTelas {
         if (playList == null) {
             carregandoDebug("Play List");
             playList = new JPlayList(Carregador.getMe());
+            playList.setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
             ColorUtils.registrar(playList);
             ColorUtils.aplicarTema();
         }
@@ -109,8 +116,8 @@ public class GerenciadorTelas {
         }
         return crepzTray;
     }
-    
-    private static void carregandoDebug(String nomeDoObjetoCarregado){
+
+    private static void carregandoDebug(String nomeDoObjetoCarregado) {
         StringBuilder saida = new StringBuilder(300);
         saida.append("Carregando: ").append(nomeDoObjetoCarregado).append(" ==>\n");
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
@@ -123,13 +130,26 @@ public class GerenciadorTelas {
     public static boolean isFilaReproducaoCarregada() {
         return filaReproducao != null;
     }
+
     public static boolean isMiniCarregado() {
         return mini != null;
     }
+
     public static boolean isPrincipalCarregado() {
         return principal != null;
     }
+
     public static boolean isPlayListCarregado() {
         return playList != null;
+    }
+
+    public static boolean isBibliotecaCarregado() {
+        return biblioteca != null;
+    }
+    public static boolean isCrepzTrayCarregado() {
+        return crepzTray != null;
+    }
+
+    private GerenciadorTelas() {
     }
 }

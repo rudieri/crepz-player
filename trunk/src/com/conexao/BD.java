@@ -61,7 +61,7 @@ public class BD {
         try {
             Class.forName("org.hsqldb.jdbcDriver");
             conn = DriverManager.getConnection(URL + banco, user, senha);
-            System.out.println("Conectado com: " + URL + banco);
+//            System.out.println("Conectado com: " + URL + banco);
             return conn.createStatement();
         } catch (ClassNotFoundException ex) {
             testarTabelas(conn);
@@ -73,7 +73,7 @@ public class BD {
         try {
             Class.forName("org.hsqldb.jdbcDriver");
             conn = DriverManager.getConnection(URL + banco, user, senha);
-            System.out.println("Conectado com: " + URL + banco);
+//            System.out.println("Conectado com: " + URL + banco);
             testarTabelas(conn);
         } catch (Exception ex) {
             testarTabelas(conn);

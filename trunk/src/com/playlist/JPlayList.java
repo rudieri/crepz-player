@@ -355,7 +355,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 jTable.changeSelection(0, 0, false, false);
             }
             t.commit();
-            setTitle(jTextField_NomePlayList.getText() 
+            setTitle(jTextField_NomePlayList.getText()
                     + (playlist.getTipoPlayList() == TipoPlayList.INTELIGENTE ? " (Lista Automática)" : ""));
 
         } catch (Exception ex) {
@@ -442,7 +442,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 if (jTable.getRowCount() > m.getNumero()) {
                     jTable.setRowSelectionInterval(m.getNumero(), m.getNumero());
                 } else {
-                    System.err.println("Não foi possível selecionar a Musica " + m + ". Na posição " + m.getNumero());
+                    selecionarMusica(m);
                 }
                 return m;
             }
@@ -520,7 +520,9 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 return null;
             } else {
                 if (jahFoi.indexOf(carregador.getMusica()) > 0) {
-                    return jahFoi.get(jahFoi.indexOf(carregador.getMusica()) - 1);
+                    Musica musica = jahFoi.get(jahFoi.indexOf(carregador.getMusica()) - 1);
+                    selecionarMusica(musica);
+                    return musica;
                 }
                 return null;
             }
@@ -528,7 +530,20 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+       
+    }
 
+    private void selecionarMusica(Musica musica) {
+        if (musica.getNumero() >= 0 && musica.getNumero() < jTable.getRowCount()
+                &&  jTable.getValueAt(musica.getNumero(), 0).equals(musica)) {
+                    jTable.setRowSelectionInterval(musica.getNumero(), musica.getNumero());
+        } else {
+            for (int i = 0; i < jTable.getRowCount(); i++) {
+                if (jTable.getValueAt(i, 0).equals(musica)) {
+                    jTable.setRowSelectionInterval(i, i);
+                }
+            }
+        }
     }
 
     private void exportarPlayList() {
@@ -858,7 +873,9 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             JListaInteligenteEditor editor = new JListaInteligenteEditor(principal, true);
             editor.setPlaylist(playlist);
             editor.setVisible(true);
-            abrir(editor.getPlaylist());
+            if (editor.getPlaylist() != null) {
+                abrir(editor.getPlaylist());
+            }
         }
     }
 

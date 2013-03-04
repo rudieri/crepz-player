@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import org.hsqldb.server.Server;
 
 /**
@@ -84,9 +85,9 @@ public class Carregador extends Musiquera {
     @Override
     public Musica getPreviousMusica() {
         if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
-            return GerenciadorTelas.getFilaReproducao().getProxima();
+            return GerenciadorTelas.getFilaReproducao().getAnterior();
         } else {
-            return GerenciadorTelas.getPlayList().getProxima();
+            return GerenciadorTelas.getPlayList().getAnterior();
         }
     }
 
@@ -173,7 +174,9 @@ public class Carregador extends Musiquera {
     }
 
     public void ocultarPlayList() {
-        GerenciadorTelas.getPlayList().setVisible(false);
+        if (GerenciadorTelas.isPlayListCarregado()) {
+            GerenciadorTelas.getPlayList().setVisible(false);
+        }
     }
 
     public void mostrarBiblioteca() {
@@ -183,7 +186,9 @@ public class Carregador extends Musiquera {
     }
 
     public void ocultarBiblioteca() {
-        GerenciadorTelas.getPlayList().setVisible(false);
+        if (GerenciadorTelas.isBibliotecaCarregado()) {
+            GerenciadorTelas.getBiblioteca().setVisible(false);
+        }
     }
 
     public Window getWindowPrincipal() {
@@ -249,8 +254,11 @@ public class Carregador extends Musiquera {
             GerenciadorTelas.getFilaReproducao().setVisible(true);
 
         }
-        GerenciadorTelas.getPlayList().setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
-        setFonteReproducao((FonteReproducao) Configuracaoes.getEnum(Configuracaoes.CONF_FONTE_REPRODUCAO));
+        FonteReproducao fr = (FonteReproducao) Configuracaoes.getEnum(Configuracaoes.CONF_FONTE_REPRODUCAO);
+        if (fr == FonteReproducao.PLAY_LIST) {
+            GerenciadorTelas.getPlayList().setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
+        }
+        setFonteReproducao(fr);
         tocarProxima();
     }
 
@@ -288,14 +296,19 @@ public class Carregador extends Musiquera {
     }
 
     public void setFilaComoBase() {
-        if (GerenciadorTelas.getCrepzTray() != null && GerenciadorTelas.getCrepzTray().isOnTray()) {
+        if (GerenciadorTelas.isCrepzTrayCarregado() && GerenciadorTelas.getCrepzTray().isOnTray()) {
             ocultarIconeTray();
         }
         setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);
         telaPadrao = TelaPadrao.J_FILA;
-        GerenciadorTelas.getMini().dispose();
-        GerenciadorTelas.getPrincipal().dispose();
+        if (GerenciadorTelas.isMiniCarregado()) {
+            GerenciadorTelas.getMini().dispose();
+        }
+        if (GerenciadorTelas.isPrincipalCarregado()) {
+            GerenciadorTelas.getPrincipal().dispose();
+        }
         GerenciadorTelas.getFilaReproducao().setVisible(true);
+
     }
 
     public boolean isPlayListVisible() {
@@ -317,7 +330,11 @@ public class Carregador extends Musiquera {
         } else {
             Configuracaoes.set(Configuracaoes.CONF_VISIB_MINI, false);
         }
-        Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, GerenciadorTelas.getBiblioteca().isVisible());
+        if (GerenciadorTelas.isBibliotecaCarregado()) {
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, GerenciadorTelas.getBiblioteca().isVisible());
+        } else {
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, false);
+        }
         if (GerenciadorTelas.isFilaReproducaoCarregada()) {
             Configuracaoes.set(Configuracaoes.CONF_VISIB_FILA, GerenciadorTelas.getFilaReproducao().isVisible());
         } else {
@@ -405,13 +422,35 @@ public class Carregador extends Musiquera {
 
     private void initLookAndFeel() {
 
-        System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
+//        System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
         try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            //            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+
+            LookAndFeelInfo lookAndFeelInfo;
+            String[] lnfPreferido = {"nimbus", "gtk+"};
+            for (String nome : lnfPreferido) {
+                lookAndFeelInfo = findLookAndFeel(nome);
+                if (lookAndFeelInfo != null) {
+                    UIManager.setLookAndFeel(lookAndFeelInfo.getClassName());
+                }
+            }
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
+    }
+
+    private LookAndFeelInfo findLookAndFeel(String nome) {
+
+        LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+        for (LookAndFeelInfo lookAndFeelInfo : installedLookAndFeels) {
+            System.out.println(lookAndFeelInfo.getName());
+            System.out.println(lookAndFeelInfo.getClassName());
+            if (lookAndFeelInfo.getName().toLowerCase().contains(nome)) {
+                return lookAndFeelInfo;
+            }
+        }
+        return null;
     }
 
     public boolean isRandom() {

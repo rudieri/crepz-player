@@ -263,7 +263,6 @@ public abstract class Musiquera implements BasicPlayerListener {
     public void tocarPausar() {
         try {
             int estado = player.getStatus();
-            System.out.println(estado);
 
             if (estado == BasicPlayer.UNKNOWN) {
                 System.out.println("Estado UNKNOWN");
@@ -336,7 +335,6 @@ public abstract class Musiquera implements BasicPlayerListener {
     public synchronized void skipTo(double timePorcent) {
         System.out.println("Skip to: " + timePorcent + "%");
         long skipBytes = (long) (timePorcent * totalBytes);
-        System.out.println(skipBytes);
         try {
             player.seek(skipBytes);
         } catch (BasicPlayerException ex) {
@@ -409,7 +407,6 @@ public abstract class Musiquera implements BasicPlayerListener {
             if (enc.toString().toLowerCase().indexOf("mpeg") != -1) {
                 tipo = "mp3";
             }
-            System.out.println("Tipo: " + tipo);
             String info = properties.get("title") + " " + properties.get("author") + " " + properties.get("album");
             info = info.trim();
 //            String duracao = microSegundosEmMinSeq((Long) properties.get("duration"));
