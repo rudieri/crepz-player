@@ -46,7 +46,7 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
         comboBoxModelOperadorComparativo.setTextoNenhumItemSelecionado(ESCOLHA_UM_OPERADOR);
         comboBoxModelOperadorComparativo.addAll(OperadorComparativo.values());
         jComboBox_OperadorComparativo.setModel(comboBoxModelOperadorComparativo);
-        
+
         comboBoxModelOperadorLogico = new ComboBoxModelEditavel();
         comboBoxModelOperadorLogico.setTextoNenhumItemSelecionado(ESCOLHA_UM_OPERADOR);
         comboBoxModelOperadorLogico.addAll(OperadorLogico.values());
@@ -65,14 +65,14 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
         switch (condicao.getTipoValorCondicao1()) {
             case CAMPO:
                 jRadioButton_TipocondicaoComparativa.setSelected(true);
-                jComboBox_Valor1.setSelectedItem(((ValorCondicao)condicao.getValor1()).getCampo());
+                jComboBox_Valor1.setSelectedItem(((ValorCondicao) condicao.getValor1()).getCampo());
                 jComboBox_OperadorComparativo.setSelectedItem(condicao.getOperador());
                 jTextField_Valor2.setText(condicao.getValor2().toString());
                 break;
             case CONDICAO:
                 jRadioButton_TipoCondicaoLogica.setSelected(true);
-                jSelecionaCondicao1.setCondicao((Condicao)condicao.getValor1());
-                jSelecionaCondicao2.setCondicao((Condicao)condicao.getValor2());
+                jSelecionaCondicao1.setCondicao((Condicao) condicao.getValor1());
+                jSelecionaCondicao2.setCondicao((Condicao) condicao.getValor2());
                 jComboBox_OperadorLogico.setSelectedItem(condicao.getOperador());
                 break;
         }
@@ -80,7 +80,7 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
 
     public Condicao getCondicao() {
         if (jRadioButton_TipocondicaoComparativa.isSelected()) {
-            if(comboBoxModelOperadorComparativo.getSelectedItem() == ESCOLHA_UM_OPERADOR){
+            if (comboBoxModelOperadorComparativo.getSelectedItem() == ESCOLHA_UM_OPERADOR) {
                 throw new IllegalStateException("Operador não escolhido.");
             }
             if (jComboBox_Valor1.getSelectedItem() == ESCOLHA_UM_CAMPO) {
@@ -102,15 +102,21 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
                 valor2 = new ValorCondicao(Short.valueOf(jTextField_Valor2.getText()));
             } else if (campo.isLong()) {
                 valor2 = new ValorCondicao(Long.valueOf(jTextField_Valor2.getText()));
+            } else if (campo.isBoolean()) {
+                if (jTextField_Valor2.getText().matches("[0]|[Nn][AaÃa][Oo]|[Ff][Aa][Ll][Ss][Ee]")) {
+                    valor2 = new ValorCondicao(false);
+                } else {
+                    valor2 = new ValorCondicao(true);
+                }
             } else {
                 valor2 = new ValorCondicao(jTextField_Valor2.getText());
             }
             condicao.setValoresCondicao(operador, valor1, valor2);
             return condicao;
         } else {
-            Object selectedItem =  comboBoxModelOperadorLogico.getSelectedItem();
+            Object selectedItem = comboBoxModelOperadorLogico.getSelectedItem();
             if (selectedItem.equals(ESCOLHA_UM_OPERADOR)) {
-                 throw new IllegalStateException("Operador não escolhido.");
+                throw new IllegalStateException("Operador não escolhido.");
             }
             Condicao condicao = new Condicao();
             OperadorLogico operador = (OperadorLogico) selectedItem;
@@ -244,7 +250,6 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
             jPanel_Comparativa.setVisible(false);
         }
     }//GEN-LAST:event_jRadioButton_TipoCondicaoLogicaItemStateChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox jComboBox_OperadorComparativo;

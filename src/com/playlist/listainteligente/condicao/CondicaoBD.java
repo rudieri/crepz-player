@@ -167,6 +167,7 @@ public class CondicaoBD {
         return numLinhas;
     }
 //   
+
     /**
      * Método que carrega o objeto Condicao pelo ID.
      *
@@ -238,6 +239,8 @@ public class CondicaoBD {
                 valorCondicao1 = new ValorCondicao(Byte.valueOf(rs.getString("valor1")));
             } else if (tvc1 == TipoValorCondicao.LONG) {
                 valorCondicao1 = new ValorCondicao(Long.valueOf(rs.getString("valor1")));
+            } else if (tvc2 == TipoValorCondicao.BOOLEAN) {
+                valorCondicao1 = new ValorCondicao(rs.getBoolean("valor1"));
             } else {
                 valorCondicao1 = new ValorCondicao(rs.getString("valor1"));
             }
@@ -252,6 +255,8 @@ public class CondicaoBD {
                 valorCondicao2 = new ValorCondicao(Byte.valueOf(rs.getString("valor2")));
             } else if (tvc2 == TipoValorCondicao.LONG) {
                 valorCondicao2 = new ValorCondicao(Long.valueOf(rs.getString("valor2")));
+            } else if (tvc2 == TipoValorCondicao.BOOLEAN) {
+                valorCondicao2 = new ValorCondicao(rs.getBoolean("valor2"));
             } else {
                 valorCondicao2 = new ValorCondicao(rs.getString("valor2"));
             }

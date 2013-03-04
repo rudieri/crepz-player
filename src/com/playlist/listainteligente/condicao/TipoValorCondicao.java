@@ -16,4 +16,5 @@ public enum TipoValorCondicao {
     INTEGER,
     LONG,
     STRING,
+    BOOLEAN
 }
