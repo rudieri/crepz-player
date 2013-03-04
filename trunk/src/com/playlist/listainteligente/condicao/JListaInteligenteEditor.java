@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 public class JListaInteligenteEditor extends javax.swing.JDialog implements ActionListener, WindowListener {
 
     private Playlist playlist;
-    
 
     /**
      * Creates new form JListaInteligenteEditor
@@ -49,7 +48,6 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
                 jCondicao.setCondicao(condicao);
                 jPanel_Condicoes.add(jCondicao);
             }
-            jPanel_Condicoes.add(jPanel3);
         } catch (Exception ex) {
             Logger.getLogger(JListaInteligenteEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -60,6 +58,7 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
         if (playlist == null) {
             this.playlist = new Playlist();
             this.playlist.setTipoPlayList(TipoPlayList.INTELIGENTE);
+            adicionarCondicao();
         } else {
             jTextField_Nome.setText(playlist.getNome());
             atualizarCondicoes(playlist);
@@ -88,14 +87,14 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
                     Condicao condicao = listar.get(i);
                     CondicaoBD.excluir(condicao, t);
                 }
-            }else{
+            } else {
                 playlist.setNome(jTextField_Nome.getText());
                 PlaylistBD.incluir(playlist, t);
                 if (!PlaylistBD.existe(playlist, t)) {
                     throw new IllegalStateException("Droga! Não está funcionando...");
                 }
             }
-            
+
             for (int i = 0; i < jPanel_Condicoes.getComponentCount(); i++) {
                 Component component = jPanel_Condicoes.getComponent(i);
                 if (component.getClass() == JCondicao.class) {
@@ -113,6 +112,11 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
         }
     }
 
+    private void adicionarCondicao() {
+        JCondicao jCondicao = new JCondicao();
+        jPanel_Condicoes.add(jCondicao, jPanel_Condicoes.getComponentCount() - 1);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -125,13 +129,12 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jTextField_Nome = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel_Condicoes = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(this);
@@ -142,6 +145,10 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
         jLabel1.setPreferredSize(new java.awt.Dimension(70, 15));
         jPanel2.add(jLabel1, java.awt.BorderLayout.WEST);
         jPanel2.add(jTextField_Nome, java.awt.BorderLayout.CENTER);
+
+        jButton3.setText("Adicionar uma Condição");
+        jButton3.addActionListener(this);
+        jPanel2.add(jButton3, java.awt.BorderLayout.LINE_END);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_START);
 
@@ -156,21 +163,12 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
         jPanel_Condicoes.setLayout(new javax.swing.BoxLayout(jPanel_Condicoes, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel3.setLayout(new java.awt.BorderLayout());
-
-        jButton3.setText("Adicionar Condição");
-        jButton3.addActionListener(this);
-        jPanel3.add(jButton3, java.awt.BorderLayout.CENTER);
-
-        jPanel_Condicoes.add(jPanel3);
-
         jScrollPane1.setViewportView(jPanel_Condicoes);
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-757)/2, (screenSize.height-382)/2, 757, 382);
+        setSize(new java.awt.Dimension(757, 382));
+        setLocationRelativeTo(null);
     }
 
     // Code for dispatching events from components to event handlers.
@@ -221,8 +219,7 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        JCondicao jCondicao = new JCondicao();
-        jPanel_Condicoes.add(jCondicao, jPanel_Condicoes.getComponentCount() - 1);
+        adicionarCondicao();
 //        Rectangle visibleRect = jScrollPane1.getVisibleRect();
 //        System.out.println(visibleRect);
 //        visibleRect.y = jPanel_Condicoes.getHeight();//-visibleRect.height;
@@ -282,7 +279,6 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel_Condicoes;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField_Nome;

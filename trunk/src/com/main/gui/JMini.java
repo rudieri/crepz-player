@@ -6,6 +6,7 @@ import com.main.Carregador;
 import com.main.Notificavel;
 import com.musica.Musiquera.PropriedadesMusica;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -51,6 +52,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
     private boolean ajusteDeTempo;
 
     public JMini(Carregador carregador) {
+        super((Dialog)null);
         initComponents();
         this.setIconImage(carregador.getIcones().getCrepzIcon().getImage());
         this.carregador = carregador;
@@ -272,7 +274,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         @Override
         public void run() {
             jPanel2.setVisible(false);
-            setPreferredSize(new Dimension(getPreferredSize().width, 50));
+            setPreferredSize(new Dimension(getPreferredSize().width, 55));
             pack();
         }
     }
@@ -430,8 +432,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         } else if (e.getSource() == jButton_Next) {
             if (!(thisX != this.getX() || thisY != this.getY())) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    tarefa.cancel();
-                    tarefa = new Timer();
                     carregador.abrir(carregador.getNextMusica(), 0, false);
                     //  tarefa.schedule(principal.getExecutaProxima(), 10);
                 }
@@ -439,8 +439,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         } else if (e.getSource() == jButton_Ant) {
             if (!(thisX != this.getX() || thisY != this.getY())) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    tarefa.cancel();
-                    tarefa = new Timer();
                     carregador.abrir(carregador.getPreviousMusica(), 0, false);
                     // tarefa.schedule(principal.getExecutaAnterior(), 10);
                 }
@@ -536,7 +534,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jLabel_top = new javax.swing.JLabel();
         jLabelFechar = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
         jLabelNomeMusica = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
 
@@ -583,6 +580,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jPopupMenu1.add(jMenuCancelar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Crepz Player");
         setBackground(new java.awt.Color(51, 51, 51));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImage(null);
@@ -641,6 +639,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jPanel1.add(jToggle_Repete);
 
         jSlider_vol.setBackground(new java.awt.Color(255, 255, 255));
+        jSlider_vol.setFont(new java.awt.Font("Cantarell", 0, 3)); // NOI18N
         jSlider_vol.setToolTipText("Volume");
         jSlider_vol.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jSlider_vol.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -657,6 +656,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jPanel2.setLayout(new java.awt.BorderLayout());
 
         jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
+        jSlider_Tempo.setFont(new java.awt.Font("Cantarell", 0, 3)); // NOI18N
         jSlider_Tempo.setMaximum(1000);
         jSlider_Tempo.setToolTipText("");
         jSlider_Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -701,28 +701,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jPanel5.setPreferredSize(new java.awt.Dimension(300, 26));
         jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jPanel6.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
-
         jLabelNomeMusica.setFont(new java.awt.Font("DejaVu Sans", 0, 11)); // NOI18N
         jLabelNomeMusica.setText("Nenhuma música sendo reproduzida...");
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(jLabelNomeMusica)
-                .addContainerGap(122, Short.MAX_VALUE))
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(jLabelNomeMusica))
-        );
-
-        jPanel5.add(jPanel6, java.awt.BorderLayout.PAGE_START);
+        jPanel5.add(jLabelNomeMusica, java.awt.BorderLayout.PAGE_START);
 
         jPanel7.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
 
@@ -734,7 +715,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 7, Short.MAX_VALUE)
+            .addGap(0, 21, Short.MAX_VALUE)
         );
 
         jPanel5.add(jPanel7, java.awt.BorderLayout.CENTER);
@@ -796,7 +777,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JPopupMenu.Separator jSeparator1;

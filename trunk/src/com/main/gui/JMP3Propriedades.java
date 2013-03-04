@@ -175,7 +175,6 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
@@ -217,6 +216,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel4.setLayout(new java.awt.BorderLayout());
 
+        jLabel2.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jLabel2.setText("Arquivo:");
         jLabel2.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel4.add(jLabel2, java.awt.BorderLayout.WEST);
@@ -228,6 +228,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel7.setLayout(new java.awt.BorderLayout());
 
+        jLabel3.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jLabel3.setText("Titulo:");
         jLabel3.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel7.add(jLabel3, java.awt.BorderLayout.WEST);
@@ -239,6 +240,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel9.setLayout(new javax.swing.BoxLayout(jPanel9, javax.swing.BoxLayout.LINE_AXIS));
 
+        jLabel5.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jLabel5.setText("Interprete:");
         jLabel5.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel9.add(jLabel5);
@@ -250,6 +252,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel10.setLayout(new javax.swing.BoxLayout(jPanel10, javax.swing.BoxLayout.LINE_AXIS));
 
+        jLabel6.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jLabel6.setText("Album:");
         jLabel6.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel10.add(jLabel6);
@@ -261,6 +264,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel11.setLayout(new javax.swing.BoxLayout(jPanel11, javax.swing.BoxLayout.LINE_AXIS));
 
+        jLabel7.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jLabel7.setText("Genero:");
         jLabel7.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel11.add(jLabel7);
@@ -272,6 +276,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel12.setLayout(new javax.swing.BoxLayout(jPanel12, javax.swing.BoxLayout.LINE_AXIS));
 
+        jLabel8.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jLabel8.setText("Ano:");
         jLabel8.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel12.add(jLabel8);
@@ -283,6 +288,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel14.setLayout(new javax.swing.BoxLayout(jPanel14, javax.swing.BoxLayout.LINE_AXIS));
 
+        jLabel9.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jLabel9.setText("Comentario:");
         jLabel9.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel14.add(jLabel9);
@@ -296,7 +302,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 578, Short.MAX_VALUE)
+            .addGap(0, 574, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -314,16 +320,18 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel2.setPreferredSize(new java.awt.Dimension(400, 50));
 
+        jButton1.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jButton1.setText("Salvar");
         jPanel2.add(jButton1);
 
+        jButton2.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
         jButton2.setText("Fechar");
         jPanel2.add(jButton2);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-598)/2, (screenSize.height-333)/2, 598, 333);
+        setSize(new java.awt.Dimension(598, 333));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

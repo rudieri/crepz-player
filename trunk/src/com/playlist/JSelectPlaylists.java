@@ -15,8 +15,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -50,15 +48,17 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         ModelReadOnly tm = new ModelReadOnly();
         tm.addColumn("Cod");
         tm.addColumn("Nome");
+        tm.addColumn("Tipo");
         tm.addColumn("Músicas");
         tm.addColumn("Obj");
 
         jTable.setModel(tm);
 
         // Definindo a largura das colunas...
-        jTable.getColumn("Cod").setPreferredWidth(50);
-        jTable.getColumn("Nome").setPreferredWidth(200);
-        jTable.getColumn("Músicas").setPreferredWidth(100);
+        jTable.getColumn("Cod").setPreferredWidth(30);
+        jTable.getColumn("Nome").setPreferredWidth(250);
+        jTable.getColumn("Tipo").setPreferredWidth(150);
+        jTable.getColumn("Músicas").setPreferredWidth(40);
 
         // Removendo a coluna do objeto da view...
         jTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer());
@@ -87,7 +87,7 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         try {
             PlaylistBD.carregar(playlist);
         } catch (Exception ex) {
-            Logger.getLogger(JSelectPlaylists.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace(System.err);
         }
         return playlist;
     }
@@ -107,11 +107,12 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
             ArrayList lista = PlaylistBD.listar(filtro);
             for (int i = 0; i < lista.size(); i++) {
                 Playlist m = (Playlist) lista.get(i);
-                Object[] row = new Object[4];
+                Object[] row = new Object[5];
                 row[0] = m.getId();
                 row[1] = m.getNome();
-                row[2] = m.getNrMusicas();
-                row[3] = m;
+                row[2] = m.getTipoPlayList();
+                row[3] = m.getNrMusicas();
+                row[4] = m;
 
                 ts.addRow(row);
             }
@@ -130,26 +131,48 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         playlist.limpar();
         playlist.tocar(p);
     }
-    
-    private void startEvents(){
-       jButton_OK.addActionListener(this); 
-       jMenuItem1.addActionListener(this); 
-       jMenuItem2.addActionListener(this); 
-       jMenuItem3.addActionListener(this); 
+
+    private void startEvents() {
+        jButton_OK.addActionListener(this);
+        jMenuItemPesquisar.addActionListener(this);
+        jMenuItemLimpar.addActionListener(this);
+        jMenuItemFechar.addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == jButton_OK) {
             atualizarTabelaLista();
-        } else if (e.getSource() == jMenuItem1) {
+        } else if (e.getSource() == jMenuItemPesquisar) {
             atualizarTabelaLista();
-        } else if (e.getSource() == jMenuItem2) {
+        } else if (e.getSource() == jMenuItemLimpar) {
             jTextField_Nome.setText("");
-        } else if (e.getSource() == jMenuItem3) {
+        } else if (e.getSource() == jMenuItemFechar) {
             setVisible(false);
             dispose();
         }
+    }
+
+    private void abrirListaSelecionada() {
+        if (jTable.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(this, "Você deve selecionar uma delas para abrir...");
+            return ;
+        }
+        rodarPlaylist((Playlist) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount()));
+        dispose();
+    }
+    private void excluirListaSelecionada() {
+        if (jTable.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(this, "Você deve selecionar uma delas para abrir...");
+            return ;
+        }
+        Playlist playlistExcluir = (Playlist) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
+        try {
+            PlaylistBD.excluir(playlistExcluir);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+        atualizarTabelaLista();
     }
 
     /**
@@ -169,11 +192,14 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         jPanel3 = new javax.swing.JPanel();
         jScrollPane = new javax.swing.JScrollPane();
         jTable = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        jButtonAbrir = new javax.swing.JButton();
+        jButtonExcluir = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItemPesquisar = new javax.swing.JMenuItem();
+        jMenuItemLimpar = new javax.swing.JMenuItem();
+        jMenuItemFechar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -182,19 +208,19 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
 
         jPanel_Nome4.setMinimumSize(new java.awt.Dimension(0, 22));
         jPanel_Nome4.setPreferredSize(new java.awt.Dimension(0, 35));
-        jPanel_Nome4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 1));
+        jPanel_Nome4.setLayout(new java.awt.BorderLayout());
 
         jLabel_Nome4.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
         jLabel_Nome4.setText("Filtro:");
         jLabel_Nome4.setMaximumSize(new java.awt.Dimension(60, 16));
         jLabel_Nome4.setMinimumSize(new java.awt.Dimension(60, 16));
         jLabel_Nome4.setPreferredSize(new java.awt.Dimension(70, 16));
-        jPanel_Nome4.add(jLabel_Nome4);
+        jPanel_Nome4.add(jLabel_Nome4, java.awt.BorderLayout.WEST);
 
         jTextField_Nome.setMaximumSize(new java.awt.Dimension(300, 20));
         jTextField_Nome.setMinimumSize(new java.awt.Dimension(300, 20));
         jTextField_Nome.setPreferredSize(new java.awt.Dimension(200, 25));
-        jPanel_Nome4.add(jTextField_Nome);
+        jPanel_Nome4.add(jTextField_Nome, java.awt.BorderLayout.CENTER);
 
         jButton_OK.setText("...");
         jButton_OK.setToolTipText("Carrega a listagem");
@@ -202,7 +228,7 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         jButton_OK.setMaximumSize(new java.awt.Dimension(22, 20));
         jButton_OK.setMinimumSize(new java.awt.Dimension(22, 20));
         jButton_OK.setPreferredSize(new java.awt.Dimension(30, 30));
-        jPanel_Nome4.add(jButton_OK);
+        jPanel_Nome4.add(jButton_OK, java.awt.BorderLayout.EAST);
 
         jPanel1.add(jPanel_Nome4);
 
@@ -237,42 +263,65 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
 
+        jButtonAbrir.setText("Abrir");
+        jButtonAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAbrirActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButtonAbrir);
+
+        jButtonExcluir.setText("Excluir");
+        jButtonExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonExcluirActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButtonExcluir);
+
+        getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
+
         jMenu1.setText("Funções");
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
-        jMenuItem1.setText("Pesquisar");
-        jMenu1.add(jMenuItem1);
+        jMenuItemPesquisar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+        jMenuItemPesquisar.setText("Pesquisar");
+        jMenu1.add(jMenuItemPesquisar);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
-        jMenuItem2.setText("Limpar");
-        jMenu1.add(jMenuItem2);
+        jMenuItemLimpar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
+        jMenuItemLimpar.setText("Limpar");
+        jMenu1.add(jMenuItemLimpar);
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
-        jMenuItem3.setText("Fechar");
-        jMenu1.add(jMenuItem3);
+        jMenuItemFechar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
+        jMenuItemFechar.setText("Fechar");
+        jMenu1.add(jMenuItemFechar);
 
         jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
 
-        pack();
+        setSize(new java.awt.Dimension(687, 386));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseClicked
         if (evt.getClickCount() == 2) {
-            rodarPlaylist((Playlist) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount()));
-            setVisible(false);
-            dispose();
+            abrirListaSelecionada();
         }
 }//GEN-LAST:event_jTableMouseClicked
 
     private void jTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableKeyPressed
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            rodarPlaylist((Playlist) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount()));
-            setVisible(false);
-            dispose();
+            abrirListaSelecionada();
         }
 }//GEN-LAST:event_jTableKeyPressed
+
+    private void jButtonAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAbrirActionPerformed
+        abrirListaSelecionada();
+    }//GEN-LAST:event_jButtonAbrirActionPerformed
+
+    private void jButtonExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExcluirActionPerformed
+        excluirListaSelecionada();
+    }//GEN-LAST:event_jButtonExcluirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -283,14 +332,17 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         dialog.setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAbrir;
+    private javax.swing.JButton jButtonExcluir;
     private javax.swing.JButton jButton_OK;
     private javax.swing.JLabel jLabel_Nome4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItemFechar;
+    private javax.swing.JMenuItem jMenuItemLimpar;
+    private javax.swing.JMenuItem jMenuItemPesquisar;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel_Nome4;
     private javax.swing.JScrollPane jScrollPane;

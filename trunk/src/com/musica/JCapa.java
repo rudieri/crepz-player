@@ -71,8 +71,8 @@ public class JCapa extends javax.swing.JPanel implements Cloneable{
         jPanel8 = new javax.swing.JPanel();
         jLabel_Qts = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
         setMaximumSize(new java.awt.Dimension(112, 91));
         setMinimumSize(new java.awt.Dimension(112, 91));
         setPreferredSize(new java.awt.Dimension(112, 91));

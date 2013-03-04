@@ -73,13 +73,14 @@ public class MusicaComponent extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(120, 50));
         setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setOpaque(false);
         jPanel2.setPreferredSize(new java.awt.Dimension(113, 20));
         jPanel2.setLayout(new java.awt.BorderLayout());
 
+        jLabelNome.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
         jLabelNome.setText("Musica");
         jPanel2.add(jLabelNome, java.awt.BorderLayout.CENTER);
 
+        jLabelTempo.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
         jLabelTempo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelTempo.setText("00:00:00");
         jLabelTempo.setPreferredSize(new java.awt.Dimension(65, 18));
@@ -87,10 +88,10 @@ public class MusicaComponent extends javax.swing.JPanel {
 
         add(jPanel2, java.awt.BorderLayout.PAGE_START);
 
-        jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jLabelArtista.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        jLabelArtista.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
         jLabelArtista.setText("Artista");
         jLabelArtista.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabelArtista.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
