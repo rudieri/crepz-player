@@ -533,7 +533,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
        
     }
 
-    private void selecionarMusica(Musica musica) {
+    public void selecionarMusica(Musica musica) {
         if (musica.getNumero() >= 0 && musica.getNumero() < jTable.getRowCount()
                 &&  jTable.getValueAt(musica.getNumero(), 0).equals(musica)) {
                     jTable.setRowSelectionInterval(musica.getNumero(), musica.getNumero());

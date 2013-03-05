@@ -12,6 +12,7 @@ import com.hotkey.linux.Ouvinte;
 import com.main.gui.Aguarde;
 import com.main.gui.JMini;
 import com.melloware.jintellitype.JIntellitype;
+import com.musica.CacheDeMusica;
 import com.musica.LinhaDoTempo;
 import com.musica.Musica;
 import com.musica.MusicaBD;
@@ -259,7 +260,25 @@ public class Carregador extends Musiquera {
             GerenciadorTelas.getPlayList().setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
         }
         setFonteReproducao(fr);
-        tocarProxima();
+        if (Configuracaoes.getBoolean(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU)
+                && Configuracaoes.getInteger(Configuracaoes.CONF_MUSICA_REPRODUZINDO) != -1) {
+            Musica musica = CacheDeMusica.get(Configuracaoes.getInteger(Configuracaoes.CONF_MUSICA_REPRODUZINDO));
+            if (musica == null) {
+                tocarProxima();
+            } else {
+                if (Configuracaoes.getLong(Configuracaoes.CONF_MUSICA_REPRODUZINDO_TEMPO) != -1) {
+                    abrir(musica, Configuracaoes.getLong(Configuracaoes.CONF_MUSICA_REPRODUZINDO_TEMPO), false);
+
+                } else {
+                    abrir(musica, 0, false);
+                }
+                if (fr == FonteReproducao.PLAY_LIST) {
+                    GerenciadorTelas.getPlayList().selecionarMusica(musica);
+                }
+            }
+        } else {
+            tocarProxima();
+        }
     }
 
     public void setMiniComoBase() {
@@ -320,6 +339,11 @@ public class Carregador extends Musiquera {
     }
 
     public void sair() {
+        if (Configuracaoes.getBoolean(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU)) {
+            Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO, isPlaying() || isPaused() ? getMusica().getId() : -1);
+            Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO_TEMPO, isPlaying() || isPaused() ? getTempoAtual() : -1);
+        }
+
         if (GerenciadorTelas.isPrincipalCarregado()) {
             Configuracaoes.set(Configuracaoes.CONF_VISIB_PRINCIPAL, GerenciadorTelas.getPrincipal().isVisible());
         } else {

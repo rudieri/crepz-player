@@ -72,7 +72,8 @@ public class JConfiguracao extends javax.swing.JDialog {
             jComboBoxAdicionarFilaVazia.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA).ordinal());
             jComboBoxTelaPadrao.setModel(new DefaultComboBoxModel(TelaPadrao.getNomesFakes()));
             jComboBoxTelaPadrao.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_TELA_PADRAO).ordinal());
-            jCheckBox1.setSelected(Configuracaoes.getBoolean(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS));
+            jCheckBoxAtalhosGlobais.setSelected(Configuracaoes.getBoolean(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS));
+            jCheckBoxUltimaMusica.setSelected(Configuracaoes.getBoolean(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU));
             //java -classpath /home/rudieri/NetBeansProjects/CrepzPlayer/build/classes/ com.hotkey.linux.DisparaComando --prev
             String local = getClass().getResource("/").getFile();
             jTextFieldPlay.setText("java -classpath "+local+ " com.hotkey.linux.DisparaComando --play");
@@ -125,6 +126,8 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel15 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jComboBoxTelaPadrao = new javax.swing.JComboBox();
+        jPanel20 = new javax.swing.JPanel();
+        jCheckBoxUltimaMusica = new javax.swing.JCheckBox();
         jPanel16 = new javax.swing.JPanel();
         jPanel_Fila = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -182,7 +185,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
         jPanel18 = new javax.swing.JPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBoxAtalhosGlobais = new javax.swing.JCheckBox();
         jPanel11 = new javax.swing.JPanel();
         jButtonSalvar = new javax.swing.JButton();
         jButtonFechar = new javax.swing.JButton();
@@ -212,6 +215,13 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel15.add(jComboBoxTelaPadrao);
 
         jPanel_Geral.add(jPanel15);
+
+        jPanel20.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jCheckBoxUltimaMusica.setText("Iniciar com a última música reproduzida.");
+        jPanel20.add(jCheckBoxUltimaMusica);
+
+        jPanel_Geral.add(jPanel20);
 
         jPanel16.setLayout(new java.awt.BorderLayout());
         jPanel_Geral.add(jPanel16);
@@ -474,8 +484,8 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         jPanel18.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jCheckBox1.setText("Atalhos globais ativos");
-        jPanel18.add(jCheckBox1);
+        jCheckBoxAtalhosGlobais.setText("Atalhos globais ativos");
+        jPanel18.add(jCheckBoxAtalhosGlobais);
 
         jPanel_Atalhos.add(jPanel18, java.awt.BorderLayout.PAGE_START);
 
@@ -484,6 +494,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         jPanel11.setPreferredSize(new java.awt.Dimension(400, 35));
+        jPanel11.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 2));
 
         jButtonSalvar.setMnemonic('S');
         jButtonSalvar.setText("Salvar");
@@ -507,8 +518,8 @@ public class JConfiguracao extends javax.swing.JDialog {
 
         getContentPane().add(jPanel11, java.awt.BorderLayout.PAGE_END);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-497)/2, (screenSize.height-425)/2, 497, 425);
+        setSize(new java.awt.Dimension(647, 446));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarActionPerformed
@@ -523,7 +534,8 @@ public class JConfiguracao extends javax.swing.JDialog {
         Configuracaoes.set(Configuracaoes.CONF_ACOES_FILA_VAZIA, AcoesFilaVazia.values()[jComboBoxAoEsvaziaFila.getSelectedIndex()]);
         Configuracaoes.set(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA, AdicionarNaFilaVazia.values()[jComboBoxAdicionarFilaVazia.getSelectedIndex()]);
         Configuracaoes.set(Configuracaoes.CONF_TELA_PADRAO, TelaPadrao.values()[jComboBoxTelaPadrao.getSelectedIndex()]);
-        Configuracaoes.set(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS, jCheckBox1.isSelected());
+        Configuracaoes.set(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS, jCheckBoxAtalhosGlobais.isSelected());
+        Configuracaoes.set(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU, jCheckBoxUltimaMusica.isSelected());
         dispose();
 //        setDadosBanco();
 
@@ -570,7 +582,8 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JButton jButtonSalvar;
     private javax.swing.JButton jButton_Add;
     private javax.swing.JButton jButton_Remove;
-    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBoxAtalhosGlobais;
+    private javax.swing.JCheckBox jCheckBoxUltimaMusica;
     private javax.swing.JCheckBox jCheckBox_DownloadCapa;
     private javax.swing.JCheckBox jCheckBox_Organizador;
     private javax.swing.JComboBox jComboBoxAcaoFila;
@@ -602,6 +615,7 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel23;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
