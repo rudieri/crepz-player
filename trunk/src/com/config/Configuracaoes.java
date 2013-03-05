@@ -8,7 +8,6 @@ import com.config.constantes.AcaoPadraoFila;
 import com.config.constantes.AcoesFilaVazia;
 import com.config.constantes.AdicionarNaFilaVazia;
 import com.config.constantes.TelaPadrao;
-import com.main.Carregador;
 import com.main.FonteReproducao;
 import com.musica.CacheDeMusica;
 import com.musica.Musica;
@@ -17,8 +16,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -29,10 +26,10 @@ public class Configuracaoes {
     //Aqui!!!!!!!!
 
     /*
-    Declare aqui todas as configurações com seus determinados tipos;
+     Declare aqui todas as configurações com seus determinados tipos;
      * Fazer dessa forma:
-    public static final Byte NOME_DA_CONFIG = ordinal_da_config; // é sequencial, deve ser o indice da config no array
-    private static final Tipo nomeDaConfig = new Tipo();
+     public static final Byte NOME_DA_CONFIG = ordinal_da_config; // é sequencial, deve ser o indice da config no array
+     private static final Tipo nomeDaConfig = new Tipo();
      *
      */
     // Config 0
@@ -76,31 +73,42 @@ public class Configuracaoes {
     private static Boolean visibFila = false;
     // Config 13
     public static final Byte CONF_LISTA_ABERTA = 13;
-    private static Integer listaAberta  = -1;
+    private static Integer listaAberta = -1;
     // Config 14
     public static final Byte CONF_FONTE_REPRODUCAO = 14;
-    private static FonteReproducao fonteReproducao  = FonteReproducao.AVULSO;
+    private static FonteReproducao fonteReproducao = FonteReproducao.AVULSO;
     // Config 15
     public static final Byte CONF_PELES = 15;
-    private static ArrayList<String> peles  = new ArrayList<String>();
-    // Config 15
+    private static ArrayList<String> peles = new ArrayList<String>();
+    // Config 16
     public static final Byte CONF_PELE_ATUAL = 16;
-    private static String peleAtual  = "";
-    
+    private static String peleAtual = "";
+    // Config 17
+    public static final Byte CONF_MUSICA_CONTINUA_ONDE_PAROU = 17;
+    private static Boolean musicaContinuaOndeParou = true;
+    // Config 18
+    public static final Byte CONF_MUSICA_REPRODUZINDO = 18;
+    private static Integer musicaReproduzindo = -1;
+    // Config 19
+    public static final Byte CONF_MUSICA_REPRODUZINDO_TEMPO = 19;
+    private static Long musicaReproduzindoTempo = -1l;
     // lista de todas as configs
     private static final Object[] configs;
     private static final String ARQUIVO = "etc/conf";
     private static final HashMap<Byte, Acao> acoes;
 
+    /*########### AQUI 2 ###############33
+     Coloque as varáveis  em ordem no array
+     */
     static {
         // inicializa a lista das configs
         configs = new Object[]{
             pastasScaner,
-            acaoPadraoFila, 
+            acaoPadraoFila,
             acoesFilaVazia,
             adicionarNaFilaVazia,
             telaPadrao,
-            atalhosGlobaisAtivos, 
+            atalhosGlobaisAtivos,
             randomAtivo,
             repeatAtivo,
             visibPrincipal,
@@ -111,8 +119,10 @@ public class Configuracaoes {
             listaAberta,
             fonteReproducao,
             peles,
-            peleAtual
-        
+            peleAtual,
+            musicaContinuaOndeParou,
+            musicaReproduzindo,
+            musicaReproduzindoTempo
         };
 //        configs[CONF_PASTAS_SCANER] = pastasScaner;
         acoes = new HashMap<Byte, Acao>(configs.length);
@@ -133,6 +143,7 @@ public class Configuracaoes {
         configs[indexConf] = valor;
         gravar();
     }
+
     public static void set(Byte indexConf, boolean valor) {
         configs[indexConf] = valor;
         gravar();
@@ -157,7 +168,7 @@ public class Configuracaoes {
                 acao.getAcao().invoke(acao.getAlvo());
             }
         } catch (Exception ex) {
-            Logger.getLogger(Configuracaoes.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -184,10 +195,14 @@ public class Configuracaoes {
     public static ArrayList<String> getList(Byte index) {
         return (ArrayList) configs[index];
     }
+
     public static boolean getBoolean(Byte index) {
-        return (Boolean)configs[index];
+        return (Boolean) configs[index];
     }
-    
+    public static Long getLong(Byte index) {
+        return (Long) configs[index];
+    }
+
     private static void ler() {
         try {
             if (!new File(ARQUIVO).exists()) {
@@ -221,15 +236,17 @@ public class Configuracaoes {
                     configs[Integer.parseInt(tokens[0])] = Integer.valueOf(tokens[1].trim());
                 } else if (myConfig instanceof Enum) {
                     configs[Integer.parseInt(tokens[0])] = Enum.valueOf(((Enum) myConfig).getClass(), tokens[1]);
-                } else if(myConfig instanceof Boolean){
+                } else if (myConfig instanceof Boolean) {
                     configs[Integer.parseInt(tokens[0])] = Boolean.parseBoolean(tokens[1]);
-                }else{
+                } else if (myConfig instanceof Long) {
+                    configs[Integer.parseInt(tokens[0])] = Long.parseLong(tokens[1]);
+                } else {
                     configs[Integer.parseInt(tokens[0])] = tokens[1];
                 }
 
             }
         } catch (Exception ex) {
-            Logger.getLogger(Configuracaoes.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -246,9 +263,11 @@ public class Configuracaoes {
                 textFile.append(((Enum) myConfig).name());
             } else if (myConfig instanceof String) {
                 textFile.append(myConfig.toString());
-            } else if(myConfig instanceof Boolean){
+            } else if (myConfig instanceof Boolean) {
                 textFile.append(myConfig.toString());
-            }else{
+            } else if (myConfig instanceof Long) {
+                textFile.append(myConfig.toString());
+            } else {
                 textFile.append(myConfig.toString());
             }
             textFile.append('\n');
@@ -256,7 +275,9 @@ public class Configuracaoes {
         try {
             FileUtils.gravaArquivo(textFile, ARQUIVO);
         } catch (Exception ex) {
-            Logger.getLogger(Configuracaoes.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace(System.err);
         }
     }
+
+    
 }

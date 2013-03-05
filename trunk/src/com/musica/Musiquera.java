@@ -5,7 +5,6 @@
 package com.musica;
 
 import com.config.Configuracaoes;
-import com.graficos.Icones;
 import com.main.gui.JPrincipal;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -135,7 +134,7 @@ public abstract class Musiquera implements BasicPlayerListener {
             } catch (Exception ex) {
                 Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
             }
-            in = new File(m.getCaminho());
+            in = new File(musica.getCaminho());
             if (in == null) {
                 return false;
             }
@@ -163,15 +162,17 @@ public abstract class Musiquera implements BasicPlayerListener {
         }
     }
 
-    @SuppressWarnings("CallToThreadDumpStack")
     public void abrir(Musica m, int posicao, boolean abrirComPausa) {
+        abrir(m, segundoToMicro(posicao), abrirComPausa);
+    }
+    public void abrir(Musica m, long posicao, boolean abrirComPausa) {
         boolean consegueiuAbrir = abrirForaLinhaTempo(m, posicao, abrirComPausa);
         if (consegueiuAbrir) {
             LinhaDoTempo.adicionarNaPosicaoAtual(musica);
         }
     }
 
-    private boolean abrirForaLinhaTempo(Musica m, int posicao, boolean abrirComPausa) {
+    private boolean abrirForaLinhaTempo(Musica m, long posicao, boolean abrirComPausa) {
         try {
             boolean abriu = apenasAbrir(m);
             if (!abriu) {
@@ -208,16 +209,16 @@ public abstract class Musiquera implements BasicPlayerListener {
             if (tenteiAbrir <= 2) {
                 System.out.println("Falha ao abrir, tentando novamente!");
                 return abrirForaLinhaTempo(m, posicao, abrirComPausa);
-            }else if(tenteiAbrir == 3){
+            } else if (tenteiAbrir == 3) {
                 System.out.println("Falha ao abrir, passando para a próxima música!");
                 return abrirForaLinhaTempo(getNextMusica(), 0, false);
-            } else if(tenteiAbrir == 4){
+            } else if (tenteiAbrir == 4) {
                 System.out.println("Falha ao abrir (estágio 2), tentando novamente!");
                 return abrirForaLinhaTempo(m, posicao, abrirComPausa);
-            }else if (tenteiAbrir <= 30) {
+            } else if (tenteiAbrir <= 30) {
                 System.out.println("Falha ao abrir (está ficando \"danger\"), tentando novamente!");
                 return abrirForaLinhaTempo(getNextMusica(), posicao, abrirComPausa);
-            }else{
+            } else {
                 System.out.println("Todas as tentativas falharam... :(");
                 tenteiAbrir = 0;
                 return false;
@@ -324,11 +325,17 @@ public abstract class Musiquera implements BasicPlayerListener {
 
         }
     }
+    
+    public long segundoToMicro(int segundos){
+        return segundos * 1000000;
+    }
 
     public synchronized void skipTo(int segundos) {
-        //DoIt
-        double micro = segundos * 1000000;
-        skipTo(micro / (double) totalTempo);
+        skipTo(segundoToMicro(segundos));
+    }
+
+    public synchronized void skipTo(long microssegundos) {
+        skipTo(((double) microssegundos) / (double) totalTempo);
     }
 
     @SuppressWarnings("CallToThreadDumpStack")
@@ -452,7 +459,8 @@ public abstract class Musiquera implements BasicPlayerListener {
             }
         }
         numberTempoChange(prop);
-        String hms = microSegundosEmMinSeq((long) (totalTempo * prop));
+        tempoAtual = (int) (totalTempo * prop);
+        String hms = microSegundosEmMinSeq((long) (tempoAtual));
         stringTempoChange(hms);
     }
 
