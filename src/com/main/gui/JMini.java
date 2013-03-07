@@ -16,11 +16,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.event.ChangeListener;
 
 
 /*
@@ -37,7 +40,7 @@ import javax.swing.JLabel;
  *
  * @author manchini
  */
-public class JMini extends javax.swing.JDialog implements Notificavel, ActionListener, MouseListener {
+public class JMini extends javax.swing.JDialog implements Notificavel, ActionListener, MouseListener, MouseMotionListener, MouseWheelListener, ChangeListener {
 
     /**
      * Creates new form treco
@@ -52,7 +55,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
     private boolean ajusteDeTempo;
 
     public JMini(Carregador carregador) {
-        super((Dialog)null);
+        super((Dialog) null);
         initComponents();
         this.setIconImage(carregador.getIcones().getCrepzIcon().getImage());
         this.carregador = carregador;
@@ -298,9 +301,9 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
      * Deixa o JMini visivel ou não
      *
      * @param b boolean que indica se a janela é estará visivel.
-     * @param e MouseEvent é usado apenas quando o SO não for Windows
      */
-    public void setVisible(boolean b, MouseEvent e) {
+    @Override
+    public void setVisible(boolean b) {
         if (!super.isVisible()) {
 
             if (carregador.isRandom()) {
@@ -326,15 +329,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
 
     private void showMenu(MouseEvent e) {
         jPopupMenu1.show(e.getComponent(), e.getX(), e.getY());
-    }
-
-    public void atualizaTempo(int t) {
-        jSlider_Tempo.setValue(t);
-    }
-
-    public void atualizaVolume(int t) {
-        jSlider_vol.setValue(t);
-        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
     }
 
     @Override
@@ -467,9 +461,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
                     }
                 }
             }
-        } else if (e.getSource() == jSlider_vol) {
-            carregador.setVolume((byte) jSlider_vol.getValue());
-            jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
         } else if (e.getSource() == jSlider_Tempo) {
             carregador.skipTo(new Double(jSlider_Tempo.getValue()) / jSlider_Tempo.getMaximum());
             ajusteDeTempo = false;
@@ -547,11 +538,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jMenuVisualizacoes.setText("Visualizações");
 
         jCheckBox_top.setText("Sempre Visível");
-        jCheckBox_top.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jCheckBox_topStateChanged(evt);
-            }
-        });
+        jCheckBox_top.addChangeListener(this);
         jMenuVisualizacoes.add(jCheckBox_top);
 
         jCheckBox_lib.setText("Mostrar Biblioteca");
@@ -591,16 +578,8 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jPanel4.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204), new java.awt.Color(0, 0, 0), new java.awt.Color(51, 51, 51)), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204), new java.awt.Color(102, 102, 102), new java.awt.Color(153, 153, 153))));
         jPanel4.setForeground(new java.awt.Color(102, 102, 102));
         jPanel4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel4.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                jPanel4MouseWheelMoved(evt);
-            }
-        });
-        jPanel4.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                jPanel4MouseDragged(evt);
-            }
-        });
+        jPanel4.addMouseWheelListener(this);
+        jPanel4.addMouseMotionListener(this);
         jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -643,11 +622,8 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jSlider_vol.setToolTipText("Volume");
         jSlider_vol.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jSlider_vol.setPreferredSize(new java.awt.Dimension(100, 23));
-        jSlider_vol.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                jSlider_volMouseWheelMoved(evt);
-            }
-        });
+        jSlider_vol.addMouseWheelListener(this);
+        jSlider_vol.addChangeListener(this);
         jPanel1.add(jSlider_vol);
 
         jPanel4.add(jPanel1);
@@ -725,12 +701,40 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
 
         pack();
+    }
+
+    // Code for dispatching events from components to event handlers.
+
+    public void mouseDragged(java.awt.event.MouseEvent evt) {
+        if (evt.getSource() == jPanel4) {
+            JMini.this.jPanel4MouseDragged(evt);
+        }
+    }
+
+    public void mouseMoved(java.awt.event.MouseEvent evt) {
+    }
+
+    public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+        if (evt.getSource() == jPanel4) {
+            JMini.this.jPanel4MouseWheelMoved(evt);
+        }
+        else if (evt.getSource() == jSlider_vol) {
+            JMini.this.jSlider_volMouseWheelMoved(evt);
+        }
+    }
+
+    public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        if (evt.getSource() == jCheckBox_top) {
+            JMini.this.jCheckBox_topStateChanged(evt);
+        }
+        else if (evt.getSource() == jSlider_vol) {
+            JMini.this.jSlider_volStateChanged(evt);
+        }
     }// </editor-fold>//GEN-END:initComponents
 
     private void jSlider_volMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_volMouseWheelMoved
         int v = jSlider_vol.getValue() - evt.getWheelRotation();
         jSlider_vol.setValue(v);
-        mouseReleased(evt);
 }//GEN-LAST:event_jSlider_volMouseWheelMoved
 
     private void jPanel4MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseDragged
@@ -751,6 +755,11 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
             jLabel_top.setIcon(carregador.getIcones().getTopOff());
         }
     }//GEN-LAST:event_jCheckBox_topStateChanged
+
+    private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
+        carregador.setVolume((byte) jSlider_vol.getValue());
+        jSlider_vol.setToolTipText("Volume: " + jSlider_vol.getValue() + "%");
+    }//GEN-LAST:event_jSlider_volStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGrou_Balanco;
     private javax.swing.JLabel jButton_Ant;

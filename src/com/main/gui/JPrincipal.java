@@ -184,11 +184,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         }
     }
 
-    public void setVolume(int v) {
-        jSlider_vol.setValue(v);
-        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
-    }
-
+  
     public void setBalaco(int b) {
         jSlider_Balanco.setValue(b);
     }
@@ -338,6 +334,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
             jToggle_Repeat.setIcon(carregador.getIcones().getRepeatOffIcon32());
         }
         jSlider_vol.setValue(carregador.getVolume());
+        jSlider_Balanco.setValue(carregador.getBalanco());
     }
     private MouseAdapter mouseAdapterArrastar = new MouseAdapter() {
         @Override
@@ -931,16 +928,13 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     }// </editor-fold>//GEN-END:initComponents
 
     private void jSlider_volMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_volMouseWheelMoved
-        // TODO add your handling code here:
         jSlider_vol.setValue(jSlider_vol.getValue() - evt.getWheelRotation());
-        carregador.setVolume((byte) jSlider_vol.getValue());
-        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
     }//GEN-LAST:event_jSlider_volMouseWheelMoved
 
     private void jSlider_BalancoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_BalancoStateChanged
 
         carregador.setBalanco((byte) jSlider_Balanco.getValue());
-        jSlider_Balanco.setToolTipText(String.valueOf(jSlider_Balanco.getValue() / 100));
+        jSlider_Balanco.setToolTipText("Balanço: " + String.valueOf(jSlider_Balanco.getValue()) + "%");
     }//GEN-LAST:event_jSlider_BalancoStateChanged
 
     private void jSlider_BalancoMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jSlider_BalancoMouseWheelMoved
@@ -953,7 +947,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jSlider_volStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_volStateChanged
         carregador.setVolume((byte) jSlider_vol.getValue());
-        jSlider_vol.setToolTipText(jSlider_vol.getValue() + "%");
+        jSlider_vol.setToolTipText("Volume: "+jSlider_vol.getValue() + "%");
     }//GEN-LAST:event_jSlider_volStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
