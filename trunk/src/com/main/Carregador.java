@@ -20,6 +20,8 @@ import com.musica.Musiquera;
 import com.musica.Musiquera.PropriedadesMusica;
 import java.awt.SystemTray;
 import java.awt.Window;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -213,6 +215,17 @@ public class Carregador extends Musiquera {
                 return GerenciadorTelas.getPrincipal();
             case J_MINI:
                 return GerenciadorTelas.getMini();
+            case COMO_ESTAVA:
+                if (GerenciadorTelas.isFilaReproducaoCarregada() && isFilaReproducaoVisivel()) {
+                    return GerenciadorTelas.getFilaReproducao();
+                }
+                if (GerenciadorTelas.isPrincipalCarregado() && isPrincipalVisible()) {
+                    return GerenciadorTelas.getPrincipal();
+                }
+                if (GerenciadorTelas.isMiniCarregado() && isMiniVisible()) {
+                    return GerenciadorTelas.getMini();
+                }
+                break;
 
         }
         ArrayList<Notificavel> todasTelas = getTodasTelas();
@@ -237,13 +250,15 @@ public class Carregador extends Musiquera {
     }
 
     private void abrirUltimaConfiguracao() {
+        boolean carregouTela = false;
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PRINCIPAL)) {
             GerenciadorTelas.getPrincipal().setVisible(true);
-
+            carregouTela = true;
         }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_MINI)) {
             GerenciadorTelas.getMini().setVisible(true);
             GerenciadorTelas.getCrepzTray().toTray();
+            carregouTela = true;
         }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PLAYLIST)) {
             GerenciadorTelas.getPlayList().setVisible(true);
@@ -253,7 +268,11 @@ public class Carregador extends Musiquera {
         }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_FILA)) {
             GerenciadorTelas.getFilaReproducao().setVisible(true);
+            carregouTela = true;
 
+        }
+        if (!carregouTela) {
+            GerenciadorTelas.getFilaReproducao().setVisible(true);
         }
         FonteReproducao fr = (FonteReproducao) Configuracaoes.getEnum(Configuracaoes.CONF_FONTE_REPRODUCAO);
         if (fr == FonteReproducao.PLAY_LIST) {
@@ -274,6 +293,9 @@ public class Carregador extends Musiquera {
                 }
                 if (fr == FonteReproducao.PLAY_LIST) {
                     GerenciadorTelas.getPlayList().selecionarMusica(musica);
+                }
+                if (fr == FonteReproducao.FILA_REPRODUCAO) {
+                    GerenciadorTelas.getFilaReproducao().selecionaMusica(musica);
                 }
             }
         } else {
@@ -304,7 +326,6 @@ public class Carregador extends Musiquera {
         if (GerenciadorTelas.getCrepzTray() != null && GerenciadorTelas.getCrepzTray().isOnTray()) {
             ocultarIconeTray();
         }
-        telaPadrao = TelaPadrao.J_PRINCIPAL;
         if (GerenciadorTelas.isMiniCarregado()) {
             GerenciadorTelas.getMini().dispose();
         }
@@ -312,6 +333,7 @@ public class Carregador extends Musiquera {
             GerenciadorTelas.getFilaReproducao().dispose();
         }
         GerenciadorTelas.getPrincipal().setVisible(true);
+        telaPadrao = TelaPadrao.J_PRINCIPAL;
     }
 
     public void setFilaComoBase() {
@@ -330,6 +352,12 @@ public class Carregador extends Musiquera {
 
     }
 
+    public boolean isPrincipalVisible() {
+        return GerenciadorTelas.getPrincipal().isVisible();
+    }
+    public boolean isMiniVisible() {
+        return GerenciadorTelas.getMini().isVisible();
+    }
     public boolean isPlayListVisible() {
         return GerenciadorTelas.getPlayList().isVisible();
     }
@@ -371,6 +399,9 @@ public class Carregador extends Musiquera {
             Configuracaoes.set(Configuracaoes.CONF_VISIB_PLAYLIST, false);
         }
         Configuracaoes.set(Configuracaoes.CONF_FONTE_REPRODUCAO, fonteReproducao);
+        Configuracaoes.set(Configuracaoes.CONF_BALANCO, getBalanco());
+        Configuracaoes.set(Configuracaoes.CONF_VOLUME, getVolume());
+
         System.exit(0);
     }
 
@@ -451,11 +482,27 @@ public class Carregador extends Musiquera {
             //            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
             LookAndFeelInfo lookAndFeelInfo;
-            String[] lnfPreferido = {"nimbus", "gtk+"};
+            String[] lnfPreferido = {"gtk+", "nimbus"};
             for (String nome : lnfPreferido) {
                 lookAndFeelInfo = findLookAndFeel(nome);
                 if (lookAndFeelInfo != null) {
+
                     UIManager.setLookAndFeel(lookAndFeelInfo.getClassName());
+                    UIManager.getLookAndFeelDefaults().put("Slider.paintValue", false);
+                    PropertyChangeEvent changeEvent = new PropertyChangeEvent(UIManager.getLookAndFeelDefaults(), "Slider.paintValue", true, false);
+                    PropertyChangeListener[] propertyChangeListeners = UIManager.getLookAndFeel().getDefaults().getPropertyChangeListeners();
+                    for (PropertyChangeListener propertyChangeListener : propertyChangeListeners) {
+                        propertyChangeListener.propertyChange(changeEvent);
+                    }
+//                    UIDefaults defaults = UIManager.getLookAndFeel().getDefaults();
+//                    
+//                    for (Map.Entry<Object, Object> entry : defaults.entrySet()) {
+//                        Object chave = entry.getKey();
+//                        Object valor = entry.getValue();
+//                        System.out.println("=> " + chave.toString() + " = " + (valor == null ? "null" : valor.toString() + "("+valor.getClass().getSimpleName()+")"));
+//                    }
+
+                    return;
                 }
             }
 

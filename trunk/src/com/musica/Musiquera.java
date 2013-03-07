@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,8 +53,27 @@ public abstract class Musiquera implements BasicPlayerListener {
         player = new BasicPlayer();
         player.addBasicPlayerListener(this);
         player.setSleepTime(15);
-        volume = 50;
-        balanco = 50;
+
+        // Escolher o mixer para mexer no volume
+        List mixers = player.getMixers();
+        String mx = null;
+        for (int i = 0; i < mixers.size(); i++) {
+            String mix = (String) mixers.get(i);
+            if (mix.contains("default")) {
+                mx = mix;
+            }
+            System.out.println(mx);
+        }
+        if (mixers.size() > 0) {
+            if (mx == null) {
+                mx = (String) mixers.get(mixers.size() - 3);
+            }
+            player.setMixerName(mx);
+            System.out.println("Eu escolhi o mixer: " + mx);
+
+        }
+        setBalanco(Configuracaoes.getByte(Configuracaoes.CONF_BALANCO));
+        setVolume(Configuracaoes.getByte(Configuracaoes.CONF_VOLUME));
     }
 
     public abstract void numberTempoChange(double s);
@@ -71,11 +91,10 @@ public abstract class Musiquera implements BasicPlayerListener {
 
     public abstract void atualizaLabels(String nome, int bits, String tempo, int freq);
 
-    public void setVolume(byte v) {
+    public final void setVolume(byte v) {
         volume = v;
 
         try {
-            System.out.println(new Double(v) / 100);
             player.setGain(new Double(v) / 100);
 
         } catch (BasicPlayerException ex) {
@@ -87,7 +106,7 @@ public abstract class Musiquera implements BasicPlayerListener {
         return volume;
     }
 
-    public void setBalanco(byte b) {
+    public final void setBalanco(byte b) {
         balanco = b;
         try {
             player.setPan(new Double(b) / 100);
@@ -165,6 +184,7 @@ public abstract class Musiquera implements BasicPlayerListener {
     public void abrir(Musica m, int posicao, boolean abrirComPausa) {
         abrir(m, segundoToMicro(posicao), abrirComPausa);
     }
+
     public void abrir(Musica m, long posicao, boolean abrirComPausa) {
         boolean consegueiuAbrir = abrirForaLinhaTempo(m, posicao, abrirComPausa);
         if (consegueiuAbrir) {
@@ -325,8 +345,8 @@ public abstract class Musiquera implements BasicPlayerListener {
 
         }
     }
-    
-    public long segundoToMicro(int segundos){
+
+    public long segundoToMicro(int segundos) {
         return segundos * 1000000;
     }
 
@@ -340,7 +360,6 @@ public abstract class Musiquera implements BasicPlayerListener {
 
     @SuppressWarnings("CallToThreadDumpStack")
     public synchronized void skipTo(double timePorcent) {
-        System.out.println("Skip to: " + timePorcent + "%");
         long skipBytes = (long) (timePorcent * totalBytes);
         try {
             player.seek(skipBytes);
@@ -475,36 +494,22 @@ public abstract class Musiquera implements BasicPlayerListener {
                 }
                 break;
             case BasicPlayerEvent.PLAYING:
-
                 tocando = true;
                 paused = false;
+                reajustarVolumeEBalanco(event);
                 break;
             case BasicPlayerEvent.RESUMED:
                 tocando = true;
                 paused = false;
-
+                reajustarVolumeEBalanco(event);
                 break;
             case BasicPlayerEvent.PAUSED:
                 tocando = true;
                 paused = true;
                 break;
-
             case BasicPlayerEvent.GAIN:
-                if (Math.abs(event.getValue() * 100 - volume) > 2) {
-                    try {
-                        player.setGain(new Double(volume) / 100);
-
-                    } catch (BasicPlayerException ex) {
-                        System.out.println("Erro ao mudar o volume!");
-                    }
-                }
-                if (event.getValue() * 100 != balanco) {
-                    try {
-                        player.setPan(new Double(balanco) / 100);
-                    } catch (BasicPlayerException ex) {
-                        System.out.println("Erro ao mudar o balanço");
-                    }
-                }
+            case BasicPlayerEvent.PAN:
+                reajustarVolumeEBalanco(event);
                 break;
             case BasicPlayerEvent.SEEKED:
                 tocando = true;
@@ -533,6 +538,24 @@ public abstract class Musiquera implements BasicPlayerListener {
     @Override
     public void setController(BasicController bc) {
         System.out.println("Controller= " + bc.toString());
+    }
+
+    private void reajustarVolumeEBalanco(BasicPlayerEvent event) {
+        if (event.getCode() != BasicPlayerEvent.PAN && Math.abs(event.getValue() * 100 - volume) > 2) {
+            try {
+                player.setGain(new Double(volume) / 100);
+
+            } catch (BasicPlayerException ex) {
+                ex.printStackTrace(System.err);
+            }
+        }
+        if (event.getCode() != BasicPlayerEvent.GAIN && (int)(event.getValue() * 100) != balanco) {
+            try {
+                player.setPan(new Double(balanco) / 100);
+            } catch (BasicPlayerException ex) {
+                ex.printStackTrace(System.err);
+            }
+        }
     }
 
     public class PropriedadesMusica {

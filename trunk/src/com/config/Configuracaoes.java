@@ -92,6 +92,12 @@ public class Configuracaoes {
     // Config 19
     public static final Byte CONF_MUSICA_REPRODUZINDO_TEMPO = 19;
     private static Long musicaReproduzindoTempo = -1l;
+    // Config 20
+    public static final Byte CONF_VOLUME = 20;
+    private static Byte volume = 50;
+    // Config 21
+    public static final Byte CONF_BALANCO = 21;
+    private static Byte  balanco = 50;
     // lista de todas as configs
     private static final Object[] configs;
     private static final String ARQUIVO = "etc/conf";
@@ -122,7 +128,9 @@ public class Configuracaoes {
             peleAtual,
             musicaContinuaOndeParou,
             musicaReproduzindo,
-            musicaReproduzindoTempo
+            musicaReproduzindoTempo,
+            volume,
+            balanco
         };
 //        configs[CONF_PASTAS_SCANER] = pastasScaner;
         acoes = new HashMap<Byte, Acao>(configs.length);
@@ -184,6 +192,9 @@ public class Configuracaoes {
         return (String) configs[index];
     }
 
+    public static Byte getByte(Byte index) {
+        return (Byte) configs[index];
+    }
     public static Integer getInteger(Byte index) {
         return (Integer) configs[index];
     }
@@ -199,8 +210,12 @@ public class Configuracaoes {
     public static boolean getBoolean(Byte index) {
         return (Boolean) configs[index];
     }
+    
     public static Long getLong(Byte index) {
         return (Long) configs[index];
+    }
+    public static Double getDouble(Byte index) {
+        return (Double) configs[index];
     }
 
     private static void ler() {
@@ -240,6 +255,10 @@ public class Configuracaoes {
                     configs[Integer.parseInt(tokens[0])] = Boolean.parseBoolean(tokens[1]);
                 } else if (myConfig instanceof Long) {
                     configs[Integer.parseInt(tokens[0])] = Long.parseLong(tokens[1]);
+                } else if (myConfig instanceof Double) {
+                    configs[Integer.parseInt(tokens[0])] = Double.parseDouble(tokens[1]);
+                } else if (myConfig instanceof Byte) {
+                    configs[Integer.parseInt(tokens[0])] = Byte.parseByte(tokens[1]);
                 } else {
                     configs[Integer.parseInt(tokens[0])] = tokens[1];
                 }
@@ -266,6 +285,8 @@ public class Configuracaoes {
             } else if (myConfig instanceof Boolean) {
                 textFile.append(myConfig.toString());
             } else if (myConfig instanceof Long) {
+                textFile.append(myConfig.toString());
+            } else if (myConfig instanceof Double) {
                 textFile.append(myConfig.toString());
             } else {
                 textFile.append(myConfig.toString());

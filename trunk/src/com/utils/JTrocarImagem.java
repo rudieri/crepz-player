@@ -92,26 +92,26 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
                 Object[] row = new Object[4];
 
                 if (lista.get(i) != null) {
-                    BufferedImage bf = null;
+                    BufferedImage bf;
                     try {
                         jProgressBar.setString("Baixando: " + lista.get(i).getTitle());
                         bf = ImageIO.read(new URL(lista.get(i).getUrl()));
+                        row[0] = new javax.swing.ImageIcon(bf.getScaledInstance(150, 200, Image.SCALE_SMOOTH));
+                        row[2] = lista.get(i).getUrl();
                     } catch (Exception ex) {
                         Logger.getLogger(JTrocarImagem.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    row[0] = new javax.swing.ImageIcon(bf.getScaledInstance(150, 200, Image.SCALE_SMOOTH));
-                    row[2] = lista.get(i).getUrl();
                 }
                 if (lista.get(i) != null) {
-                    BufferedImage bf = null;
+                    BufferedImage bf;
                     try {
                         jProgressBar.setString("Baixando: " + lista.get(i).getTitle());
                         bf = ImageIO.read(new URL(lista.get(i + 1).getUrl()));
+                        row[1] = new javax.swing.ImageIcon(bf.getScaledInstance(150, 200, Image.SCALE_SMOOTH));
+                        row[3] = lista.get(i).getUrl();
                     } catch (Exception ex) {
                         Logger.getLogger(JTrocarImagem.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    row[1] = new javax.swing.ImageIcon(bf.getScaledInstance(150, 200, Image.SCALE_SMOOTH));
-                    row[3] = lista.get(i).getUrl();
                 }
 
                 tm.addRow(row);

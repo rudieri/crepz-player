@@ -41,6 +41,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -59,9 +60,8 @@ import javax.swing.table.TableRowSorter;
  *
  * @author rudieri
  */
-public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, ActionListener, MouseListener, TableModelListener, ObjectTableModelListener, KeyListener {
+public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, ActionListener, MouseListener, TableModelListener, ObjectTableModelListener, KeyListener, WindowListener {
 
-//    private ModelReadOnly modelMusicas;
     private ObjectTableModel<Musica> objModelMusicas;
     private ModelReadOnly modelFila;
     private final Carregador carregador;
@@ -81,9 +81,6 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         initTabelaMusica();
         atualizaTabelaMusica();
 
-//        TransferHandler transferHandler = new TransferHandler(null);
-//       jTableFila.setDropMode(DropMode.ON);
-//        jTableFila.setTransferHandler(transferHandler);
         this.carregador = carregador;
         inicializaIcones();
 
@@ -108,14 +105,12 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
     private void tocarMusicaSelecionada() {
         Musica musica = objModelMusicas.getItem(converterIndiceTabelaMusica(jTableMusicas.getSelectedRow()));
         carregador.abrir(musica, 0, false);
-//            alterarMusica(musica);
     }
 
     private void tocarMusicaSelecionadaFila() {
         Musica musica = (Musica) modelFila.getValueAt(jTableFila.getSelectedRow(), 0);
         modelFila.removeRow(jTableFila.getSelectedRow());
         carregador.abrir(musica, 0, false);
-//            alterarMusica(musica);
         atualizarBarraStausFila();
     }
 
@@ -302,8 +297,6 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jMenuItemFilaTocar.setIcon(carregador.getIcones().getPlayIcon16());
         jMenuItemFilaRemover.setIcon(carregador.getIcones().getXis());
         jMenuItemEmbaralhar.setIcon(carregador.getIcones().getRandomOnIcon16());
-//        jMenuItemFilaTocar.setIcon(carregador.getIcones().playIcon16);
-//        jMenuItemFilaTocar.setIcon(carregador.getIcones().playIcon16);
 
     }
 
@@ -482,6 +475,16 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jTableMusicas.scrollRectToVisible(rect);
         return objModelMusicas.getItem(converterIndiceTabelaMusica(selectedRow));
     }
+    
+    public void selecionaMusica(Musica musica){
+        int indexOf = objModelMusicas.indexOf(musica);
+        if (indexOf!=-1) {
+            Rectangle rect = jTableMusicas.getVisibleRect();
+            jTableMusicas.setRowSelectionInterval(indexOf, indexOf);
+            rect.y = jTableMusicas.getCellRect(indexOf, 0, true).y - rect.height / 2;
+            jTableMusicas.scrollRectToVisible(rect);
+        }
+    }
 
     private void filtrarTabelaMusica(KeyEvent evt) {
         if (evt.getModifiersEx() == KeyEvent.CTRL_DOWN_MASK) {
@@ -592,6 +595,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         if (!ajustandoTempo) {
             jSlider_Tempo.setToolTipText(hms);
         }
+        jLabelTempo.setText(hms);
 
     }
 
@@ -914,6 +918,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jPanel8 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabelTocando = new javax.swing.JLabel();
+        jLabelTempo = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         jPanelControles = new javax.swing.JPanel();
         jButton_Play = new javax.swing.JLabel();
@@ -988,11 +993,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Fila de Reprodução");
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
+        addWindowListener(this);
 
         jPanelCentro.setBorder(javax.swing.BorderFactory.createTitledBorder("Musicas"));
         jPanelCentro.setOpaque(false);
@@ -1104,17 +1105,25 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jPanel8.setOpaque(false);
         jPanel8.setLayout(new java.awt.BorderLayout());
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Tocando Agora..."));
+        jPanel5.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         jPanel5.setOpaque(false);
+        jPanel5.setPreferredSize(new java.awt.Dimension(4, 32));
         jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jLabelTocando.setFont(new java.awt.Font("Dialog", 0, 11)); // NOI18N
+        jLabelTocando.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jLabelTocando.setText("Nada...");
         jLabelTocando.setPreferredSize(new java.awt.Dimension(0, 18));
         jPanel5.add(jLabelTocando, java.awt.BorderLayout.CENTER);
 
+        jLabelTempo.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        jLabelTempo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelTempo.setText("00:00:00");
+        jLabelTempo.setPreferredSize(new java.awt.Dimension(80, 21));
+        jPanel5.add(jLabelTempo, java.awt.BorderLayout.EAST);
+
         jPanel8.add(jPanel5, java.awt.BorderLayout.PAGE_START);
 
+        jPanel9.setMinimumSize(new java.awt.Dimension(221, 36));
         jPanel9.setOpaque(false);
         jPanel9.setLayout(new java.awt.BorderLayout());
 
@@ -1146,14 +1155,17 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jPanel9.add(jPanelControles, java.awt.BorderLayout.WEST);
 
         jPanel11.setOpaque(false);
+        jPanel11.setPreferredSize(new java.awt.Dimension(202, 18));
         jPanel11.setLayout(new javax.swing.BoxLayout(jPanel11, javax.swing.BoxLayout.LINE_AXIS));
 
-        jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
+        jSlider_Tempo.setFont(new java.awt.Font("Cantarell", 0, 1)); // NOI18N
+        jSlider_Tempo.setForeground(javax.swing.UIManager.getDefaults().getColor("ProgressBar.background"));
         jSlider_Tempo.setMaximum(1000);
         jSlider_Tempo.setToolTipText("");
         jSlider_Tempo.setValue(0);
         jSlider_Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jSlider_Tempo.setMinimumSize(new java.awt.Dimension(36, 14));
+        jSlider_Tempo.setPreferredSize(new java.awt.Dimension(202, 22));
         jPanel11.add(jSlider_Tempo);
 
         jPanel9.add(jPanel11, java.awt.BorderLayout.CENTER);
@@ -1201,8 +1213,34 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 
         setJMenuBar(jMenuBar1);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-800)/2, (screenSize.height-600)/2, 800, 600);
+        setSize(new java.awt.Dimension(800, 600));
+        setLocationRelativeTo(null);
+    }
+
+    // Code for dispatching events from components to event handlers.
+
+    public void windowActivated(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowClosed(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowClosing(java.awt.event.WindowEvent evt) {
+        if (evt.getSource() == JFilaReproducao.this) {
+            JFilaReproducao.this.formWindowClosing(evt);
+        }
+    }
+
+    public void windowDeactivated(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowDeiconified(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowIconified(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowOpened(java.awt.event.WindowEvent evt) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -1227,6 +1265,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabelQtdMusicas;
     private javax.swing.JLabel jLabelQtdMusicasFila;
+    private javax.swing.JLabel jLabelTempo;
     private javax.swing.JLabel jLabelTocando;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
