@@ -13,6 +13,7 @@ import com.playlist.JPlayList;
 import com.utils.Warning;
 import com.utils.pele.ColorUtils;
 import com.utils.pele.JPele;
+import java.awt.Rectangle;
 
 /**
  *
@@ -38,6 +39,10 @@ public class GerenciadorTelas {
                 ex.printStackTrace(System.err);
                 principal = new JPrincipal(Carregador.getMe());
             }
+            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_PRINCIPAL);
+            if (rectangle != null) {
+                principal.setBounds(rectangle);
+            }
             ColorUtils.registrar(principal);
             ColorUtils.aplicarTema();
         }
@@ -48,6 +53,10 @@ public class GerenciadorTelas {
         if (mini == null) {
             carregandoDebug("Mini");
             mini = new JMini(Carregador.getMe());
+            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_MINI);
+            if (rectangle != null) {
+                mini.setBounds(rectangle);
+            }
             ColorUtils.registrar(mini);
             ColorUtils.aplicarTema();
         }
@@ -66,6 +75,10 @@ public class GerenciadorTelas {
         if (filaReproducao == null) {
             carregandoDebug("Fila de Reprodução");
             filaReproducao = new JFilaReproducao(Carregador.getMe());
+            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_FILA);
+            if (rectangle != null) {
+                filaReproducao.setBounds(rectangle);
+            }
             ColorUtils.registrar(filaReproducao);
             ColorUtils.aplicarTema();
 
@@ -78,6 +91,13 @@ public class GerenciadorTelas {
             carregandoDebug("Play List");
             playList = new JPlayList(Carregador.getMe());
             playList.setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
+            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_PLAYLIST);
+            if (rectangle != null) {
+                playList.setBounds(rectangle);
+            } else {
+                playList.setLocation(Carregador.getMe().getWindowPrincipal().getX()
+                        - GerenciadorTelas.getPlayList().getWidth() - 5, Carregador.getMe().getWindowPrincipal().getY());
+            }
             ColorUtils.registrar(playList);
             ColorUtils.aplicarTema();
         }
@@ -88,6 +108,14 @@ public class GerenciadorTelas {
         if (biblioteca == null) {
             carregandoDebug("Biblioteca");
             biblioteca = new JBiBlioteca(Carregador.getMe());
+            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_BIBLIOTECA);
+            if (rectangle != null) {
+                biblioteca.setBounds(rectangle);
+            } else {
+                biblioteca.setLocation(Carregador.getMe().getWindowPrincipal().getX()
+                        - GerenciadorTelas.getBiblioteca().getWidth() - 5,
+                        Carregador.getMe().getWindowPrincipal().getY());
+            }
         }
         return biblioteca;
     }
@@ -146,6 +174,7 @@ public class GerenciadorTelas {
     public static boolean isBibliotecaCarregado() {
         return biblioteca != null;
     }
+
     public static boolean isCrepzTrayCarregado() {
         return crepzTray != null;
     }

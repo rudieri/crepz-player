@@ -12,6 +12,7 @@ import com.main.FonteReproducao;
 import com.musica.CacheDeMusica;
 import com.musica.Musica;
 import com.utils.file.FileUtils;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ public class Configuracaoes {
      Declare aqui todas as configurações com seus determinados tipos;
      * Fazer dessa forma:
      public static final Byte NOME_DA_CONFIG = ordinal_da_config; // é sequencial, deve ser o indice da config no array
-     private static final Tipo nomeDaConfig = new Tipo();
+     private static  Tipo nomeDaConfig = new Tipo(); // Valor padrão
      *
      */
     // Config 0
@@ -97,7 +98,22 @@ public class Configuracaoes {
     private static Byte volume = 50;
     // Config 21
     public static final Byte CONF_BALANCO = 21;
-    private static Byte  balanco = 50;
+    private static Byte balanco = 50;
+    // Config 22
+    public static final Byte CONF_LOCAL_PRINCIPAL = 22;
+    private static Rectangle localPrincipal = new Rectangle();
+    // Config 23
+    public static final Byte CONF_LOCAL_MINI = 23;
+    private static Rectangle localMini = new Rectangle();
+    // Config 24
+    public static final Byte CONF_LOCAL_FILA = 24;
+    private static Rectangle localFila = new Rectangle();
+    // Config 25
+    public static final Byte CONF_LOCAL_PLAYLIST = 25;
+    private static Rectangle localPlayList = new Rectangle();
+    // Config 26
+    public static final Byte CONF_LOCAL_BIBLIOTECA = 26;
+    private static Rectangle localBiblioteca = new Rectangle();
     // lista de todas as configs
     private static final Object[] configs;
     private static final String ARQUIVO = "etc/conf";
@@ -130,38 +146,60 @@ public class Configuracaoes {
             musicaReproduzindo,
             musicaReproduzindoTempo,
             volume,
-            balanco
+            balanco,
+            localPrincipal,
+            localMini,
+            localFila,
+            localPlayList,
+            localBiblioteca
         };
 //        configs[CONF_PASTAS_SCANER] = pastasScaner;
         acoes = new HashMap<Byte, Acao>(configs.length);
         ler();
     }
 
-    public static void set(Byte indexConf, Enum valor) {
+    public static void set(Byte indexConf, Enum valor, boolean gravarAgora) {
         configs[indexConf] = valor;
-        gravar();
+        if (gravarAgora) {
+            gravar();
+        }
     }
 
-    public static void set(Byte indexConf, String valor) {
+    public static void set(Byte indexConf, String valor, boolean gravarAgora) {
         configs[indexConf] = valor;
-        gravar();
+        if (gravarAgora) {
+            gravar();
+        }
     }
 
-    public static void set(Byte indexConf, Integer valor) {
+    public static void set(Byte indexConf, Integer valor, boolean gravarAgora) {
         configs[indexConf] = valor;
-        gravar();
+        if (gravarAgora) {
+            gravar();
+        }
     }
 
-    public static void set(Byte indexConf, boolean valor) {
+    public static void set(Byte indexConf, boolean valor, boolean gravarAgora) {
         configs[indexConf] = valor;
-        gravar();
+        if (gravarAgora) {
+            gravar();
+        }
     }
 
-    public static void set(Byte indexConf, ArrayList valor) {
+    public static void set(Byte indexConf, Rectangle valor, boolean gravarAgora) {
+        configs[indexConf] = valor;
+        if (gravarAgora) {
+            gravar();
+        }
+    }
+
+    public static void set(Byte indexConf, ArrayList valor, boolean gravarAgora) {
         ((ArrayList) configs[indexConf]).clear();
         ((ArrayList) configs[indexConf]).addAll(valor);
         dispararAcao(indexConf, valor);
-        gravar();
+        if (gravarAgora) {
+            gravar();
+        }
     }
 
     private static void dispararAcao(Byte config, ArrayList valor) {
@@ -195,6 +233,7 @@ public class Configuracaoes {
     public static Byte getByte(Byte index) {
         return (Byte) configs[index];
     }
+
     public static Integer getInteger(Byte index) {
         return (Integer) configs[index];
     }
@@ -210,12 +249,20 @@ public class Configuracaoes {
     public static boolean getBoolean(Byte index) {
         return (Boolean) configs[index];
     }
-    
+
     public static Long getLong(Byte index) {
         return (Long) configs[index];
     }
+
     public static Double getDouble(Byte index) {
         return (Double) configs[index];
+    }
+
+    public static Rectangle getRectangle(Byte index) {
+        if (((Rectangle)configs[index]).isEmpty()) {
+            return null;
+        }
+        return (Rectangle) configs[index];
     }
 
     private static void ler() {
@@ -235,16 +282,16 @@ public class Configuracaoes {
                 String linha = linhas[i];
                 String[] tokens = linha.split(" ", 2);
                 Object myConfig = configs[Integer.parseInt(tokens[0])];
-                if (myConfig.getClass() == String.class) {
+                if (myConfig instanceof  String) {
                     configs[Integer.parseInt(tokens[0])] = tokens[1];
-                } else if (myConfig.getClass() == ArrayList.class) {
+                } else if (myConfig instanceof  ArrayList) {
                     if (tokens[1].trim().isEmpty()) {
                         continue;
                     }
                     String[] valores = tokens[1].split(",");
                     ((ArrayList) myConfig).clear();
                     ((ArrayList) myConfig).addAll(Arrays.asList(valores));
-                } else if (myConfig.getClass() == Musica.class) {
+                } else if (myConfig instanceof  Musica) {
                     Musica musica = CacheDeMusica.get(Integer.parseInt(tokens[1].trim()));
                     configs[Integer.parseInt(tokens[0])] = musica;
                 } else if (myConfig instanceof Integer) {
@@ -259,6 +306,14 @@ public class Configuracaoes {
                     configs[Integer.parseInt(tokens[0])] = Double.parseDouble(tokens[1]);
                 } else if (myConfig instanceof Byte) {
                     configs[Integer.parseInt(tokens[0])] = Byte.parseByte(tokens[1]);
+                } else if (myConfig instanceof Rectangle) {
+                    if (tokens[1].trim().isEmpty() || tokens[1].trim().equals("-")) {
+                        configs[Integer.parseInt(tokens[0])] = (Rectangle)null;
+                    } else {
+                        String[] tk = tokens[1].replaceAll("[\\[\\] ]*", "").split(",");
+                        configs[Integer.parseInt(tokens[0])] = new Rectangle(Integer.valueOf(tk[0]),
+                                Integer.valueOf(tk[1]), Integer.valueOf(tk[2]), Integer.valueOf(tk[3]));
+                    }
                 } else {
                     configs[Integer.parseInt(tokens[0])] = tokens[1];
                 }
@@ -274,19 +329,19 @@ public class Configuracaoes {
         for (int i = 0; i < configs.length; i++) {
             Object myConfig = configs[i];
             textFile.append(i).append(' ');
-            if (myConfig.getClass() == ArrayList.class) {
+            if (myConfig instanceof  ArrayList) {
                 textFile.append(((ArrayList) myConfig).toString().replaceAll("[\\[\\]]", ""));
-            } else if (myConfig.getClass() == Musica.class) {
+            } else if (myConfig instanceof  Musica) {
                 textFile.append(((Musica) myConfig).getId());
             } else if (myConfig instanceof Enum) {
                 textFile.append(((Enum) myConfig).name());
-            } else if (myConfig instanceof String) {
-                textFile.append(myConfig.toString());
-            } else if (myConfig instanceof Boolean) {
-                textFile.append(myConfig.toString());
-            } else if (myConfig instanceof Long) {
-                textFile.append(myConfig.toString());
-            } else if (myConfig instanceof Double) {
+            } else if (myConfig instanceof Rectangle) {
+                Rectangle rec = (Rectangle) myConfig;
+                textFile.append('[').append(rec.x).append(',').append(rec.y).append(',').append(rec.width).append(',').append(rec.height).append(']');
+            } else if (myConfig instanceof String
+                    || myConfig instanceof Long
+                    || myConfig instanceof Double
+                    || myConfig instanceof Boolean) {
                 textFile.append(myConfig.toString());
             } else {
                 textFile.append(myConfig.toString());
@@ -300,5 +355,7 @@ public class Configuracaoes {
         }
     }
 
-    
+    public static void salvar() {
+        gravar();
+    }
 }

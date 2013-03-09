@@ -171,7 +171,6 @@ public class Carregador extends Musiquera {
 //        if (isFilaReproducaoVisivel()) {
 //            ocultarFilaReproducao();
 //        }
-        GerenciadorTelas.getPlayList().setLocation(getWindowPrincipal().getX() - GerenciadorTelas.getPlayList().getWidth() - 5, getWindowPrincipal().getY());
         GerenciadorTelas.getPlayList().setVisible(true);
         setFonteReproducao(FonteReproducao.PLAY_LIST);
     }
@@ -183,8 +182,6 @@ public class Carregador extends Musiquera {
     }
 
     public void mostrarBiblioteca() {
-        GerenciadorTelas.getBiblioteca().setLocation(getWindowPrincipal().getX() - GerenciadorTelas.getBiblioteca().getWidth() - 5,
-                getWindowPrincipal().getY());
         GerenciadorTelas.getBiblioteca().setVisible(true);
     }
 
@@ -262,10 +259,10 @@ public class Carregador extends Musiquera {
         }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PLAYLIST)) {
             GerenciadorTelas.getPlayList().setVisible(true);
-        }
+            }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_BIBLIOTECA)) {
             GerenciadorTelas.getBiblioteca().setVisible(true);
-        }
+            }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_FILA)) {
             GerenciadorTelas.getFilaReproducao().setVisible(true);
             carregouTela = true;
@@ -355,9 +352,11 @@ public class Carregador extends Musiquera {
     public boolean isPrincipalVisible() {
         return GerenciadorTelas.getPrincipal().isVisible();
     }
+
     public boolean isMiniVisible() {
         return GerenciadorTelas.getMini().isVisible();
     }
+
     public boolean isPlayListVisible() {
         return GerenciadorTelas.getPlayList().isVisible();
     }
@@ -368,40 +367,47 @@ public class Carregador extends Musiquera {
 
     public void sair() {
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU)) {
-            Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO, isPlaying() || isPaused() ? getMusica().getId() : -1);
-            Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO_TEMPO, isPlaying() || isPaused() ? getTempoAtual() : -1);
+            Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO, isPlaying() || isPaused() ? getMusica().getId() : -1, false);
+            Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO_TEMPO, isPlaying() || isPaused() ? getTempoAtual() : -1, false);
         }
 
         if (GerenciadorTelas.isPrincipalCarregado()) {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_PRINCIPAL, GerenciadorTelas.getPrincipal().isVisible());
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_PRINCIPAL, GerenciadorTelas.getPrincipal().isVisible(), false);
+            Configuracaoes.set(Configuracaoes.CONF_LOCAL_PRINCIPAL, GerenciadorTelas.getPrincipal().getBounds(), false);
         } else {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_PRINCIPAL, false);
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_PRINCIPAL, false, false);
         }
         if (GerenciadorTelas.isMiniCarregado()) {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_MINI, GerenciadorTelas.getMini().isVisible());
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_MINI, GerenciadorTelas.getMini().isVisible(), false);
+            Configuracaoes.set(Configuracaoes.CONF_LOCAL_MINI, GerenciadorTelas.getMini().getBounds(), false);
         } else {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_MINI, false);
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_MINI, false, false);
         }
         if (GerenciadorTelas.isBibliotecaCarregado()) {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, GerenciadorTelas.getBiblioteca().isVisible());
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, GerenciadorTelas.getBiblioteca().isVisible(), false);
+            Configuracaoes.set(Configuracaoes.CONF_LOCAL_BIBLIOTECA, GerenciadorTelas.getBiblioteca().getBounds(), false);
         } else {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, false);
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_BIBLIOTECA, false, false);
         }
         if (GerenciadorTelas.isFilaReproducaoCarregada()) {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_FILA, GerenciadorTelas.getFilaReproducao().isVisible());
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_FILA, GerenciadorTelas.getFilaReproducao().isVisible(), false);
+            Configuracaoes.set(Configuracaoes.CONF_LOCAL_FILA, GerenciadorTelas.getFilaReproducao().getBounds(), false);
         } else {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_FILA, false);
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_FILA, false, false);
         }
         if (GerenciadorTelas.isPlayListCarregado()) {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_PLAYLIST, GerenciadorTelas.getPlayList().isVisible());
-            Configuracaoes.set(Configuracaoes.CONF_LISTA_ABERTA, GerenciadorTelas.getPlayList().getPlaylistAberta() == null ? -1 : GerenciadorTelas.getPlayList().getPlaylistAberta().getId());
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_PLAYLIST, GerenciadorTelas.getPlayList().isVisible(), false);
+            Configuracaoes.set(Configuracaoes.CONF_LISTA_ABERTA, GerenciadorTelas.getPlayList().getPlaylistAberta() == null
+                    ? -1 : GerenciadorTelas.getPlayList().getPlaylistAberta().getId(), false);
+            Configuracaoes.set(Configuracaoes.CONF_LOCAL_PLAYLIST, GerenciadorTelas.getPlayList().getBounds(), false);
         } else {
-            Configuracaoes.set(Configuracaoes.CONF_VISIB_PLAYLIST, false);
+            Configuracaoes.set(Configuracaoes.CONF_VISIB_PLAYLIST, false, false);
         }
-        Configuracaoes.set(Configuracaoes.CONF_FONTE_REPRODUCAO, fonteReproducao);
-        Configuracaoes.set(Configuracaoes.CONF_BALANCO, getBalanco());
-        Configuracaoes.set(Configuracaoes.CONF_VOLUME, getVolume());
+        Configuracaoes.set(Configuracaoes.CONF_FONTE_REPRODUCAO, fonteReproducao, false);
+        Configuracaoes.set(Configuracaoes.CONF_BALANCO, getBalanco(), false);
+        Configuracaoes.set(Configuracaoes.CONF_VOLUME, getVolume(), false);
 
+        Configuracaoes.salvar();
         System.exit(0);
     }
 
@@ -529,11 +535,11 @@ public class Carregador extends Musiquera {
     }
 
     public void setRandom(boolean random) {
-        Configuracaoes.set(Configuracaoes.CONF_RANDOM_ATIVO, random);
+        Configuracaoes.set(Configuracaoes.CONF_RANDOM_ATIVO, random, true);
     }
 
     public void setRepeat(boolean repeat) {
-        Configuracaoes.set(Configuracaoes.CONF_REPEAT_ATIVO, repeat);
+        Configuracaoes.set(Configuracaoes.CONF_REPEAT_ATIVO, repeat, true);
     }
 
     public void mostrarFilaReproducao() {

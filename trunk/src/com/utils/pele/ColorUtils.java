@@ -52,7 +52,7 @@ public class ColorUtils {
     public static void aplicarTema() {
         // Primeiro os componentes das janelas
         if (peleAtual == Pele.PELE_PADRAO) {
-            Configuracaoes.set(Configuracaoes.CONF_PELE_ATUAL, peleAtual.getNome());
+            Configuracaoes.set(Configuracaoes.CONF_PELE_ATUAL, peleAtual.getNome(), true);
             return;
         }
         for (int i = 0; i < listaComponentes.size(); i++) {
@@ -72,8 +72,8 @@ public class ColorUtils {
             Pele pele = listaPelesConhecidas.get(i);
             salvarPeles.add(pele.toString());
         }
-        Configuracaoes.set(Configuracaoes.CONF_PELE_ATUAL, peleAtual.getNome());
-        Configuracaoes.set(Configuracaoes.CONF_PELES, salvarPeles);
+        Configuracaoes.set(Configuracaoes.CONF_PELE_ATUAL, peleAtual.getNome(), true);
+        Configuracaoes.set(Configuracaoes.CONF_PELES, salvarPeles,  true);
 
     }
 
