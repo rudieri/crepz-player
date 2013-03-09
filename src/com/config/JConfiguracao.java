@@ -85,7 +85,7 @@ public class JConfiguracao extends javax.swing.JDialog {
             jTextFieldPrev.setText("java -classpath " + local + " com.hotkey.linux.DisparaComando --prev");
             jTextFieldStop.setText("java -classpath " + local + " com.hotkey.linux.DisparaComando --stop");
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -545,13 +545,14 @@ public class JConfiguracao extends javax.swing.JDialog {
             String pasta = (String) jTable_pastas.getValueAt(i, 0);
             pastas.add(pasta);
         }
-        Configuracaoes.set(Configuracaoes.CONF_PASTAS_SCANER, pastas);
-        Configuracaoes.set(Configuracaoes.CONF_ACAO_PADRAO_FILA, AcaoPadraoFila.values()[jComboBoxAcaoFila.getSelectedIndex()]);
-        Configuracaoes.set(Configuracaoes.CONF_ACOES_FILA_VAZIA, AcoesFilaVazia.values()[jComboBoxAoEsvaziaFila.getSelectedIndex()]);
-        Configuracaoes.set(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA, AdicionarNaFilaVazia.values()[jComboBoxAdicionarFilaVazia.getSelectedIndex()]);
-        Configuracaoes.set(Configuracaoes.CONF_TELA_PADRAO, TelaPadrao.values()[jComboBoxTelaPadrao.getSelectedIndex()]);
-        Configuracaoes.set(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS, jCheckBoxAtalhosGlobais.isSelected());
-        Configuracaoes.set(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU, jCheckBoxUltimaMusica.isSelected());
+        Configuracaoes.set(Configuracaoes.CONF_PASTAS_SCANER, pastas, false);
+        Configuracaoes.set(Configuracaoes.CONF_ACAO_PADRAO_FILA, AcaoPadraoFila.values()[jComboBoxAcaoFila.getSelectedIndex()], false);
+        Configuracaoes.set(Configuracaoes.CONF_ACOES_FILA_VAZIA, AcoesFilaVazia.values()[jComboBoxAoEsvaziaFila.getSelectedIndex()], false);
+        Configuracaoes.set(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA, AdicionarNaFilaVazia.values()[jComboBoxAdicionarFilaVazia.getSelectedIndex()], false);
+        Configuracaoes.set(Configuracaoes.CONF_TELA_PADRAO, TelaPadrao.values()[jComboBoxTelaPadrao.getSelectedIndex()], false);
+        Configuracaoes.set(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS, jCheckBoxAtalhosGlobais.isSelected(), false);
+        Configuracaoes.set(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU, jCheckBoxUltimaMusica.isSelected(), false);
+        Configuracaoes.salvar();
         dispose();
 //        setDadosBanco();
 
