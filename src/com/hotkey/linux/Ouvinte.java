@@ -89,7 +89,6 @@ public class Ouvinte implements Runnable {
             } catch (IOException ex) {
                 Logger.getLogger(Ouvinte.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("Aceito...");
         }
     }
 

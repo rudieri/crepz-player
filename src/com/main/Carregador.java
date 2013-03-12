@@ -77,7 +77,6 @@ public class Carregador extends Musiquera {
 
     @Override
     public Musica getNextMusica() {
-        System.out.println("Buscando música em: " + fonteReproducao);
         if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
             return GerenciadorTelas.getFilaReproducao().getProxima();
         } else {
@@ -521,8 +520,6 @@ public class Carregador extends Musiquera {
 
         LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
         for (LookAndFeelInfo lookAndFeelInfo : installedLookAndFeels) {
-            System.out.println(lookAndFeelInfo.getName());
-            System.out.println(lookAndFeelInfo.getClassName());
             if (lookAndFeelInfo.getName().toLowerCase().contains(nome)) {
                 return lookAndFeelInfo;
             }

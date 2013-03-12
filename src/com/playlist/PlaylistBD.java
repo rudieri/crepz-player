@@ -196,7 +196,6 @@ public class PlaylistBD {
 
 
         if (filtro.getId() >= 0) {
-            System.out.println("id: "+ filtro.getId());
             sql.add("AND id = :id");
             sql.setParam("id", filtro.getId());
             ResultSet rs = t.executeQuery(sql.getSql());
@@ -212,7 +211,6 @@ public class PlaylistBD {
                     lista.add(playlist);
 
                 }
-                System.out.println(sql.getSql());
                 return lista;
             } finally {
                 rs.close();

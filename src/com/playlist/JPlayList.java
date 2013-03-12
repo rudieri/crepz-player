@@ -122,8 +122,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     private void importarMusicas(File[] files, Transacao t) {
         try {
             for (File s : files) {
-                System.out.println(s);
-                Musica musica = MusicaGerencia.addFiles(s, t);
+                Musica musica = MusicaGerencia.addOneFile(s, t);
                 if (musica == null) {
                     continue;
                 }
@@ -577,7 +576,6 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 ex.printStackTrace(System.err);
             }
 
-            System.out.println(f.getAbsolutePath());
         }
 
     }
@@ -681,7 +679,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
             t.begin();
 
-            Musica m = MusicaGerencia.addFiles(in, t);
+            Musica m = MusicaGerencia.addOneFile(in, t);
             t.commit();
             //trace("ID: " +m.getId());
             MusicaSC filtro = new MusicaSC();
@@ -700,6 +698,11 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     }
 
     private void removerMusica() {
+        if (playlist.getTipoPlayList() == TipoPlayList.INTELIGENTE) {
+            JOptionPane.showMessageDialog(this, "Essa lista é automática!"
+                    + "\nAltere as condições para remover ou adicionar músicas.");
+            return ;
+        }
         DefaultTableModel tm = (DefaultTableModel) jTable.getModel();
         int selecteds[] = jTable.getSelectedRows();
         for (int i = selecteds.length - 1; i >= 0; i--) {

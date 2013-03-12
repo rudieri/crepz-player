@@ -12,7 +12,7 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author rudieri
  */
-public class FiltroMusica extends FileFilter {
+public class FiltroMusica extends FileFilter implements java.io.FileFilter{
     private static final FiltroMusica FILTRO_MUSICA = new FiltroMusica();
 
     private FiltroMusica() {
@@ -25,7 +25,7 @@ public class FiltroMusica extends FileFilter {
 
     @Override
     public String getDescription() {
-        return "Arquivos de músicas...";
+        return "Arquivos de Audio...";
     }
     public static  FiltroMusica getInstance(){
         return FILTRO_MUSICA;

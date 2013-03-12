@@ -8,7 +8,9 @@ import com.conexao.Transacao;
 import com.utils.BuscaGoogle;
 import com.utils.ComandosSO;
 import com.utils.file.FileUtils;
+import com.utils.file.filtros.FiltroMusica;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -28,12 +30,27 @@ import org.tritonus.share.sampled.TAudioFormat;
 public class MusicaGerencia {
 
     public static final ArrayList<String> listaNegra;
+    private static FileFilter fileFilterImg;
 
     static {
         listaNegra = new ArrayList<String>();
+        fileFilterImg = new java.io.FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                try {
+                    boolean aceita = false;
+                    for (int i = 0; !aceita && i < extSuportadaImagem.length; i++) {
+                        aceita |= pathname.getName().toLowerCase().endsWith(extSuportadaImagem[i]);
+                    }
+                    return aceita;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        };
+
     }
-    @SuppressWarnings("RedundantStringConstructorCall")
-    public static String[] generos = new String("Blues,Classic Rock,Country,Dance,Disco,Funk,Grunge,Hip-Hop,Jazz,Metal,New Age,Oldies,Other,"
+    public static String[] generos = ("Blues,Classic Rock,Country,Dance,Disco,Funk,Grunge,Hip-Hop,Jazz,Metal,New Age,Oldies,Other,"
             + "Pop,R&B,Rap,Reggae,Rock,Techno,Industrial,Alternative,Ska,Death Metal,Pranks,Soundtrack,Euro-Techno,Ambient,Trip-Hop,"
             + "Vocal,Jazz+Funk,Fusion,Trance,Classical,Instrumental,Acid,House,Game,Sound Clip,Gospel,Noise,Altern Rock,Bass,Soul,Punk,"
             + "Space,Meditative,Instrumental Pop,Instrumental Rock,Ethnic,Gothic,Darkwave,Techno-Industrial,Electronic,Pop-Folk,Eurodance,"
@@ -99,9 +116,9 @@ public class MusicaGerencia {
         return m;
     }
 
-    public static void mapearDiretorio(File dir, Transacao t, JProgressBar JProgressBar, Integer total) throws Exception {
-        if (dir.isDirectory()) {
-            File[] f = dir.listFiles();
+    public static void mapearDiretorio(File file, Transacao t, JProgressBar JProgressBar, Integer total) throws Exception {
+        if (file.isDirectory()) {
+            File[] f = file.listFiles(FiltroMusica.getInstance());
             for (int i = 0; i < f.length; i++) {
                 mapearDiretorio(f[i], t, JProgressBar, total);
             }
@@ -113,7 +130,7 @@ public class MusicaGerencia {
                 JProgressBar.setValue(count * 100 / total);
                 JProgressBar.setString(count + " de " + total);
             }
-            addFiles(dir, t);
+            addOneFile(file, t);
         }
     }
 
@@ -125,14 +142,13 @@ public class MusicaGerencia {
             }
 
         } else {
-            Musica musica = addFiles(dir, t);
+            Musica musica = addOneFile(dir, t);
             if (musica != null) {
                 container.add(musica);
             }
         }
     }
 
-    @SuppressWarnings("AssignmentToMethodParameter")
     private static void mapearDiretorio(File dir, ArrayList<Musica> container, JProgressBar jProgressBar, int total, Transacao t) throws Exception {
         if (dir.isDirectory()) {
             File[] f = dir.listFiles();
@@ -140,12 +156,11 @@ public class MusicaGerencia {
                 mapearDiretorio(file, container, jProgressBar, total, t);
             }
         } else {
-            Musica musica = addFiles(dir, t);
+            Musica musica = addOneFile(dir, t);
             if (musica != null) {
                 container.add(musica);
                 jProgressBar.setValue(container.size() * 100 / total);
                 jProgressBar.setString(container.size() + " músicas de " + total + " arquivos.");
-            } else {
             }
         }
     }
@@ -155,16 +170,13 @@ public class MusicaGerencia {
         t.begin();
         jProgressBar.setStringPainted(true);
         for (short i = 0; i < dirs.size(); i++) {
-            File f = dirs.get(i);
-//            File[] f = new File[dirs.size()];
-            mapearDiretorio(f, container, jProgressBar, total, t);
+            mapearDiretorio(dirs.get(i), container, jProgressBar, total, t);
         }
 
         t.commit();
     }
 
     public static boolean ehValido(File file) {
-        //  System.out.println(new MimetypesFileTypeMap().getContentType(file));
         String ext = file.getName().toLowerCase();
         boolean valido = false;
         for (int i = 0; !valido && i < extSuportadaMusica.length; i++) {
@@ -193,48 +205,47 @@ public class MusicaGerencia {
         }
     }
 
-    public static Musica addFiles(File file) {
+    public static Musica addOneFile(File file) {
         Transacao t = new Transacao();
         try {
             t.begin();
-            Musica addFiles = addFiles(file, t);
+            Musica musica = addOneFile(file, t);
             t.commit();
-            return addFiles;
+            return musica;
         } catch (Exception ex) {
             t.rollback();
             Logger.getLogger(MusicaGerencia.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
-    public static ArrayList<Musica> addFilesM3u(File m3uFile, Transacao t){
+
+    public static ArrayList<Musica> addFilesM3u(File m3uFile, Transacao t) {
         ArrayList<Musica> musicas = new ArrayList<Musica>();
         if (m3uFile.getName().endsWith("m3u")) {
             File[] arquivos = FileUtils.lerM3u(m3uFile);
             for (File arquivo : arquivos) {
-                musicas.add(addFiles(arquivo, t));
+                musicas.add(addOneFile(arquivo, t));
             }
         }
         return musicas;
     }
 
-    @SuppressWarnings("AssignmentToMethodParameter")
-    public static Musica addFiles(File file, Transacao t) {
-        if (ehValido(file)) {
-            if (getExtecao(file).toLowerCase().equals("ogg")) {
-                return adicionaOGG(file, t);
-            }
-            try {
+    public static Musica addOneFile(File file, Transacao t) {
+        if (getExtecao(file).toLowerCase().equals("ogg")) {
+            return adicionaOGG(file, t);
+        }
+        try {
 
-                String caminho = file.getAbsolutePath().trim().replace('\\', '/');
-                if (listaNegra.contains(caminho)) {
-                    System.out.println("Não importado, pois está na lista temporária de regeição: " + caminho);
-                    return null;
-                }
-                MP3File mp3;
-                try{
-                 mp3= new MP3File(caminho);
+            String caminho = file.getAbsolutePath().trim().replace('\\', '/');
+            if (listaNegra.contains(caminho)) {
+                System.out.println("Não importado, pois está na lista temporária de regeição: " + caminho);
+                return null;
+            }
+            MP3File mp3;
+            try {
+                mp3 = new MP3File(caminho);
                 Musica m = new Musica();
-                m.setCaminho(normalizarCaminhoArquivo(file));
+                m.setCaminho(normalizarCaminhoArquivo(caminho));
                 if (organizarPastas) {
                     getMusica(m, mp3, file);
                     File destinoF = new File(destino);
@@ -268,35 +279,31 @@ public class MusicaGerencia {
                     m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
                     MusicaBD.alterar(m, t);
                 }
-                
+
                 return m;
-                }catch(Exception ex){
-                    Musica m = new Musica();
-                    m.setCaminho(normalizarCaminhoArquivo(file));
-                    m.setNome(file.getName());
-                    m.setAlbum(file.getParentFile().getName());
-                    m.setAutor(file.getParentFile().getParentFile().getName());
-                    if (MusicaBD.existe(m, t)) {
-                        MusicaBD.carregar(m, t);
-                        m.setDtModArquivo(file.lastModified());
-                        m.setPerdida(false);
-                        MusicaBD.alterar(m, t);
-                    }else{
-                        m.setDtModArquivo(file.lastModified());
-                        MusicaBD.incluir(m, t);
-                        MusicaBD.carregarPeloEndereco(m, t);
-                    }
+            } catch (Exception ex) {
+                Musica m = new Musica();
+                m.setCaminho(normalizarCaminhoArquivo(file));
+                m.setNome(file.getName());
+                m.setAlbum(file.getParentFile().getName());
+                m.setAutor(file.getParentFile().getParentFile().getName());
+                if (MusicaBD.existe(m, t)) {
+                    MusicaBD.carregar(m, t);
+                    m.setDtModArquivo(file.lastModified());
+                    m.setPerdida(false);
+                    MusicaBD.alterar(m, t);
+                } else {
+                    m.setDtModArquivo(file.lastModified());
+                    MusicaBD.incluir(m, t);
+                    MusicaBD.carregarPeloEndereco(m, t);
                 }
-            } catch (Exception e) {
-                System.out.println("Erro ao importar arquivos, foi adiconado na lista negra.");
-                e.printStackTrace();
-                listaNegra.add(file.getAbsolutePath());
             }
-            return null;
-        } else {
-//            System.out.println(file.getName() + " Não é um tipo válido.");
-            return null;
+        } catch (Exception e) {
+            System.out.println("Erro ao importar arquivo. Será adiconado na lista negra: " + file.getAbsolutePath());
+            e.printStackTrace(System.err);
+            listaNegra.add(file.getAbsolutePath());
         }
+        return null;
 
     }
 
@@ -327,23 +334,8 @@ public class MusicaGerencia {
         if (!dir.isDirectory()) {
             return null;
         }
-        File[] files = dir.listFiles(new java.io.FileFilter() {
 
-            @Override
-            public boolean accept(File pathname) {
-                try {
-                    boolean aceita = false;
-                    for (int i = 0; !aceita && i < extSuportadaImagem.length; i++) {
-                        aceita |= pathname.getName().toLowerCase().endsWith(extSuportadaImagem[i]);
-
-                    }
-                    return aceita;
-//                    return (new javax.swing.ImageIcon(pathname.getPath()).getIconHeight() > 0 && pathname.canRead()) && new File(pathname.getAbsolutePath()).exists();
-                } catch (Exception ex) {
-                    return false;
-                }
-            }
-        });
+        File[] files = dir.listFiles(fileFilterImg);
 
         if (files != null && files.length > 0) {
             if (ComandosSO.getMySO() == ComandosSO.WINDOWS) {

@@ -82,7 +82,6 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
 
     public static Playlist getPlayList(int id) {
         Playlist playlist = new Playlist();
-        System.out.println("id: " + id);
         playlist.setId(id);
         try {
             PlaylistBD.carregar(playlist);
@@ -111,7 +110,7 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
                 row[0] = m.getId();
                 row[1] = m.getNome();
                 row[2] = m.getTipoPlayList();
-                row[3] = m.getNrMusicas();
+                row[3] = m.getTipoPlayList() == TipoPlayList.INTELIGENTE ? "<auto>":m.getNrMusicas();
                 row[4] = m;
 
                 ts.addRow(row);
