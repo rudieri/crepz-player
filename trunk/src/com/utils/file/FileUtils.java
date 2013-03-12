@@ -138,13 +138,4 @@ public class FileUtils {
             return new File[0];
         }
     }
-
-    public static void main(String arqs[]) {
-        try {
-            StringBuilder st = leArquivo(new File("C:/JPlayer/teste.mp3"));
-            System.out.println(st);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 }

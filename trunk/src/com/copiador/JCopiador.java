@@ -125,7 +125,6 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
                         }
                         Files.copy(original.toPath(), novo.toPath(), StandardCopyOption.COPY_ATTRIBUTES,
                                 StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Copiando... [" + i + " de " + musicas.size() + "] ");
                     } catch (IOException ex) {
                         if (mostrarMensagemErro(ex, i, musica)) {
                             return;
@@ -150,7 +149,6 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
                         }
                         Files.copy(original.toPath(), novo.toPath(), StandardCopyOption.COPY_ATTRIBUTES,
                                 StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Copiando... [" + i + " de " + musicas.size() + "] ");
                     } catch (IOException ex) {
                         if (mostrarMensagemErro(ex, i, musica)) {
                             return;

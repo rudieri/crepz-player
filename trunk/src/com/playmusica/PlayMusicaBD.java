@@ -59,7 +59,6 @@ public class PlayMusicaBD {
      */
     public static int incluir(PlayMusica playMusica, Transacao t) throws Exception {
         consistir(playMusica);
-        System.out.println(playMusica.getId());
         SQL sql = new SQL();
         sql.add("INSERT INTO " + TBL);
         sql.add(" (id, playlist, musica, seq) ");
@@ -76,7 +75,6 @@ public class PlayMusicaBD {
     }
  public static int incluir(PlayMusica playMusica, int id, Transacao t) throws Exception {
         consistir(playMusica);
-        System.out.println(playMusica.getId());
         SQL sql = new SQL();
         sql.add("INSERT INTO " + TBL);
         sql.add(" (id, playlist, musica, seq) ");

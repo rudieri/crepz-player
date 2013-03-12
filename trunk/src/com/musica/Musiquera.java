@@ -144,7 +144,7 @@ public abstract class Musiquera implements BasicPlayerListener {
         try {
             this.musica = m;
             if (m == null) {
-                System.out.println("Musica não existe, nullPointer");
+                System.out.println("Musica não existe!");
                 System.err.print(Arrays.toString(Thread.currentThread().getStackTrace()));
                 return false;
             }
@@ -409,7 +409,7 @@ public abstract class Musiquera implements BasicPlayerListener {
             }
             return tempo.toString();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
         return "";
     }
@@ -442,7 +442,7 @@ public abstract class Musiquera implements BasicPlayerListener {
                 try {
                     info = getMusica().getNome();
                 } catch (Exception ex) {
-                    System.out.println("Erro em opened, " + ex.toString());
+                    ex.printStackTrace(System.err);
                 }
             }
             atualizaLabels(info, bits, microSegundosEmMinSeq(totalTempo), freq);

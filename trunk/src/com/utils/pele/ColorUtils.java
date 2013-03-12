@@ -104,7 +104,7 @@ public class ColorUtils {
             }
         } catch (Exception ex) {
             System.out.println("Erro ao trocar cor do componente: " + component.getName() + " => " + component.toString());
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 

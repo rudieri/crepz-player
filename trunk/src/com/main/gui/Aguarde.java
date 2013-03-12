@@ -41,7 +41,6 @@ public class Aguarde extends javax.swing.JFrame implements Runnable {
             player.play();
         } catch (BasicPlayerException ex) {
             ex.printStackTrace(System.err);
-            System.out.println("Crepz no intro!");
         }
     }
 

@@ -129,7 +129,7 @@ public class Scan implements Runnable {
                     }
                     if (ultimaModificacao > maxDtModArquivo) {
                         atualizarChache = true;
-                        MusicaGerencia.addFiles(path, t);
+                        MusicaGerencia.addOneFile(path, t);
                     }
                 }
             }

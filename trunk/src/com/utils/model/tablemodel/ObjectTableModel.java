@@ -185,7 +185,6 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
                 itensFiltrados.set(indexOf, item);
             }
         }
-        System.out.println("Item changed: " + item + ", tempo total: " + item.getTextoParaPesquisa());
         for (int i = 0; i < tableModelListeners.size(); i++) {
             TableModelEvent event = new TableModelEvent(this, convertedRow, convertedRow, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE);
             tableModelListeners.get(i).tableChanged(event);
@@ -221,7 +220,6 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
             }
         }
         itensFiltrados.clear();
-        System.out.println("Filtro: " + filtro);
         String[] tokenFiltro = filtro.split(" ");
         for (int i = 0; i < itens.size(); i++) {
             E item = itens.get(i);
@@ -233,7 +231,6 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
                 itensFiltrados.add(item);
             }
         }
-        System.out.println("Itens Filtrados: " + itensFiltrados.size());
         for (int i = 0; i < tableModelListeners.size(); i++) {
             TableModelEvent event = new TableModelEvent(this, 0, itensFiltrados.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
             if (!itensFiltrados.isEmpty()) {

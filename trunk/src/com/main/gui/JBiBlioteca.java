@@ -399,7 +399,6 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
         int total = DiretorioUtils.calculaQuantidadeArquivos(pasta);
         MusicaGerencia.count = 0;
         MusicaGerencia.mapearDiretorio(pasta, t, jProgressBar, total);
-        System.out.println("Tempo decorrido: " + (new Date().getTime() - date));
     }
 
     public void resetText() {
