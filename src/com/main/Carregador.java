@@ -32,21 +32,18 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import org.hsqldb.server.Server;
-import sun.management.VMManagement;
 
 /**
  *
@@ -692,40 +689,37 @@ public class Carregador extends Musiquera {
      */
     public static boolean gerarBloqueio() {
         try {
-
-            RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-            Field jvmField = runtimeMXBean.getClass().getDeclaredField("jvm");
-            jvmField.setAccessible(true);
-            VMManagement vmm = (VMManagement) jvmField.get(runtimeMXBean);
-            vmm.getVmId();
-            Method pidMethod = vmm.getClass().getDeclaredMethod("getProcessId");
-            pidMethod.setAccessible(true);
-            Integer meuPid = (Integer) pidMethod.invoke(vmm);
+            long time = System.currentTimeMillis();
 
             File pasta = new File(new File(Carregador.class.getResource("/").toURI()), "etc");
             if (!pasta.exists()) {
                 pasta.mkdirs();
             }
-            arquivoBloqueio = new File(pasta, "mypid.lock");
+            arquivoBloqueio = new File(pasta, "lock");
             if (arquivoBloqueio.exists()) {
                 String leArquivo = FileUtils.leArquivo(arquivoBloqueio).toString().replaceAll("[^0-9]", "");
-                int outroPid;
+                long timeArquivo;
                 if (leArquivo.length() != 0) {
-                    outroPid = Integer.parseInt(leArquivo.toString());
+                    timeArquivo = Long.parseLong(leArquivo.toString());
                 } else {
-                    outroPid = 0;
+                    timeArquivo = 0;
                 }
 
-                if (outroPid == 0) {
-                    FileUtils.gravaArquivo(meuPid.toString(), arquivoBloqueio.getAbsolutePath());
+                if (timeArquivo == 0) {
+                    FileUtils.gravaArquivo(Long.toString(time), arquivoBloqueio.getAbsolutePath());
                 } else {
-                    if (outroPid != meuPid.intValue()) {
-                        return false;
+                    if (time-timeArquivo>10000) {
+                        boolean consegui = DisparaComando.disparar(new Comando(TipoComando.PING));
+                        if (!consegui) {
+                            arquivoBloqueio.delete();
+                            return gerarBloqueio();
+                        }
                     }
+                    return false;
                 }
             } else {
                 arquivoBloqueio.createNewFile();
-                FileUtils.gravaArquivo(meuPid.toString(), arquivoBloqueio.getAbsolutePath());
+                FileUtils.gravaArquivo(Long.toString(time), arquivoBloqueio.getAbsolutePath());
             }
         } catch (Exception ex) {
             Logger.getLogger(Carregador.class.getName()).log(Level.SEVERE, null, ex);
