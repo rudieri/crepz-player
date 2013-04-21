@@ -85,6 +85,11 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jFileChooserImportar.setFileFilter(FiltroMusica.getInstance());
         jFileChooserImportar.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         jProgressBar1.setVisible(false);
+        JCheckBoxMenuItem[] menusLnF = carregador.getMenusLnF();
+        for (JCheckBoxMenuItem jCheckBoxMenuItem : menusLnF) {
+            jMenuLnF.add(jCheckBoxMenuItem);
+        }
+        SwingUtilities.updateComponentTreeUI(jMenuLnF);
     }
 
     @Override
@@ -515,6 +520,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jMenuItem_Play = new javax.swing.JMenuItem();
         jMenuItem_Configuracoes = new javax.swing.JMenuItem();
         jMenuItem_Tema = new javax.swing.JMenuItem();
+        jMenuLnF = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem_Sobre = new javax.swing.JMenuItem();
         jMenuItem_Help = new javax.swing.JMenuItem();
@@ -601,7 +607,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel15.setOpaque(false);
         jPanel15.setPreferredSize(new java.awt.Dimension(397, 60));
 
-        jLabel_Musica.setText("Nada está tocando no momento...");
+        jLabel_Musica.setText(":)");
         jPanel15.add(jLabel_Musica);
 
         jPanel1.add(jPanel15);
@@ -621,7 +627,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel11.setOpaque(false);
 
         jLabel_bit.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
-        jLabel_bit.setText("Kbps");
+        jLabel_bit.setText("- Kbps");
         jPanel11.add(jLabel_bit);
 
         jPanel5.add(jPanel11);
@@ -629,7 +635,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel12.setBackground(new java.awt.Color(255, 255, 255));
         jPanel12.setOpaque(false);
 
-        jLabel_freq.setText("Hz");
+        jLabel_freq.setText("- KHz");
         jPanel12.add(jLabel_freq);
 
         jPanel5.add(jPanel12);
@@ -795,6 +801,9 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jMenu2.add(jMenuItem_Tema);
 
         jMenuBar1.add(jMenu2);
+
+        jMenuLnF.setText("L&F");
+        jMenuBar1.add(jMenuLnF);
 
         jMenu3.setText("Sobre");
 
@@ -1036,7 +1045,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
     private void jMenuItem_ArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_ArquivoActionPerformed
         try {
-            carregador.abrir(MusicaGerencia.addOneFile(telaAbrirArquivo(), null), 0, false);
+            carregador.abrir(MusicaGerencia.addOneFile(telaAbrirArquivo()), 0, false);
         } catch (Exception ex) {
             Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1226,6 +1235,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private javax.swing.JMenuItem jMenuItem_Propriedades;
     private javax.swing.JMenuItem jMenuItem_Sobre;
     private javax.swing.JMenuItem jMenuItem_Tema;
+    private javax.swing.JMenu jMenuLnF;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;

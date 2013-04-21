@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * MusicaComponent.java
  *
  * Created on 07/02/2012, 22:52:34
@@ -69,10 +64,11 @@ public class MusicaComponent extends javax.swing.JPanel {
         jLabelArtista = new javax.swing.JLabel();
 
         setBorder(new javax.swing.border.LineBorder(new java.awt.Color(99, 99, 99), 1, true));
-        setOpaque(false);
+        setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
         setPreferredSize(new java.awt.Dimension(120, 50));
         setLayout(new java.awt.BorderLayout());
 
+        jPanel2.setOpaque(false);
         jPanel2.setPreferredSize(new java.awt.Dimension(113, 20));
         jPanel2.setLayout(new java.awt.BorderLayout());
 
@@ -88,6 +84,7 @@ public class MusicaComponent extends javax.swing.JPanel {
 
         add(jPanel2, java.awt.BorderLayout.PAGE_START);
 
+        jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         jLabelArtista.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N

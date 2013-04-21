@@ -8,7 +8,10 @@ import com.config.Configuracaoes;
 import com.config.constantes.TelaPadrao;
 import com.fila.JFilaReproducao;
 import com.graficos.Icones;
+import com.hotkey.linux.Comando;
+import com.hotkey.linux.DisparaComando;
 import com.hotkey.linux.Ouvinte;
+import com.hotkey.linux.TipoComando;
 import com.main.gui.Aguarde;
 import com.main.gui.JMini;
 import com.melloware.jintellitype.JIntellitype;
@@ -16,23 +19,34 @@ import com.musica.CacheDeMusica;
 import com.musica.LinhaDoTempo;
 import com.musica.Musica;
 import com.musica.MusicaBD;
+import com.musica.MusicaGerencia;
 import com.musica.Musiquera;
 import com.musica.Musiquera.PropriedadesMusica;
+import com.utils.file.FileUtils;
 import java.awt.SystemTray;
 import java.awt.Window;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import org.hsqldb.server.Server;
+import sun.management.VMManagement;
 
 /**
  *
@@ -41,9 +55,11 @@ import org.hsqldb.server.Server;
 public class Carregador extends Musiquera {
 
     private static Carregador me;
+    private static File arquivoBloqueio;
     private Icones icones;
     private FonteReproducao fonteReproducao;
     private static TelaPadrao telaPadrao;
+    private JCheckBoxMenuItem[] menusLnF;
 
     public Carregador() {
         super();
@@ -117,10 +133,28 @@ public class Carregador extends Musiquera {
         }
     }
 
-    private void inicializarConfiguracoes() {
+    private void inicializarConfiguracoes(String[] args) {
         icones = new Icones();
         icones.loadIcons("crepz");
         startMultimidiaKeys();
+        ArrayList<File> abrir = new ArrayList<File>();
+        for (int i = 0; i < args.length; i++) {
+            String nomeArq = args[i];
+            File f = new File(nomeArq);
+            if (MusicaGerencia.ehValido(f)) {
+                abrir.add(f);
+            }
+
+        }
+        if (abrir.size() > 0) {
+            File[] files = new File[abrir.size()];
+            GerenciadorTelas.getPlayList(abrir.toArray(files)).setVisible(true);
+            Configuracaoes.set(Configuracaoes.CONF_FONTE_REPRODUCAO, FonteReproducao.PLAY_LIST, true);
+            if (telaPadrao == TelaPadrao.COMO_ESTAVA) {
+                telaPadrao = TelaPadrao.J_PRINCIPAL;
+            }
+            tocarProxima();
+        }
         setTelaBase(telaPadrao);
         if (!Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER).isEmpty()) {
             GerenciadorTelas.getScan();
@@ -258,10 +292,10 @@ public class Carregador extends Musiquera {
         }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_PLAYLIST)) {
             GerenciadorTelas.getPlayList().setVisible(true);
-            }
+        }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_BIBLIOTECA)) {
             GerenciadorTelas.getBiblioteca().setVisible(true);
-            }
+        }
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_VISIB_FILA)) {
             GerenciadorTelas.getFilaReproducao().setVisible(true);
             carregouTela = true;
@@ -366,7 +400,7 @@ public class Carregador extends Musiquera {
 
     public void sair() {
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU)) {
-            Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO, isPlaying() || isPaused() ? getMusica().getId() : -1, false);
+            Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO, (isPlaying() || isPaused()) && getMusica() != null ? getMusica().getId() : -1, false);
             Configuracaoes.set(Configuracaoes.CONF_MUSICA_REPRODUZINDO_TEMPO, isPlaying() || isPaused() ? getTempoAtual() : -1, false);
         }
 
@@ -405,8 +439,12 @@ public class Carregador extends Musiquera {
         Configuracaoes.set(Configuracaoes.CONF_FONTE_REPRODUCAO, fonteReproducao, false);
         Configuracaoes.set(Configuracaoes.CONF_BALANCO, getBalanco(), false);
         Configuracaoes.set(Configuracaoes.CONF_VOLUME, getVolume(), false);
+        Configuracaoes.set(Configuracaoes.CONF_LOOK_AND_FEEL, UIManager.getLookAndFeel().getID(), false);
 
         Configuracaoes.salvar();
+        if (arquivoBloqueio != null) {
+            arquivoBloqueio.deleteOnExit();
+        }
         System.exit(0);
     }
 
@@ -484,21 +522,61 @@ public class Carregador extends Musiquera {
 
 //        System.setProperty("Quaqua.tabLayoutPolicy", "wrap");
         try {
+            LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+            menusLnF = new JCheckBoxMenuItem[installedLookAndFeels.length];
+            for (int i = 0; i < installedLookAndFeels.length; i++) {
+                LookAndFeelInfo info = installedLookAndFeels[i];
+                final JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(info.getName());
+                jCheckBoxMenuItem.addItemListener(new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            try {
+                                LookAndFeelInfo findLookAndFeel = findLookAndFeel(jCheckBoxMenuItem.getText());
+                                if (UIManager.getLookAndFeel().getName().contains(jCheckBoxMenuItem.getText())
+                                        || UIManager.getLookAndFeel().getID().contains(jCheckBoxMenuItem.getText())
+                                        || UIManager.getLookAndFeel().getClass().getName().equals(findLookAndFeel.getClassName())) {
+                                    return;
+                                }
+                                setLookAndFeel(findLookAndFeel);
+                                for (int j = 0; j < menusLnF.length; j++) {
+                                    JCheckBoxMenuItem menuItem = menusLnF[j];
+                                    if (menuItem != jCheckBoxMenuItem && menuItem.isSelected()) {
+                                        menuItem.setSelected(false);
+                                    }
+                                }
+                                updateTelasLookAndFeel();
+                            } catch (Exception ex) {
+                                Logger.getLogger(Carregador.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                });
+                menusLnF[i] = jCheckBoxMenuItem;
+            }
+
+
+            String lnfSalvo = Configuracaoes.getString(Configuracaoes.CONF_LOOK_AND_FEEL);
             //            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
-            LookAndFeelInfo lookAndFeelInfo;
-            String[] lnfPreferido = {"gtk+", "nimbus"};
-            for (String nome : lnfPreferido) {
-                lookAndFeelInfo = findLookAndFeel(nome);
-                if (lookAndFeelInfo != null) {
+            boolean achou = false;
+            if (lnfSalvo != null && !lnfSalvo.isEmpty()) {
+                LookAndFeelInfo findLookAndFeel = findLookAndFeel(lnfSalvo);
+                if (findLookAndFeel != null) {
+                    achou = true;
+                    setLookAndFeel(findLookAndFeel);
 
-                    UIManager.setLookAndFeel(lookAndFeelInfo.getClassName());
-                    UIManager.getLookAndFeelDefaults().put("Slider.paintValue", false);
-                    PropertyChangeEvent changeEvent = new PropertyChangeEvent(UIManager.getLookAndFeelDefaults(), "Slider.paintValue", true, false);
-                    PropertyChangeListener[] propertyChangeListeners = UIManager.getLookAndFeel().getDefaults().getPropertyChangeListeners();
-                    for (PropertyChangeListener propertyChangeListener : propertyChangeListeners) {
-                        propertyChangeListener.propertyChange(changeEvent);
-                    }
+                } else {
+                    achou = false;
+                }
+            }
+            if (!achou) {
+
+                String[] lnfPreferido = {"nimbus", "gtk+"};
+                for (String nome : lnfPreferido) {
+                    LookAndFeelInfo lookAndFeelInfo = findLookAndFeel(nome);
+                    if (lookAndFeelInfo != null) {
+                        setLookAndFeel(lookAndFeelInfo);
 //                    UIDefaults defaults = UIManager.getLookAndFeel().getDefaults();
 //                    
 //                    for (Map.Entry<Object, Object> entry : defaults.entrySet()) {
@@ -507,7 +585,8 @@ public class Carregador extends Musiquera {
 //                        System.out.println("=> " + chave.toString() + " = " + (valor == null ? "null" : valor.toString() + "("+valor.getClass().getSimpleName()+")"));
 //                    }
 
-                    return;
+                        break;
+                    }
                 }
             }
 
@@ -520,11 +599,53 @@ public class Carregador extends Musiquera {
 
         LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
         for (LookAndFeelInfo lookAndFeelInfo : installedLookAndFeels) {
-            if (lookAndFeelInfo.getName().toLowerCase().contains(nome)) {
+            if (lookAndFeelInfo.getName().toLowerCase().contains(nome.toLowerCase())) {
                 return lookAndFeelInfo;
             }
         }
         return null;
+    }
+
+    public void updateTelasLookAndFeel() throws Exception {
+        if (GerenciadorTelas.isPrincipalCarregado()) {
+            SwingUtilities.updateComponentTreeUI(GerenciadorTelas.getPrincipal());
+        }
+        if (GerenciadorTelas.isPlayListCarregado()) {
+            SwingUtilities.updateComponentTreeUI(GerenciadorTelas.getPlayList());
+            GerenciadorTelas.getPlayList().lookAndFeelChanged();
+        }
+        if (GerenciadorTelas.isBibliotecaCarregado()) {
+            SwingUtilities.updateComponentTreeUI(GerenciadorTelas.getBiblioteca());
+        }
+        if (GerenciadorTelas.isFilaReproducaoCarregada()) {
+            SwingUtilities.updateComponentTreeUI(GerenciadorTelas.getFilaReproducao());
+            GerenciadorTelas.getFilaReproducao().lookAndFeelChanged();
+        }
+        if (GerenciadorTelas.isMiniCarregado()) {
+            SwingUtilities.updateComponentTreeUI(GerenciadorTelas.getMini());
+        }
+    }
+
+    public void setLookAndFeel(LookAndFeelInfo lookAndFeelInfo) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeelInfo.getClassName());
+        UIManager.getLookAndFeelDefaults().put("Slider.paintValue", false);
+        PropertyChangeEvent changeEvent = new PropertyChangeEvent(UIManager.getLookAndFeelDefaults(), "Slider.paintValue", true, false);
+        PropertyChangeListener[] propertyChangeListeners = UIManager.getLookAndFeel().getDefaults().getPropertyChangeListeners();
+        for (PropertyChangeListener propertyChangeListener : propertyChangeListeners) {
+            propertyChangeListener.propertyChange(changeEvent);
+        }
+        for (JCheckBoxMenuItem jCheckBoxMenuItem : menusLnF) {
+            if (jCheckBoxMenuItem.getText().contains(lookAndFeelInfo.getName()) || lookAndFeelInfo.getName().contains(jCheckBoxMenuItem.getText())) {
+                jCheckBoxMenuItem.setSelected(true);
+            } else {
+                jCheckBoxMenuItem.setSelected(false);
+
+            }
+        }
+    }
+
+    public JCheckBoxMenuItem[] getMenusLnF() {
+        return menusLnF;
     }
 
     public boolean isRandom() {
@@ -563,8 +684,66 @@ public class Carregador extends Musiquera {
         return icones;
     }
 
+    /**
+     * Gera um arquivo de bloqueio, para que não se possa abrir mais de uma
+     * instância do Crepz ao mesmo tempo.
+     *
+     * @return Se essa instância é válida ou não.
+     */
+    public static boolean gerarBloqueio() {
+        try {
+
+            RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+            Field jvmField = runtimeMXBean.getClass().getDeclaredField("jvm");
+            jvmField.setAccessible(true);
+            VMManagement vmm = (VMManagement) jvmField.get(runtimeMXBean);
+            vmm.getVmId();
+            Method pidMethod = vmm.getClass().getDeclaredMethod("getProcessId");
+            pidMethod.setAccessible(true);
+            Integer meuPid = (Integer) pidMethod.invoke(vmm);
+
+            File pasta = new File(new File(Carregador.class.getResource("/").toURI()), "etc");
+            if (!pasta.exists()) {
+                pasta.mkdirs();
+            }
+            arquivoBloqueio = new File(pasta, "mypid.lock");
+            if (arquivoBloqueio.exists()) {
+                String leArquivo = FileUtils.leArquivo(arquivoBloqueio).toString().replaceAll("[^0-9]", "");
+                int outroPid;
+                if (leArquivo.length() != 0) {
+                    outroPid = Integer.parseInt(leArquivo.toString());
+                } else {
+                    outroPid = 0;
+                }
+
+                if (outroPid == 0) {
+                    FileUtils.gravaArquivo(meuPid.toString(), arquivoBloqueio.getAbsolutePath());
+                } else {
+                    if (outroPid != meuPid.intValue()) {
+                        return false;
+                    }
+                }
+            } else {
+                arquivoBloqueio.createNewFile();
+                FileUtils.gravaArquivo(meuPid.toString(), arquivoBloqueio.getAbsolutePath());
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Carregador.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
-        me = new Carregador();
-        me.inicializarConfiguracoes();
+        boolean possoContinuar = gerarBloqueio();
+        if (possoContinuar) {
+            me = new Carregador();
+            me.inicializarConfiguracoes(args);
+        } else {
+            if (args.length > 0) {
+                System.out.println("Tentando abrir: " + args[0]);
+                DisparaComando.disparar(new Comando(TipoComando.ADICIONAR_LISTA, args[0]));
+            }
+        }
     }
 }

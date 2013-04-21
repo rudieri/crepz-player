@@ -12,13 +12,16 @@ import java.util.*;
  */
 public class PlaylistBD {
 
-    /** Constante que define o nome da tabela. */
+    /**
+     * Constante que define o nome da tabela.
+     */
     public static final String TBL = "playlist";
 
     /**
      * Método que consiste a BK de Musica.
+     *
      * @param playlist
-     * @throws Exception  
+     * @throws Exception
      */
     public static void consistirBK(Playlist playlist) throws Exception {
         if (playlist == null) {
@@ -34,8 +37,9 @@ public class PlaylistBD {
 
     /**
      * Método que consiste os dados de Musica.
+     *
      * @param playlist
-     * @throws Exception  
+     * @throws Exception
      */
     public static void consistir(Playlist playlist) throws Exception {
         consistirBK(playlist);
@@ -46,10 +50,10 @@ public class PlaylistBD {
      * Método que tenta incluir um objeto Musica.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @param t Contendo a transação.
      * @return int Contendo o numero de linhas afetadas.
-     * @throws Exception  
+     * @throws Exception
      */
     public static int incluir(Playlist playlist, Transacao t) throws Exception {
         consistir(playlist);
@@ -72,10 +76,10 @@ public class PlaylistBD {
      * Método que tenta alterar um objeto Musica.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @param t Contendo a transação.
      * @return int Contendo o numero de linhas afetadas.
-     * @throws Exception  
+     * @throws Exception
      */
     public static int alterar(Playlist playlist, Transacao t) throws Exception {
         consistir(playlist);
@@ -97,10 +101,10 @@ public class PlaylistBD {
      * Método que tenta excluir um objeto Musica.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @param t Contendo a transação.
      * @return int Contendo o numero de linhas afetadas.
-     * @throws Exception  
+     * @throws Exception
      */
     public static int excluir(Playlist playlist, Transacao t) throws Exception {
         SQL sql = new SQL();
@@ -114,13 +118,14 @@ public class PlaylistBD {
     }
 
     /**
-     * Método que verifica pelo BK se o objeto Musica está cadastrado. Se estiver, carrega o ID do objeto.
+     * Método que verifica pelo BK se o objeto Musica está cadastrado. Se
+     * estiver, carrega o ID do objeto.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @param t Contendo a transação.
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
-     * @throws Exception  
+     * @throws Exception
      */
     public static boolean existe(Playlist playlist, Transacao t) throws Exception {
         consistirBK(playlist);
@@ -136,22 +141,44 @@ public class PlaylistBD {
         try {
             if (!rs.next()) {
                 return false;
-        }
+            }
             playlist.setId(rs.getInt("id"));
             return true;
         } finally {
             rs.close();
+        }
     }
+    public static boolean existeCarregar(Playlist playlist, Transacao t) throws Exception {
+        consistirBK(playlist);
+
+        SQL sql = new SQL();
+        sql.add("SELECT * FROM " + TBL);
+        sql.add("WHERE nome = :nome");
+
+        sql.setParam("nome", playlist.getNome());
+
+        ResultSet rs = t.executeQuery(sql.getSql());
+
+        try {
+            if (!rs.next()) {
+                return false;
+            }
+            playlist.setId(rs.getInt("id"));
+            carregar(playlist, t);
+            return true;
+        } finally {
+            rs.close();
+        }
     }
 
     /**
      * Método que carrega o objeto Musica pelo ID.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @param t Contendo a transação.
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
-     * @throws Exception  
+     * @throws Exception
      */
     public static boolean carregar(Playlist playlist, Transacao t) throws Exception {
         SQL sql = new SQL();
@@ -164,7 +191,7 @@ public class PlaylistBD {
         try {
             if (!rs.next()) {
                 return false;
-    }
+            }
 
             playlist.setId(rs.getInt("id"));
             playlist.setNome(rs.getString("nome"));
@@ -177,16 +204,18 @@ public class PlaylistBD {
         }
     }
 
-    /** Método que retorna uma lista de Musicas de acordo com o filtro.
+    /**
+     * Método que retorna uma lista de Musicas de acordo com o filtro.
+     *
      * @param filtro Contendo o filtro.
      * @param t Contendo a transação.
      * @return ArrayList Contendo uma lista de Musicas.
-     * @throws Exception 
+     * @throws Exception
      */
     public static ArrayList listar(PlaylistSC filtro, Transacao t) throws Exception {
         if (filtro == null) {
             throw new Exception(" - Filtro não informado.");
-    }
+        }
 
 
         SQL sql = new SQL();
@@ -245,15 +274,15 @@ public class PlaylistBD {
     }
 
     /*#########################################
-    METODOS SEM TRANSACAO
+     METODOS SEM TRANSACAO
      *#########################################*/
     /**
      * Método que tenta incluir um objeto Musica.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @return int Contendo o numero de linhas afetadas.
-     * @throws Exception  
+     * @throws Exception
      */
     public static int incluir(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -272,9 +301,9 @@ public class PlaylistBD {
      * Método que tenta alterar um objeto Musica.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @return int Contendo o numero de linhas afetadas.
-     * @throws Exception  
+     * @throws Exception
      */
     public static int alterar(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -293,9 +322,9 @@ public class PlaylistBD {
      * Método que tenta excluir um objeto Musica.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @return int Contendo o numero de linhas afetadas.
-     * @throws Exception  
+     * @throws Exception
      */
     public static int excluir(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -311,12 +340,13 @@ public class PlaylistBD {
     }
 
     /**
-     * Método que verifica pelo BK se o objeto Musica está cadastrado. Se estiver, carrega o ID do objeto.
+     * Método que verifica pelo BK se o objeto Musica está cadastrado. Se
+     * estiver, carrega o ID do objeto.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
-     * @throws Exception  
+     * @throws Exception
      */
     public static boolean existe(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -330,14 +360,26 @@ public class PlaylistBD {
             throw ex;
         }
     }
+    public static boolean existeCarregar(Playlist playlist) throws Exception {
+        Transacao t = new Transacao();
+        try {
+            t.begin();
+            boolean r = existeCarregar(playlist, t);
+            t.commit();
+            return r;
+        } catch (Exception ex) {
+            t.rollback();
+            throw ex;
+        }
+    }
 
     /**
      * Método que carrega o objeto Musica pelo ID.
      *
      *
-     * @param playlist 
+     * @param playlist
      * @return boolean Contendo TRUE se está cadastrado e FALSE se não estiver.
-     * @throws Exception  
+     * @throws Exception
      */
     public static boolean carregar(Playlist playlist) throws Exception {
         Transacao t = new Transacao();
@@ -352,10 +394,12 @@ public class PlaylistBD {
         }
     }
 
-    /** Método que retorna uma lista de Musicas de acordo com o filtro.
+    /**
+     * Método que retorna uma lista de Musicas de acordo com o filtro.
+     *
      * @param filtro Contendo o filtro.
      * @return ArrayList Contendo uma lista de Musicas.
-     * @throws Exception 
+     * @throws Exception
      */
     public static ArrayList listar(PlaylistSC filtro) throws Exception {
         Transacao t = new Transacao();

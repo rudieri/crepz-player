@@ -70,7 +70,6 @@ public class MusicaGerencia {
         //getID3v2Tag
         if (mp3.hasID3v2Tag()) {
             m.setNome(mp3.getID3v2Tag().getSongTitle());
-            m.setSize(mp3.getID3v2Tag().getSize());
             m.setAlbum(mp3.getID3v2Tag().getAlbumTitle());
             m.setAutor(mp3.getID3v2Tag().getLeadArtist());
             m.setGenero(mp3.getID3v2Tag().getSongGenre());
@@ -83,7 +82,6 @@ public class MusicaGerencia {
             if (m.getNome() == null || m.getNome().isEmpty()) {
                 m.setNome(mp3.getID3v1Tag().getTitle());
             }
-            m.setSize(mp3.getID3v1Tag().getSize());
             m.setAlbum(mp3.getID3v1Tag().getAlbumTitle());
             m.setAutor(mp3.getID3v1Tag().getArtist());
             m.setGenero(Integer.valueOf(mp3.getID3v1Tag().getGenre()));
@@ -136,7 +134,7 @@ public class MusicaGerencia {
 
     public static void mapearDiretorio(File dir, ArrayList<Musica> container, Transacao t) throws Exception {
         if (dir.isDirectory()) {
-            File[] f = dir.listFiles();
+            File[] f = dir.listFiles(FiltroMusica.getInstance());
             for (int i = 0; i < f.length; i++) {
                 mapearDiretorio(f[i], container, t);
             }
@@ -151,7 +149,7 @@ public class MusicaGerencia {
 
     private static void mapearDiretorio(File dir, ArrayList<Musica> container, JProgressBar jProgressBar, int total, Transacao t) throws Exception {
         if (dir.isDirectory()) {
-            File[] f = dir.listFiles();
+            File[] f = dir.listFiles(FiltroMusica.getInstance());
             for (File file : f) {
                 mapearDiretorio(file, container, jProgressBar, total, t);
             }
@@ -159,7 +157,7 @@ public class MusicaGerencia {
             Musica musica = addOneFile(dir, t);
             if (musica != null) {
                 container.add(musica);
-                jProgressBar.setValue(container.size() * 100 / total);
+                jProgressBar.setValue(total == 0 ? 1 :container.size() * 100 / total);
                 jProgressBar.setString(container.size() + " músicas de " + total + " arquivos.");
             }
         }
@@ -231,77 +229,79 @@ public class MusicaGerencia {
     }
 
     public static Musica addOneFile(File file, Transacao t) {
-        if (getExtecao(file).toLowerCase().equals("ogg")) {
-            return adicionaOGG(file, t);
-        }
-        try {
-
-            String caminho = file.getAbsolutePath().trim().replace('\\', '/');
-            if (listaNegra.contains(caminho)) {
-                System.out.println("Não importado, pois está na lista temporária de regeição: " + caminho);
-                return null;
+        if (ehValido(file)) {
+            if (getExtecao(file).toLowerCase().equals("ogg")) {
+                return adicionaOGG(file, t);
             }
-            MP3File mp3;
             try {
-                mp3 = new MP3File(caminho);
-                Musica m = new Musica();
-                m.setCaminho(normalizarCaminhoArquivo(caminho));
-                if (organizarPastas) {
-                    getMusica(m, mp3, file);
-                    File destinoF = new File(destino);
-                    destinoF.mkdirs();
-                    destinoF = new File(destinoF.getAbsolutePath() + "/" + file.getName());
-                    if (!destinoF.getAbsolutePath().equals(file.getAbsolutePath())) {
-                        if (file.renameTo(destinoF)) {
-                            file = destinoF;
+
+                String caminho = file.getAbsolutePath().trim().replace('\\', '/');
+                if (listaNegra.contains(caminho)) {
+                    System.out.println("Não importado, pois está na lista temporária de regeição: " + caminho);
+                    return null;
+                }
+                MP3File mp3;
+                try {
+                    mp3 = new MP3File(caminho);
+                    Musica m = new Musica();
+                    m.setCaminho(normalizarCaminhoArquivo(caminho));
+                    if (organizarPastas) {
+                        getMusica(m, mp3, file);
+                        File destinoF = new File(destino);
+                        destinoF.mkdirs();
+                        destinoF = new File(destinoF.getAbsolutePath() + "/" + file.getName());
+                        if (!destinoF.getAbsolutePath().equals(file.getAbsolutePath())) {
+                            if (file.renameTo(destinoF)) {
+                                file = destinoF;
+                            }
+                            caminho = file.getAbsolutePath().trim().replace('\\', '/');
+                            mp3 = new MP3File(caminho);
+                            m.setCaminho(caminho);
                         }
-                        caminho = file.getAbsolutePath().trim().replace('\\', '/');
-                        mp3 = new MP3File(caminho);
-                        m.setCaminho(caminho);
+
                     }
 
-                }
+                    if (MusicaBD.existe(m, t)) {
+                        MusicaBD.carregar(m, t);
+                        getMusica(m, mp3, file);
+                        m.setDtModArquivo(file.lastModified());
+                        m.setPerdida(false);
+                        MusicaBD.alterar(m, t);
+                    } else {
+                        getMusica(m, mp3, file);
+                        m.setDtModArquivo(file.lastModified());
+                        MusicaBD.incluir(m, t);
+                        MusicaBD.carregarPeloEndereco(m, t);
 
-                if (MusicaBD.existe(m, t)) {
-                    MusicaBD.carregar(m, t);
-                    getMusica(m, mp3, file);
-                    m.setDtModArquivo(file.lastModified());
-                    m.setPerdida(false);
-                    MusicaBD.alterar(m, t);
-                } else {
-                    getMusica(m, mp3, file);
-                    m.setDtModArquivo(file.lastModified());
-                    MusicaBD.incluir(m, t);
-                    MusicaBD.carregarPeloEndereco(m, t);
+                    }
+                    if (downLoadCapas && m.getImg() == null) {
+                        m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
+                        MusicaBD.alterar(m, t);
+                    }
 
+                    return m;
+                } catch (Exception ex) {
+                    Musica m = new Musica();
+                    m.setCaminho(normalizarCaminhoArquivo(file));
+                    m.setNome(file.getName());
+                    m.setAlbum(file.getParentFile().getName());
+                    m.setAutor(file.getParentFile().getParentFile().getName());
+                    if (MusicaBD.existe(m, t)) {
+                        MusicaBD.carregar(m, t);
+                        m.setDtModArquivo(file.lastModified());
+                        m.setPerdida(false);
+                        MusicaBD.alterar(m, t);
+                    } else {
+                        m.setDtModArquivo(file.lastModified());
+                        MusicaBD.incluir(m, t);
+                        MusicaBD.carregarPeloEndereco(m, t);
+                    }
                 }
-                if (downLoadCapas && m.getImg() == null) {
-                    m.setImg(BuscaGoogle.getAquivoBuscaImagens(m).getAbsolutePath());
-                    MusicaBD.alterar(m, t);
-                }
-
-                return m;
-            } catch (Exception ex) {
-                Musica m = new Musica();
-                m.setCaminho(normalizarCaminhoArquivo(file));
-                m.setNome(file.getName());
-                m.setAlbum(file.getParentFile().getName());
-                m.setAutor(file.getParentFile().getParentFile().getName());
-                if (MusicaBD.existe(m, t)) {
-                    MusicaBD.carregar(m, t);
-                    m.setDtModArquivo(file.lastModified());
-                    m.setPerdida(false);
-                    MusicaBD.alterar(m, t);
-                } else {
-                    m.setDtModArquivo(file.lastModified());
-                    MusicaBD.incluir(m, t);
-                    MusicaBD.carregarPeloEndereco(m, t);
-                }
+            } catch (Exception e) {
+                System.out.println("Erro ao importar arquivo. Será adiconado na lista negra: " + file.getAbsolutePath());
+                e.printStackTrace(System.err);
+                listaNegra.add(file.getAbsolutePath());
             }
-        } catch (Exception e) {
-            System.out.println("Erro ao importar arquivo. Será adiconado na lista negra: " + file.getAbsolutePath());
-            e.printStackTrace(System.err);
-            listaNegra.add(file.getAbsolutePath());
         }
         return null;
 

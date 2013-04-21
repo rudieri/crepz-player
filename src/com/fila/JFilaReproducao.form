@@ -177,6 +177,11 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="jMenuLnF">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="L&amp;F"/>
+          </Properties>
+        </Menu>
       </SubComponents>
     </Menu>
   </NonVisualComponents>

@@ -2,7 +2,9 @@ package com.hotkey.linux;
 
 import com.config.Configuracaoes;
 import com.main.Carregador;
+import com.main.GerenciadorTelas;
 import com.musica.Musiquera;
+import com.playlist.JPlayList;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -66,21 +68,49 @@ public class Ouvinte implements Runnable {
                 BufferedReader bin = new BufferedReader(inputStreamReader);
                 String linha;
                 while ((linha = bin.readLine()) != null) {
-                    if (linha.equals("--play") || linha.equals("--pause")) {
-                        musiquera.tocarPausar();
+                    if (linha.isEmpty()) {
+                        continue;
                     }
-                    if (linha.equals("--stop")) {
-                        musiquera.parar();
+                    System.out.println("Recebi o comando: " + linha);
+                    int idxComando = linha.indexOf(' ');
+                    // só 1 por enquanto
+                    String[] arquivos = new String[]{linha.substring(idxComando + 1, linha.length())};
+
+                    TipoComando porComando = TipoComando.getPorComando(linha.substring(0, idxComando));
+                    for (int i = 0; i < arquivos.length; i++) {
+                        String arq = arquivos[i];
+                        System.out.println((porComando == null ? "null" : porComando.getComando()) + " " + arq);
                     }
-                    if (linha.equals("--next")) {
-                        musiquera.tocarProxima();
+                    switch (porComando) {
+                        case ABRIR_CREPZ:
+
+                            break;
+                        case ADICIONAR_LISTA:
+                            JPlayList playList = GerenciadorTelas.getPlayList(null);
+//                            String[] musicas = new String[arquivos.length - 1];
+//                            System.arraycopy(arquivos, 1, musicas, 0, arquivos.length - 1);
+                            playList.importarMusicasParaPlayList(arquivos);
+                            break;
+                        case AVANCAR_MUSICA:
+                            musiquera.tocarProxima();
+                            break;
+                        case VOLTAR_MUSICA:
+                            musiquera.tocarAnterior();
+                            break;
+                        case OBTER_LISTA:
+                            throw new UnsupportedOperationException("Não implementado ainda...");
+                        case PARAR_MUSICA:
+                            musiquera.parar();
+                            break;
+                        case PAUSAR_MUSICA:
+                        case REPRODUZIR_MUSICA:
+                            musiquera.tocarPausar();
+                            break;
+
+                        default:
+                            throw new AssertionError();
                     }
-                    if (linha.equals("--prev")) {
-                        musiquera.tocarAnterior();
-                    }
-                    if (linha.equals("--list-music")) {
-                        throw new UnsupportedOperationException("Não implementado ainda...");
-                    }
+
                 }
                 bin.close();
                 inputStreamReader.close();

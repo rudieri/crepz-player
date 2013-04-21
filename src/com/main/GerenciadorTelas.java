@@ -10,10 +10,16 @@ import com.main.gui.JBiBlioteca;
 import com.main.gui.JMini;
 import com.main.gui.JPrincipal;
 import com.playlist.JPlayList;
+import com.playlist.Playlist;
+import com.playlist.PlaylistBD;
 import com.utils.Warning;
 import com.utils.pele.ColorUtils;
 import com.utils.pele.JPele;
 import java.awt.Rectangle;
+import java.io.File;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -87,10 +93,21 @@ public class GerenciadorTelas {
     }
 
     public static JPlayList getPlayList() {
+        return getPlayList(null);
+    }
+
+    public static JPlayList getPlayList(File[] lista) {
         if (playList == null) {
             carregandoDebug("Play List");
             playList = new JPlayList(Carregador.getMe());
-            playList.setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
+            if (lista == null) {
+                playList.setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
+            } else {
+                playList.limpar();
+                playList.importarMusicasParaPlayList(lista);
+                
+                
+            }
             Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_PLAYLIST);
             if (rectangle != null) {
                 playList.setBounds(rectangle);
