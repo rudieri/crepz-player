@@ -3,6 +3,7 @@ package com.hotkey.linux;
 import java.awt.HeadlessException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -55,6 +56,7 @@ public class DisparaComando {
             printWriter.println(meuComando);
             printWriter.close();
             socket.close();
+            return true;
         } catch (Exception ex) {
             if (tentativas < 3) {
                 try {

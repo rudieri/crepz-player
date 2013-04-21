@@ -28,9 +28,8 @@ public class Ouvinte implements Runnable {
         this.musiquera = musiquera;
         if (Configuracaoes.getBoolean(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS)) {
             exportPath();
-            initSocket();
-        } else {
         }
+        initSocket();
     }
 
     private void exportPath() {
@@ -105,6 +104,8 @@ public class Ouvinte implements Runnable {
                         case PAUSAR_MUSICA:
                         case REPRODUZIR_MUSICA:
                             musiquera.tocarPausar();
+                            break;
+                        case PING:
                             break;
 
                         default:

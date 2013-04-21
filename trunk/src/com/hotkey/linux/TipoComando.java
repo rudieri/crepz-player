@@ -5,6 +5,7 @@ package com.hotkey.linux;
  * @author c90
  */
 public enum TipoComando {
+    PING("--ping"),
     ABRIR_CREPZ("--open"),
     REPRODUZIR_MUSICA("--play"),
     PAUSAR_MUSICA("--pause"),
