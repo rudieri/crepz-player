@@ -191,6 +191,11 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="jMenuLnF">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="L&amp;F"/>
+          </Properties>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu3">
           <Properties>
             <Property name="text" type="java.lang.String" value="Sobre"/>
@@ -378,7 +383,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel_Musica">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Nada est&#xe1; tocando no momento..."/>
+                <Property name="text" type="java.lang.String" value=":)"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -431,7 +436,7 @@
                             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="ad" green="ad" id="Label.foreground" palette="3" red="ad" type="palette"/>
                             </Property>
-                            <Property name="text" type="java.lang.String" value="Kbps"/>
+                            <Property name="text" type="java.lang.String" value="- Kbps"/>
                           </Properties>
                         </Component>
                       </SubComponents>
@@ -448,7 +453,7 @@
                       <SubComponents>
                         <Component class="javax.swing.JLabel" name="jLabel_freq">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Hz"/>
+                            <Property name="text" type="java.lang.String" value="- KHz"/>
                           </Properties>
                         </Component>
                       </SubComponents>

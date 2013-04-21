@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * JFilaReproducao.java
  *
  * Created on 29/01/2012, 00:24:46
@@ -71,7 +66,8 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 
     /**
      * Creates new form JFilaReproducao
-     * @param carregador 
+     *
+     * @param carregador
      */
     public JFilaReproducao(Carregador carregador) {
         initComponents();
@@ -88,6 +84,11 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jFileChooserImportar.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         jTextFieldPesquisa.requestFocus();
         startEvents();
+        JCheckBoxMenuItem[] menusLnF = carregador.getMenusLnF();
+        for (JCheckBoxMenuItem jCheckBoxMenuItem : menusLnF) {
+            jMenuLnF.add(jCheckBoxMenuItem);
+        }
+        SwingUtilities.updateComponentTreeUI(jMenuLnF);
     }
 
     private void adicionarMusicasSelecionadas() {
@@ -158,6 +159,10 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jLabelQtdMusicas.setText(String.valueOf(objModelMusicas.getRowCount()));
     }
 
+    public void lookAndFeelChanged() {
+        jTableFila.setDefaultRenderer(Object.class, new TableRendererFila());
+    }
+
     private void initTabelaFila() {
         modelFila = new ModelReadOnly();
         modelFila.addColumn("");
@@ -224,11 +229,13 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
                     } else if (data != null && data instanceof ArrayList) {
                         addMusicasToFila(data, posicaoDestino);
                     } else {
-                        //Windows
-                        if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                            ArrayList<File> arquivos = (ArrayList) transferable.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
-                            importarMusicas(arquivos, true);
-                        } else {
+                        try {
+                            //Windows
+                            if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                                ArrayList<File> arquivos = (ArrayList) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+                                importarMusicas(arquivos, true);
+                            }
+                        } catch (Exception lex) {
                             // Linux
                             loop_flavor:
                             for (int i = 0; i < flavors.length; i++) {
@@ -267,6 +274,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
                 evt.acceptDrag(DnDConstants.ACTION_COPY);
             }
         });
+        
         jTableFila.setDropTarget(dropTargetFila);
         jScrollPaneFila.setDropTarget(dropTargetFila);
         jTableFila.setModel(modelFila);
@@ -475,10 +483,10 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jTableMusicas.scrollRectToVisible(rect);
         return objModelMusicas.getItem(converterIndiceTabelaMusica(selectedRow));
     }
-    
-    public void selecionaMusica(Musica musica){
+
+    public void selecionaMusica(Musica musica) {
         int indexOf = objModelMusicas.indexOf(musica);
-        if (indexOf!=-1) {
+        if (indexOf != -1) {
             Rectangle rect = jTableMusicas.getVisibleRect();
             jTableMusicas.setRowSelectionInterval(indexOf, indexOf);
             rect.y = jTableMusicas.getCellRect(indexOf, 0, true).y - rect.height / 2;
@@ -634,7 +642,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jButton_Stop.addMouseListener(this);
         jToggle_Repete.addMouseListener(this);
         jSlider_Tempo.addMouseListener(this);
-        
+
         // key listener
         jTextFieldPesquisa.addKeyListener(this);
         jTableFila.addKeyListener(this);
@@ -709,7 +717,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
             carregador.sair();
         } else if (e.getSource() == jMenuItem3) {
             carregador.mostrarModificadorDeTema();
-        }else if(e.getSource() == jMenuItemVoltarTelaPrincipal){
+        } else if (e.getSource() == jMenuItemVoltarTelaPrincipal) {
             carregador.setPrincipalComoBase();
         }
     }
@@ -722,7 +730,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
                 if (acaoPadraoFila == AcaoPadraoFila.ADICIONAR_FILA) {
                     adicionarMusicasSelecionadas();
                 } else if (acaoPadraoFila == AcaoPadraoFila.REPRODUZIR) {
-                    carregador.setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);    
+                    carregador.setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);
                     tocarMusicaSelecionada();
                 } else {
                     tocarMusicaSelecionada();
@@ -937,6 +945,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuLnF = new javax.swing.JMenu();
 
         jMenuItemFilaTocar.setMnemonic('R');
         jMenuItemFilaTocar.setText("Reproduzir");
@@ -1211,6 +1220,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 
         jMenuBar1.add(jMenu2);
 
+        jMenuLnF.setText("L&F");
+        jMenuBar1.add(jMenuLnF);
+
         setJMenuBar(jMenuBar1);
 
         setSize(new java.awt.Dimension(800, 600));
@@ -1290,6 +1302,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
     private javax.swing.JMenuItem jMenuItemPasta;
     private javax.swing.JMenuItem jMenuItemTocar;
     private javax.swing.JMenuItem jMenuItemVoltarTelaPrincipal;
+    private javax.swing.JMenu jMenuLnF;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;

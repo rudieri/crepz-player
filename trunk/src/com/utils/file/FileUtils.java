@@ -74,9 +74,9 @@ public class FileUtils {
         FileInputStream leitor = new FileInputStream(arquivo);
         InputStreamReader in = new InputStreamReader(leitor, codificacao);
         BufferedReader leitorBuf = new BufferedReader(in);
-        String line = null;
+        String line;
         while ((line = leitorBuf.readLine()) != null) {
-            stringBuilder.append(line).append("\r\n");
+            stringBuilder.append(line).append('\n');
         }
         in.close();
         leitor.close();

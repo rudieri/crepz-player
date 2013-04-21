@@ -39,7 +39,6 @@ public class Musica implements Serializable, Filtravel {
     private String caminho;
     private long dtModArquivo;
     private String img;
-    private int size;
     private int number;
     /**Caso o arquivo da música não seja encontrado.*/
     @NomeCampo(nome = "Música Perdida")
@@ -192,14 +191,6 @@ public class Musica implements Serializable, Filtravel {
             genero = "";
             b.printStackTrace(System.err);
         }
-    }
-
-    public void setSize(int s) {
-        this.size = s;
-    }
-
-    public int getSize() {
-        return this.size;
     }
 
     public void setNumero(int n) {

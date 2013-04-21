@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.config;
 
 import com.config.constantes.AcaoPadraoFila;
@@ -114,6 +110,9 @@ public class Configuracaoes {
     // Config 26
     public static final Byte CONF_LOCAL_BIBLIOTECA = 26;
     private static Rectangle localBiblioteca = new Rectangle();
+    // Config 26
+    public static final Byte CONF_LOOK_AND_FEEL = 27;
+    private static String lookAndFeel = "";
     // lista de todas as configs
     private static final Object[] configs;
     private static final String ARQUIVO = "etc/conf";
@@ -151,7 +150,8 @@ public class Configuracaoes {
             localMini,
             localFila,
             localPlayList,
-            localBiblioteca
+            localBiblioteca,
+            lookAndFeel
         };
 //        configs[CONF_PASTAS_SCANER] = pastasScaner;
         acoes = new HashMap<Byte, Acao>(configs.length);
