@@ -40,8 +40,6 @@ public abstract class Musiquera implements BasicPlayerListener {
     private BasicPlayer player;
     private Musica musica;
     private File in;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("ss");
-    private final SimpleDateFormat formatotempo = new SimpleDateFormat("HH:mm:ss");
     /**
      * Variável usada para saber se o núermo de reproduções já foi alterado.
      */

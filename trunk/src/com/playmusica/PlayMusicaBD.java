@@ -139,6 +139,9 @@ public class PlayMusicaBD {
      * @return int Contendo o numero de linhas afetadas.
      */
     public static int excluirPelaBk(PlayMusica playMusica, Transacao t) throws Exception {
+        if (playMusica.getPlaylist() == null) {
+            throw new Exception("PlayList não carregada.");
+        }
         SQL sql = new SQL();
         sql.add("DELETE FROM " + TBL);
         sql.add("WHERE playlist = :playlist  ");

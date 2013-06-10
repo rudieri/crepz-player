@@ -1,9 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.playlist.listainteligente.condicao;
-// com.playlist.listainteligente.condicao.JSelecionaCondicao
+
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -74,34 +70,28 @@ public class JSelecionaCondicao extends javax.swing.JPanel implements ActionList
         jDialog.getRootPane().add(jCondicao);
         JPanel jPanelBts = new JPanel();
         jPanelBts.setLayout(new BoxLayout(jPanelBts, BoxLayout.X_AXIS));
-        JButton jButton_Ok = new JButton("OK");
+        final JButton jButton_Ok = new JButton("OK");
         jPanelBts.add(jButton_Ok);
-        JButton jButton_Cancel = new JButton("Cancelar");
+        final JButton jButton_Cancel = new JButton("Cancelar");
         jPanelBts.add(jButton_Cancel);
         jDialog.getRootPane().add(jPanelBts);
         jDialog.pack();
-//        jDialog.setSize(500, 120);
         Window windowAncestor = SwingUtilities.getWindowAncestor(this);
 
         Rectangle bounds = windowAncestor.getBounds();
-        jDialog.setLocation(bounds.x + bounds.width / 2 - jDialog.getWidth() / 2, 
+        jDialog.setLocation(bounds.x + bounds.width / 2 - jDialog.getWidth() / 2,
                 bounds.y + bounds.height / 2 - jDialog.getHeight() / 2);
-        
-        jButton_Ok.addActionListener(new ActionListener() {
-
+        ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jDialog.dispose();
-                setCondicao(jCondicao.getCondicao());
-            }
-        });
-        jButton_Cancel.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == jButton_Ok) {
+                    setCondicao(jCondicao.getCondicao());
+                }
                 jDialog.dispose();
             }
-        });
+        };
+        jButton_Ok.addActionListener(actionListener);
+        jButton_Cancel.addActionListener(actionListener);
         jDialog.setVisible(true);
     }//GEN-LAST:event_jButton_Condicao1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

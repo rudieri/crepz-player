@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.playlist.listainteligente.condicao;
 
 import com.musica.Musica;
@@ -103,7 +99,7 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
             } else if (campo.isLong()) {
                 valor2 = new ValorCondicao(Long.valueOf(jTextField_Valor2.getText()));
             } else if (campo.isBoolean()) {
-                if (jTextField_Valor2.getText().matches("[0]|[Nn][AaÃa][Oo]|[Ff][Aa][Ll][Ss][Ee]")) {
+                if (jTextField_Valor2.getText().matches("[0]|[Nn][AaÃã][Oo]|[Ff][Aa][Ll][Ss][Ee]")) {
                     valor2 = new ValorCondicao(false);
                 } else {
                     valor2 = new ValorCondicao(true);
@@ -192,10 +188,8 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
 
         jPanel_Comparativa.setLayout(new java.awt.GridLayout(1, 3));
 
-        jComboBox_Valor1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel_Comparativa.add(jComboBox_Valor1);
 
-        jComboBox_OperadorComparativo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel_Comparativa.add(jComboBox_OperadorComparativo);
         jPanel_Comparativa.add(jTextField_Valor2);
 
@@ -208,7 +202,6 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
 
         jPanel_Logica.add(jPanel5);
 
-        jComboBox_OperadorLogico.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel_Logica.add(jComboBox_OperadorLogico);
 
         jPanel6.setLayout(new java.awt.BorderLayout());
