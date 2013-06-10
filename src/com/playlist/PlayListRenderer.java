@@ -2,8 +2,6 @@ package com.playlist;
 
 import com.musica.Musica;
 import com.utils.pele.ColorUtils;
-import com.utils.pele.JPele;
-import com.utils.pele.Pele;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;

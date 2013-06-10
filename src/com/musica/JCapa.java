@@ -59,16 +59,10 @@ public class JCapa extends javax.swing.JPanel implements Cloneable{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel_Img = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
         jLabel_Titulo1 = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
-        jPanel7 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
         jLabel_Qts = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -77,9 +71,6 @@ public class JCapa extends javax.swing.JPanel implements Cloneable{
         setMinimumSize(new java.awt.Dimension(112, 91));
         setPreferredSize(new java.awt.Dimension(112, 91));
         setLayout(new java.awt.BorderLayout());
-
-        jPanel2.setOpaque(false);
-        jPanel2.setLayout(new java.awt.BorderLayout());
 
         jPanel3.setMaximumSize(new java.awt.Dimension(80, 80));
         jPanel3.setMinimumSize(new java.awt.Dimension(80, 80));
@@ -92,52 +83,26 @@ public class JCapa extends javax.swing.JPanel implements Cloneable{
         jLabel_Img.setPreferredSize(new java.awt.Dimension(80, 120));
         jPanel3.add(jLabel_Img);
 
-        jPanel2.add(jPanel3, java.awt.BorderLayout.WEST);
+        add(jPanel3, java.awt.BorderLayout.WEST);
 
         jPanel4.setOpaque(false);
-        jPanel4.setLayout(new java.awt.GridLayout(3, 1, 5, 5));
-
-        jPanel5.setOpaque(false);
-        jPanel5.setLayout(new java.awt.BorderLayout());
+        jPanel4.setLayout(new java.awt.GridLayout(2, 1, 5, 5));
 
         jLabel_Titulo1.setFont(new java.awt.Font("Comic Sans MS", 1, 11)); // NOI18N
         jLabel_Titulo1.setText("Titulo");
-        jLabel_Titulo1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        jPanel5.add(jLabel_Titulo1, java.awt.BorderLayout.CENTER);
-
-        jPanel6.setOpaque(false);
-        jPanel5.add(jPanel6, java.awt.BorderLayout.WEST);
-
-        jPanel4.add(jPanel5);
-
-        jPanel7.setOpaque(false);
-        jPanel7.setLayout(new java.awt.BorderLayout());
-
-        jPanel8.setOpaque(false);
-        jPanel7.add(jPanel8, java.awt.BorderLayout.WEST);
+        jPanel4.add(jLabel_Titulo1);
 
         jLabel_Qts.setFont(new java.awt.Font("Comic Sans MS", 1, 11)); // NOI18N
         jLabel_Qts.setText("Titulo");
-        jLabel_Qts.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        jPanel7.add(jLabel_Qts, java.awt.BorderLayout.CENTER);
+        jPanel4.add(jLabel_Qts);
 
-        jPanel4.add(jPanel7);
-
-        jPanel2.add(jPanel4, java.awt.BorderLayout.CENTER);
-
-        add(jPanel2, java.awt.BorderLayout.CENTER);
+        add(jPanel4, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel_Img;
     private javax.swing.JLabel jLabel_Qts;
     private javax.swing.JLabel jLabel_Titulo1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     // End of variables declaration//GEN-END:variables
 }

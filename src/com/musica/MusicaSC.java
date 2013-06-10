@@ -15,7 +15,6 @@ public class MusicaSC {
     private String album;
     private String autor;
     private String genero;
-    private int id;
     private String caminho;
     /**
      * @return the nome
@@ -31,18 +30,11 @@ public class MusicaSC {
         this.nome = nome;
     }
 
-    public void setId(int i){
-        id=i;
-    }
     public void setCaminho(String c){
         caminho=c;
     }
     public String getCaminho(){
         return caminho;
-    }
-
-    public int getId(){
-        return id;
     }
 
     /**

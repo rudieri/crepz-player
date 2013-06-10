@@ -118,6 +118,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         }
         importarMusicasParaPlayList(files);
     }
+
     public void importarMusicasParaPlayList(File[] files) {
         Transacao t = new Transacao();
         try {
@@ -317,8 +318,8 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
             ModelReadOnly model = (ModelReadOnly) jTable.getModel();
             model.setRowCount(0);
-            if(playlist == null){
-                return ;
+            if (playlist == null) {
+                return;
             }
             // Filtro...
 //            Playlist p = new Playlist();
@@ -794,16 +795,6 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         }
     }
 
-    public void filtraTexto(int code) {
-
-        jTextField_Pesquisa.setVisible(true);
-        repaint();
-        // jPanel6.repaint();
-        //jPanel3.repaint();
-        jTextField_Pesquisa.requestFocus();
-        jTextField_Pesquisa.setText("");
-    }
-
     private void onTableKeyPressed(KeyEvent evt) {
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_DELETE:
@@ -861,6 +852,17 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         editor.setVisible(true);
         if (editor.getPlaylist() != null) {
             abrir(editor.getPlaylist());
+        }
+    }
+
+    private void abrirPropriedades() {
+        int linha = jTable.getSelectedRow();
+        Musica musica = (Musica) jTable.getValueAt(linha, 0);
+        try {
+            new JMP3Propriedades(principal, true, musica).setVisible(true);
+            jTable.setValueAt(musica, linha, 0);
+        } catch (Exception ex) {
+            Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -1206,6 +1208,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 }
                 break;
             case MouseEvent.BUTTON2:
+                abrirPropriedades();
                 break;
             case MouseEvent.BUTTON3:
                 jPopupMenu_Playlist.show((Component) evt.getSource(), evt.getX(), evt.getY());
@@ -1222,12 +1225,13 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     }//GEN-LAST:event_jToggleButtonOpcoesListaStateChanged
 
     private void jTextField_PesquisaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_PesquisaKeyPressed
+        int rowSelct = jTable.getSelectedRow();
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ESCAPE:
                 jTextField_Pesquisa.setText("");
                 break;
             case KeyEvent.VK_ENTER:
-                Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 0);
+                Musica m = (Musica) jTable.getModel().getValueAt(rowSelct, 0);
                 try {
                     carregador.abrir(m, 0, false);
                     //  tocarPausar(null);
@@ -1236,20 +1240,17 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 }
                 break;
             case KeyEvent.VK_DOWN:
-                int RowSelct = jTable.getSelectedRow();
                 if (jTable.getSelectedRow() == jTable.getRowCount() - 1) {
                     jTable.getSelectionModel().setSelectionInterval(0, 0);
                 } else {
-                    jTable.getSelectionModel().setSelectionInterval(RowSelct + 1, RowSelct + 1);
+                    jTable.getSelectionModel().setSelectionInterval(rowSelct + 1, rowSelct + 1);
                 }
                 break;
             case KeyEvent.VK_UP:
-                int RowSelct2 = jTable.getSelectedRow();
                 if (jTable.getSelectedRow() == 0) {
                     jTable.getSelectionModel().setSelectionInterval(jTable.getRowCount() - 1, jTable.getRowCount() - 1);
                 } else {
-
-                    jTable.getSelectionModel().setSelectionInterval(RowSelct2 - 1, RowSelct2 - 1);
+                    jTable.getSelectionModel().setSelectionInterval(rowSelct - 1, rowSelct - 1);
                 }
 
                 break;
@@ -1257,10 +1258,6 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 jTable.requestFocus();
                 break;
         }
-
-//        if(aux>47 && aux<91 || aux>64 && aux<58 || aux>95 && aux<106 ){
-//
-//        }
 
     }//GEN-LAST:event_jTextField_PesquisaKeyPressed
     private void jTextField_PesquisaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_PesquisaKeyTyped
@@ -1296,14 +1293,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     }//GEN-LAST:event_jMenuItemCopiarTudoParaActionPerformed
 
     private void jMenuItem_EditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_EditarActionPerformed
-        int linha = jTable.getSelectedRow();
-        Musica musica = (Musica) jTable.getValueAt(linha, 0);
-        try {
-            new JMP3Propriedades(principal, true, musica).setVisible(true);
-            jTable.setValueAt(musica, linha, 0);
-        } catch (Exception ex) {
-            Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        abrirPropriedades();
     }//GEN-LAST:event_jMenuItem_EditarActionPerformed
 
     private void jMenuItem_TocarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_TocarActionPerformed
