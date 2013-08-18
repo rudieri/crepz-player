@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.utils;
 
 import java.io.File;
@@ -32,6 +28,14 @@ public class ComandosSO {
             mySO = OUTRO;
 
         }
+    }
+
+    public static String getLocalCrepzPath() {
+        return System.getProperty("user.home") + "/.crepz-player/";
+    }
+
+    public static File getLocalCrepz() {
+        return new File(getLocalCrepzPath());
     }
 
     public static void abrirPasta(String path) {

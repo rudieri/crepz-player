@@ -1,7 +1,6 @@
 package com.hotkey.linux;
 
-import com.config.Configuracaoes;
-import com.main.Carregador;
+import com.config.Configuracoes;
 import com.main.GerenciadorTelas;
 import com.musica.Musiquera;
 import com.playlist.JPlayList;
@@ -11,10 +10,6 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
 /**
  *
  * @author rudieri
@@ -22,11 +17,10 @@ import java.util.logging.Logger;
 public class Ouvinte implements Runnable {
 
     private final Musiquera musiquera;
-    private Carregador carregador;
 
     public Ouvinte(Musiquera musiquera) {
         this.musiquera = musiquera;
-        if (Configuracaoes.getBoolean(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS)) {
+        if (Configuracoes.ATALHOS_GLOBAIS_ATIVOS.getValor()) {
             exportPath();
         }
         initSocket();

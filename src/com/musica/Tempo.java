@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.musica;
 
 import java.io.Serializable;
@@ -12,21 +8,27 @@ import java.io.Serializable;
  */
 public class Tempo implements Serializable {
 
-    private final int milissegundos;
+    private final short segundos;
     private String string;
 
 
-    public Tempo(int milissegundos) {
-        this.milissegundos = milissegundos;
+    public Tempo(short segundos) {
+        this.segundos = segundos;
         convertToString();
+    }
+    public Tempo(int milissegundos) {
+        this((short)(milissegundos/1000));
     }
 
     public Tempo(long microssegundos) {
         this((int) (microssegundos / 1000));
     }
 
+    public short getSegundos() {
+        return segundos;
+    }
     public int getMilissegundos() {
-        return milissegundos;
+        return segundos*1000;
     }
 
     /**
@@ -39,11 +41,11 @@ public class Tempo implements Serializable {
     }
 
     private void convertToString() {
-        int segundos = milissegundos / 1000;
-        int horas = segundos / 3600;
-        segundos -= horas * 3600;
-        int minutos = segundos / 60;
-        segundos -= minutos * 60;
+        int segsAux = segundos;
+        int horas = segsAux / 3600;
+        segsAux -= horas * 3600;
+        int minutos = segsAux / 60;
+        segsAux -= minutos * 60;
         StringBuilder tempo = new StringBuilder(8);
         if (horas > 0) {
             if (horas > 9) {
@@ -59,10 +61,10 @@ public class Tempo implements Serializable {
             tempo.append('0').append(minutos);
         }
         tempo.append(':');
-        if (segundos > 9) {
-            tempo.append(segundos);
+        if (segsAux > 9) {
+            tempo.append(segsAux);
         } else {
-            tempo.append('0').append(segundos);
+            tempo.append('0').append(segsAux);
         }
         string = tempo.toString();
     }

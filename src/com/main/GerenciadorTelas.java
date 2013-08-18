@@ -4,22 +4,17 @@
  */
 package com.main;
 
-import com.config.Configuracaoes;
+import com.config.Configuracoes;
 import com.fila.JFilaReproducao;
 import com.main.gui.JBiBlioteca;
 import com.main.gui.JMini;
 import com.main.gui.JPrincipal;
 import com.playlist.JPlayList;
-import com.playlist.Playlist;
-import com.playlist.PlaylistBD;
 import com.utils.Warning;
 import com.utils.pele.ColorUtils;
 import com.utils.pele.JPele;
 import java.awt.Rectangle;
 import java.io.File;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -45,7 +40,7 @@ public class GerenciadorTelas {
                 ex.printStackTrace(System.err);
                 principal = new JPrincipal(Carregador.getMe());
             }
-            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_PRINCIPAL);
+            Rectangle rectangle = Configuracoes.LOCAL_PRINCIPAL.getValor();
             if (rectangle != null) {
                 principal.setBounds(rectangle);
             }
@@ -59,7 +54,7 @@ public class GerenciadorTelas {
         if (mini == null) {
             carregandoDebug("Mini");
             mini = new JMini(Carregador.getMe());
-            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_MINI);
+            Rectangle rectangle = Configuracoes.LOCAL_MINI.getValor();
             if (rectangle != null) {
                 mini.setBounds(rectangle);
             }
@@ -81,7 +76,7 @@ public class GerenciadorTelas {
         if (filaReproducao == null) {
             carregandoDebug("Fila de Reprodução");
             filaReproducao = new JFilaReproducao(Carregador.getMe());
-            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_FILA);
+            Rectangle rectangle = Configuracoes.LOCAL_FILA.getValor();
             if (rectangle != null) {
                 filaReproducao.setBounds(rectangle);
             }
@@ -101,14 +96,14 @@ public class GerenciadorTelas {
             carregandoDebug("Play List");
             playList = new JPlayList(Carregador.getMe());
             if (lista == null) {
-                playList.setPlayListAberta(Configuracaoes.getInteger(Configuracaoes.CONF_LISTA_ABERTA));
+                playList.setPlayListAberta(Configuracoes.LISTA_ABERTA.getValor());
             } else {
                 playList.limpar();
                 playList.importarMusicasParaPlayList(lista);
                 
                 
             }
-            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_PLAYLIST);
+            Rectangle rectangle = Configuracoes.LOCAL_PLAYLIST.getValor();
             if (rectangle != null) {
                 playList.setBounds(rectangle);
             } else {
@@ -125,7 +120,7 @@ public class GerenciadorTelas {
         if (biblioteca == null) {
             carregandoDebug("Biblioteca");
             biblioteca = new JBiBlioteca(Carregador.getMe());
-            Rectangle rectangle = Configuracaoes.getRectangle(Configuracaoes.CONF_LOCAL_BIBLIOTECA);
+            Rectangle rectangle = Configuracoes.LOCAL_BIBLIOTECA.getValor();
             if (rectangle != null) {
                 biblioteca.setBounds(rectangle);
             } else {

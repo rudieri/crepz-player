@@ -1,9 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * JConfiguracao.java
  *
  * Created on 19/08/2010, 21:17:54
@@ -14,20 +9,21 @@ import com.config.constantes.AcaoPadraoFila;
 import com.config.constantes.AcoesFilaVazia;
 import com.config.constantes.AdicionarNaFilaVazia;
 import com.config.constantes.TelaPadrao;
+import com.main.Carregador;
 import com.musica.MusicaGerencia;
 import com.utils.model.ModelReadOnly;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
  * @author manchini
  */
-public class JConfiguracao extends javax.swing.JDialog {
+public class JConfiguracao extends javax.swing.JDialog implements ActionListener{
 
     private JFileChooser jFileChooser = new JFileChooser();
 
@@ -61,7 +57,7 @@ public class JConfiguracao extends javax.swing.JDialog {
             tm.addColumn("Pastas em que o Crepz procurará por músicas");
             jTable_pastas.setModel(tm);
             tm.setRowCount(0);
-            ArrayList<String> pastas = Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER);
+            ArrayList<String> pastas = Configuracoes.PASTAS_SCANER.getValor();
             for (short i = 0; i < pastas.size(); i++) {
                 if (pastas.get(i) != null && !pastas.get(i).replace(" ", "").isEmpty()) {
                     tm.addRow(new Object[]{pastas.get(i)});
@@ -69,15 +65,19 @@ public class JConfiguracao extends javax.swing.JDialog {
                 }
             }
             jComboBoxAcaoFila.setModel(new DefaultComboBoxModel(AcaoPadraoFila.getNomesFakes()));
-            jComboBoxAcaoFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_ACAO_PADRAO_FILA).ordinal());
+            jComboBoxAcaoFila.setSelectedIndex(Configuracoes.ACAO_PADRAO_FILA.getValor().ordinal());
             jComboBoxAoEsvaziaFila.setModel(new DefaultComboBoxModel(AcoesFilaVazia.getNomesFakes()));
-            jComboBoxAoEsvaziaFila.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_ACOES_FILA_VAZIA).ordinal());
+            jComboBoxAoEsvaziaFila.setSelectedIndex(Configuracoes.ACOES_FILA_VAZIA.getValor().ordinal());
             jComboBoxAdicionarFilaVazia.setModel(new DefaultComboBoxModel(AdicionarNaFilaVazia.getNomesFakes()));
-            jComboBoxAdicionarFilaVazia.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA).ordinal());
+            jComboBoxAdicionarFilaVazia.setSelectedIndex(Configuracoes.ADICIONAR_NA_FILA_VAZIA.getValor().ordinal());
             jComboBoxTelaPadrao.setModel(new DefaultComboBoxModel(TelaPadrao.getNomesFakes()));
-            jComboBoxTelaPadrao.setSelectedIndex(Configuracaoes.getEnum(Configuracaoes.CONF_TELA_PADRAO).ordinal());
-            jCheckBoxAtalhosGlobais.setSelected(Configuracaoes.getBoolean(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS));
-            jCheckBoxUltimaMusica.setSelected(Configuracaoes.getBoolean(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU));
+            jComboBoxTelaPadrao.setSelectedIndex(Configuracoes.TELA_PADRAO.getValor().ordinal());
+            jCheckBoxAtalhosGlobais.setSelected(Configuracoes.ATALHOS_GLOBAIS_ATIVOS.getValor());
+            jCheckBoxUltimaMusica.setSelected(Configuracoes.MUSICA_CONTINUA_ONDE_PAROU.getValor());
+            jComboBoxMixer.setModel(new DefaultComboBoxModel(Carregador.getMe().getMixers().toArray()));
+            if (Configuracoes.MIXER.getValor() != null && !Configuracoes.MIXER.getValor().isEmpty()) {
+                jComboBoxMixer.setSelectedItem(Configuracoes.MIXER.getValor());
+            }
             //java -classpath /home/rudieri/NetBeansProjects/CrepzPlayer/build/classes/ com.hotkey.linux.DisparaComando --prev
             String local = getClass().getResource("/").getFile();
             jTextFieldPlay.setText("java -classpath " + local + " com.hotkey.linux.DisparaComando --play");
@@ -94,13 +94,6 @@ public class JConfiguracao extends javax.swing.JDialog {
         MusicaGerencia.organizarPastas = jCheckBox_Organizador.isSelected();
         MusicaGerencia.destino = jTextField_DestinoOrg.getText() != null ? jTextField_DestinoOrg.getText() : "";
         MusicaGerencia.downLoadCapas = jCheckBox_DownloadCapa.isSelected();
-//        Scan.setTempo((Integer) jSpinner1.getValue());
-        TableModel tm = jTable_pastas.getModel();
-        ArrayList<String> pastas = new ArrayList<String>(10);
-        for (int i = 0; i < tm.getRowCount(); i++) {
-            String tms = tm.getValueAt(i, 0) == null ? "" : tm.getValueAt(i, 0).toString();
-            pastas.add(tms);
-        }
 
     }
 
@@ -132,6 +125,9 @@ public class JConfiguracao extends javax.swing.JDialog {
         jComboBoxTelaPadrao = new javax.swing.JComboBox();
         jPanel20 = new javax.swing.JPanel();
         jCheckBoxUltimaMusica = new javax.swing.JCheckBox();
+        jPanel21 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jComboBoxMixer = new javax.swing.JComboBox();
         jPanel16 = new javax.swing.JPanel();
         jPanel_Fila = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -194,8 +190,6 @@ public class JConfiguracao extends javax.swing.JDialog {
         jButtonSalvar = new javax.swing.JButton();
         jButtonFechar = new javax.swing.JButton();
 
-        FormListener formListener = new FormListener();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(441, 342));
 
@@ -218,7 +212,6 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel15.add(jLabel9);
 
         jComboBoxTelaPadrao.setToolTipText("O que acontece quando eu clido 2 vezes numa música...");
-        jComboBoxTelaPadrao.addItemListener(formListener);
         jPanel15.add(jComboBoxTelaPadrao);
 
         jPanel_Geral.add(jPanel15);
@@ -229,6 +222,16 @@ public class JConfiguracao extends javax.swing.JDialog {
         jPanel20.add(jCheckBoxUltimaMusica);
 
         jPanel_Geral.add(jPanel20);
+
+        jPanel21.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel11.setText("Mixer:");
+        jPanel21.add(jLabel11);
+
+        jComboBoxMixer.setToolTipText("O que acontece quando eu clido 2 vezes numa música...");
+        jPanel21.add(jComboBoxMixer);
+
+        jPanel_Geral.add(jPanel21);
 
         jPanel16.setLayout(new java.awt.BorderLayout());
         jPanel_Geral.add(jPanel16);
@@ -329,14 +332,14 @@ public class JConfiguracao extends javax.swing.JDialog {
         jButton_Add.setText("Adicionar");
         jButton_Add.setToolTipText("Adicionar endereço na lista. (Alt + A)");
         jButton_Add.setPreferredSize(new java.awt.Dimension(60, 30));
-        jButton_Add.addActionListener(formListener);
+        jButton_Add.addActionListener(this);
         jPanel12.add(jButton_Add);
 
         jButton_Remove.setMnemonic('R');
         jButton_Remove.setText("Remover");
         jButton_Remove.setToolTipText("Remover da lista o item selecionado. (Alt + R)");
         jButton_Remove.setPreferredSize(new java.awt.Dimension(60, 30));
-        jButton_Remove.addActionListener(formListener);
+        jButton_Remove.addActionListener(this);
         jPanel12.add(jButton_Remove);
 
         jPanel5.add(jPanel12);
@@ -368,7 +371,7 @@ public class JConfiguracao extends javax.swing.JDialog {
         jButton2.setText("...");
         jButton2.setOpaque(true);
         jButton2.setPreferredSize(new java.awt.Dimension(30, 30));
-        jButton2.addActionListener(formListener);
+        jButton2.addActionListener(this);
         jPanel9.add(jButton2);
 
         jPanel_Organizador.add(jPanel9);
@@ -494,13 +497,13 @@ public class JConfiguracao extends javax.swing.JDialog {
         jButtonSalvar.setMnemonic('S');
         jButtonSalvar.setText("Salvar");
         jButtonSalvar.setToolTipText("Salvar configurações. (Alt + S )");
-        jButtonSalvar.addActionListener(formListener);
+        jButtonSalvar.addActionListener(this);
         jPanel11.add(jButtonSalvar);
 
         jButtonFechar.setMnemonic('C');
         jButtonFechar.setText("Cancelar");
         jButtonFechar.setToolTipText("Cancelar. (Alt + C)");
-        jButtonFechar.addActionListener(formListener);
+        jButtonFechar.addActionListener(this);
         jPanel11.add(jButtonFechar);
 
         getContentPane().add(jPanel11, java.awt.BorderLayout.PAGE_END);
@@ -511,30 +514,21 @@ public class JConfiguracao extends javax.swing.JDialog {
 
     // Code for dispatching events from components to event handlers.
 
-    private class FormListener implements java.awt.event.ActionListener, java.awt.event.ItemListener {
-        FormListener() {}
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            if (evt.getSource() == jButton_Add) {
-                JConfiguracao.this.jButton_AddActionPerformed(evt);
-            }
-            else if (evt.getSource() == jButton_Remove) {
-                JConfiguracao.this.jButton_RemoveActionPerformed(evt);
-            }
-            else if (evt.getSource() == jButton2) {
-                JConfiguracao.this.jButton2ActionPerformed(evt);
-            }
-            else if (evt.getSource() == jButtonSalvar) {
-                JConfiguracao.this.jButtonSalvarActionPerformed(evt);
-            }
-            else if (evt.getSource() == jButtonFechar) {
-                JConfiguracao.this.jButtonFecharActionPerformed(evt);
-            }
+    public void actionPerformed(java.awt.event.ActionEvent evt) {
+        if (evt.getSource() == jButton_Add) {
+            JConfiguracao.this.jButton_AddActionPerformed(evt);
         }
-
-        public void itemStateChanged(java.awt.event.ItemEvent evt) {
-            if (evt.getSource() == jComboBoxTelaPadrao) {
-                JConfiguracao.this.jComboBoxTelaPadraoItemStateChanged(evt);
-            }
+        else if (evt.getSource() == jButton_Remove) {
+            JConfiguracao.this.jButton_RemoveActionPerformed(evt);
+        }
+        else if (evt.getSource() == jButton2) {
+            JConfiguracao.this.jButton2ActionPerformed(evt);
+        }
+        else if (evt.getSource() == jButtonSalvar) {
+            JConfiguracao.this.jButtonSalvarActionPerformed(evt);
+        }
+        else if (evt.getSource() == jButtonFechar) {
+            JConfiguracao.this.jButtonFecharActionPerformed(evt);
         }
     }// </editor-fold>//GEN-END:initComponents
 
@@ -545,14 +539,15 @@ public class JConfiguracao extends javax.swing.JDialog {
             String pasta = (String) jTable_pastas.getValueAt(i, 0);
             pastas.add(pasta);
         }
-        Configuracaoes.set(Configuracaoes.CONF_PASTAS_SCANER, pastas, false);
-        Configuracaoes.set(Configuracaoes.CONF_ACAO_PADRAO_FILA, AcaoPadraoFila.values()[jComboBoxAcaoFila.getSelectedIndex()], false);
-        Configuracaoes.set(Configuracaoes.CONF_ACOES_FILA_VAZIA, AcoesFilaVazia.values()[jComboBoxAoEsvaziaFila.getSelectedIndex()], false);
-        Configuracaoes.set(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA, AdicionarNaFilaVazia.values()[jComboBoxAdicionarFilaVazia.getSelectedIndex()], false);
-        Configuracaoes.set(Configuracaoes.CONF_TELA_PADRAO, TelaPadrao.values()[jComboBoxTelaPadrao.getSelectedIndex()], false);
-        Configuracaoes.set(Configuracaoes.CONF_ATALHOS_GLOBAIS_ATIVOS, jCheckBoxAtalhosGlobais.isSelected(), false);
-        Configuracaoes.set(Configuracaoes.CONF_MUSICA_CONTINUA_ONDE_PAROU, jCheckBoxUltimaMusica.isSelected(), false);
-        Configuracaoes.salvar();
+        Configuracoes.PASTAS_SCANER.setValor(pastas);
+        Configuracoes.ACAO_PADRAO_FILA.setValor(AcaoPadraoFila.values()[jComboBoxAcaoFila.getSelectedIndex()]);
+        Configuracoes.ACOES_FILA_VAZIA.setValor(AcoesFilaVazia.values()[jComboBoxAoEsvaziaFila.getSelectedIndex()]);
+        Configuracoes.ADICIONAR_NA_FILA_VAZIA.setValor(AdicionarNaFilaVazia.values()[jComboBoxAdicionarFilaVazia.getSelectedIndex()]);
+        Configuracoes.TELA_PADRAO.setValor(TelaPadrao.values()[jComboBoxTelaPadrao.getSelectedIndex()]);
+        Configuracoes.ATALHOS_GLOBAIS_ATIVOS.setValor(jCheckBoxAtalhosGlobais.isSelected());
+        Configuracoes.MUSICA_CONTINUA_ONDE_PAROU.setValor(jCheckBoxUltimaMusica.isSelected());
+        Configuracoes.MIXER.setValor((String) jComboBoxMixer.getSelectedItem());
+        Configuracoes.gravar();
         dispose();
 //        setDadosBanco();
 
@@ -621,9 +616,11 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JComboBox jComboBoxAcaoFila;
     private javax.swing.JComboBox jComboBoxAdicionarFilaVazia;
     private javax.swing.JComboBox jComboBoxAoEsvaziaFila;
+    private javax.swing.JComboBox jComboBoxMixer;
     private javax.swing.JComboBox jComboBoxTelaPadrao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel16;
@@ -648,6 +645,7 @@ public class JConfiguracao extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel20;
+    private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel23;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

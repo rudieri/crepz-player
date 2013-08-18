@@ -5,7 +5,7 @@
  */
 package com.fila;
 
-import com.config.Configuracaoes;
+import com.config.Configuracoes;
 import com.config.JConfiguracao;
 import com.config.constantes.AcaoPadraoFila;
 import com.config.constantes.AcoesFilaVazia;
@@ -433,7 +433,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 
     public Musica getAnterior() {
         if (modelFila.getRowCount() == 0) {
-            if (Configuracaoes.getEnum(Configuracaoes.CONF_ACOES_FILA_VAZIA) == AcoesFilaVazia.TOCAR_SEQ) {
+            if (Configuracoes.ACOES_FILA_VAZIA.getValor() == AcoesFilaVazia.TOCAR_SEQ) {
                 int selectedRow = jTableMusicas.getSelectedRow() - 1;
                 if (selectedRow < 0) {
                     selectedRow = jTableMusicas.getRowCount() - 1;
@@ -453,7 +453,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
             atualizarBarraStausFila();
 //            alterarMusica(musica);
             return musica;
-        } else if (Configuracaoes.getEnum(Configuracaoes.CONF_ACOES_FILA_VAZIA) != AcoesFilaVazia.NADA) {
+        } else if (Configuracoes.ACOES_FILA_VAZIA.getValor() != AcoesFilaVazia.NADA) {
             return getMusicaDaLista();
         }
         return null;
@@ -464,7 +464,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
             return null;
         }
 
-        if (Configuracaoes.getEnum(Configuracaoes.CONF_ACOES_FILA_VAZIA) == AcoesFilaVazia.TOCAR_SEQ) {
+        if (Configuracoes.ACOES_FILA_VAZIA.getValor() == AcoesFilaVazia.TOCAR_SEQ) {
             int selectedRow = jTableMusicas.getSelectedRow() + 1;
             if (selectedRow >= jTableMusicas.getRowCount()) {
                 selectedRow = 0;
@@ -503,7 +503,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
                     evt.consume();
                     break;
                 case KeyEvent.VK_ENTER:
-                    final AcaoPadraoFila acaoPadraoFila = (AcaoPadraoFila) Configuracaoes.getObject(Configuracaoes.CONF_ACAO_PADRAO_FILA);
+                    final AcaoPadraoFila acaoPadraoFila = Configuracoes.ACAO_PADRAO_FILA.getValor();
                     if (acaoPadraoFila != AcaoPadraoFila.ADICIONAR_FILA) {
                         adicionarMusicasSelecionadas();
                     } else if (acaoPadraoFila != AcaoPadraoFila.REPRODUZIR) {
@@ -520,7 +520,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
             final String textoPesquisa = jTextFieldPesquisa.getText();
             switch (evt.getKeyCode()) {
                 case KeyEvent.VK_ENTER:
-                    final AcaoPadraoFila acaoPadraoFila = (AcaoPadraoFila) Configuracaoes.getObject(Configuracaoes.CONF_ACAO_PADRAO_FILA);
+                    final AcaoPadraoFila acaoPadraoFila = Configuracoes.ACAO_PADRAO_FILA.getValor();
                     if (acaoPadraoFila == AcaoPadraoFila.ADICIONAR_FILA) {
                         adicionarMusicasSelecionadas();
                     } else if (acaoPadraoFila == AcaoPadraoFila.REPRODUZIR) {
@@ -726,7 +726,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
     public void mouseClicked(MouseEvent e) {
         if (e.getSource() == jTableMusicas) {
             if (e.getButton() == 1 && e.getClickCount() > 1) {
-                final AcaoPadraoFila acaoPadraoFila = (AcaoPadraoFila) Configuracaoes.getObject(Configuracaoes.CONF_ACAO_PADRAO_FILA);
+                final AcaoPadraoFila acaoPadraoFila = Configuracoes.ACAO_PADRAO_FILA.getValor();
                 if (acaoPadraoFila == AcaoPadraoFila.ADICIONAR_FILA) {
                     adicionarMusicasSelecionadas();
                 } else if (acaoPadraoFila == AcaoPadraoFila.REPRODUZIR) {
@@ -862,7 +862,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
             if (e.getType() == TableModelEvent.INSERT) {
                 carregador.setFonteReproducao(FonteReproducao.FILA_REPRODUCAO);
                 if (!carregador.isPlaying()
-                        && Configuracaoes.getEnum(Configuracaoes.CONF_ADICIONAR_NA_FILA_VAZIA) == AdicionarNaFilaVazia.REPRODUZIR_MUSICA) {
+                        && Configuracoes.ADICIONAR_NA_FILA_VAZIA.getValor() == AdicionarNaFilaVazia.REPRODUZIR_MUSICA) {
                     carregador.abrirETocar();
                 }
             }

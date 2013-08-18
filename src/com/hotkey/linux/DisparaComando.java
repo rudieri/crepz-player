@@ -65,8 +65,11 @@ public class DisparaComando {
                 }
                 disparar(meuComando, tentativas + 1);
             } else {
-                Logger.getLogger(DisparaComando.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, ex);
+                if (!meuComando.equals(TipoComando.PING.getComando())) {
+                    Logger.getLogger(DisparaComando.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null, ex);
+                    
+                }
             }
         }
         return false;
