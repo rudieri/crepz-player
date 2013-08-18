@@ -1,7 +1,7 @@
 package com.playlist;
 
 import com.conexao.Transacao;
-import com.config.Configuracaoes;
+import com.config.Configuracoes;
 import com.copiador.JCopiador;
 import com.fila.JFilaReproducao;
 import com.main.Carregador;
@@ -442,7 +442,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
     public Musica getAleatorio(Musica atual) {
         if (faltamTocar.isEmpty()) {
-            if (Configuracaoes.getBoolean(Configuracaoes.CONF_REPEAT_ATIVO)) {
+            if (Configuracoes.REPEAT_ATIVO.getValor()) {
                 faltamTocar.addAll(jahFoi);
                 jahFoi.clear();
                 return getAleatorio(atual);
@@ -489,7 +489,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         try {
             Musica atual = carregador.getMusica();
             int mAtual = -1;
-            if (!Configuracaoes.getBoolean(Configuracaoes.CONF_RANDOM_ATIVO)) {
+            if (!Configuracoes.RANDOM_ATIVO.getValor()) {
                 if (atual != null) {
                     mAtual = atual.getNumero();
                 }
@@ -523,7 +523,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         try {
             Musica atual = carregador.getMusica();
             int mAtual;
-            if (!Configuracaoes.getBoolean(Configuracaoes.CONF_RANDOM_ATIVO)) {
+            if (!Configuracoes.RANDOM_ATIVO.getValor()) {
                 mAtual = atual.getNumero();
                 if (mAtual > -1) {
                     if (mAtual - 1 < 0) {

@@ -5,7 +5,7 @@
 package com.main;
 
 import com.conexao.Transacao;
-import com.config.Configuracaoes;
+import com.config.Configuracoes;
 import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
 import java.io.File;
@@ -88,7 +88,7 @@ public class Scan implements Runnable {
     }
 
     private ArrayList<String> getPastas() {
-        return Configuracaoes.getList(Configuracaoes.CONF_PASTAS_SCANER);
+        return Configuracoes.PASTAS_SCANER.getValor();
     }
 
     private void verificarModicicacoes(File path, Transacao t) {

@@ -1,6 +1,6 @@
 package com.conexao;
 
-import java.io.File;
+import com.utils.ComandosSO;
 import org.hsqldb.server.Server;
 
 /*
@@ -19,23 +19,8 @@ public class BancoServer {
     public BancoServer(String bd) {
         s = new Server();
         s.setDatabaseName(0, "BD");
-        s.setDatabasePath(0, new File("").getAbsolutePath() + "/" + bd);
+        s.setDatabasePath(0, ComandosSO.getLocalCrepzPath() + bd);
         s.start();
-//        new Thread(new Runnable() {
-//
-//            public void run() {
-//                while (ativo) {
-//                    try {
-//                        Thread.sleep(500);
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                }
-//                s.shutdown();
-//                s.stop();
-//            }
-//        }).start();
-
     }
 
     public void stop() {

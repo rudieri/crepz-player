@@ -297,9 +297,7 @@ public class MusicaBD {
         try {
             ArrayList lista = new ArrayList();
             while (rs.next()) {
-                Musica musica = new Musica();
-                carregarObjeto(musica, rs);
-                lista.add(musica);
+                lista.add(CacheDeMusica.get(rs.getInt("id"), rs));
             }
             System.gc();
             return lista;

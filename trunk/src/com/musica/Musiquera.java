@@ -4,12 +4,13 @@
  */
 package com.musica;
 
-import com.config.Configuracaoes;
+import com.config.Configuracao;
+import com.config.ConfiguracaoListener;
+import com.config.Configuracoes;
 import com.main.gui.JPrincipal;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -52,26 +53,8 @@ public abstract class Musiquera implements BasicPlayerListener {
         player.addBasicPlayerListener(this);
         player.setSleepTime(15);
 
-        // Escolher o mixer para mexer no volume
-        List mixers = player.getMixers();
-        String mx = null;
-        for (int i = 0; i < mixers.size(); i++) {
-            String mix = (String) mixers.get(i);
-            if (mix.contains("default")) {
-                mx = mix;
-            }
-            System.out.println(mx);
-        }
-        if (mixers.size() > 0) {
-            if (mx == null) {
-                mx = (String) mixers.get(mixers.size() - 3);
-            }
-            player.setMixerName(mx);
-            System.out.println("Eu escolhi o mixer: " + mx);
-
-        }
-        setBalanco(Configuracaoes.getByte(Configuracaoes.CONF_BALANCO));
-        setVolume(Configuracaoes.getByte(Configuracaoes.CONF_VOLUME));
+        setBalanco(Configuracoes.BALANCO.getValor());
+        setVolume(Configuracoes.VOLUME.getValor());
     }
 
     public abstract void numberTempoChange(double s);
@@ -88,7 +71,7 @@ public abstract class Musiquera implements BasicPlayerListener {
     public abstract void setPropriedadesMusica(PropriedadesMusica propriedadesMusica);
 
     public abstract void atualizaLabels(String nome, int bits, String tempo, int freq);
-
+    
     public final void setVolume(byte v) {
         volume = v;
 
@@ -136,6 +119,14 @@ public abstract class Musiquera implements BasicPlayerListener {
 
     public boolean isPaused() {
         return paused;
+    }
+    
+    public List<String> getMixers(){
+        return player.getMixers();
+    }
+    
+    public void setMixerName(String mixer){
+        player.setMixerName(mixer);
     }
 
     public boolean apenasAbrir(Musica m) throws BasicPlayerException {
@@ -530,7 +521,7 @@ public abstract class Musiquera implements BasicPlayerListener {
     }
 
     public boolean isRepeat() {
-        return Configuracaoes.getBoolean(Configuracaoes.CONF_REPEAT_ATIVO);
+        return Configuracoes.REPEAT_ATIVO.getValor();
     }
 
     @Override

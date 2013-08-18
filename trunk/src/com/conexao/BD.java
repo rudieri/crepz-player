@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.conexao;
 
+import com.utils.ComandosSO;
 import com.utils.file.FileUtils;
 import java.io.File;
 import java.sql.Connection;
@@ -38,22 +35,22 @@ public class BD {
     }
 
     private String getArquivosBanco() {
-        String ret = banco;
-        if (new File(new File("").getAbsoluteFile() + "/" + banco + ".properties").exists()) {
-            ret = new File("").getAbsoluteFile() + "/" + banco;
-        } else if (new File(new File("").getAbsoluteFile() + "/dist/" + banco + ".properties").exists()) {
-            ret = new File("").getAbsoluteFile() + "/dist/" + banco;
-
-        } else if (new File(new File("").getAbsolutePath().replace("dist", "") + "/" + banco + ".properties").exists()) {
-            ret = new File("").getAbsolutePath().replace("dist", "") + "/" + banco;
-        }
-
-        if (ret == null) {
-            ret = new File("").getAbsolutePath() + "/" + banco;
-        }
-
-        System.out.println("BANCO: ---- " + ret);
-        return ret;
+//        String ret = banco;
+//        if (new File(new File("").getAbsoluteFile() + "/" + banco + ".properties").exists()) {
+//            ret = new File("").getAbsoluteFile() + "/" + banco;
+//        } else if (new File(new File("").getAbsoluteFile() + "/dist/" + banco + ".properties").exists()) {
+//            ret = new File("").getAbsoluteFile() + "/dist/" + banco;
+//
+//        } else if (new File(new File("").getAbsolutePath().replace("dist", "") + "/" + banco + ".properties").exists()) {
+//            ret = new File("").getAbsolutePath().replace("dist", "") + "/" + banco;
+//        }
+//
+//        if (ret == null) {
+//            ret = new File("").getAbsolutePath() + "/" + banco;
+//        }
+//
+//        System.out.println("BANCO: ---- " + ret);
+        return ComandosSO.getLocalCrepzPath() + banco;
     }
 
     public Statement getStatement() throws SQLException {
