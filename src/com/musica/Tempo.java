@@ -8,6 +8,9 @@ import java.io.Serializable;
  */
 public class Tempo implements Serializable {
 
+    private static final long serialVersionUID = 2L;
+    
+    public static final Tempo TEMPO_ZERO = new Tempo(0);
     private final short segundos;
     private String string;
 
@@ -34,6 +37,7 @@ public class Tempo implements Serializable {
     /**
      Retorna a representação do tempo no formato hh:mm:ss, as horas ou minutos
      * podem ser suprimidos caso seus valores forem (0) zero
+     * @return 
      */
     @Override
     public String toString() {

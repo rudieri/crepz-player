@@ -4,7 +4,7 @@
  */
 package com.copiador;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -26,7 +26,7 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
     /**
      * Creates new form JCopiador
      */
-    private ArrayList<Musica> musicas;
+    private ArrayList<MusicaS> musicas;
     private JFileChooser jFileChooser;
     private Thread thread;
 
@@ -55,17 +55,18 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
         pack();
     }
 
-    public void setMusicas(ArrayList<Musica> musicas) {
+    @SuppressWarnings("AssignmentToCollectionOrArrayFieldFromParameter")
+    public void setMusicas(ArrayList<MusicaS> musicas) {
         if (musicas.isEmpty()) {
             JOptionPane.showMessageDialog(this, "A lista está vazia...");
             dispose();
         }
         this.musicas = musicas;
         jLabelQtdMusicas.setText(String.valueOf(musicas.size()));
-        Musica primeiraMusica = musicas.get(0);
+        MusicaS primeiraMusica = musicas.get(0);
         String minimaPastaCommum = primeiraMusica.getCaminho().substring(0, primeiraMusica.getCaminho().lastIndexOf('/'));
         for (int i = 1; i < musicas.size(); i++) {
-            Musica musica = musicas.get(i);
+            MusicaS musica = musicas.get(i);
             while (!musica.getCaminho().startsWith(minimaPastaCommum)) {
                 minimaPastaCommum = minimaPastaCommum.substring(0, minimaPastaCommum.lastIndexOf('/'));
             }
@@ -103,18 +104,18 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
                 for (int i = 0; i < musicas.size(); i++) {
                     jProgressBar1.setValue(i);
                     jProgressBar1.setString("Copiando... [" + i + " de " + musicas.size() + "] ");
-                    Musica musica = musicas.get(i);
+                    MusicaS musica = musicas.get(i);
                     try {
                         File original = new File(musica.getCaminho());
                         String estruturaDir;
                         if (jRadioButtonEstArtistaAlbum.isSelected()) {
-                            estruturaDir = musica.getAutor() + "/" + musica.getAlbum();
+                            estruturaDir = musica.getAlbum().getAutor().getNome() + "/" + musica.getAlbum().getNome();
                         } else if (jRadioButtonEstArtista.isSelected()) {
-                            estruturaDir = musica.getAutor();
+                            estruturaDir = musica.getAlbum().getAutor().getNome();
                         } else if (jRadioButtonEstAlbumArtista.isSelected()) {
-                            estruturaDir = musica.getAlbum() + "/" + musica.getAutor();
+                            estruturaDir = musica.getAlbum().getNome() + "/" + musica.getAlbum().getAutor().getNome();
                         } else {
-                            estruturaDir = musica.getAlbum();
+                            estruturaDir = musica.getAlbum().getNome();
                         }
                         File novo = new File(pastaDestino.getAbsolutePath() + "/" + estruturaDir + "/" + original.getName());
                         if (!novo.getParentFile().exists()) {
@@ -136,7 +137,7 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
                 for (int i = 0; i < musicas.size(); i++) {
                     jProgressBar1.setValue(i);
                     jProgressBar1.setString("Copiando... [" + i + " de " + musicas.size() + "] ");
-                    Musica musica = musicas.get(i);
+                    MusicaS musica = musicas.get(i);
                     try {
                         File original = new File(musica.getCaminho());
                         String estruturaDir = musica.getCaminho().replace(jTextFieldPastaOrigemBase.getText(), "/");
@@ -161,7 +162,7 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
                 for (int i = 0; i < musicas.size(); i++) {
                     jProgressBar1.setValue(i);
                     jProgressBar1.setString("Copiando... [" + i + " de " + musicas.size() + "] ");
-                    Musica musica = musicas.get(i);
+                    MusicaS musica = musicas.get(i);
                     try {
                         File original = new File(musica.getCaminho());
 
@@ -184,6 +185,20 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
         jProgressBar1.setVisible(false);
         JOptionPane.showMessageDialog(this, "Musicas copiadas com sucesso.");
         dispose();
+    }
+
+    private boolean mostrarMensagemErro(IOException ex, int i, MusicaS musica) throws HeadlessException {
+        ex.printStackTrace(System.err);
+        if (i == musicas.size() - 1) {
+            JOptionPane.showMessageDialog(this, "Não foi possível copiar o arquivo");
+        } else {
+            if (JOptionPane.showConfirmDialog(this, "Não foi possível copiar o arquivo ["
+                    + musica.getCaminho() + "]"
+                    + "\nDeseja ignora-lo e continuar copiando os outros?") == JOptionPane.NO_OPTION) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -518,18 +533,4 @@ public class JCopiador extends javax.swing.JDialog implements ItemListener, Acti
     private javax.swing.JTextField jTextFieldPastaOrigemBase;
     private javax.swing.JTextField jTextFieldPlayListOrigem;
     // End of variables declaration//GEN-END:variables
-
-    private boolean mostrarMensagemErro(IOException ex, int i, Musica musica) throws HeadlessException {
-        ex.printStackTrace(System.err);
-        if (i == musicas.size() - 1) {
-            JOptionPane.showMessageDialog(this, "Não foi possível copiar o arquivo");
-        } else {
-            if (JOptionPane.showConfirmDialog(this, "Não foi possível copiar o arquivo ["
-                    + musica.getCaminho() + "]"
-                    + "\nDeseja ignora-lo e continuar copiando os outros?") == JOptionPane.NO_OPTION) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

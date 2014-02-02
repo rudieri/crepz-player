@@ -4,30 +4,27 @@
  */
 package com.playlist.listainteligente.condicao;
 
-import com.musica.Musica;
-import com.playlist.Playlist;
+import com.musica.MusicaS;
 import com.playlist.listainteligente.condicao.operadores.Operador;
 import com.playlist.listainteligente.condicao.operadores.OperadorComparativo;
 import com.playlist.listainteligente.condicao.operadores.OperadorLogico;
+import java.io.Serializable;
 
 /**
  *
  * @author rudieri
  */
-public class Condicao {
+public class Condicao implements Serializable{
+    private static final long serialVersionUID = 2L;
 
-    private int id;
     private Operador operador;
     private Object valor1;
     private Object valor2;
-    private Playlist playlist;
 
     public Condicao() {
     }
 
-    public Condicao(int id) {
-        this.id = id;
-    }
+   
 
     public void setValoresCondicao(OperadorLogico operadorLogico, Condicao condicao1, Condicao condicao2) {
         this.operador = operadorLogico;
@@ -53,33 +50,25 @@ public class Condicao {
         }
     }
 
-    protected void setId(int id) {
-        this.id = id;
-    }
-
-    protected int getId() {
-        return id;
-    }
-
     protected Object getValor1() {
         return valor1;
     }
-
-    protected Object getValor1ToBD() {
-        if (valor1.getClass() == Condicao.class) {
-            return String.valueOf(((Condicao) valor1).getId());
-        } else {
-            return ((ValorCondicao) valor1).toBD();
-        }
-    }
-
-    protected Object getValor2ToBD() {
-        if (valor1.getClass() == Condicao.class) {
-            return String.valueOf(((Condicao) valor2).getId());
-        } else {
-            return ((ValorCondicao) valor2).toString();
-        }
-    }
+//
+//    protected Object getValor1ToBD() {
+//        if (valor1.getClass() == Condicao.class) {
+//            return String.valueOf(((Condicao) valor1).getId());
+//        } else {
+//            return ((ValorCondicao) valor1).toBD();
+//        }
+//    }
+//
+//    protected Object getValor2ToBD() {
+//        if (valor1.getClass() == Condicao.class) {
+//            return String.valueOf(((Condicao) valor2).getId());
+//        } else {
+//            return valor2.toString();
+//        }
+//    }
 
     protected TipoValorCondicao getTipoValorCondicao2() {
         if (valor1.getClass() == Condicao.class) {
@@ -93,15 +82,15 @@ public class Condicao {
         return valor2;
     }
 
-    protected void setPlaylist(Playlist playlist) {
-        this.playlist = playlist;
-    }
+//    protected void setPlaylist(Playlist playlist) {
+//        this.playlist = playlist;
+//    }
+//
+//    protected Playlist getPlaylist() {
+//        return playlist;
+//    }
 
-    protected Playlist getPlaylist() {
-        return playlist;
-    }
-
-    public boolean resolver(Musica musica) {
+    public boolean resolver(MusicaS musica) {
         return operador.resolverOperacao(valor1, valor2, musica);
     }
 

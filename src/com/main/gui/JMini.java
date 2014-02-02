@@ -724,11 +724,11 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
     }
 
     public void stateChanged(javax.swing.event.ChangeEvent evt) {
-        if (evt.getSource() == jCheckBox_top) {
-            JMini.this.jCheckBox_topStateChanged(evt);
-        }
-        else if (evt.getSource() == jSlider_vol) {
+        if (evt.getSource() == jSlider_vol) {
             JMini.this.jSlider_volStateChanged(evt);
+        }
+        else if (evt.getSource() == jCheckBox_top) {
+            JMini.this.jCheckBox_topStateChanged(evt);
         }
     }// </editor-fold>//GEN-END:initComponents
 

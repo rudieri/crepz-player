@@ -4,7 +4,7 @@
  */
 package com.utils;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import gsearch.Client;
 import gsearch.Result;
 import java.io.File;
@@ -28,10 +28,10 @@ public class BuscaGoogle {
         Client c = new Client();
         return c.searchImages(busca +"");
     }
-    public static File getAquivoBuscaImagens(Musica musica) throws Exception{
+    public static File getAquivoBuscaImagens(MusicaS musica) throws Exception{
         File retorno = null;
         List<Result> lista = buscaImagens(((musica.getAlbum()==null?"": musica.getAlbum())+
-                                    " "+musica.getAutor()==null?"":musica.getAutor()+
+                                    " "+musica.getAlbum().getAutor().getNome()==null?"":musica.getAlbum().getAutor().getNome()+
                                     ""+musica.getNome()==null?"":musica.getNome()).replaceAll("  ", " ").trim());
         if(!lista.isEmpty()){
              URL link = new URL(lista.get(0).getUrl());

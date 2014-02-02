@@ -4,8 +4,9 @@
  */
 package com.playlist.listainteligente.condicao;
 
-import com.musica.Musica;
 import com.utils.campo.Campo;
+import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +14,9 @@ import java.util.logging.Logger;
  *
  * @author rudieri
  */
-public class ValorCondicao {
+public class ValorCondicao implements Serializable {
+
+    private static final long serialVersionUID = 2L;
 
     private Object valor;
     private Campo campo;
@@ -46,15 +49,44 @@ public class ValorCondicao {
         this.campo = campo;
     }
 
-    public Object getValor(Musica musica) {
+    public Object getValor(Object objeto) {
+        return getValor(objeto, null);
+    }
+
+    public Object getValor(Object objeto, String novoCaminnho) {
         if (valor != null) {
             return valor;
         } else {
             try {
-                return campo.getField().get(musica);
+                if (novoCaminnho == null) {
+                    novoCaminnho = campo.getCaminhoCampo();
+                }
+                if (novoCaminnho.indexOf('.') == -1) {
+                    return campo.getField().get(objeto);
+                } else {
+                    String[] split = novoCaminnho.split("[.]", 2);
+                    if (split[1].isEmpty()) {
+                        Field f = objeto.getClass().getDeclaredField(split[0]);
+                        if (!f.isAccessible()) {
+                            f.setAccessible(true);
+                        }
+                        return f.get(objeto);
+                    } else {
+                        Field f = objeto.getClass().getDeclaredField(split[0]);
+                        if (!f.isAccessible()) {
+                            f.setAccessible(true);
+                        }
+                        return getValor(f.get(objeto), split[1]);
+                    }
+//                    musica.getClass().g
+                }
             } catch (IllegalArgumentException ex) {
                 Logger.getLogger(ValorCondicao.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IllegalAccessException ex) {
+                Logger.getLogger(ValorCondicao.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchFieldException ex) {
+                Logger.getLogger(ValorCondicao.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SecurityException ex) {
                 Logger.getLogger(ValorCondicao.class.getName()).log(Level.SEVERE, null, ex);
             }
             return null;

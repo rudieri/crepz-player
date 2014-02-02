@@ -4,7 +4,7 @@
  */
 package com.playlist.listainteligente.condicao.operadores;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import com.playlist.listainteligente.condicao.Condicao;
 
 /**
@@ -27,7 +27,7 @@ public enum OperadorLogico implements Operador<Condicao>{
     
 
     @Override
-    public boolean resolverOperacao(Condicao valor1, Condicao valor2, Musica musica) {
+    public boolean resolverOperacao(Condicao valor1, Condicao valor2, MusicaS musica) {
         if (this==E) {
             return valor1.resolver(musica) && valor2.resolver(musica);
         }else{

@@ -5,7 +5,7 @@
  */
 package com.playlist;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import java.awt.Color;
 
 /**
@@ -41,9 +41,9 @@ public class JLista extends javax.swing.JPanel {
 
     }
 
-    public void setMusica(Musica musica) {
+    public void setMusica(MusicaS musica) {
         jLabelNome.setText(musica.getNome());
-        jLabelArtista.setText(musica.getAutor());
+        jLabelArtista.setText(musica.getAlbum() == null ? "" : musica.getAlbum().getAutor() == null ? "" :musica.getAlbum().getAutor().getNome());
         jLabelTempo.setText(musica.getTempo().toString());
     }
 

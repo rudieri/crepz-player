@@ -1,1 +1,0 @@
-CREATE INDEX idx_caminho ON musica ( caminho );

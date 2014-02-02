@@ -4,7 +4,7 @@
  */
 package com.playlist.listainteligente;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import com.playlist.listainteligente.condicao.Condicao;
 import java.util.ArrayList;
 
@@ -23,10 +23,10 @@ public class ListaInteligente {
     public void addCondicao(Condicao condicao){
         this.condicoes.add(condicao);
     }
-    public ArrayList<Musica> filtrarLista(ArrayList<Musica> musicas){
-        ArrayList<Musica> novaLista = new ArrayList<Musica>(500);
+    public ArrayList<MusicaS> filtrarLista(ArrayList<MusicaS> musicas){
+        ArrayList<MusicaS> novaLista = new ArrayList<MusicaS>(500);
         for (int i = 0; i < musicas.size(); i++) {
-            Musica musica = musicas.get(i);
+            MusicaS musica = musicas.get(i);
             boolean add = true;
             for (int j = 0; add && j < condicoes.size(); j++) {
                 Condicao condicao = condicoes.get(j);

@@ -8,7 +8,6 @@ import com.config.Configuracao;
 import com.config.ConfiguracaoListener;
 import com.config.Configuracoes;
 import com.config.constantes.TelaPadrao;
-import com.fila.JFilaReproducao;
 import com.graficos.Icones;
 import com.hotkey.linux.Comando;
 import com.hotkey.linux.DisparaComando;
@@ -17,13 +16,12 @@ import com.hotkey.linux.TipoComando;
 import com.main.gui.Aguarde;
 import com.main.gui.JMini;
 import com.melloware.jintellitype.JIntellitype;
-import com.musica.CacheDeMusica;
 import com.musica.LinhaDoTempo;
-import com.musica.Musica;
-import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
+import com.musica.MusicaS;
 import com.musica.Musiquera;
 import com.musica.Musiquera.PropriedadesMusica;
+import com.serial.PortaCDs;
 import com.utils.ComandosSO;
 import com.utils.file.FileUtils;
 import java.awt.SystemTray;
@@ -44,7 +42,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import org.hsqldb.server.Server;
 
 /**
  *
@@ -67,7 +64,7 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         fonteReproducao = FonteReproducao.AVULSO;
         telaPadrao = Configuracoes.TELA_PADRAO.getValor();
         initLookAndFeel();
-        startBanco();
+//        startBanco();
         createLog();
         aguarde.dispose();
         // Deixa a tela padrão visível.
@@ -90,7 +87,7 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
     }
 
     @Override
-    public Musica getNextMusica() {
+    public MusicaS getNextMusica() {
         if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
             return GerenciadorTelas.getFilaReproducao().getProxima();
         } else {
@@ -99,7 +96,7 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
     }
 
     @Override
-    public Musica getPreviousMusica() {
+    public MusicaS getPreviousMusica() {
         if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
             return GerenciadorTelas.getFilaReproducao().getAnterior();
         } else {
@@ -117,14 +114,14 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
 
     @Override
     public void setPropriedadesMusica(PropriedadesMusica propriedadesMusica) {
-        Musica musica = getMusica();
+        MusicaS musica = getMusica();
         musica.setTempo(propriedadesMusica.getTempoTotal());
-        try {
-            MusicaBD.alterar(musica);
-            MusicaBD.carregar(musica);
-        } catch (Exception ex) {
-            Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            MusicaBD.alterar(musica);
+//            MusicaBD.carregar(musica);
+//        } catch (Exception ex) {
+//            Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         getTelaPrincipal().propriedadesMusicaChanged(propriedadesMusica);
         if (fonteReproducao == FonteReproducao.FILA_REPRODUCAO) {
             GerenciadorTelas.getFilaReproducao().propriedadesMusicaChanged(propriedadesMusica);
@@ -145,13 +142,11 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         Configuracoes.MIXER.addConfiguracaoListener(this);
         setMixerName(Configuracoes.MIXER.getValor());
         ArrayList<File> abrir = new ArrayList<File>();
-        for (int i = 0; i < args.length; i++) {
-            String nomeArq = args[i];
+        for (String nomeArq : args) {
             File f = new File(nomeArq);
             if (MusicaGerencia.ehValido(f)) {
                 abrir.add(f);
             }
-
         }
         if (abrir.size() > 0) {
             File[] files = new File[abrir.size()];
@@ -183,12 +178,12 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         }
     }
 
-    public static void startBanco() {
-        Server server = new org.hsqldb.server.Server();
-        server.setDatabaseName(0, "BD");
-        server.setDatabasePath(0,  ComandosSO.getLocalCrepzPath() + "BD");
-        server.start();
-    }
+//    public static void startBanco() {
+//        Server server = new org.hsqldb.server.Server();
+//        server.setDatabaseName(0, "BD");
+//        server.setDatabasePath(0,  ComandosSO.getLocalCrepzPath() + "BD");
+//        server.start();
+//    }
 
     public void setTelaBase(TelaPadrao telaPadrao) {
         switch (telaPadrao) {
@@ -311,14 +306,14 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         if (!carregouTela) {
             GerenciadorTelas.getFilaReproducao().setVisible(true);
         }
-        FonteReproducao fr = (FonteReproducao) Configuracoes.FONTE_REPRODUCAO.getValor();
+        FonteReproducao fr = Configuracoes.FONTE_REPRODUCAO.getValor();
         if (fr == FonteReproducao.PLAY_LIST) {
             GerenciadorTelas.getPlayList().setPlayListAberta(Configuracoes.LISTA_ABERTA.getValor());
         }
         setFonteReproducao(fr);
         if (Configuracoes.MUSICA_CONTINUA_ONDE_PAROU.getValor()
-                && Configuracoes.MUSICA_REPRODUZINDO.getValor() != -1) {
-            Musica musica = CacheDeMusica.get(Configuracoes.MUSICA_REPRODUZINDO.getValor());
+                && Configuracoes.MUSICA_REPRODUZINDO.getValor() != null) {
+            MusicaS musica = Configuracoes.MUSICA_REPRODUZINDO.getValor();
             if (musica == null) {
                 tocarProxima();
             } else {
@@ -407,7 +402,7 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
 
     public void sair() {
         if (Configuracoes.MUSICA_CONTINUA_ONDE_PAROU.getValor()) {
-            Configuracoes.MUSICA_REPRODUZINDO.setValor((isPlaying() || isPaused()) && getMusica() != null ? getMusica().getId() : -1, false);
+            Configuracoes.MUSICA_REPRODUZINDO.setValor((isPlaying() || isPaused()) ? getMusica() : null, false);
             Configuracoes.MUSICA_REPRODUZINDO_TEMPO.setValor(isPlaying() || isPaused() ? getTempoAtual() : -1l, false);
         }
 
@@ -438,7 +433,7 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         if (GerenciadorTelas.isPlayListCarregado()) {
             Configuracoes.VISIB_PLAYLIST.setValor(GerenciadorTelas.getPlayList().isVisible(), false);
             Configuracoes.LISTA_ABERTA.setValor(GerenciadorTelas.getPlayList().getPlaylistAberta() == null
-                    ? -1 : GerenciadorTelas.getPlayList().getPlaylistAberta().getId(), false);
+                    ? null : GerenciadorTelas.getPlayList().getPlaylistAberta().getNome(), false);
             Configuracoes.LOCAL_PLAYLIST.setValor(GerenciadorTelas.getPlayList().getBounds(), false);
         } else {
             Configuracoes.VISIB_PLAYLIST.setValor(false, false);
@@ -449,6 +444,7 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         Configuracoes.LOOK_AND_FEEL.setValor(UIManager.getLookAndFeel().getID(), false);
 
         Configuracoes.gravar();
+        PortaCDs.salvar();
         if (arquivoBloqueio != null) {
             arquivoBloqueio.deleteOnExit();
         }
@@ -481,11 +477,11 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         }
     }
 
-    public void addToPlayList(ArrayList<Musica> musicas) {
+    public void addToPlayList(ArrayList<MusicaS> musicas) {
         GerenciadorTelas.getPlayList().addMusicas(musicas);
     }
 
-    public void addToPlayList(Musica musica) {
+    public void addToPlayList(MusicaS musica) {
         GerenciadorTelas.getPlayList().addMusica(musica);
     }
 
@@ -546,8 +542,7 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
                                     return;
                                 }
                                 setLookAndFeel(findLookAndFeel);
-                                for (int j = 0; j < menusLnF.length; j++) {
-                                    JCheckBoxMenuItem menuItem = menusLnF[j];
+                                for (JCheckBoxMenuItem menuItem : menusLnF) {
                                     if (menuItem != jCheckBoxMenuItem && menuItem.isSelected()) {
                                         menuItem.setSelected(false);
                                     }

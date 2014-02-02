@@ -1,48 +1,72 @@
 package com.musica;
 
 import com.biblioteca.Capa;
-import com.utils.SwapCapa;
 import com.utils.pele.ColorUtils;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-public class JCapa extends javax.swing.JPanel implements Cloneable{
+public class JCapa extends javax.swing.JPanel implements Cloneable {
 
+    private static HashMap<String, ImageIcon> swap = new HashMap<String, ImageIcon>(50);
+
+    public static void reset() {
+        swap.clear();
+    }
+
+    public static ImageIcon getCapa(String endereco) {
+        ImageIcon imageIcon = swap.get(endereco);
+        if (imageIcon == null) {
+            try {
+                BufferedImage bf;
+                bf = ImageIO.read(new File(endereco));
+                if (bf != null) {
+                    imageIcon = new javax.swing.ImageIcon(bf.getScaledInstance(80, 120, Image.SCALE_SMOOTH));
+                    swap.put(endereco, imageIcon);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace(System.err);
+            }
+        }
+        return imageIcon;
+    }
+    
+    
     public JCapa() {
         initComponents();
     }
 
-    public void setCapa(Capa capa) {
+    public void setCapa(final Capa capa) {
         jLabel_Qts.setText("Musicas :" + capa.getQtd());
         jLabel_Titulo1.setText(capa.getTitulo());
-        try {
-            if (capa.getImg() != null) {
-                ImageIcon imgIcon = null;
-                if (SwapCapa.swap.get(capa.getImg()) != null) {
-                    imgIcon = SwapCapa.swap.get(capa.getImg());
-                } else {
-                    BufferedImage bf;
-                    bf = ImageIO.read(new File(capa.getImg()));
-                    if (bf != null) {
-                        imgIcon = new javax.swing.ImageIcon(bf.getScaledInstance(80, 120, Image.SCALE_SMOOTH));
-                        SwapCapa.swap.put(capa.getImg(), imgIcon);
+        if (capa.getImg() != null) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (JCapa.this) {
+                        ImageIcon imgIcon = JCapa.getCapa(capa.getImg());
+                        jLabel_Img.setIcon(imgIcon);
+                        JCapa.this.notifyAll();
                     }
                 }
-
-                jLabel_Img.setIcon(imgIcon);
+            }).start();
+        }
+        synchronized (this) {
+            try {
+                this.wait();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(JCapa.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(JCapa.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public String getTXT(){
+    public String getTXT() {
         return jLabel_Titulo1.getText();
     }
 

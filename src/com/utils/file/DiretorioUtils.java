@@ -1,6 +1,5 @@
 package com.utils.file;
 
-import com.utils.file.filtros.FiltroMusica;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -78,7 +77,7 @@ public class DiretorioUtils {
     }
 
     private static int calculaQuantidadeArquivosDir(File diretorio) {
-        File[] arquivos = diretorio.listFiles(FiltroMusica.getInstance());
+        File[] arquivos = diretorio.listFiles(FiltroArquivoGenerico.FILTRO_MUSICA);
         if (arquivos == null) {
             return 0;
         }

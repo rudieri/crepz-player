@@ -1,23 +1,18 @@
 package com.playlist;
 
-import com.conexao.Transacao;
 import com.config.Configuracoes;
 import com.copiador.JCopiador;
 import com.fila.JFilaReproducao;
 import com.main.Carregador;
 import com.main.gui.JMP3Propriedades;
 import com.main.gui.JPrincipal;
-import com.musica.*;
-import com.playlist.listainteligente.condicao.Condicao;
-import com.playlist.listainteligente.condicao.CondicaoBD;
-import com.playlist.listainteligente.condicao.CondicaoSC;
+import com.musica.MusicaGerencia;
+import com.musica.MusicaS;
 import com.playlist.listainteligente.condicao.JListaInteligenteEditor;
-import com.playmusica.PlayMusica;
-import com.playmusica.PlayMusicaBD;
-import com.playmusica.PlayMusicaSC;
+import com.serial.PortaCDs;
 import com.utils.file.FileUtils;
-import com.utils.file.filtros.FiltroListaReproducao;
-import com.utils.model.ModelReadOnly;
+import com.utils.file.FiltroArquivoGenerico;
+import com.utils.model.tablemodel.ObjectTableModel;
 import com.utils.model.tablemodel.ObjectTransferable;
 import com.utils.transferivel.TipoTransferenciaMusica;
 import java.awt.Component;
@@ -26,27 +21,40 @@ import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 
 
 /*
@@ -65,17 +73,12 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
      * Creates new form JPlayList
      */
     private JPrincipal principal;
-//    private boolean aleatorio = false;
-//    private boolean recomecar = false;
-    private ArrayList<Musica> faltamTocar = new ArrayList<Musica>(200);
-    private ArrayList<Musica> jahFoi = new ArrayList<Musica>(200);
-    private ArrayList<Musica> total = new ArrayList<Musica>(200);
-    private ArrayList<Musica> pesquisa = new ArrayList<Musica>(200);
     private final Carregador carregador;
     private int contaErro = 0;
-    private Playlist playlist;
+    private PlaylistI playlist;
     private DropTarget dropTargetPlayList;
     private JCopiador jCopiador;
+    private ObjectTableModel<MusicaS> objectTableModel;
 
     static {
         formatoPadraoData = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -89,17 +92,33 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         jPanelOpcoesLista.setVisible(false);
         setIconImage(carregador.getIcones().getCrepzIcon().getImage());
         carregarIcones();
+        jTextField_Pesquisa.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                objectTableModel.setFiltro(jTextField_Pesquisa.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                objectTableModel.setFiltro(jTextField_Pesquisa.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                objectTableModel.setFiltro(jTextField_Pesquisa.getText());
+            }
+        });
+        
     }
 
-    public void setPlayListAberta(Integer id) {
-        if (id == null) {
+    public void setPlayListAberta(String nome) {
+        if (nome == null) {
             playlist = null;
             return;
         }
         try {
-            playlist = new Playlist();
-            playlist.setId(id);
-            PlaylistBD.carregar(playlist);
+            playlist = PortaCDs.getPlaylist(nome, true, PlaylistS.class);
             abrir(playlist);
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
@@ -107,7 +126,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
     }
 
-    public Playlist getPlaylistAberta() {
+    public PlaylistI getPlaylistAberta() {
         return playlist;
     }
 
@@ -119,22 +138,12 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         importarMusicasParaPlayList(files);
     }
 
-    public void importarMusicasParaPlayList(File[] files) {
-        Transacao t = new Transacao();
-        try {
-            t.begin();
-            importarMusicas(files, t);
-            t.commit();
-        } catch (Exception ex) {
-            t.rollback();
-            Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+  
 
-    private void importarMusicas(File[] files, Transacao t) {
+    public void importarMusicasParaPlayList(File[] files) {
         try {
             for (File s : files) {
-                Musica musica = MusicaGerencia.addOneFile(s, t);
+                MusicaS musica = MusicaGerencia.addOneFile(s);
                 if (musica == null) {
                     continue;
                 }
@@ -153,13 +162,8 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
     private void tocarSelecionada() {
         try {
-            Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 0);
-            //tocar(m);
+            MusicaS m = (MusicaS) jTable.getModel().getValueAt(jTable.getSelectedRow(), 0);
             carregador.abrir(m, 0, false);
-            if (jahFoi.indexOf(m) != jahFoi.size() - 1) {
-                jahFoi.add(m);
-                faltamTocar.remove(m);
-            }
         } catch (Exception ex) {
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -174,25 +178,18 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
      */
     private void initTabelaLista() {
 
-        // Definindo as colunas...
-        ModelReadOnly tm = new ModelReadOnly();
-        tm.addColumn("");
-        //   tm.addColumn("Autor");
-        try {
-            jTable.setModel(tm);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-        jTable.setAutoCreateRowSorter(true);
+        objectTableModel = new ObjectTableModel<MusicaS>(MusicaS.class, false);
+        jTable.setModel(objectTableModel);
+       
+        jTable.setAutoCreateRowSorter(false);
         jTable.setShowVerticalLines(true);
         jTable.setEditingColumn(-1);
         jTable.setEditingRow(-1);
 
-        jTable.setDefaultRenderer(Object.class, new PlayListRenderer());
+        jTable.setDefaultRenderer(MusicaS.class, new PlayListRenderer());
         jTable.setIntercellSpacing(new Dimension(1, 2));
         jTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jTable.setShowHorizontalLines(false);
-        jTable.setShowVerticalLines(true);
         jTable.setRowSelectionAllowed(true);
         jTable.setColumnSelectionAllowed(false);
         jTable.setRowHeight(40);
@@ -207,9 +204,9 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             @Override
             protected Transferable createTransferable(JComponent c) {
                 int[] rows = jTable.getSelectedRows();
-                ArrayList<Musica> musicas = new ArrayList<Musica>(rows.length);
+                ArrayList<MusicaS> musicas = new ArrayList<MusicaS>(rows.length);
                 for (int i = 0; i < rows.length; i++) {
-                    musicas.add((Musica) jTable.getModel().getValueAt(rows[i], 0));
+                    musicas.add((MusicaS) jTable.getModel().getValueAt(rows[i], 0));
                 }
                 return new ObjectTransferable(musicas, TipoTransferenciaMusica.JPLAY_LIST);
 
@@ -246,11 +243,11 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                         // irá cair no drop do linux e la encontrará alguns arquivos :D
                         Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, "Crepz tratavel...", ex);
                     }
-                    if (data != null && data.getClass() == Musica.class) {
+                    if (data != null && data.getClass() == MusicaS.class) {
                         if (posicaoDestino != -1) {
-                            ((ModelReadOnly) jTable.getModel()).insertRow(posicaoDestino, new Object[]{data});
+                            ((ObjectTableModel<MusicaS>) jTable.getModel()).insertItem((MusicaS)data, posicaoDestino);
                         } else {
-                            ((ModelReadOnly) jTable.getModel()).addRow(new Object[]{data});
+                            ((ObjectTableModel<MusicaS>)jTable.getModel()).addItem((MusicaS) data);
                         }
                     } else if (data != null && data.getClass() == ArrayList.class) {
                         addMusicas((ArrayList) data, posicaoDestino);
@@ -262,12 +259,10 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                         } else {
                             // Linux
                             loop_flavor:
-                            for (int i = 0; i < flavors.length; i++) {
-                                if (flavors[i].isRepresentationClassReader()) {
+                            for (DataFlavor flavor : flavors) {
+                                if (flavor.isRepresentationClassReader()) {
                                     dtde.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
-
-                                    Reader reader = flavors[i].getReaderForText(transferable);
-
+                                    Reader reader = flavor.getReaderForText(transferable);
                                     BufferedReader br = new BufferedReader(reader);
                                     ArrayList<File> arquivos = new ArrayList<File>(10);
                                     String linhaLida;
@@ -281,7 +276,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                                         }
                                     }
                                     importarMusicasParaPlayList((File[]) arquivos.toArray());
-                                    break loop_flavor;
+                                    break;
                                 }
                             }
                         }
@@ -306,79 +301,29 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
      * Método que atualiza a consulta atual.
      */
     public void atualizarTabelaLista() {
-        pesquisa.clear();
         if (jTextField_NomePlayList.getText().isEmpty()) {
             return;
         }
-
-        Transacao t = new Transacao();
         try {
-            t.begin();
-//            initTabelaLista(false);
-
-            ModelReadOnly model = (ModelReadOnly) jTable.getModel();
-            model.setRowCount(0);
+            ObjectTableModel<MusicaS> model = (ObjectTableModel<MusicaS>) jTable.getModel();
+            model.clear();
             if (playlist == null) {
                 return;
             }
             // Filtro...
-//            Playlist p = new Playlist();
-//            p.setNome(jTextField_NomePlayList.getText());
-//            PlaylistBD.existe(p, t);
-            if (playlist.getTipoPlayList() != null && playlist.getTipoPlayList() == TipoPlayList.INTELIGENTE) {
-                ArrayList<Musica> musicas = MusicaBD.listar(new MusicaSC(), t);
-                CondicaoSC filtroCond = new CondicaoSC();
-                filtroCond.setPlaylist(playlist);
-                ArrayList<Condicao> condicaos = CondicaoBD.listar(filtroCond, t);
-                for (int i = 0; i < musicas.size(); i++) {
-                    Musica musica = musicas.get(i);
-                    boolean todasAsCondicoes = true;
-                    for (int j = 0; todasAsCondicoes && j < condicaos.size(); j++) {
-                        Condicao condicao = condicaos.get(j);
-                        todasAsCondicoes &= condicao.resolver(musica);
-                    }
-                    if (todasAsCondicoes) {
-                        musica.setNumero(model.getRowCount());
-                        Object[] row = new Object[1];
-                        row[0] = musica;
-                        model.addRow(row);
-                        faltamTocar.add(musica);
-                        total.add(musica);
-                        pesquisa.add(musica);
-
-                    }
-                }
-
-            } else {
-                PlayMusicaSC filtro = new PlayMusicaSC();
-                filtro.setPlaylist(playlist);
-                ArrayList<PlayMusica> lista = PlayMusicaBD.listar(filtro, t);
-                for (int i = 0; i < lista.size(); i++) {
-                    PlayMusica m = (PlayMusica) lista.get(i);
-                    if (m.getMusica().getCaminho() == null) {
-                        MusicaBD.carregar(m.getMusica(), t);
-                    }
-                    m.getMusica().setNumero(i);
-                    Object[] row = new Object[1];
-                    row[0] = m.getMusica();
-                    model.addRow(row);
-                    faltamTocar.add(m.getMusica());
-                    total.add(m.getMusica());
-                    pesquisa.add(m.getMusica());
-                }
-
+            if (playlist instanceof PlaylistC) {
+                ((PlaylistC) playlist).updateMusicas();
             }
+            objectTableModel.setItens(playlist.getMusicas());
+
             jTable.requestFocus();
             if (jTable.getRowCount() > 0) {
                 jTable.changeSelection(0, 0, false, false);
             }
-            t.commit();
             setTitle(jTextField_NomePlayList.getText()
-                    + (playlist.getTipoPlayList() == TipoPlayList.INTELIGENTE ? " (Lista Automática)" : ""));
+                    + (playlist instanceof PlaylistC ? " (Lista Automática)" : ""));
 
         } catch (Exception ex) {
-            t.rollback();
-            // JOptionPane.showMessageDialog(this, "Erro ao Filtrar \\õ/");
             ex.printStackTrace(System.err);
         }
     }
@@ -386,16 +331,8 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     public void atualizarTabelaLista(ArrayList novaLista) {
         try {
 
-//            initTabelaLista(true);
-            ModelReadOnly ts = (ModelReadOnly) jTable.getModel();
-            ts.setRowCount(0);
-            for (int i = 0; i < novaLista.size(); i++) {
-                Musica m = (Musica) novaLista.get(i);
-
-                Object[] row = new Object[1];
-                row[0] = m;
-                ts.addRow(row);
-            }
+         objectTableModel.setItens(playlist.getMusicas());
+         
             jTable.requestFocus();
             if (jTable.getRowCount() > 0) {
                 jTable.changeSelection(0, 0, false, false);
@@ -426,10 +363,9 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
             intervalos.put(inicio, fim);
             ultimoLido = indice;
         }
-        for (Iterator<Integer> it = intervalos.keySet().iterator(); it.hasNext();) {
-            Integer start = it.next();
+        for (Integer start : intervalos.keySet()) {
             int end = intervalos.get(start);
-            ((ModelReadOnly) jTable.getModel()).moveRow(start.intValue(), end, novaPosicao);
+            ((ObjectTableModel) jTable.getModel()).moveRow(start.intValue(), end, novaPosicao);
             novaPosicao += (end - start + 1);
         }
         jTable.clearSelection();
@@ -440,54 +376,41 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         super.setAlwaysOnTop(sempreNoTopo);
     }
 
-    public Musica getAleatorio(Musica atual) {
-        if (faltamTocar.isEmpty()) {
-            if (Configuracoes.REPEAT_ATIVO.getValor()) {
-                faltamTocar.addAll(jahFoi);
-                jahFoi.clear();
-                return getAleatorio(atual);
-            } else {
-                return null;
-            }
-        } else {
-            if (jahFoi.indexOf(atual) == -1 && faltamTocar.indexOf(atual) != -1) {
-                jahFoi.add(faltamTocar.remove(faltamTocar.indexOf(atual)));
-                return getAleatorio(atual);
-            } else {
-                int random = (int) (Math.random() * faltamTocar.size());
-                Musica m = faltamTocar.remove(random);
-                jahFoi.add(m);
-                if (jTable.getRowCount() > m.getNumero()) {
-                    jTable.setRowSelectionInterval(m.getNumero(), m.getNumero());
-                } else {
-                    selecionarMusica(m);
-                }
-                return m;
-            }
-        }
+    public MusicaS getAleatorio(MusicaS atual) {
+//        if (Configuracoes.REPEAT_ATIVO.getValor()) {
+//            return getAleatorio(atual);
+//        } else {
+//                return null;
+//        }
+
+        int random = (int) (Math.random() * objectTableModel.getRowCount());
+        MusicaS m = objectTableModel.getItem(random);
+        jTable.setRowSelectionInterval(random, random);
+        return m;
 
     }
 
-    public Musica getProxima() {
+    public MusicaS getProxima() {
         return getProxima(false);
     }
 
-    private Musica getProxima(boolean erro) {
+    private MusicaS getProxima(boolean erro) {
+        if (objectTableModel.getRowCount() == 0) {
+            return null;
+        }
         if (!erro) {
             contaErro = 0;
         } else {
             contaErro++;
         }
-        if (total.size() < 1) {
-            return null;
-        }
-        if (contaErro > total.size()) {
+      
+        if (contaErro > objectTableModel.getRowCount()) {
             JOptionPane.showMessageDialog(this, "Nenhum arquivo foi encontrado... Você montou sua unidades?");
             contaErro = 0;
             return null;
         }
         try {
-            Musica atual = carregador.getMusica();
+            MusicaS atual = carregador.getMusica();
             int mAtual = -1;
             if (!Configuracoes.RANDOM_ATIVO.getValor()) {
                 if (atual != null) {
@@ -496,16 +419,16 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
                 if (mAtual < 0) {
                     jTable.setRowSelectionInterval(0, 0);
-                    return (Musica) jTable.getModel().getValueAt(0, 0);
+                    return (MusicaS) jTable.getModel().getValueAt(0, 0);
                 }
 
                 if (mAtual + 1 >= jTable.getRowCount()) {
                     jTable.setRowSelectionInterval(0, 0);
-                    return (Musica) jTable.getModel().getValueAt(0, 0);
+                    return (MusicaS) jTable.getModel().getValueAt(0, 0);
 
                 } else {
                     jTable.setRowSelectionInterval(mAtual + 1, mAtual + 1);
-                    return (Musica) jTable.getModel().getValueAt(mAtual + 1, 0);
+                    return (MusicaS) jTable.getModel().getValueAt(mAtual + 1, 0);
 
                 }
             } else {
@@ -519,26 +442,26 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
     }
 
-    public Musica getAnterior() {
+    public MusicaS getAnterior() {
         try {
-            Musica atual = carregador.getMusica();
+            MusicaS atual = carregador.getMusica();
             int mAtual;
             if (!Configuracoes.RANDOM_ATIVO.getValor()) {
                 mAtual = atual.getNumero();
                 if (mAtual > -1) {
                     if (mAtual - 1 < 0) {
                         jTable.setRowSelectionInterval(mAtual - 1, mAtual - 1);
-                        return (Musica) jTable.getModel().getValueAt(jTable.getRowCount() - 1, 0);
+                        return (MusicaS) jTable.getModel().getValueAt(jTable.getRowCount() - 1, 0);
                     } else {
                         jTable.setRowSelectionInterval(mAtual - 1, mAtual - 1);
-                        return (Musica) jTable.getModel().getValueAt(mAtual - 1, 0);
+                        return (MusicaS) jTable.getModel().getValueAt(mAtual - 1, 0);
                     }
                 }
                 System.out.println("Não tem mais musicas, retornando null.");
                 return null;
             } else {
-                if (jahFoi.indexOf(carregador.getMusica()) > 0) {
-                    Musica musica = jahFoi.get(jahFoi.indexOf(carregador.getMusica()) - 1);
+                if (objectTableModel.indexOf(carregador.getMusica()) > 0) {
+                    MusicaS musica = objectTableModel.getItem(objectTableModel.indexOf(carregador.getMusica()) - 1);
                     selecionarMusica(musica);
                     return musica;
                 }
@@ -551,7 +474,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
     }
 
-    public void selecionarMusica(Musica musica) {
+    public void selecionarMusica(MusicaS musica) {
         if (musica.getNumero() >= 0 && musica.getNumero() < jTable.getRowCount()
                 && jTable.getValueAt(musica.getNumero(), 0).equals(musica)) {
             jTable.setRowSelectionInterval(musica.getNumero(), musica.getNumero());
@@ -582,8 +505,8 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 f.createNewFile();
                 FileWriter fw = new FileWriter(f);
                 BufferedWriter bfw = new BufferedWriter(fw);
-                for (int i = 0; i < total.size(); i++) {
-                    Musica m = total.get(i);
+                for (int i = 0; i < objectTableModel.getRowCount(); i++) {
+                    MusicaS m = objectTableModel.getItem(i);
                     String aux = m.getCaminho();
                     aux = aux.replace('/', File.separatorChar);
                     bfw.write(aux);
@@ -600,58 +523,23 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     }
 
     private void salvarPlaylist() {
-        Transacao t = new Transacao();
         try {
-            t.begin();
-            playlist = new Playlist();
-            playlist.setNome(jTextField_NomePlayList.getText());
-            if (PlaylistBD.existe(playlist, t)) {
-                PlaylistBD.carregar(playlist, t);
-            } else {
-                PlaylistBD.incluir(playlist, t);
-                PlaylistBD.existe(playlist, t);
-            }
-            PlayMusicaBD.excluirMusica(playlist, t);
-            for (int i = 0; i < total.size(); i++) {
-                Musica m = total.get(i);
-                PlayMusica plm = new PlayMusica();
-                plm.setMusica(m);
-                plm.setPlaylist(playlist);
-                plm.setSeq(i);
-                //plm.setId(m.getId());
-                PlayMusicaBD.incluir(plm, t);
-            }
-            playlist.setNrMusicas(total.size());
+            playlist = PortaCDs.getPlaylist(jTextField_NomePlayList.getText(), true, PlaylistS.class);
+            playlist.getMusicas().clear();
+            playlist.getMusicas().addAll(objectTableModel.getItens());
 
-            PlaylistBD.alterar(playlist, t);
             setTitle(jTextField_NomePlayList.getText());
-
-            t.commit();
         } catch (Exception ex) {
-            t.rollback();
             ex.printStackTrace(System.err);
         }
 
     }
 
     private void deletar() {
-        Transacao t = new Transacao();
         try {
-            t.begin();
-
-            Playlist playList = new Playlist();
-            playList.setNome(jTextField_NomePlayList.getText());
-            if (PlaylistBD.existe(playList, t)) {
-                PlaylistBD.carregar(playList, t);
-            }
-            PlayMusicaBD.excluirMusica(playList, t);
-            PlaylistBD.excluir(playList, t);
-
-
-            t.commit();
+            PortaCDs.removerPlaylist(playlist);
             limpar();
         } catch (Exception ex) {
-            t.rollback();
             ex.printStackTrace(System.err);
         }
     }
@@ -661,14 +549,12 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         jTextField_NomePlayList.setText("");
         setTitle("Lista de Reprodução - Vazia");
 //        initTabelaLista(false);
-        ((ModelReadOnly) jTable.getModel()).setRowCount(0);
-        faltamTocar = new ArrayList(200);
-        total = new ArrayList(200);
+        ((ObjectTableModel) jTable.getModel()).clear();
     }
 
-    public void abrir(Playlist playlist) {
+    public void abrir(PlaylistI playlist) {
         this.playlist = playlist;
-        boolean listaNormal = playlist.getTipoPlayList() == null || playlist.getTipoPlayList() == TipoPlayList.NORMAL;
+        boolean listaNormal = playlist instanceof PlaylistS;
         jMenuItem_ExcluirLista.setEnabled(listaNormal);
         jMenuItemSalvar.setEnabled(listaNormal);
         jButtonAdicionar.setEnabled(listaNormal);
@@ -682,7 +568,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
     }
 
-    public void tocar(Playlist playlist) {
+    public void tocar(PlaylistI playlist) {
         try {
             abrir(playlist);
             carregador.abrir(getProxima(false), 0, false);
@@ -692,61 +578,35 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     }
 
     public void adicionarMusica() {
-        Transacao t = new Transacao();
         try {
             File in = principal.telaAbrirArquivo();
 
-            t.begin();
 
-            Musica m = MusicaGerencia.addOneFile(in, t);
-            t.commit();
-            //trace("ID: " +m.getId());
-            MusicaSC filtro = new MusicaSC();
-            filtro.setCaminho(m.getCaminho().trim());
-
-
-            m = MusicaBD.listar(filtro).get(0);
-//
+            MusicaS m = MusicaGerencia.addOneFile(in);
             addMusica(m);
 
 
         } catch (Exception ex) {
-            t.rollback();
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     private void removerMusica() {
-        if (playlist.getTipoPlayList() == TipoPlayList.INTELIGENTE) {
+        if (playlist instanceof PlaylistC) {
             JOptionPane.showMessageDialog(this, "Essa lista é automática!"
                     + "\nAltere as condições para remover ou adicionar músicas.");
             return;
         }
-        DefaultTableModel tm = (DefaultTableModel) jTable.getModel();
+        
         int selecteds[] = jTable.getSelectedRows();
-        for (int i = selecteds.length - 1; i >= 0; i--) {
-
-            Musica m = (Musica) tm.getValueAt(selecteds[i], 0);
-            faltamTocar.remove(m);
-            pesquisa.remove(m);
-            total.remove(m);
-            tm.removeRow(selecteds[i]);
-            PlayMusica playMusica = new PlayMusica();
-            playMusica.setMusica(m);
-            playMusica.setPlaylist(playlist);
-            try {
-                PlayMusicaBD.excluirPelaBk(playMusica);
-            } catch (Exception ex) {
-                Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        objectTableModel.removeItem(selecteds);
     }
 
     private void openM3u() {
         JFileChooser jf = new JFileChooser();
         jf.setDialogType(JFileChooser.OPEN_DIALOG);
         jf.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jf.setFileFilter(FiltroListaReproducao.getInstance());
+        jf.setFileFilter(FiltroArquivoGenerico.FILTRO_PLAYLIST);
         if (jf.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File f = jf.getSelectedFile();
             try {
@@ -781,13 +641,13 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
             transferFocus();
         } else {
+            PlaylistI novaPlaylist = PortaCDs.getPlaylist(jTextField_NomePlayList.getText(), false, PlaylistS.class);
+            if (novaPlaylist != null && novaPlaylist != playlist) {
+                JOptionPane.showMessageDialog(this, "Já existe uma lista de reprodução com esse nome.\nColoque um nome diferente.");
+                return ;
+            }
             if (playlist != null) {
                 playlist.setNome(jTextField_NomePlayList.getText());
-                try {
-                    PlaylistBD.alterar(playlist);
-                } catch (Exception ex) {
-                    Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
             salvarPlaylist();
             jToggleButtonOpcoesLista.setSelected(false);
@@ -848,7 +708,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
     private void editarListaAutomatica() {
         JListaInteligenteEditor editor = new JListaInteligenteEditor(principal, true);
-        editor.setPlaylist(playlist);
+        editor.setPlaylist((PlaylistC) playlist);
         editor.setVisible(true);
         if (editor.getPlaylist() != null) {
             abrir(editor.getPlaylist());
@@ -857,7 +717,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
 
     private void abrirPropriedades() {
         int linha = jTable.getSelectedRow();
-        Musica musica = (Musica) jTable.getValueAt(linha, 0);
+        MusicaS musica = (MusicaS) jTable.getValueAt(linha, 0);
         try {
             new JMP3Propriedades(principal, true, musica).setVisible(true);
             jTable.setValueAt(musica, linha, 0);
@@ -1093,17 +953,11 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     // Code for dispatching events from components to event handlers.
 
     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        if (evt.getSource() == jMenuItem_Tocar) {
-            JPlayList.this.jMenuItem_TocarActionPerformed(evt);
+        if (evt.getSource() == jButtonSalvar) {
+            JPlayList.this.jButtonSalvarActionPerformed(evt);
         }
-        else if (evt.getSource() == jMenuItem_Editar) {
-            JPlayList.this.jMenuItem_EditarActionPerformed(evt);
-        }
-        else if (evt.getSource() == jMenuItem_ExcluirLista) {
-            JPlayList.this.jMenuItem_ExcluirListaActionPerformed(evt);
-        }
-        else if (evt.getSource() == jMenuItemCopiarTudoPara) {
-            JPlayList.this.jMenuItemCopiarTudoParaActionPerformed(evt);
+        else if (evt.getSource() == jButtonExportar) {
+            JPlayList.this.jButtonExportarActionPerformed(evt);
         }
         else if (evt.getSource() == jButtonAbrir) {
             JPlayList.this.jButtonAbrirActionPerformed(evt);
@@ -1117,20 +971,26 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         else if (evt.getSource() == jButtonLimpar) {
             JPlayList.this.jButtonLimparActionPerformed(evt);
         }
-        else if (evt.getSource() == jButtonSalvar) {
-            JPlayList.this.jButtonSalvarActionPerformed(evt);
-        }
-        else if (evt.getSource() == jButtonExportar) {
-            JPlayList.this.jButtonExportarActionPerformed(evt);
-        }
         else if (evt.getSource() == jButtonAdicionar) {
             JPlayList.this.jButtonAdicionarActionPerformed(evt);
         }
         else if (evt.getSource() == jButtonRemover) {
             JPlayList.this.jButtonRemoverActionPerformed(evt);
         }
+        else if (evt.getSource() == jMenuItem_Tocar) {
+            JPlayList.this.jMenuItem_TocarActionPerformed(evt);
+        }
+        else if (evt.getSource() == jMenuItem_Editar) {
+            JPlayList.this.jMenuItem_EditarActionPerformed(evt);
+        }
+        else if (evt.getSource() == jMenuItem_ExcluirLista) {
+            JPlayList.this.jMenuItem_ExcluirListaActionPerformed(evt);
+        }
         else if (evt.getSource() == jMenuItemAbrirPlayList) {
             JPlayList.this.jMenuItemAbrirPlayListActionPerformed(evt);
+        }
+        else if (evt.getSource() == jMenuItemCopiarTudoPara) {
+            JPlayList.this.jMenuItemCopiarTudoParaActionPerformed(evt);
         }
         else if (evt.getSource() == jMenuItemSalvar) {
             JPlayList.this.jMenuItemSalvarActionPerformed(evt);
@@ -1168,9 +1028,6 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
     }
 
     public void keyTyped(java.awt.event.KeyEvent evt) {
-        if (evt.getSource() == jTextField_Pesquisa) {
-            JPlayList.this.jTextField_PesquisaKeyTyped(evt);
-        }
     }
 
     public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -1231,7 +1088,7 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
                 jTextField_Pesquisa.setText("");
                 break;
             case KeyEvent.VK_ENTER:
-                Musica m = (Musica) jTable.getModel().getValueAt(rowSelct, 0);
+                MusicaS m = ((ObjectTableModel<MusicaS>)jTable.getModel()).getItem(rowSelct);
                 try {
                     carregador.abrir(m, 0, false);
                     //  tocarPausar(null);
@@ -1260,34 +1117,12 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         }
 
     }//GEN-LAST:event_jTextField_PesquisaKeyPressed
-    private void jTextField_PesquisaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_PesquisaKeyTyped
-        ArrayList<Musica> novaLista = new ArrayList<Musica>(200);
-        char keyChar = Character.toLowerCase(evt.getKeyChar());
-        String textoFiltro;
-        if ((keyChar >= 'a' && keyChar <= 'z') || (keyChar >= '0' && keyChar <= '9')) {
-            textoFiltro = jTextField_Pesquisa.getText().toLowerCase() + keyChar;
-        } else {
-            textoFiltro = jTextField_Pesquisa.getText().toLowerCase();
-        }
-        for (Iterator<Musica> it = pesquisa.iterator(); it.hasNext();) {
-            Musica m = it.next();
-            if ((m.getNome() + m.getAutor()).toLowerCase().indexOf(textoFiltro) != -1) {
-                novaLista.add(m);
-            }
-        }
-        atualizarTabelaLista(novaLista);
-        if (jTable.getRowCount() > 0) {
-            jTable.setRowSelectionInterval(0, 0);
-            //Estou aqui
-        }
-        jTextField_Pesquisa.requestFocus();
-    }//GEN-LAST:event_jTextField_PesquisaKeyTyped
 
     private void jMenuItemCopiarTudoParaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCopiarTudoParaActionPerformed
         if (jCopiador == null) {
             jCopiador = new JCopiador(this, false);
         }
-        jCopiador.setMusicas(total);
+        jCopiador.setMusicas(objectTableModel.getItens());
         jCopiador.setNomePLayList(playlist.getNome());
         jCopiador.setVisible(true);
     }//GEN-LAST:event_jMenuItemCopiarTudoParaActionPerformed
@@ -1377,78 +1212,38 @@ public class JPlayList extends javax.swing.JDialog implements ActionListener, Li
         editarListaAutomatica();
     }//GEN-LAST:event_jMenuItem_EditarListaAutomaticaActionPerformed
 
-    public void addMusica(Musica m) {
+    public void addMusica(MusicaS m) {
+       objectTableModel.addItem(m);
         if (playlist == null) {
             salvarPlaylistAtual();
+        }else{
+            playlist.getMusicas().add(m);
         }
-        try {
-            PlayMusica playMusica = new PlayMusica();
-            playMusica.setMusica(m);
-            playMusica.setPlaylist(playlist);
-            playMusica.setSeq(jTable.getModel().getRowCount());
-            PlayMusicaBD.incluir(playMusica);
-        } catch (Exception ex) {
-            Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        m.setNumero(jTable.getModel().getRowCount());
-        Object[] row = new Object[1];
-        row[0] = m;
-        ((ModelReadOnly) jTable.getModel()).addRow(row);
-        faltamTocar.add(m);
-        total.add(m);
-        pesquisa.add(m);
+       
     }
 
-    public void addMusicas(ArrayList<Musica> musicas) {
+    public void addMusicas(ArrayList<MusicaS> musicas) {
         addMusicas(musicas, jTable.getRowCount());
     }
 
-    public void addMusicas(ArrayList<Musica> musicas, int posicaoInicial) {
+    public void addMusicas(ArrayList<MusicaS> musicas, int posicaoInicial) {
         if (playlist == null) {
             salvarPlaylistAtual();
         }
-        int posicao = posicaoInicial;
-        Transacao t = new Transacao();
+        
         try {
-            t.begin();
-            for (int i = 0; i < musicas.size(); i++) {
-                Musica musica = musicas.get(i);
-                PlayMusica playMusica = new PlayMusica();
-                playMusica.setMusica(musica);
-                playMusica.setPlaylist(playlist);
-                playMusica.setSeq(jTable.getModel().getRowCount());
-                PlayMusicaBD.incluir(playMusica, t);
-
-
-                Object[] row = new Object[1];
-                row[0] = musica;
-                if (posicaoInicial == -1 || posicaoInicial >= jTable.getRowCount()) {
-                    ((DefaultTableModel) jTable.getModel()).addRow(row);
-                    faltamTocar.add(musica);
-                    total.add(musica);
-                    pesquisa.add(musica);
-                    musica.setNumero(getUltimaPosicao());
-                } else {
-                    ((DefaultTableModel) jTable.getModel()).insertRow(posicao, row);
-                    faltamTocar.add(posicao, musica);
-                    total.add(posicao, musica);
-                    pesquisa.add(posicao, musica);
-                    musica.setNumero(posicao);
-                    posicao++;
-                }
+            if (posicaoInicial == -1) {
+                playlist.getMusicas().addAll(musicas);
+            }else{
+                playlist.getMusicas().addAll(posicaoInicial, musicas);
             }
-            t.commit();
+            objectTableModel.setItens(playlist.getMusicas());
         } catch (Exception ex) {
-            t.rollback();
             Logger.getLogger(JPlayList.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-
-    private int getUltimaPosicao() {
-        return faltamTocar.size() + jahFoi.size();
-    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAbrir;
     private javax.swing.JButton jButtonAdicionar;

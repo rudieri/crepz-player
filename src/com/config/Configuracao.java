@@ -1,12 +1,14 @@
 package com.config;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
+import com.musica.autor.AutorS;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
 /**
  *
  * @author rudieri
+ * @param <E>
  */
 public class Configuracao<E> {
 
@@ -42,15 +44,17 @@ public class Configuracao<E> {
         if (valor == null) {
             return null;
         } else if (valor instanceof ArrayList) {
-            return ((ArrayList) valor).toString().replaceAll("[\\[\\]]", "");
-        } else if (valor instanceof Musica) {
-            return String.valueOf(((Musica) valor).getId());
+            return valor.toString().replaceAll("[\\[\\]]", "");
+        } else if (valor instanceof MusicaS) {
+            MusicaS musica = (MusicaS) valor;
+            AutorS autor = musica.getAlbum().getAutor();
+            return autor.getNome() + "/" + musica.getAlbum().getNome() + "/" + musica.getNome();
         } else if (valor instanceof Enum) {
             return ((Enum) valor).name();
         } else if (valor instanceof Rectangle) {
             Rectangle rec = (Rectangle) valor;
             return "[" + rec.x + "," + rec.y + "," + rec.width + "," + rec.height + "]";
-        } else if (valor instanceof String || valor instanceof Long || valor instanceof Double || valor instanceof Boolean) {
+        } else if (valor instanceof String || valor instanceof Long || valor instanceof Double || valor instanceof Boolean || valor instanceof Byte) {
             return valor.toString();
         } else {
             throw new UnsupportedOperationException("Classe " + valor.getClass().toString() + " não tratada.");

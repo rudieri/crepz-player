@@ -1,6 +1,6 @@
 package com.playlist;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import com.utils.pele.ColorUtils;
 import java.awt.Color;
 import java.awt.Component;
@@ -30,8 +30,8 @@ public class PlayListRenderer implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
-        if (value.getClass() == Musica.class) {
-            jLista.setMusica((Musica) value);
+        if (value.getClass() == MusicaS.class) {
+            jLista.setMusica((MusicaS) value);
         }
         //Aqui
 //        if (ColorUtils.getPeleAtual() == Pele.PELE_PADRAO) {

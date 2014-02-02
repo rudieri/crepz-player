@@ -10,10 +10,8 @@
  */
 package com.utils;
 
-import com.conexao.Transacao;
-import com.musica.CacheDeMusica;
-import com.musica.Musica;
 import com.musica.MusicaGerencia;
+import com.musica.MusicaS;
 import gsearch.Result;
 import java.awt.Color;
 import java.awt.Component;
@@ -47,13 +45,13 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
     /**
      * Creates new form JTrocarImagem
      */
-    Musica musica = null;
-    Thread th;
+    private final MusicaS musica;
+    private Thread th;
 
-    public JTrocarImagem(java.awt.Frame parent, boolean modal, Musica musica) {
+    public JTrocarImagem(java.awt.Frame parent, boolean modal, MusicaS musica) {
         super(parent, modal);
         initComponents();
-        jLabel1.setText("Musica: " + musica.getNome());
+        jLabel_Musica.setText("Musica: " + musica.getNome());
         this.musica = musica;
         atualizarTabela();
         startEvents();
@@ -72,10 +70,10 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
     private void atualizarTabela_Run() {
         try {
             jProgressBar.setVisible(true);
-            jButton1.setVisible(false);
+            jButton_Salvar.setVisible(false);
             jProgressBar.setString("Conectando...");
-            List<Result> lista = BuscaGoogle.buscaImagens(((musica.getAlbum() == null ? "" : musica.getAlbum())
-                    + " " + musica.getAutor() == null ? "" : musica.getAutor()
+            List<Result> lista = BuscaGoogle.buscaImagens(((musica.getAlbum() == null ? "" : musica.getAlbum().getNome())
+                    + " " + (musica.getAlbum() == null ? "" : musica.getAlbum().getAutor() == null ? "" : musica.getAlbum().getAutor().getNome())
                     + "" + musica.getNome() == null ? "" : musica.getNome()).replaceAll("  ", " ").trim());
             jProgressBar.setString("Montando Tabela");
             DefaultTableModel tm = (DefaultTableModel) jTable1.getModel();
@@ -115,13 +113,13 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
                 }
 
                 tm.addRow(row);
-                jButton1.setVisible(true);
+                jButton_Salvar.setVisible(true);
             }
 
 
         } catch (Exception ex) {
             jProgressBar.setVisible(false);
-            jButton1.setVisible(true);
+            jButton_Salvar.setVisible(true);
         }
     }
 
@@ -155,14 +153,14 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
 
     private void salvar() {
         th.interrupt();
-        Transacao t = new Transacao();
+//        Transacao t = new Transacao();
         try {
             String img = (String) jTable1.getModel().getValueAt(jTable1.getSelectedRow(), jTable1.getSelectedColumn() + 2);
             URL link = new URL(img);
             File musicaF = new File(musica.getCaminho());
-            String dest = musica.getImg();
+            String dest = musica.getAlbum().getImg();
             if (dest == null) {
-                dest = new File(musicaF.getAbsolutePath().replace(musicaF.getName(), musica.getAlbum() + "_" + musica.getAutor() + ".jpg")).getCanonicalPath();
+                dest = new File(musicaF.getAbsolutePath().replace(musicaF.getName(), musica.getAlbum().getNome() + "_" + musica.getAlbum().getAutor().getNome() + ".jpg")).getCanonicalPath();
             }
             File destino = new File(dest);
             InputStream in = link.openStream();
@@ -175,19 +173,19 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
             out.flush();
             out.close();
 
-            t.begin();
-            MusicaGerencia.mapearDiretorio(new File(musicaF.getAbsolutePath().replace(musicaF.getName(), "")), t, new JProgressBar(), 10);
-            t.commit();
+//            t.begin();
+            MusicaGerencia.mapearDiretorio(new File(musicaF.getAbsolutePath().replace(musicaF.getName(), "")), new JProgressBar(), 10);
+//            t.commit();
             setVisible(false);
             dispose();
         } catch (Exception ex) {
-            t.rollback();
+//            t.rollback();
             Logger.getLogger(JTrocarImagem.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     private void startEvents(){
-        jButton1.addActionListener(this);
+        jButton_Salvar.addActionListener(this);
     }
     
     @Override
@@ -207,13 +205,11 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        jLabel_Musica = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        jButton_Salvar = new javax.swing.JButton();
         jProgressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -221,12 +217,10 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
         jPanel1.setPreferredSize(new java.awt.Dimension(50, 30));
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel1.setText("Musica:");
-        jPanel1.add(jLabel1);
+        jLabel_Musica.setText("Musica:");
+        jPanel1.add(jLabel_Musica);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
-
-        jPanel2.setLayout(new java.awt.BorderLayout());
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -256,29 +250,23 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTable1);
 
-        jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jPanel3.setPreferredSize(new java.awt.Dimension(50, 35));
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
+        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
 
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.LINE_AXIS));
-
-        jButton1.setText("Salvar");
-        jPanel4.add(jButton1);
+        jButton_Salvar.setText("Salvar");
+        jPanel3.add(jButton_Salvar);
 
         jProgressBar.setIndeterminate(true);
         jProgressBar.setString("Aguarde");
         jProgressBar.setStringPainted(true);
-        jPanel4.add(jProgressBar);
-
-        jPanel3.add(jPanel4);
+        jPanel3.add(jProgressBar);
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.PAGE_END);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-358)/2, (screenSize.height-361)/2, 358, 361);
+        setSize(new java.awt.Dimension(358, 361));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -286,19 +274,17 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
      */
     public static void main(String args[]) {
 
-        Musica m = CacheDeMusica.get(-1);// Nenhuma música, apenas para pegar uma nova instância
-        m.setAlbum("Appetit for destruction");
-        m.setAutor("Guns");
-        JTrocarImagem dialog = new JTrocarImagem(new javax.swing.JFrame(), true, m);
-        dialog.setVisible(true);
+//        Musica m = Cache.getMusica(-1);// Nenhuma música, apenas para pegar uma nova instância
+//        m.setAlbum("Appetit for destruction");
+//        m.setAutor("Guns");
+//        JTrocarImagem dialog = new JTrocarImagem(new javax.swing.JFrame(), true, m);
+//        dialog.setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton jButton_Salvar;
+    private javax.swing.JLabel jLabel_Musica;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JProgressBar jProgressBar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

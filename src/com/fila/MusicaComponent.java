@@ -5,7 +5,7 @@
  */
 package com.fila;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import com.utils.pele.ColorUtils;
 
 /**
@@ -14,21 +14,21 @@ import com.utils.pele.ColorUtils;
  */
 public class MusicaComponent extends javax.swing.JPanel {
 
-    private Musica musica;
+    private MusicaS musica;
 
     public MusicaComponent() {
         initComponents();
     }
 
-    public Musica getMusica() {
+    public MusicaS getMusica() {
         return musica;
     }
 
-    public void setMusica(Musica musica) {
+    public void setMusica(MusicaS musica) {
         this.musica = musica;
         jLabelTempo.setText(musica.getTempo().toString());
         jLabelNome.setText(musica.getNome());
-        jLabelArtista.setText("Por: " + musica.getAutor());
+        jLabelArtista.setText("Por: " + musica.getAlbum().getAutor().getNome());
     }
 
     public void setSelecionado(boolean sel) {
