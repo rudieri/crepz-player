@@ -1,15 +1,11 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
  * JSelectPlaylists.java
  *
  * Created on 12/06/2010, 17:22:14
  */
 package com.playlist;
 
+import com.serial.PortaCDs;
 import com.utils.model.ModelReadOnly;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -19,7 +15,6 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -30,12 +25,13 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
     /**
      * Creates new form JSelectPlaylists
      */
-    JPlayList playlist;
+    private final JPlayList playlist;
 
     public JSelectPlaylists(java.awt.Frame parent, boolean modal, JPlayList playlist) {
         super(parent, modal);
         initComponents();
         this.playlist = playlist;
+        initTabelaLista();
         atualizarTabelaLista();
         startEvents();
     }
@@ -47,7 +43,6 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
 
         // Definindo as colunas...
         ModelReadOnly tm = new ModelReadOnly();
-        tm.addColumn("Cod");
         tm.addColumn("Nome");
         tm.addColumn("Tipo");
         tm.addColumn("Músicas");
@@ -56,7 +51,6 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         jTable.setModel(tm);
 
         // Definindo a largura das colunas...
-        jTable.getColumn("Cod").setPreferredWidth(30);
         jTable.getColumn("Nome").setPreferredWidth(250);
         jTable.getColumn("Tipo").setPreferredWidth(150);
         jTable.getColumn("Músicas").setPreferredWidth(40);
@@ -70,7 +64,6 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         jTable.setEditingColumn(-1);
         jTable.setEditingRow(-1);
 
-
         jTable.setIntercellSpacing(new Dimension(1, 2));
         jTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jTable.setShowHorizontalLines(true);
@@ -81,17 +74,6 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
 
     }
 
-    public static Playlist getPlayList(int id) {
-        Playlist playlist = new Playlist();
-        playlist.setId(id);
-        try {
-            PlaylistBD.carregar(playlist);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-        return playlist;
-    }
-
     /**
      * Método que atualiza a consulta atual.
      */
@@ -99,20 +81,16 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
 
         try {
             // Filtro...
-            initTabelaLista();
-            DefaultTableModel ts = (DefaultTableModel) jTable.getModel();
-
-            PlaylistSC filtro = new PlaylistSC();
-            filtro.setNome(jTextField_Nome.getText());
-            ArrayList lista = PlaylistBD.listar(filtro);
+            ModelReadOnly ts = (ModelReadOnly) jTable.getModel();
+            ts.setRowCount(0);
+            ArrayList<PlaylistI> lista = PortaCDs.listarPlayLists(jTextField_Nome.getText());
             for (int i = 0; i < lista.size(); i++) {
-                Playlist m = (Playlist) lista.get(i);
-                Object[] row = new Object[5];
-                row[0] = m.getId();
-                row[1] = m.getNome();
-                row[2] = m.getTipoPlayList();
-                row[3] = m.getTipoPlayList() == TipoPlayList.INTELIGENTE ? "<auto>":m.getNrMusicas();
-                row[4] = m;
+                PlaylistI m = lista.get(i);
+                Object[] row = new Object[ts.getColumnCount()];
+                row[0] = m.getNome();
+                row[1] = m.getTipoPlayList();
+                row[2] = m instanceof PlaylistS ? m.getNroMusicas() : "<auto>";
+                row[3] = m;
 
                 ts.addRow(row);
             }
@@ -127,7 +105,7 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
         }
     }
 
-    public void rodarPlaylist(Playlist p) {
+    public void rodarPlaylist(PlaylistI p) {
         playlist.limpar();
         playlist.tocar(p);
     }
@@ -142,22 +120,20 @@ public class JSelectPlaylists extends javax.swing.JDialog implements ActionListe
     private void abrirListaSelecionada() {
         if (jTable.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(this, "Você deve selecionar uma delas para abrir...");
-            return ;
+            return;
         }
-        rodarPlaylist((Playlist) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount()));
+        rodarPlaylist((PlaylistI) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount()));
         dispose();
     }
+
     private void excluirListaSelecionada() {
         if (jTable.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(this, "Você deve selecionar uma delas para abrir...");
-            return ;
+            return;
         }
-        Playlist playlistExcluir = (Playlist) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
-        try {
-            PlaylistBD.excluir(playlistExcluir);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
+        PlaylistI playlistExcluir = (PlaylistI) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
+        PortaCDs.removerPlaylist(playlistExcluir);
+        PortaCDs.salvar();
         atualizarTabelaLista();
     }
 

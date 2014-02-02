@@ -9,7 +9,9 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.DefaultComboBoxModel;
@@ -21,7 +23,7 @@ import javax.swing.border.BevelBorder;
  *
  * @author rudieri
  */
-public class JPele extends javax.swing.JDialog implements CorSelecionadaListener, ActionListener, MouseListener {
+public class JPele extends javax.swing.JDialog implements CorSelecionadaListener, ActionListener, MouseListener, ItemListener, KeyListener {
 
     /**
      * Creates new form JPele
@@ -203,16 +205,8 @@ public class JPele extends javax.swing.JDialog implements CorSelecionadaListener
 
         jComboBox1.setEditable(true);
         jComboBox1.setPreferredSize(new java.awt.Dimension(200, 26));
-        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jComboBox1ItemStateChanged(evt);
-            }
-        });
-        jComboBox1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jComboBox1KeyPressed(evt);
-            }
-        });
+        jComboBox1.addItemListener(this);
+        jComboBox1.addKeyListener(this);
         jPanel5.add(jComboBox1);
 
         jButtonNovo.setText("Novo");
@@ -323,18 +317,36 @@ public class JPele extends javax.swing.JDialog implements CorSelecionadaListener
         getContentPane().add(jPanel3, java.awt.BorderLayout.PAGE_END);
 
         pack();
+    }
+
+    // Code for dispatching events from components to event handlers.
+
+    public void itemStateChanged(java.awt.event.ItemEvent evt) {
+        if (evt.getSource() == jComboBox1) {
+            JPele.this.jComboBox1ItemStateChanged(evt);
+        }
+    }
+
+    public void keyPressed(java.awt.event.KeyEvent evt) {
+        if (evt.getSource() == jComboBox1) {
+            JPele.this.jComboBox1KeyPressed(evt);
+        }
+    }
+
+    public void keyReleased(java.awt.event.KeyEvent evt) {
+    }
+
+    public void keyTyped(java.awt.event.KeyEvent evt) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
+         if (evt.getStateChange() == ItemEvent.SELECTED) {
             Pele pele = ColorUtils.getPelePorNome(evt.getItem().toString());
             if (pele == null) {
                 pele = new Pele(jComboBox1.getSelectedItem().toString());
             }
             setPele(pele);
         }
-
-
     }//GEN-LAST:event_jComboBox1ItemStateChanged
 
     private void jComboBox1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBox1KeyPressed
@@ -346,6 +358,7 @@ public class JPele extends javax.swing.JDialog implements CorSelecionadaListener
             setPele(pele);
         }
     }//GEN-LAST:event_jComboBox1KeyPressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonNovo;

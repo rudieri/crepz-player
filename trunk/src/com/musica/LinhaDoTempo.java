@@ -12,17 +12,17 @@ import com.utils.listaencadeada.ListaEncadeada;
  */
 public class LinhaDoTempo {
 
-    private static final ListaEncadeada<Musica> listaEncadeada;
+    private static final ListaEncadeada<MusicaS> listaEncadeada;
     private static int posicao;
     private static boolean ativa;
 
     static {
-        listaEncadeada = new ListaEncadeada<Musica>();
+        listaEncadeada = new ListaEncadeada<MusicaS>();
         posicao = 0;
         ativa = true;
     }
 
-    public static void adicionarNaPosicaoAtual(Musica musica) {
+    public static void adicionarNaPosicaoAtual(MusicaS musica) {
         if (!ativa) {
             return;
         }
@@ -34,14 +34,14 @@ public class LinhaDoTempo {
         posicao++;
     }
 
-    public static void adicionar(Musica musica) {
+    public static void adicionar(MusicaS musica) {
         if (!ativa) {
             return;
         }
         listaEncadeada.adicionar(musica);
     }
 
-    public static Musica getProxima() {
+    public static MusicaS getProxima() {
         if (!ativa) {
             return null;
         }
@@ -58,7 +58,7 @@ public class LinhaDoTempo {
         }
     }
 
-    public static Musica getEstaMesmo() {
+    public static MusicaS getEstaMesmo() {
         if (!ativa) {
             return null;
         }
@@ -69,7 +69,7 @@ public class LinhaDoTempo {
         }
     }
 
-    public static Musica getAnterior() {
+    public static MusicaS getAnterior() {
         if (!ativa) {
             return null;
         }

@@ -4,7 +4,7 @@
  */
 package com.playlist.listainteligente.condicao.operadores;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import com.playlist.listainteligente.condicao.ValorCondicao;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public enum OperadorComparativo implements Operador<ValorCondicao> {
     }
 
     @Override
-    public boolean resolverOperacao(ValorCondicao valor1, ValorCondicao valor2, Musica musica) {
+    public boolean resolverOperacao(ValorCondicao valor1, ValorCondicao valor2, MusicaS musica) {
         Object v1 = valor1.getValor(musica);
         Object v2 = valor2.getValor(musica);
 
@@ -50,7 +50,7 @@ public enum OperadorComparativo implements Operador<ValorCondicao> {
                 return v1 == v2 || v1.equals(v2)
                         || v1.toString().toLowerCase().equals(v2.toString().toLowerCase());
             case DIFERENTE:
-                return v1 != null && v2 != null && v1.equals(v2);
+                return v1.equals(v2);
             case CONTEM:
                 return v1.toString().toLowerCase().contains(v2.toString().toLowerCase());
             case NAO_CONTEM:
@@ -98,8 +98,7 @@ public enum OperadorComparativo implements Operador<ValorCondicao> {
         if (tipoOperadorComparativo == TipoOperadorComparativo.NUMERICO) {
             lista.addAll(Arrays.asList(OperadorComparativo.values()));
         } else {
-            for (int i = 0; i < values().length; i++) {
-                OperadorComparativo operadorComparativo = values()[i];
+            for (OperadorComparativo operadorComparativo : values()) {
                 if (operadorComparativo.getTipoOperadorComparativo() == tipoOperadorComparativo) {
                     lista.add(operadorComparativo);
                 }

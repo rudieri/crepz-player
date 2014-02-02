@@ -42,8 +42,7 @@ public enum TipoTransferenciaMusica implements Serializable {
     }
 
     public static TipoTransferenciaMusica forName(String nome) {
-        for (int i = 0; i < values().length; i++) {
-            TipoTransferenciaMusica valor = values()[i];
+        for (TipoTransferenciaMusica valor : values()) {
             if (valor.getNome().equals(nome)) {
                 return valor;
             }

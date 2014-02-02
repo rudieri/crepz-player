@@ -10,7 +10,6 @@ import com.main.gui.JBiBlioteca;
 import com.main.gui.JMini;
 import com.main.gui.JPrincipal;
 import com.playlist.JPlayList;
-import com.utils.Warning;
 import com.utils.pele.ColorUtils;
 import com.utils.pele.JPele;
 import java.awt.Rectangle;
@@ -148,7 +147,7 @@ public class GerenciadorTelas {
                 carregandoDebug("Crepz Tray");
                 crepzTray = new CrepzTray(Carregador.getMe());
             } catch (Exception ex) {
-                Warning.print("System tray não supostado.");
+                System.err.print("System tray não supostado.");
                 ex.printStackTrace(System.err);
                 crepzTray = null;
             }

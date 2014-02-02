@@ -2,9 +2,10 @@ package com.main.gui;
 
 import com.biblioteca.BibliotecalRenderer;
 import com.biblioteca.Capa;
-import com.conexao.Transacao;
 import com.main.Carregador;
-import com.musica.*;
+import com.musica.MusicaGerencia;
+import com.musica.MusicaS;
+import com.serial.PortaCDs;
 import com.utils.JTrocarImagem;
 import com.utils.file.DiretorioUtils;
 import com.utils.model.ModelReadOnly;
@@ -15,11 +16,18 @@ import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -27,10 +35,13 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -48,14 +59,14 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author manchini
  */
-public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, Runnable {
+public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, Runnable, FocusListener, KeyListener, MouseListener {
 
     private final BibliotecalRenderer bibliotecalRenderer;
     /**
      * Creates new form JBiBlioteca
      */
     private JPrincipal principal;
-    private JFileChooser jFileChooser = new JFileChooser();
+    private final JFileChooser jFileChooser = new JFileChooser();
     String genero = "";
     private final Carregador carregador;
     private DropTarget dropTargetBiblioteca;
@@ -85,28 +96,23 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
             protected Transferable createTransferable(JComponent c) {
                 int[] rows = jTable.getSelectedRows();
                 int[] cols = jTable.getSelectedColumns();
-                ArrayList<Musica> musicas = new ArrayList<Musica>(rows.length);
+                ArrayList<MusicaS> musicas = new ArrayList<MusicaS>(rows.length);
                 for (int i = 0; i < rows.length; i++) {
                     if (jCheckBox_capa.isSelected()) {
                         for (int j = 0; j < cols.length; j++) {
                             int k = cols[j];
 
                             Capa capa = (Capa) jTable.getModel().getValueAt(rows[i], k);
-                            MusicaSC filtro = new MusicaSC();
-                            // if (jPanelFiltrar.isVisible()) {
-                            filtro.setNome(capa.getTitulo());
-                            filtro.setAutor(capa.getTitulo());
-                            filtro.setAlbum(capa.getTitulo());
-                            filtro.setGenero(capa.getTitulo());
+                           
                             initTabelaLista();
                             try {
-                                musicas.addAll(MusicaBD.listar(filtro));
+//                                musicas.addAll(PortaCDs.listarMusicas(capa., genero, genero)
                             } catch (Exception ex) {
                                 Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     } else {
-                        musicas.add((Musica) jTable.getModel().getValueAt(rows[i], jTable.getModel().getColumnCount() - 1));
+                        musicas.add((MusicaS) jTable.getModel().getValueAt(rows[i], jTable.getModel().getColumnCount() - 1));
                     }
                 }
                 return new ObjectTransferable(musicas, TipoTransferenciaMusica.JBIBLIOTECA);
@@ -128,12 +134,10 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
                     } else {
                         // Linux
                         loop_flavor:
-                        for (int i = 0; i < flavors.length; i++) {
-                            if (flavors[i].isRepresentationClassReader()) {
+                        for (DataFlavor flavor : flavors) {
+                            if (flavor.isRepresentationClassReader()) {
                                 dtde.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
-
-                                Reader reader = flavors[i].getReaderForText(transferable);
-
+                                Reader reader = flavor.getReaderForText(transferable);
                                 BufferedReader br = new BufferedReader(reader);
                                 ArrayList<File> arquivos = new ArrayList<File>(1);
                                 String linhaLida;
@@ -147,7 +151,7 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
                                     }
                                 }
                                 importarArquivos(arquivos);
-                                break loop_flavor;
+                                break;
                             }
                         }
 
@@ -226,12 +230,12 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
         try {
             jComboBox_Agrupar.setEnabled(false);
             // Filtro...
-            MusicaSC filtro = new MusicaSC();
-            // if (jPanelFiltrar.isVisible()) {
-            filtro.setNome(jTextField_Album.getText());
-            filtro.setAutor(jTextField_Album.getText());
-            filtro.setAlbum(jTextField_Album.getText());
-            filtro.setGenero(genero);
+//            MusicaSC filtro = new MusicaSC();
+//            // if (jPanelFiltrar.isVisible()) {
+//            filtro.setNome(jTextField_Album.getText());
+//            filtro.setAutor(jTextField_Album.getText());
+//            filtro.setAlbum(jTextField_Album.getText());
+//            filtro.setGenero(genero);
 //            } else {
 //                filtro.setNome("");
 //                filtro.setAutor("");
@@ -239,13 +243,14 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
 //            }
             initTabelaLista();
             DefaultTableModel ts = (DefaultTableModel) jTable.getModel();
-            ArrayList lista = MusicaBD.listar(filtro);
+//            ArrayList lista = MusicaBD.listar(filtro);
+            ArrayList<MusicaS> lista = PortaCDs.listarMusicas(genero, genero, genero);
             for (int i = 0; i < lista.size(); i++) {
-                Musica m = (Musica) lista.get(i);
+                MusicaS m = (MusicaS) lista.get(i);
                 Object[] row = new Object[5];
-                row[0] = m.getGenero();
+                row[0] = m.getAlbum().getGenero();
                 row[1] = m.getNome();
-                row[2] = m.getAutor();
+                row[2] = m.getAlbum().getAutor().getNome();
                 row[3] = m.getAlbum();
                 row[4] = m;
                 ts.addRow(row);
@@ -304,27 +309,27 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
         try {
             jComboBox_Agrupar.setEnabled(true);
             // Filtro...
-            MusicaSC filtro = new MusicaSC();
-            if (jPanelFiltrar.isVisible()) {
-                genero = "";
-                filtro.setNome(jTextField_Album.getText());
-                filtro.setAutor(jTextField_Album.getText());
-                filtro.setAlbum(jTextField_Album.getText());
-            } else {
-                resetText();
-            }
+//            MusicaSC filtro = new MusicaSC();
+//            if (jPanelFiltrar.isVisible()) {
+//                genero = "";
+//                filtro.setNome(jTextField_Album.getText());
+//                filtro.setAutor(jTextField_Album.getText());
+//                filtro.setAlbum(jTextField_Album.getText());
+//            } else {
+//                resetText();
+//            }
             initTabelaCapa();
             DefaultTableModel ts = (DefaultTableModel) jTable.getModel();
-            ArrayList lista = MusicaBD.listarAgrupado(filtro, jComboBox_Agrupar.getSelectedItem().toString());
-            for (int i = 0; i < lista.size(); i += 2) {
-                Object[] row = new Object[3];
-                row[0] = (Capa) lista.get(i);
-                if (i < lista.size() - 1) {
-                    row[1] = (Capa) lista.get(i + 1);
-                }
-
-                ts.addRow(row);
-            }
+//            ArrayList lista = MusicaBD.listarAgrupado(filtro, jComboBox_Agrupar.getSelectedItem().toString());
+//            for (int i = 0; i < lista.size(); i += 2) {
+//                Object[] row = new Object[3];
+//                row[0] = (Capa) lista.get(i);
+//                if (i < lista.size() - 1) {
+//                    row[1] = (Capa) lista.get(i + 1);
+//                }
+//
+//                ts.addRow(row);
+//            }
             jTable.requestFocus();
             if (jTable.getRowCount() > 0) {
                 jTable.changeSelection(0, 0, false, false);
@@ -360,20 +365,14 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
 
     @Override
     public void run() {
-        Transacao t = new Transacao();
         jProgressBar.setVisible(true);
         try {
-            t.begin();
             File pasta = telaAbrirArquivo();
             if (pasta != null) {
-                importarArquivos(pasta, t);
-
-
+                importarArquivos(pasta);
             }
-            t.commit();
             atualizarTabelaCapa();
         } catch (Exception ex) {
-            t.rollback();
             ex.printStackTrace(System.err);
         } finally {
             jProgressBar.setVisible(false);
@@ -381,24 +380,19 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
     }
 
     private void importarArquivos(ArrayList<File> pasta) {
-        Transacao t = new Transacao();
         try {
-            t.begin();
             for (int i = 0; i < pasta.size(); i++) {
-                importarArquivos(pasta.get(i), t);
+                importarArquivos(pasta.get(i));
             }
-            t.commit();
         } catch (Exception ex) {
-            t.rollback();
             Logger.getLogger(JBiBlioteca.class.getName()).log(Level.WARNING, "Erro ao importar arquivos arrastados: ", ex);
         }
     }
 
-    private void importarArquivos(File pasta, Transacao t) throws Exception {
-        long date = new Date().getTime();
+    private void importarArquivos(File pasta) throws Exception {
         int total = DiretorioUtils.calculaQuantidadeArquivos(pasta);
         MusicaGerencia.count = 0;
-        MusicaGerencia.mapearDiretorio(pasta, t, jProgressBar, total);
+        MusicaGerencia.mapearDiretorio(pasta, jProgressBar, total);
     }
 
     public void resetText() {
@@ -450,11 +444,11 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
         } else if (e.getSource() == jMenuItem3) {
             if (jTable.getSelectedRow() != -1) {
                 carregador.addToPlayList(
-                        (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount()));
+                        (MusicaS) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount()));
             }
         } else if (e.getSource() == jMenuItem4) {
             for (int i = 0; i < jTable.getRowCount(); i++) {
-                Musica m = (Musica) jTable.getModel().getValueAt(i, jTable.getColumnCount());
+                MusicaS m = (MusicaS) jTable.getModel().getValueAt(i, jTable.getColumnCount());
                 carregador.addToPlayList(m);
             }
         } else if (e.getSource() == jMenuItem5) {
@@ -464,7 +458,7 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
                     jTextField_Album.setText(capa.getTitulo());
                     atualizarTabelaLista();
                 }
-                Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
+                MusicaS m = (MusicaS) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
                 new JTrocarImagem(principal, true, m).setVisible(true);
                 jCheckBox_capa.setSelected(true);
                 atualizarTabelaCapa();
@@ -536,16 +530,8 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
         jTextField_Album.setMaximumSize(new java.awt.Dimension(300, 20));
         jTextField_Album.setMinimumSize(new java.awt.Dimension(300, 20));
         jTextField_Album.setPreferredSize(new java.awt.Dimension(276, 25));
-        jTextField_Album.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextField_AlbumFocusGained(evt);
-            }
-        });
-        jTextField_Album.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTextField_AlbumKeyPressed(evt);
-            }
-        });
+        jTextField_Album.addFocusListener(this);
+        jTextField_Album.addKeyListener(this);
         jPanel_Nome4.add(jTextField_Album);
 
         jButton_PK4.setText("OK");
@@ -617,16 +603,8 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
         jTable.setFocusTraversalPolicyProvider(true);
         jTable.setRowSelectionAllowed(false);
         jTable.setSurrendersFocusOnKeystroke(true);
-        jTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableMouseClicked(evt);
-            }
-        });
-        jTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jTableKeyPressed(evt);
-            }
-        });
+        jTable.addMouseListener(this);
+        jTable.addKeyListener(this);
         jScrollPane.setViewportView(jTable);
 
         jPanel3.add(jScrollPane, java.awt.BorderLayout.CENTER);
@@ -683,8 +661,52 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
 
         setJMenuBar(jMenuBar1);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-495)/2, (screenSize.height-419)/2, 495, 419);
+        setSize(new java.awt.Dimension(495, 419));
+        setLocationRelativeTo(null);
+    }
+
+    // Code for dispatching events from components to event handlers.
+
+    public void focusGained(java.awt.event.FocusEvent evt) {
+        if (evt.getSource() == jTextField_Album) {
+            JBiBlioteca.this.jTextField_AlbumFocusGained(evt);
+        }
+    }
+
+    public void focusLost(java.awt.event.FocusEvent evt) {
+    }
+
+    public void keyPressed(java.awt.event.KeyEvent evt) {
+        if (evt.getSource() == jTextField_Album) {
+            JBiBlioteca.this.jTextField_AlbumKeyPressed(evt);
+        }
+        else if (evt.getSource() == jTable) {
+            JBiBlioteca.this.jTableKeyPressed(evt);
+        }
+    }
+
+    public void keyReleased(java.awt.event.KeyEvent evt) {
+    }
+
+    public void keyTyped(java.awt.event.KeyEvent evt) {
+    }
+
+    public void mouseClicked(java.awt.event.MouseEvent evt) {
+        if (evt.getSource() == jTable) {
+            JBiBlioteca.this.jTableMouseClicked(evt);
+        }
+    }
+
+    public void mouseEntered(java.awt.event.MouseEvent evt) {
+    }
+
+    public void mouseExited(java.awt.event.MouseEvent evt) {
+    }
+
+    public void mousePressed(java.awt.event.MouseEvent evt) {
+    }
+
+    public void mouseReleased(java.awt.event.MouseEvent evt) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableKeyPressed
@@ -707,21 +729,21 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
                 } else {
                     if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                         try {
-                            Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
+                            MusicaS m = (MusicaS) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
                             carregador.abrir(m, 0, false);
                             jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                         } catch (Exception ex) {
                             Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     } else {
-                        Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
+                        MusicaS m = (MusicaS) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
                         carregador.addToPlayList(m);
                     }
                 }
             }
 
             if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_P) {
-                Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
+                MusicaS m = (MusicaS) jTable.getModel().getValueAt(jTable.getSelectedRow(), 4);
                 carregador.addToPlayList(m);
 
             }
@@ -747,14 +769,14 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
             } else {
                 if (jComboBox_selecao.getSelectedItem().equals("Executar")) {
                     try {
-                        Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
+                        MusicaS m = (MusicaS) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
                         carregador.abrir(m, 0, false);
                         jTable.changeSelection(jTable.getSelectedRow(), jTable.getSelectedColumn(), false, false);
                     } catch (Exception ex) {
                         Logger.getLogger(JBiBlioteca.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
-                    Musica m = (Musica) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
+                    MusicaS m = (MusicaS) jTable.getModel().getValueAt(jTable.getSelectedRow(), jTable.getColumnCount());
                     carregador.addToPlayList(m);
                 }
             }
@@ -770,6 +792,7 @@ public class JBiBlioteca extends javax.swing.JDialog implements ActionListener, 
     private void jTextField_AlbumFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField_AlbumFocusGained
         jTextField_Album.selectAll();
     }//GEN-LAST:event_jTextField_AlbumFocusGained
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

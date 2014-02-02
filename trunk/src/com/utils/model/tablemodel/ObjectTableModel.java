@@ -13,6 +13,7 @@ import javax.swing.table.TableModel;
 /**
  *
  * @author rudieri
+ * @param <E>
  */
 public class ObjectTableModel<E extends Filtravel> implements TableModel {
 
@@ -21,36 +22,52 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
     private ArrayList<E> itensFiltrados;
     private final Class<E> modelo;
     private String filtro;
-    private Field[] colunas;
+    private ColunaTabela[] colunas;
     private ArrayList<ObjectTableModelListener> listeners;
+    private boolean gerarColunas;
 
     public ObjectTableModel(Class<E> classeModelo) {
+        this(classeModelo, true);
+    }
+    public ObjectTableModel(Class<E> classeModelo, boolean gerarColunas) {
         tableModelListeners = new ArrayList<TableModelListener>(2);
         listeners = new ArrayList<ObjectTableModelListener>(1);
         itens = new ArrayList<E>(10);
         itensFiltrados = new ArrayList<E>(10);
+        this.gerarColunas = gerarColunas;
         this.modelo = classeModelo;
-        inicializaColunas();
+        if (gerarColunas) {
+            inicializaColunas();
+        }
     }
 
     private void inicializaColunas() {
         Field[] campos = modelo.getDeclaredFields();
-        int contaCol = 0;
-        for (int i = 0; i < campos.length; i++) {
-            Field campo = campos[i];
+        ArrayList<ColunaTabela> colunaTabelas = new ArrayList<ColunaTabela>();
+        ArrayList<Field> caminho = new ArrayList<Field>();
+        inicializaColunas(colunaTabelas, campos, caminho);
+        colunas = new ColunaTabela[colunaTabelas.size()];
+        colunas = colunaTabelas.toArray(colunas);
+
+    }
+
+    private void inicializaColunas(ArrayList<ColunaTabela> colunas, Field[] campos, ArrayList<Field> caminho) {
+        for (Field campo : campos) {
             campo.setAccessible(true);
-            final ObjetoTabela annotation = campo.getAnnotation(ObjetoTabela.class);
+            ObjetoTabela annotation = campo.getAnnotation(ObjetoTabela.class);
             if (annotation != null && annotation.visivel()) {
-                contaCol++;
-            }
-        }
-        colunas = new Field[contaCol];
-        contaCol = 0;
-        for (int i = 0; i < campos.length; i++) {
-            Field field = campos[i];
-            final ObjetoTabela annotation = field.getAnnotation(ObjetoTabela.class);
-            if (annotation != null && annotation.visivel()) {
-                colunas[contaCol++] = field;
+                if (annotation.temFilhos()) {
+                    Class<?> tipoCampoFilho = campo.getType();
+                    caminho.add(campo);
+                    inicializaColunas(colunas, tipoCampoFilho.getDeclaredFields(), caminho);
+                    caminho.remove(campo);
+                } else {
+                    caminho.add(campo);
+                    Field[] fields = new Field[caminho.size()];
+                    ColunaTabela colunaTabela = new ColunaTabela(caminho.toArray(fields));
+                    colunas.add(colunaTabela);
+                    caminho.remove(caminho.size() - 1);
+                }
             }
         }
     }
@@ -66,18 +83,18 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
 
     @Override
     public int getColumnCount() {
-        return colunas.length;
+        return gerarColunas ? colunas.length : 1;
     }
 
     @Override
     public String getColumnName(int columnIndex) {
-        return ObjetoTabelaUtils.getNomeColuna(modelo, colunas[columnIndex]);
+        return gerarColunas ? ObjetoTabelaUtils.getNomeColuna(modelo, colunas[columnIndex].getField()) : modelo.getName();
 //        return ((ObjetoTabela) modelo.getClass().getAnnotations()[columnIndex]).nomeColuna();
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return Object.class;
+        return gerarColunas ? Object.class : modelo;
     }
 
     @Override
@@ -89,17 +106,20 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
     @Deprecated
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (filtro == null) {
-            return ObjetoTabelaUtils.getValueAt(itens.get(rowIndex), colunas[columnIndex]);
+            return gerarColunas ? colunas[columnIndex].getValor(itens.get(rowIndex)) : itens.get(rowIndex);
         } else {
             if (itensFiltrados.isEmpty()) {
                 return null;
             }
-            return ObjetoTabelaUtils.getValueAt(itensFiltrados.get(rowIndex), colunas[columnIndex]);
+            return gerarColunas ? colunas[columnIndex].getValor(itensFiltrados.get(rowIndex)) : itensFiltrados.get(rowIndex);
         }
     }
 
     /**
      *
+     * @param aValue
+     * @param rowIndex
+     * @param columnIndex
      * @deprecated Será usado apenas internamente, substituído por
      * {@link ObjectTableModel}
      */
@@ -149,17 +169,30 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
 
     }
 
+    public void insertItem(E item, int index) {
+        itens.add(index, item);
+        if (filtro == null) {
+            for (int i = 0; i < tableModelListeners.size(); i++) {
+                TableModelEvent event = new TableModelEvent(this, index, itens.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+                tableModelListeners.get(i).tableChanged(event);
+            }
+        } else {
+            atualizarFiltro();
+        }
+        dispararSizeChanged();
+
+    }
+
     public void setItens(ArrayList<E> itens) {
-//        this.itens.clear();
-//        this.itensFiltrados.clear();
         clear();
+        if (itens.isEmpty()) {
+            return ;
+        }
         this.itens.addAll(itens);
         if (filtro == null) {
-
             for (int i = 0; i < tableModelListeners.size(); i++) {
                 TableModelEvent event = new TableModelEvent(this, 0, itens.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
                 tableModelListeners.get(i).tableChanged(event);
-
             }
         } else {
             atualizarFiltro();
@@ -232,7 +265,7 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
             }
         }
         for (int i = 0; i < tableModelListeners.size(); i++) {
-            TableModelEvent event = new TableModelEvent(this, 0, itensFiltrados.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+            TableModelEvent event = new TableModelEvent(this);//, 0, itensFiltrados.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE);
             if (!itensFiltrados.isEmpty()) {
 //             event = new TableModelEvent(this, 0, 0, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
                 tableModelListeners.get(i).tableChanged(event);
@@ -258,7 +291,7 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
             }
             itensFiltrados.clear();
         } else {
-            this.filtro = text;
+            this.filtro = text.toLowerCase();
             atualizarFiltro();
         }
         dispararSizeChanged();
@@ -285,5 +318,47 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
 
     public boolean contains(E item) {
         return indexOf(item) != -1;
+    }
+
+    public void moveRow(int linhaInicial, int linhaFinal, int novaPosicao) {
+        ArrayList<E> dados = new ArrayList<E>(linhaFinal - linhaInicial + 1);
+        for (int i = linhaInicial; i < linhaFinal; i++) {
+            dados.add(itens.remove(i));
+        }
+        itens.addAll(novaPosicao, dados);
+        if (filtro == null) {
+            for (int i = 0; i < tableModelListeners.size(); i++) {
+                TableModelEvent event = new TableModelEvent(this, 0, itens.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE);
+                tableModelListeners.get(i).tableChanged(event);
+            }
+        } else {
+            atualizarFiltro();
+        }
+        dispararSizeChanged();
+    }
+
+    /**
+     * Use por conta e risco...
+     *
+     * @return
+     */
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
+    public ArrayList<E> getItens() {
+        return itens;
+    }
+
+    public void removeItem(int... linhas) {
+        for (int i = linhas.length; i >= 0; i--) {
+            itens.remove(linhas[i]);
+        }
+        if (filtro == null) {
+            for (int i = 0; i < tableModelListeners.size(); i++) {
+                TableModelEvent event = new TableModelEvent(this, itens.size() - 1, itens.size() - 1, TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT);
+                tableModelListeners.get(i).tableChanged(event);
+            }
+        } else {
+            atualizarFiltro();
+        }
+        dispararSizeChanged();
     }
 }

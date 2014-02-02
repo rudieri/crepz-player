@@ -1,6 +1,6 @@
 package com.main.gui;
 
-import com.conexao.BD;
+import com.config.Configuracoes;
 import com.config.JConfiguracao;
 import com.help.JHelp;
 import com.help.JSobre;
@@ -9,12 +9,11 @@ import com.main.Notificavel;
 import com.melloware.jintellitype.HotkeyListener;
 import com.melloware.jintellitype.IntellitypeListener;
 import com.melloware.jintellitype.JIntellitype;
-import com.musica.Musica;
 import com.musica.MusicaGerencia;
+import com.musica.MusicaS;
 import com.musica.Musiquera.PropriedadesMusica;
-import com.utils.Warning;
 import com.utils.file.DiretorioUtils;
-import com.utils.file.filtros.FiltroMusica;
+import com.utils.file.FiltroArquivoGenerico;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics;
@@ -34,7 +33,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeListener;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 
@@ -82,7 +88,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
-        jFileChooserImportar.setFileFilter(FiltroMusica.getInstance());
+        jFileChooserImportar.setFileFilter(FiltroArquivoGenerico.FILTRO_MUSICA);
         jFileChooserImportar.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         jProgressBar1.setVisible(false);
         JCheckBoxMenuItem[] menusLnF = carregador.getMenusLnF();
@@ -128,7 +134,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
 
                 break;
             default:
-                Warning.print("Evento desconhecio. Id: " + tipo);
+                System.err.print("Evento desconhecio. Id: " + tipo);
                 break;
         }
     }
@@ -257,7 +263,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
                     lista.add(jFileChooserImportar.getSelectedFile());
                 }
                 int nroFiles = DiretorioUtils.calculaQuantidadeArquivos(lista);
-                MusicaGerencia.mapearDiretorio(lista, new ArrayList<Musica>(nroFiles), jProgressBar1, nroFiles);
+                MusicaGerencia.mapearDiretorio(lista, new ArrayList<MusicaS>(nroFiles), jProgressBar1, nroFiles);
             } catch (Exception ex) {
                 Logger.getLogger(JPrincipal.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -460,6 +466,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jMenuDeContexto = new javax.swing.JPopupMenu();
         jCMenuReproduz = new javax.swing.JMenu();
@@ -470,7 +477,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jCCheckBarraDeMenus = new javax.swing.JCheckBoxMenuItem();
         jCIMenuMinimizar = new javax.swing.JMenuItem();
         jCIMenuFechar = new javax.swing.JMenuItem();
-        GrupoSpiner = new javax.swing.ButtonGroup();
         jFileChooserImportar = new javax.swing.JFileChooser();
         jPanel17 = new javax.swing.JPanel();
         jLabel_bib = new javax.swing.JLabel();
@@ -480,23 +486,12 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jLabel_Minimizar = new javax.swing.JLabel();
         jLabelHelp = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jPanel15 = new javax.swing.JPanel();
         jLabel_Musica = new javax.swing.JLabel();
-        jPanel14 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jPanel11 = new javax.swing.JPanel();
         jLabel_bit = new javax.swing.JLabel();
-        jPanel12 = new javax.swing.JPanel();
-        jLabel_freq = new javax.swing.JLabel();
-        jPanel13 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
-        jPanel7 = new javax.swing.JPanel();
-        jPanel10 = new javax.swing.JPanel();
         jLabel_tempoTotal = new javax.swing.JLabel();
-        jPanel8 = new javax.swing.JPanel();
+        jLabel_freq = new javax.swing.JLabel();
         jLabel_tempo = new javax.swing.JLabel();
-        jPanel9 = new javax.swing.JPanel();
         jProgressBar1 = new javax.swing.JProgressBar();
         jSlider_Tempo = new javax.swing.JSlider();
         jPanel2 = new javax.swing.JPanel();
@@ -603,86 +598,31 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         jPanel1.setPreferredSize(new java.awt.Dimension(375, 130));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel15.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.foreground"));
-        jPanel15.setOpaque(false);
-        jPanel15.setPreferredSize(new java.awt.Dimension(397, 60));
-
         jLabel_Musica.setText(":)");
-        jPanel15.add(jLabel_Musica);
+        jPanel1.add(jLabel_Musica);
 
-        jPanel1.add(jPanel15);
-
-        jPanel14.setForeground(javax.swing.UIManager.getDefaults().getColor("Panel.background"));
-        jPanel14.setPreferredSize(new java.awt.Dimension(305, 170));
-        jPanel14.setLayout(new javax.swing.BoxLayout(jPanel14, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
-
-        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel5.setOpaque(false);
-        jPanel5.setPreferredSize(new java.awt.Dimension(132, 100));
-        jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel11.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel11.setOpaque(false);
+        jPanel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        jPanel3.setLayout(new java.awt.GridLayout(0, 2));
 
         jLabel_bit.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
+        jLabel_bit.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel_bit.setText("- Kbps");
-        jPanel11.add(jLabel_bit);
+        jPanel3.add(jLabel_bit);
 
-        jPanel5.add(jPanel11);
-
-        jPanel12.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel12.setOpaque(false);
-
-        jLabel_freq.setText("- KHz");
-        jPanel12.add(jLabel_freq);
-
-        jPanel5.add(jPanel12);
-
-        jPanel13.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel13.setOpaque(false);
-        jPanel13.setLayout(new java.awt.BorderLayout());
-        jPanel5.add(jPanel13);
-
-        jPanel3.add(jPanel5);
-
-        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel6.setOpaque(false);
-        jPanel6.setPreferredSize(new java.awt.Dimension(132, 120));
-        jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
-        jPanel3.add(jPanel6);
-
-        jPanel7.setOpaque(false);
-        jPanel7.setLayout(new javax.swing.BoxLayout(jPanel7, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel10.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel10.setOpaque(false);
-
+        jLabel_tempoTotal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel_tempoTotal.setText("0:00");
-        jPanel10.add(jLabel_tempoTotal);
+        jPanel3.add(jLabel_tempoTotal);
 
-        jPanel7.add(jPanel10);
+        jLabel_freq.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel_freq.setText("- KHz");
+        jPanel3.add(jLabel_freq);
 
-        jPanel8.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel8.setOpaque(false);
-
+        jLabel_tempo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel_tempo.setText("0:00");
-        jPanel8.add(jLabel_tempo);
+        jPanel3.add(jLabel_tempo);
 
-        jPanel7.add(jPanel8);
-
-        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel9.setOpaque(false);
-        jPanel9.setLayout(new java.awt.BorderLayout());
-        jPanel7.add(jPanel9);
-
-        jPanel3.add(jPanel7);
-
-        jPanel14.add(jPanel3);
-        jPanel14.add(jProgressBar1);
-
-        jPanel1.add(jPanel14);
+        jPanel1.add(jPanel3);
+        jPanel1.add(jProgressBar1);
 
         jSlider_Tempo.setBackground(new java.awt.Color(255, 255, 255));
         jSlider_Tempo.setFont(new java.awt.Font("Cantarell", 0, 3)); // NOI18N
@@ -1095,7 +1035,7 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private void jMenuItem_HadukemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_HadukemActionPerformed
         if (JOptionPane.showConfirmDialog(this, "Isso limpará todos os dados.\nO Crepz Player será fechado.\n Está certo disso ??") == JOptionPane.YES_OPTION) {
             try {
-                BD.hadukem();
+                Configuracoes.limpar();
 //                ConfigFile.excluir();
                 super.setVisible(false);
                 System.exit(0);
@@ -1193,7 +1133,6 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
         ajusteDeTempo = false;
     }//GEN-LAST:event_jSlider_TempoMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup GrupoSpiner;
     private javax.swing.JLabel jButton_Ant;
     private javax.swing.JLabel jButton_Next;
     private javax.swing.JLabel jButton_Play;
@@ -1237,20 +1176,9 @@ public class JPrincipal extends javax.swing.JFrame implements HotkeyListener, In
     private javax.swing.JMenuItem jMenuItem_Tema;
     private javax.swing.JMenu jMenuLnF;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel12;
-    private javax.swing.JPanel jPanel13;
-    private javax.swing.JPanel jPanel14;
-    private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JSlider jSlider_Balanco;
     private javax.swing.JSlider jSlider_Tempo;

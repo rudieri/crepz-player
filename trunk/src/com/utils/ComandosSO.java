@@ -1,5 +1,6 @@
 package com.utils;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -41,6 +42,12 @@ public class ComandosSO {
     public static void abrirPasta(String path) {
         try {
             File file = new File(path);
+            try {
+                Desktop.getDesktop().open(file);
+                return;
+            } catch (IOException ioe) {
+
+            }
             URI uri = file.toURI();
             switch (mySO) {
                 case LINUX:

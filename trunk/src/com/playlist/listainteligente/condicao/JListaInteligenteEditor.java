@@ -1,17 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.playlist.listainteligente.condicao;
 
-import com.conexao.Transacao;
-import com.playlist.Playlist;
-import com.playlist.PlaylistBD;
-import com.playlist.TipoPlayList;
+import com.playlist.PlaylistC;
+import com.playlist.PlaylistI;
+import com.serial.PortaCDs;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -22,7 +16,7 @@ import javax.swing.JOptionPane;
  */
 public class JListaInteligenteEditor extends javax.swing.JDialog implements ActionListener, WindowListener {
 
-    private Playlist playlist;
+    private PlaylistC playlist;
 
     /**
      * Creates new form JListaInteligenteEditor
@@ -36,14 +30,11 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
 
     }
 
-    public void atualizarCondicoes(Playlist playlist) {
+    public void atualizarCondicoes(PlaylistC playlist) {
         try {
-            CondicaoSC filtro = new CondicaoSC();
-            filtro.setPlaylist(playlist);
-            ArrayList<Condicao> listar = CondicaoBD.listar(filtro);
             jPanel_Condicoes.removeAll();
-            for (int i = 0; i < listar.size(); i++) {
-                Condicao condicao = listar.get(i);
+            for (int i = 0; i < playlist.getCondicoes().size(); i++) {
+                Condicao condicao = playlist.getCondicoes().get(i);
                 JCondicao jCondicao = new JCondicao();
                 jCondicao.setCondicao(condicao);
                 jPanel_Condicoes.add(jCondicao);
@@ -53,61 +44,46 @@ public class JListaInteligenteEditor extends javax.swing.JDialog implements Acti
         }
     }
 
-    public void setPlaylist(Playlist playlist) {
+    public void setPlaylist(PlaylistC playlist) {
         this.playlist = playlist;
         if (playlist == null) {
-            this.playlist = new Playlist();
-            this.playlist.setTipoPlayList(TipoPlayList.INTELIGENTE);
             adicionarCondicao();
+            jTextField_Nome.setText("");
         } else {
             jTextField_Nome.setText(playlist.getNome());
             atualizarCondicoes(playlist);
         }
     }
 
-    public Playlist getPlaylist() {
+    public PlaylistC getPlaylist() {
         return playlist;
     }
 
     private void salvar() {
-        Transacao t = new Transacao();
         try {
             if (jTextField_Nome.getText().isEmpty()) {
                 throw new IllegalStateException("Informa um nome para sua nova lista.");
             }
-            t.begin();
-            if (playlist.getNome() == null || playlist.getNome().isEmpty()) {
-                playlist.setNome(jTextField_Nome.getText());
+            PlaylistI plI = PortaCDs.getPlaylist(jTextField_Nome.getText(), true, PlaylistC.class);
+            if (!(plI instanceof PlaylistC)) {
+                throw new IllegalStateException("Já existe uma lista com esse nome.\nEscolha outro.");
             }
-            if (PlaylistBD.existe(playlist, t)) {
-                CondicaoSC filtro = new CondicaoSC();
-                filtro.setPlaylist(playlist);
-                ArrayList<Condicao> listar = CondicaoBD.listar(filtro, t);
-                for (int i = 0; i < listar.size(); i++) {
-                    Condicao condicao = listar.get(i);
-                    CondicaoBD.excluir(condicao, t);
-                }
-            } else {
-                playlist.setNome(jTextField_Nome.getText());
-                PlaylistBD.incluir(playlist, t);
-                if (!PlaylistBD.existe(playlist, t)) {
-                    throw new IllegalStateException("Droga! Não está funcionando...");
-                }
-            }
-
+            playlist = (PlaylistC) plI;
+            playlist.getCondicoes().clear();
+            
             for (int i = 0; i < jPanel_Condicoes.getComponentCount(); i++) {
                 Component component = jPanel_Condicoes.getComponent(i);
                 if (component.getClass() == JCondicao.class) {
                     Condicao condicao = ((JCondicao) component).getCondicao();
-                    condicao.setPlaylist(playlist);
-                    CondicaoBD.incluir(condicao, t);
+                    playlist.addCondicao(condicao);
                 }
             }
-            t.commit();
             dispose();
         } catch (Exception ex) {
             if (ex instanceof IllegalStateException) {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
+            }else{
+                ex.printStackTrace(System.err);
             }
         }
     }

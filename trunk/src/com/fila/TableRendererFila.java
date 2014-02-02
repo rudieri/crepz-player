@@ -4,7 +4,7 @@
  */
 package com.fila;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import com.utils.pele.ColorUtils;
 import java.awt.Component;
 import javax.swing.JLabel;
@@ -28,8 +28,8 @@ public class TableRendererFila implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
 
-        if (value.getClass() == Musica.class) {
-            mc.setMusica((Musica) value);
+        if (value.getClass() == MusicaS.class) {
+            mc.setMusica((MusicaS) value);
             mc.setSelecionado(isSelected);
             return mc;
         } else {

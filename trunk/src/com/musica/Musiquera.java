@@ -1,15 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.musica;
 
-import com.config.Configuracao;
-import com.config.ConfiguracaoListener;
 import com.config.Configuracoes;
 import com.main.gui.JPrincipal;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +32,7 @@ public abstract class Musiquera implements BasicPlayerListener {
     private long totalTempo = 1;
     private int totalBytes = 1;
     private BasicPlayer player;
-    private Musica musica;
+    private MusicaS musica;
     private File in;
     /**
      * Variável usada para saber se o núermo de reproduções já foi alterado.
@@ -64,9 +57,9 @@ public abstract class Musiquera implements BasicPlayerListener {
 //    public abstract void stringTempoTotalChange(String hms);
     public abstract void eventoOcorreuNaMusica(int evt);
 
-    public abstract Musica getNextMusica();
+    public abstract MusicaS getNextMusica();
 
-    public abstract Musica getPreviousMusica();
+    public abstract MusicaS getPreviousMusica();
 
     public abstract void setPropriedadesMusica(PropriedadesMusica propriedadesMusica);
 
@@ -104,7 +97,7 @@ public abstract class Musiquera implements BasicPlayerListener {
         return balanco;
     }
 
-    public Musica getMusica() {
+    public MusicaS getMusica() {
         return this.musica;
     }
 
@@ -129,18 +122,13 @@ public abstract class Musiquera implements BasicPlayerListener {
         player.setMixerName(mixer);
     }
 
-    public boolean apenasAbrir(Musica m) throws BasicPlayerException {
+    public boolean apenasAbrir(MusicaS m) throws BasicPlayerException {
         try {
             this.musica = m;
             if (m == null) {
                 System.out.println("Musica não existe!");
                 System.err.print(Arrays.toString(Thread.currentThread().getStackTrace()));
                 return false;
-            }
-            try {
-                MusicaBD.carregar(musica);
-            } catch (Exception ex) {
-                Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
             }
             in = new File(musica.getCaminho());
             if (in == null) {
@@ -170,18 +158,18 @@ public abstract class Musiquera implements BasicPlayerListener {
         }
     }
 
-    public void abrir(Musica m, int posicao, boolean abrirComPausa) {
+    public void abrir(MusicaS m, int posicao, boolean abrirComPausa) {
         abrir(m, segundoToMicro(posicao), abrirComPausa);
     }
 
-    public void abrir(Musica m, long posicao, boolean abrirComPausa) {
+    public void abrir(MusicaS m, long posicao, boolean abrirComPausa) {
         boolean consegueiuAbrir = abrirForaLinhaTempo(m, posicao, abrirComPausa);
         if (consegueiuAbrir) {
             LinhaDoTempo.adicionarNaPosicaoAtual(musica);
         }
     }
 
-    private boolean abrirForaLinhaTempo(Musica m, long posicao, boolean abrirComPausa) {
+    private boolean abrirForaLinhaTempo(MusicaS m, long posicao, boolean abrirComPausa) {
         try {
             boolean abriu = apenasAbrir(m);
             if (!abriu) {
@@ -202,13 +190,12 @@ public abstract class Musiquera implements BasicPlayerListener {
             tenteiAbrir = 0;
 
             return true;
-        } catch (Exception ex) {
+        } catch (BasicPlayerException ex) {
             tenteiAbrir++;
-            if (ex instanceof FileNotFoundException || ex.getMessage() != null && ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
+            if (ex.getMessage() != null && ex.getMessage().toString().indexOf("FileNotFoundException") != -1) {
                 try {
                     m.setPerdida(true);
-                    MusicaBD.alterar(musica);
-                    CacheDeMusica.remover(musica);
+//                    Cache.removerMusica(musica);
                     //                Operacoes.moverMusicaParaEstragadas(m);
                 } catch (Exception ex1) {
                     Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex1);
@@ -237,7 +224,7 @@ public abstract class Musiquera implements BasicPlayerListener {
     }
 
     public void tocarProxima() {
-        Musica proxima = LinhaDoTempo.getProxima();
+        MusicaS proxima = LinhaDoTempo.getProxima();
         if (proxima != null) {
             boolean conseguiu = abrirForaLinhaTempo(proxima, 0, false);
             if (!conseguiu) {
@@ -254,7 +241,7 @@ public abstract class Musiquera implements BasicPlayerListener {
     }
 
     public void tocarAnterior() {
-        Musica anterior = LinhaDoTempo.getAnterior();
+        MusicaS anterior = LinhaDoTempo.getAnterior();
         if (anterior != null) {
             abrirForaLinhaTempo(anterior, 0, false);
         } else {
@@ -302,7 +289,7 @@ public abstract class Musiquera implements BasicPlayerListener {
             tenteiTocar = 0;
 
 
-        } catch (Exception ex) {
+        } catch (BasicPlayerException ex) {
             tenteiTocar++;
             switch (tenteiTocar) {
                 case 1:
@@ -461,7 +448,6 @@ public abstract class Musiquera implements BasicPlayerListener {
             try {
                 naoAlterouMusicaAinda = false;
                 musica.setNumeroReproducoes((short) (musica.getNumeroReproducoes() + 1));
-                MusicaBD.alterar(musica);
             } catch (Exception ex) {
                 Logger.getLogger(Musiquera.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -561,6 +547,7 @@ public abstract class Musiquera implements BasicPlayerListener {
 
         /**
          * Retorna o tempo total em microssegundos
+         * @return 
          */
         public Tempo getTempoTotal() {
             return tempoTotal;

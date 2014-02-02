@@ -4,7 +4,7 @@
  */
 package com.playlist.listainteligente.condicao.operadores;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 
 /**
  *
@@ -12,6 +12,6 @@ import com.musica.Musica;
  * @author rudieri
  */
 public interface Operador<E> {
-    public boolean resolverOperacao(E valor1, E valor2, Musica musica);
+    public boolean resolverOperacao(E valor1, E valor2, MusicaS musica);
     public String getRepresentacao();
 }

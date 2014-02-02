@@ -1,8 +1,8 @@
 package com.main.gui;
 
-import com.musica.Musica;
-import com.musica.MusicaBD;
 import com.musica.MusicaGerencia;
+import com.musica.MusicaS;
+import com.serial.PortaCDs;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -32,18 +32,19 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
      * Creates new form JMP3Propriedades
      */
     private MP3File mp3File;
-    private Musica musica;
+    private MusicaS musica;
 
-    public JMP3Propriedades(java.awt.Frame parent, boolean modal, Musica musica) throws Exception {
+    public JMP3Propriedades(java.awt.Frame parent, boolean modal, MusicaS musica) throws Exception {
         super(parent, modal);
         initComponents();
-        this.musica = musica;
         montarGeneros();
 
         try {
             mp3File = new MP3File(musica.getCaminho());
             setDados();
-        } catch (Exception ex) {
+        } catch (IOException ex) {
+            throw new Exception("-Erro ao Carregar Propriedades do arquivo " + mp3File.getMp3file().getName() + " \n", ex);
+        } catch (TagException ex) {
             throw new Exception("-Erro ao Carregar Propriedades do arquivo " + mp3File.getMp3file().getName() + " \n", ex);
         }
         startEvents();
@@ -115,7 +116,10 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
             alterarMusica();
 
 
-        } catch (Exception ex) {
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
+            ex.printStackTrace(System.err);
+        } catch (TagException ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
             ex.printStackTrace(System.err);
         }
@@ -144,8 +148,19 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
     private void alterarMusica() {
         try {
-            MusicaGerencia.getMusica(musica, mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
-            MusicaBD.alterar(musica);
+            MusicaS novaMusica = MusicaGerencia.getMusica(mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
+            // Remove as referências da música antiga...
+            if (!novaMusica.equals(musica)) {
+                musica.getAlbum().removeMusica(musica);
+                if (musica.getAlbum().getMusicas().isEmpty()) {
+                    musica.getAlbum().getAutor().removeAlbum(musica.getAlbum());
+                    if (musica.getAlbum().getAutor().getAlbuns().isEmpty()) {
+                        PortaCDs.removerAutor(musica.getAlbum().getAutor());
+                    }
+                    musica.getAlbum().setAutor(null);
+                }
+                musica.setAlbum(null);
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
             ex.printStackTrace(System.err);

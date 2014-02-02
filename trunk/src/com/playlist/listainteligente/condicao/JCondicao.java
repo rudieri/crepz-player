@@ -1,6 +1,6 @@
 package com.playlist.listainteligente.condicao;
 
-import com.musica.Musica;
+import com.musica.MusicaS;
 import com.playlist.listainteligente.condicao.operadores.OperadorComparativo;
 import com.playlist.listainteligente.condicao.operadores.OperadorLogico;
 import com.utils.campo.Campo;
@@ -48,11 +48,18 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
         comboBoxModelOperadorLogico.addAll(OperadorLogico.values());
         jComboBox_OperadorLogico.setModel(comboBoxModelOperadorLogico);
 
-        Field[] campos = Musica.class.getDeclaredFields();
+        Field[] campos = MusicaS.class.getDeclaredFields();
+        carregarCampos(campos, "");
+    }
 
+    private void carregarCampos(Field[] campos, String classeBase) {
         for (Field field : campos) {
-            if (!Modifier.isStatic(field.getModifiers()) && Campo.contemAnotacaoNecessaria(field)) {
-                comboBoxModelValor1.addItem(new Campo(field));
+            if (!Modifier.isStatic(field.getModifiers())) {
+                if (Campo.contemAnotacaoNecessaria(field)) {
+                    comboBoxModelValor1.addItem(new Campo(MusicaS.class, classeBase + field.getName()));
+                }else if(Campo.contemFilhos(field)){
+                    carregarCampos(field.getType().getDeclaredFields(), classeBase + field.getName() + ".");
+                }
             }
         }
     }

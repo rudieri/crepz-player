@@ -9,6 +9,7 @@ import java.util.Iterator;
 /**
  *
  * @author rudieri
+ * @param <E>
  */
 public class ListaEncadeada<E> implements Iterable<E>, Iterator<E> {
 
