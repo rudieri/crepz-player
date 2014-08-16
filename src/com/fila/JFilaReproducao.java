@@ -60,6 +60,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.event.TableModelEvent;
@@ -316,6 +317,8 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jMenuItemFilaTocar.setIcon(carregador.getIcones().getPlayIcon16());
         jMenuItemFilaRemover.setIcon(carregador.getIcones().getXis());
         jMenuItemEmbaralhar.setIcon(carregador.getIcones().getRandomOnIcon16());
+        jMenuItemEditar.setIcon(carregador.getIcones().getEdit());
+        jMenuItemRemoverInstancia.setIcon(carregador.getIcones().getXis());
 
     }
 
@@ -575,19 +578,10 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
     @Override
     public void propriedadesMusicaChanged(PropriedadesMusica propriedadesMusica) {
         jLabelTocando.setText(propriedadesMusica.getNome() + " - " + propriedadesMusica.getArtista());
-        int indexOf = objModelMusicas.indexOf(carregador.getMusica());
+//        int indexOf = objModelMusicas.indexOf(carregador.getMusica());
         carregador.getMusica().setTempo(propriedadesMusica.getTempoTotal());
         setTitle(propriedadesMusica.getNome() + " - " + propriedadesMusica.getArtista());
-        try {
-
-            int convertRow = jTableMusicas.convertRowIndexToView(indexOf);
-            if (convertRow != -1) {
-                objModelMusicas.atualizarItem(carregador.getMusica(), indexOf, convertRow);
-            }
-            jTableMusicas.repaint();
-        } catch (Exception ex) {
-            System.out.println("Não aparece no filtro...");
-        }
+        jTableMusicas.repaint();
     }
 
     @Override
@@ -634,6 +628,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jMenuItemAdicionarListaExistente.addActionListener(this);
         jMenuItemAdicionar.addActionListener(this);
         jMenuItemEditar.addActionListener(this);
+        jMenuItemRemoverInstancia.addActionListener(this);
         jButtonLimparPesquisa.addActionListener(this);
         jMenuItemAbrirBiblioteca.addActionListener(this);
         jMenuItemMostrarPlayList.addActionListener(this);
@@ -695,10 +690,48 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         } else if (e.getSource() == jMenuItemEditar) {
             try {
                 MusicaS musica = objModelMusicas.getItem(converterIndiceTabelaMusica(jTableMusicas.getSelectedRow()));
-                new JMP3Propriedades(this, true, musica).setVisible(true);
-                objModelMusicas.atualizarItem(musica, jTableMusicas.getSelectedRow());
+                JMP3Propriedades jmP3Propriedades = new JMP3Propriedades(this, true, musica);
+                jmP3Propriedades.setVisible(true);
+                MusicaS novaMusica = jmP3Propriedades.getNovaMusica();
+                if (novaMusica != null) {
+                    objModelMusicas.atualizarItem(novaMusica, jTableMusicas.getSelectedRow());
+                }
+                
             } catch (Exception ex) {
                 Logger.getLogger(JFilaReproducao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (e.getSource() == jMenuItemRemoverInstancia) {
+            final int[] selectedRows = jTableMusicas.getSelectedRows();
+            String txt;
+            if (selectedRows.length > 1) {
+                txt = "Tem certeza que deseja remover as músicas selecionadas?"
+                        + "\n*Elas não serão apagadas do HD.";
+            } else {
+                txt = "Tem certeza que deseja remover a música selecionada?"
+                        + "\n*Ela não será apagada do HD.";
+            }
+            if (JOptionPane.showConfirmDialog(this, txt) != JOptionPane.YES_OPTION) {
+                return ;
+            }
+            if (selectedRows.length == 0) {
+                return;
+            }
+            ArrayList<MusicaS> lista = new ArrayList<MusicaS>(selectedRows.length);
+            for (int i = 0; i < selectedRows.length; i++) {
+                lista.add(objModelMusicas.getItem(converterIndiceTabelaMusica(selectedRows[i])));
+            }
+            while (!lista.isEmpty()) {
+                MusicaS musica = lista.remove(0);
+                musica.getAlbum().removeMusica(musica);
+                if (musica.getAlbum().getMusicas().isEmpty()) {
+                    musica.getAlbum().getAutor().removeAlbum(musica.getAlbum());
+                    if (musica.getAlbum().getAutor().getAlbuns().isEmpty()) {
+                        PortaCDs.removerAutor(musica.getAlbum().getAutor());
+                    }
+                    musica.getAlbum().setAutor(null);
+                }
+                musica.setAlbum(null);
+                atualizaTabelaMusica();
             }
         } else if (e.getSource() == jButtonLimparPesquisa) {
             jTextFieldPesquisa.setText("");
@@ -909,6 +942,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
         jMenuItemAdicionarListaNova = new javax.swing.JMenuItem();
         jMenuItemAdicionarListaExistente = new javax.swing.JMenuItem();
         jMenuItemEditar = new javax.swing.JMenuItem();
+        jMenuItemRemoverInstancia = new javax.swing.JMenuItem();
         jFileChooserImportar = new javax.swing.JFileChooser();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanelCentro = new javax.swing.JPanel();
@@ -1007,6 +1041,9 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
 
         jMenuItemEditar.setText("Propriedades");
         jPopupMenuMusica.add(jMenuItemEditar);
+
+        jMenuItemRemoverInstancia.setText("Remover Instância");
+        jPopupMenuMusica.add(jMenuItemRemoverInstancia);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Fila de Reprodução");
@@ -1302,6 +1339,7 @@ public class JFilaReproducao extends javax.swing.JFrame implements Notificavel, 
     private javax.swing.JMenuItem jMenuItemLimpar;
     private javax.swing.JMenuItem jMenuItemMostrarPlayList;
     private javax.swing.JMenuItem jMenuItemPasta;
+    private javax.swing.JMenuItem jMenuItemRemoverInstancia;
     private javax.swing.JMenuItem jMenuItemTocar;
     private javax.swing.JMenuItem jMenuItemVoltarTelaPrincipal;
     private javax.swing.JMenu jMenuLnF;

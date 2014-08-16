@@ -3,16 +3,18 @@ package com.musica.album;
 import com.musica.MusicaGerencia;
 import com.musica.MusicaS;
 import com.musica.autor.AutorS;
+import com.serial.PortaCDs;
+import com.utils.StringComparable;
 import com.utils.campo.NomeCampo;
 import com.utils.model.tablemodel.ObjetoTabela;
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  *
  * @author c90
  */
-public class AlbumS implements Serializable {
+public class AlbumS implements Serializable, Comparable<AlbumS>, StringComparable {
 
     private static final long serialVersionUID = 2L;
 
@@ -22,17 +24,17 @@ public class AlbumS implements Serializable {
     @ObjetoTabela()
     @NomeCampo(nome = "Genero")
     private String genero;
-    private final HashMap<String, MusicaS> musicas;
+    private final ArrayList<MusicaS> musicas;
     private String img;
     @ObjetoTabela(temFilhos = true)
     private AutorS autor;
 
     public AlbumS() {
-        musicas = new HashMap<String, MusicaS>();
+        musicas = new ArrayList<MusicaS>();
     }
 
     @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public HashMap<String, MusicaS> getMusicas() {
+    public ArrayList<MusicaS> getMusicas() {
         return musicas;
     }
 
@@ -49,23 +51,23 @@ public class AlbumS implements Serializable {
                 return null;
             }
         }
-        MusicaS musica = musicas.get(nomeMusica);
+        MusicaS musica = PortaCDs.Busca.buscar(musicas, nomeMusica);
         if (criar && musica == null) {
             musica = new MusicaS();
             musica.setNome(nomeMusica);
             musica.setAlbum(this);
-            musicas.put(nomeMusica, musica);
+            musicas.add(musica);
         }
         return musica;
     }
 
     public void addMusica(MusicaS musicaS) {
         musicaS.setAlbum(this);
-        musicas.put(musicaS.getNome(), musicaS);
+        musicas.add(musicaS);
     }
 
     public void removeMusica(MusicaS musicaS) {
-        musicas.remove(musicaS.getNome());
+        musicas.remove(musicaS);
     }
 
     public String getNome() {
@@ -138,4 +140,14 @@ public class AlbumS implements Serializable {
         return "Album{" + "nome=" + nome + ", autor=" + autor + '}';
     }
 
+    @Override
+    public int compareTo(AlbumS o) {
+        return o == null ? 1 : nome.compareTo(o.nome);
+    }
+
+    @Override
+    public int compareTo(String o) {
+        return o == null ? 1 : nome.compareTo(o);
+    }
+    
 }

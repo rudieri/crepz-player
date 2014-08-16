@@ -6,6 +6,7 @@ import com.musica.MusicaS;
 import com.musica.album.AlbumS;
 import com.musica.autor.AutorS;
 import com.playlist.PlaylistI;
+import com.utils.StringComparable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,20 +26,39 @@ import javax.swing.JOptionPane;
  */
 public class PortaCDs {
 
-    private static final HashMap<String, AutorS> autores;// = new HashMap<String, AutorS>();
-    private static final HashMap<String, PlaylistI> playlists;// = new HashMap<String, PlaylistI>();
+    private static final ArrayList<AutorS> autores;// = new HashMap<String, AutorS>();
+    private static final ArrayList<PlaylistI> playlists;// = new HashMap<String, PlaylistI>();
+    // Musicas: 903,4 Kb
+    // Musicas2: 821,7 Kb
+    // Musicas2: 821,6 Kb
+    // Musicas2: 772,1 Kb
+    // Playlists: 659 Kb
 
     static {
-        HashMap<String, AutorS> autoresAux = null;
-        HashMap<String, PlaylistI> playListAux = null;
+        Object autoresAux = null;
+        Object playListAux = null;
         try {
-            autoresAux = (HashMap<String, AutorS>) abrir(new File(Configuracoes.FILE_BD_MUSICAS.getValor()));
-            playListAux = (HashMap<String, PlaylistI>) abrir(new File(Configuracoes.FILE_BD_PLAYLISTS.getValor()));
+            autoresAux = abrir(new File(Configuracoes.FILE_BD_MUSICAS.getValor()));
+            playListAux = abrir(new File(Configuracoes.FILE_BD_PLAYLISTS.getValor()));
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
-        autores = autoresAux == null ? new HashMap<String, AutorS>() : autoresAux;
-        playlists = playListAux == null ? new HashMap<String, PlaylistI>() : playListAux;
+        if (autoresAux == null) {
+            autores = new ArrayList<AutorS>();
+        } else if (autoresAux instanceof HashMap) {
+            autores = new ArrayList<AutorS>();
+            autores.addAll(((Map<? extends String, ? extends AutorS>) autoresAux).values());
+        } else {
+            autores = (ArrayList<AutorS>) autoresAux;
+        }
+        if (playListAux == null) {
+            playlists = new ArrayList<PlaylistI>();
+        } else if (playListAux instanceof HashMap) {
+            playlists = new ArrayList<PlaylistI>();
+            playlists.addAll(((Map<? extends String, ? extends PlaylistI>) playListAux).values());
+        } else {
+            playlists = (ArrayList<PlaylistI>) playListAux;
+        }
     }
 
     public static void salvar() {
@@ -85,53 +105,67 @@ public class PortaCDs {
 
     public static AutorS getAutor(String nome, boolean criar) {
         nome = MusicaGerencia.removeCaracteresEsp(nome);
-        AutorS autor = autores.get(nome);
+        AutorS autor = Busca.buscar(autores, nome);
+//        AutorS autor = autores.get(nome);
         if (criar && autor == null) {
             autor = new AutorS();
             autor.setNome(nome);
-            autores.put(nome, autor);
+            autores.add(autor);
+//            autores.put(nome, autor);
         }
         return autor;
     }
 
-    public static AutorS removerAutor(AutorS autor) {
-        return autores.remove(autor.getNome());
+    public static boolean removerAutor(AutorS autor) {
+        return autores.remove(autor);
     }
 
     public static ArrayList<MusicaS> getMusicas() {
         ArrayList<MusicaS> musicas = new ArrayList<MusicaS>();
-        for (Map.Entry<String, AutorS> entry : autores.entrySet()) {
-            AutorS autor = entry.getValue();
-            for (Map.Entry<String, AlbumS> entryAlbum : autor.getAlbuns().entrySet()) {
-                AlbumS album = entryAlbum.getValue();
-                for (Map.Entry<String, MusicaS> entry1 : album.getMusicas().entrySet()) {
-                    MusicaS musica = entry1.getValue();
+        for (AutorS autor : autores) {
+            for (AlbumS album : autor.getAlbuns()) {
+                for (MusicaS musica : album.getMusicas()) {
                     musicas.add(musica);
                 }
             }
         }
         return musicas;
     }
-    
-    public static ArrayList<AutorS> getAutores(){
+
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
+    public static ArrayList<AutorS> getAutores() {
+        return autores;
+    }
+
+    public static ArrayList<AutorS> listarAutores(String nomeAutor) {
         ArrayList<AutorS> lista = new ArrayList<AutorS>(autores.size());
-        for (Map.Entry<String, AutorS> entry : autores.entrySet()) {
-            AutorS autorS = entry.getValue();
-            lista.add(autorS);
+        for (AutorS autorS : autores) {
+            if (autorS.getNome().contains(nomeAutor)) {
+                lista.add(autorS);
+            }
+        }
+        return lista;
+    }
+
+    public static ArrayList<AlbumS> listarAlbuns(String nomeAlbum) {
+        ArrayList<AlbumS> lista = new ArrayList<AlbumS>(autores.size() * 3);
+        for (AutorS autorS : autores) {
+            for (AlbumS albumS : autorS.getAlbuns()) {
+                if (albumS.getNome().toLowerCase().contains(nomeAlbum.toLowerCase())) {
+                    lista.add(albumS);
+                }
+            }
         }
         return lista;
     }
 
     public static ArrayList<MusicaS> listarMusicas(String nomeAutor, String nomeAlbum, String nomeMusica) {
         ArrayList<MusicaS> musicas = new ArrayList<MusicaS>();
-        for (Map.Entry<String, AutorS> entry : autores.entrySet()) {
-            AutorS autor = entry.getValue();
+        for (AutorS autor : autores) {
             if (autor.getNome().contains(nomeAutor)) {
-                for (Map.Entry<String, AlbumS> entryAlbum : autor.getAlbuns().entrySet()) {
-                    AlbumS album = entryAlbum.getValue();
-                    if (album.getNome().contains(nomeAlbum)) {
-                        for (Map.Entry<String, MusicaS> entry1 : album.getMusicas().entrySet()) {
-                            MusicaS musica = entry1.getValue();
+                for (AlbumS album : autor.getAlbuns()) {
+                    if (album.getNome().toLowerCase().contains(nomeAlbum.toLowerCase())) {
+                        for (MusicaS musica : album.getMusicas()) {
                             if (musica.getNome().contains(nomeMusica)) {
                                 musicas.add(musica);
                             }
@@ -160,12 +194,12 @@ public class PortaCDs {
      */
     public static PlaylistI getPlaylist(String nome, boolean criar, Class<? extends PlaylistI> tipoListaCriar) {
         nome = MusicaGerencia.removeCaracteresEsp(nome);
-        PlaylistI playlist = playlists.get(nome);
+        PlaylistI playlist = Busca.buscar(playlists, nome);
         if (criar && playlist == null) {
             try {
                 playlist = tipoListaCriar.newInstance();
                 playlist.setNome(nome);
-                playlists.put(nome, playlist);
+                playlists.add(playlist);
             } catch (InstantiationException ex) {
                 ex.printStackTrace(System.err);
             } catch (IllegalAccessException ex) {
@@ -175,16 +209,15 @@ public class PortaCDs {
         return playlist;
     }
 
-    public static PlaylistI removerPlaylist(PlaylistI playlist) {
-        return playlists.remove(playlist.getNome());
+    public static boolean  removerPlaylist(PlaylistI playlist) {
+        return playlists.remove(playlist);
     }
 
     public static ArrayList<PlaylistI> listarPlayLists(String text) {
         ArrayList<PlaylistI> lista = new ArrayList<PlaylistI>();
-        for (Map.Entry<String, PlaylistI> entry : playlists.entrySet()) {
-            String nome = entry.getKey();
+        for (PlaylistI playlistI : lista) {
+            String nome = playlistI.getNome();
             if (nome.contains(text)) {
-                PlaylistI playlistI = entry.getValue();
                 lista.add(playlistI);
             }
 
@@ -197,5 +230,17 @@ public class PortaCDs {
     }
 
     private PortaCDs() {
+    }
+
+    public static class Busca {
+
+        public static <E extends StringComparable> E buscar(ArrayList<E> lista, String nome) {
+            for (E e : lista) {
+                if (e.compareTo(nome)==0) {
+                    return e;
+                }
+            }
+            return null;
+        }
     }
 }

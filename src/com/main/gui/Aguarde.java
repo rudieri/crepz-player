@@ -10,9 +10,6 @@
  */
 package com.main.gui;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
@@ -21,6 +18,7 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
  *
  * @author manchini
  */
+@SuppressWarnings("serial")
 public class Aguarde extends javax.swing.JFrame implements Runnable {
 
     private Thread thread;
@@ -45,17 +43,9 @@ public class Aguarde extends javax.swing.JFrame implements Runnable {
     }
 
     public void mostrar() {
-        if (isVisible()) {
-            String war = "Warning: essa tela já esta ativa.\n";
-            try {
-                System.err.write(war.getBytes());
-            } catch (IOException ex) {
-                Logger.getLogger(Aguarde.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return;
-        }
         setVisible(true);
-        standBy();
+        thread = new Thread(this);
+        thread.start();
     }
 
     public void ocultar() {
@@ -64,16 +54,12 @@ public class Aguarde extends javax.swing.JFrame implements Runnable {
         dispose();
     }
 
-    private void standBy() {
-        thread = new Thread(this);
-        thread.start();
-    }
 
     @Override
     @SuppressWarnings("SleepWhileInLoop")
     public void run() {
         int count = 0;
-        while (true) {
+        while (!thread.isInterrupted()) {
             try {
                 count++;
                 jProgressBar1.setValue(count * 10);
@@ -129,7 +115,7 @@ public class Aguarde extends javax.swing.JFrame implements Runnable {
                 }
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Aguarde.class.getName()).log(Level.SEVERE, null, ex);
+                return ;
             }
         }
     }
@@ -143,23 +129,17 @@ public class Aguarde extends javax.swing.JFrame implements Runnable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jProgressBar1 = new javax.swing.JProgressBar();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Crepz Player");
+        setBackground(new java.awt.Color(0, 0, 0));
         setMinimumSize(new java.awt.Dimension(310, 306));
-        setResizable(false);
         setUndecorated(true);
-        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
-
-        jPanel3.setBackground(new java.awt.Color(0, 0, 0));
-        jPanel3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jPanel3.setMinimumSize(new java.awt.Dimension(306, 306));
-        jPanel3.setLayout(new java.awt.BorderLayout());
+        setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(0, 0, 0));
         jPanel2.setPreferredSize(new java.awt.Dimension(397, 50));
@@ -168,7 +148,7 @@ public class Aguarde extends javax.swing.JFrame implements Runnable {
         jProgressBar1.setStringPainted(true);
         jPanel2.add(jProgressBar1);
 
-        jPanel3.add(jPanel2, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setLayout(new java.awt.BorderLayout());
@@ -176,12 +156,10 @@ public class Aguarde extends javax.swing.JFrame implements Runnable {
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/img/capa.jpg"))); // NOI18N
         jPanel1.add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        jPanel3.add(jPanel1, java.awt.BorderLayout.PAGE_START);
+        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
-        getContentPane().add(jPanel3);
-
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-302)/2, (screenSize.height-384)/2, 302, 384);
+        setSize(new java.awt.Dimension(302, 359));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     /**
      * @param args the command line arguments
@@ -190,7 +168,6 @@ public class Aguarde extends javax.swing.JFrame implements Runnable {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
 }

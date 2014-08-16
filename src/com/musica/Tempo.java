@@ -12,7 +12,7 @@ public class Tempo implements Serializable {
     
     public static final Tempo TEMPO_ZERO = new Tempo(0);
     private final short segundos;
-    private String string;
+    private transient String string;
 
 
     public Tempo(short segundos) {
@@ -41,6 +41,9 @@ public class Tempo implements Serializable {
      */
     @Override
     public String toString() {
+        if (string == null) {
+            convertToString();
+        }
         return string;
     }
 

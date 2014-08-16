@@ -1,6 +1,7 @@
 package com.musica;
 
 import com.musica.album.AlbumS;
+import com.utils.StringComparable;
 import com.utils.campo.NomeCampo;
 import com.utils.model.tablemodel.Filtravel;
 import com.utils.model.tablemodel.ObjetoTabela;
@@ -10,7 +11,7 @@ import java.io.Serializable;
  *
  * @author manchini
  */
-public class MusicaS implements Serializable, Filtravel {
+public class MusicaS implements Serializable, Filtravel, Comparable<MusicaS>, StringComparable {
 
     private static final long serialVersionUID = 2L;
     private transient static final char ESPACO = ' ';
@@ -28,7 +29,7 @@ public class MusicaS implements Serializable, Filtravel {
     @NomeCampo(nome = "Caminho do Arquivo")
     private String nomeArquivo;
     private long dtModArquivo;
-    private int number;
+    private byte number;
     /**
      * Caso o arquivo da música não seja encontrado.
      */
@@ -97,24 +98,11 @@ public class MusicaS implements Serializable, Filtravel {
         this.nomeArquivo = nomeArquivo;
     }
 
-//    /**
-//     * @return the id
-//     */
-//    public int getId() {
-//        return id;
-//    }
-//
-//    /**
-//     * @param id the id to set
-//     */
-//    public void setId(int id) {
-//        this.id = id;
-//    }
-    public void setNumero(int n) {
+    public void setNumero(byte n) {
         this.number = n;
     }
 
-    public int getNumero() {
+    public byte getNumero() {
         return number;
     }
 
@@ -136,7 +124,7 @@ public class MusicaS implements Serializable, Filtravel {
         if (obj == this) {
             return true;
         } else if (obj != null && obj.getClass() == MusicaS.class) {
-            return ((MusicaS) obj).getNome().equals(nome);
+            return ((MusicaS) obj).getCaminho().equals(nomeArquivo);
         } else {
             return false;
         }
@@ -145,7 +133,7 @@ public class MusicaS implements Serializable, Filtravel {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + this.getNome().hashCode();
+        hash = 79 * hash + this.getNomeArquivo().hashCode();
         return hash;
     }
 
@@ -155,6 +143,16 @@ public class MusicaS implements Serializable, Filtravel {
         sb.append(nome).append(ESPACO).append(album.getNome()).append(ESPACO);
         sb.append(album.getAutor().getNome()).append(ESPACO).append(album.getGenero());
         return sb.toString().toLowerCase();
+    }
+
+    @Override
+    public int compareTo(MusicaS o) {
+        return o == null ? 1 : nome.compareTo(o.nome);
+    }
+
+    @Override
+    public int compareTo(String o) {
+        return o == null ? 1 : nome.compareTo(o);
     }
 
     public short getNumeroReproducoes() {

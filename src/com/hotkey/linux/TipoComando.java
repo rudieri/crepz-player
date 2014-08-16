@@ -6,6 +6,7 @@ package com.hotkey.linux;
  */
 public enum TipoComando {
     PING("--ping"),
+    TO_FRONT("--to-front"),
     ABRIR_CREPZ("--open"),
     REPRODUZIR_MUSICA("--play"),
     PAUSAR_MUSICA("--pause"),

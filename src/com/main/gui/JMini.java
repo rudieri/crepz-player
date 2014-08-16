@@ -573,7 +573,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         setIconImage(null);
         setMinimumSize(new java.awt.Dimension(100, 40));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(300, 75));
 
         jPanel4.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(204, 204, 204), new java.awt.Color(204, 204, 204), new java.awt.Color(0, 0, 0), new java.awt.Color(51, 51, 51)), javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204), new java.awt.Color(102, 102, 102), new java.awt.Color(153, 153, 153))));
         jPanel4.setForeground(new java.awt.Color(102, 102, 102));
@@ -636,7 +635,6 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jSlider_Tempo.setMaximum(1000);
         jSlider_Tempo.setToolTipText("");
         jSlider_Tempo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jSlider_Tempo.setMinimumSize(new java.awt.Dimension(36, 13));
         jSlider_Tempo.setPreferredSize(new java.awt.Dimension(80, 13));
         jPanel2.add(jSlider_Tempo, java.awt.BorderLayout.CENTER);
 
@@ -682,18 +680,7 @@ public class JMini extends javax.swing.JDialog implements Notificavel, ActionLis
         jPanel5.add(jLabelNomeMusica, java.awt.BorderLayout.PAGE_START);
 
         jPanel7.setCursor(new java.awt.Cursor(java.awt.Cursor.MOVE_CURSOR));
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 348, Short.MAX_VALUE)
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 21, Short.MAX_VALUE)
-        );
-
+        jPanel7.setLayout(new java.awt.BorderLayout());
         jPanel5.add(jPanel7, java.awt.BorderLayout.CENTER);
 
         jPanel4.add(jPanel5);
