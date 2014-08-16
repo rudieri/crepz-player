@@ -37,10 +37,13 @@ public class MusicaGerencia {
             public boolean accept(File pathname) {
                 try {
                     boolean aceita = false;
-                    for (int i = 0; !aceita && i < extSuportadaImagem.length; i++) {
-                        aceita |= pathname.getName().toLowerCase().endsWith(extSuportadaImagem[i]);
+                    String toLowerCase = pathname.getName().toLowerCase();
+                    for (String ext : extSuportadaImagem) {
+                        if (toLowerCase.endsWith(ext)) {
+                            return true;
+                        }
                     }
-                    return aceita;
+                    return false;
                 } catch (Exception ex) {
                     return false;
                 }
@@ -58,7 +61,7 @@ public class MusicaGerencia {
             + "Big Band,Chorus,Easy Listening,Acoustic,Humor,Speech,Chanson,Opera,Chamber Music,Sonata,Symphony,Booty Bass,Primus,Porn Groove,"
             + "Satire,Slow Jam,Club,Tango,Samba,Folclore").split(",");
     public static final String[] extSuportadaMusica = new String[]{"mp3", "ogg", "wav"};
-    private static final String[] extSuportadaImagem = new String[]{"jpg", "jpeg", "png", "gif"};
+    private static final String[] extSuportadaImagem = new String[]{"jpg", "jpeg", "png", "gif", "bmp"};
     public static int count = 0;
     public static boolean organizarPastas = false;
     public static boolean downLoadCapas = false;
@@ -108,7 +111,7 @@ public class MusicaGerencia {
             }
             album.setGenero(mp3.getID3v1Tag().getSongGenre());
             musica = album.getMusica(mp3.getID3v1Tag().getSongTitle());
-            musica.setNomeArquivo(file.getName());
+            musica.setNomeArquivo(file.getAbsolutePath());
 
             if (musica.getNome() == null || musica.getNome().isEmpty()) {
                 musica.setNome(file.getName());

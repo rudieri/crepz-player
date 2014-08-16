@@ -66,9 +66,8 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         initLookAndFeel();
 //        startBanco();
         createLog();
-        aguarde.dispose();
+        aguarde.ocultar();
         // Deixa a tela padrão visível.
-
 
     }
 
@@ -127,8 +126,8 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
             GerenciadorTelas.getFilaReproducao().propriedadesMusicaChanged(propriedadesMusica);
         }
     }
-    
-     @Override
+
+    @Override
     public void configuracaoModificada(Configuracao configuracao) {
         if (configuracao == Configuracoes.MIXER) {
             setMixerName(Configuracoes.MIXER.getValor());
@@ -184,7 +183,6 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
 //        server.setDatabasePath(0,  ComandosSO.getLocalCrepzPath() + "BD");
 //        server.start();
 //    }
-
     public void setTelaBase(TelaPadrao telaPadrao) {
         switch (telaPadrao) {
             case J_FILA:
@@ -234,6 +232,17 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
                 return GerenciadorTelas.getPrincipal();
             case J_MINI:
                 return GerenciadorTelas.getMini();
+            case COMO_ESTAVA:
+                if (GerenciadorTelas.isFilaReproducaoCarregada() && isFilaReproducaoVisivel()) {
+                    return GerenciadorTelas.getFilaReproducao();
+                }
+                if (GerenciadorTelas.isPrincipalCarregado() && isPrincipalVisible()) {
+                    return GerenciadorTelas.getPrincipal();
+                }
+                if (GerenciadorTelas.isMiniCarregado() && isMiniVisible()) {
+                    return GerenciadorTelas.getMini();
+                }
+                break;
 
         }
         return GerenciadorTelas.getPrincipal();
@@ -439,8 +448,8 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
             Configuracoes.VISIB_PLAYLIST.setValor(false, false);
         }
         Configuracoes.FONTE_REPRODUCAO.setValor(fonteReproducao, false);
-        Configuracoes.BALANCO.setValor((byte)getBalanco(), false);
-        Configuracoes.VOLUME.setValor((byte)getVolume(), false);
+        Configuracoes.BALANCO.setValor((byte) getBalanco(), false);
+        Configuracoes.VOLUME.setValor((byte) getVolume(), false);
         Configuracoes.LOOK_AND_FEEL.setValor(UIManager.getLookAndFeel().getID(), false);
 
         Configuracoes.gravar();
@@ -556,7 +565,6 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
                 });
                 menusLnF[i] = jCheckBoxMenuItem;
             }
-
 
             String lnfSalvo = Configuracoes.LOOK_AND_FEEL.getValor();
             //            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -696,7 +704,6 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
         try {
             long time = System.currentTimeMillis();
 
-           
             File pasta = new File(ComandosSO.getLocalCrepz(), "etc");
             if (!pasta.exists()) {
                 pasta.mkdirs();
@@ -744,6 +751,7 @@ public class Carregador extends Musiquera implements ConfiguracaoListener {
                 System.out.println("Tentando abrir: " + args[0]);
                 DisparaComando.disparar(new Comando(TipoComando.ADICIONAR_LISTA, args[0]));
             }
+            DisparaComando.disparar(new Comando(TipoComando.TO_FRONT));
         }
     }
 }

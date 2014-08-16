@@ -74,6 +74,9 @@ public class PlaylistS implements Serializable, PlaylistI {
             }
         }
     }
-    
+    @Override
+    public int compareTo(String o) {
+        return o == null ? 1 : nome.compareTo(o);
+    }
 
 }

@@ -24,6 +24,7 @@ public class DisparaComando {
     /**
      * Dispara um camando...
      *
+     * @param meuComando
      * @return true se conseguiu enviar o comando.
      */
     public static boolean disparar(Comando meuComando) throws HeadlessException {

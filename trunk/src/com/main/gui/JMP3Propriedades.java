@@ -2,11 +2,15 @@ package com.main.gui;
 
 import com.musica.MusicaGerencia;
 import com.musica.MusicaS;
+import com.musica.album.AlbumS;
+import com.musica.autor.AutorS;
 import com.serial.PortaCDs;
+import com.utils.textfield.CrepzBuscador;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -16,6 +20,7 @@ import org.farng.mp3.TagConstant;
 import org.farng.mp3.TagException;
 import org.farng.mp3.TagOptionSingleton;
 import org.farng.mp3.id3.ID3v1;
+import org.farng.mp3.id3.ID3v2_4;
 
 /*
  * JMP3Propriedades.java
@@ -26,24 +31,29 @@ import org.farng.mp3.id3.ID3v1;
  *
  * @author manchini
  */
-public class JMP3Propriedades extends javax.swing.JDialog implements ActionListener {
+public class JMP3Propriedades extends javax.swing.JDialog implements CrepzBuscador, ActionListener {
 
     /**
      * Creates new form JMP3Propriedades
      */
     private MP3File mp3File;
     private MusicaS musica;
+    private MusicaS novaMusica;
 
     public JMP3Propriedades(java.awt.Frame parent, boolean modal, MusicaS musica) throws Exception {
         super(parent, modal);
+        this.novaMusica = null;
+        this.musica = musica;
         initComponents();
         montarGeneros();
+        jTextField_Interp.setCrepzBuscador(this);
+        jTextField_Album.setCrepzBuscador(this);
 
         try {
             mp3File = new MP3File(musica.getCaminho());
-            setDados();
+            setDadosv2();
         } catch (IOException ex) {
-            throw new Exception("-Erro ao Carregar Propriedades do arquivo " + mp3File.getMp3file().getName() + " \n", ex);
+            throw new Exception("-Erro ao Carregar Propriedades do arquivo " + musica.getNome() + " \n", ex);
         } catch (TagException ex) {
             throw new Exception("-Erro ao Carregar Propriedades do arquivo " + mp3File.getMp3file().getName() + " \n", ex);
         }
@@ -56,21 +66,21 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
     private void setDados() {
         try {
-            jTextField_Arquivo.setText(mp3File.getMp3file().getAbsolutePath());
             jTextField_Titulo.setText(mp3File.getID3v1Tag().getTitle());
             jTextField_Interp.setText(mp3File.getID3v1Tag().getArtist());
             jTextField_Album.setText(mp3File.getID3v1Tag().getAlbum());
             jComboBoxGenero.setSelectedIndex(mp3File.getID3v1Tag().getGenre());
-
+            
             jTextField_ano.setText(mp3File.getID3v1Tag().getYear());
             jTextField_Comentario.setText(mp3File.getID3v1Tag().getComment());
         } catch (Exception ex) {
-            setDadosv2();
+            ex.printStackTrace(System.err);
         }
 
     }
 
     private void setDadosv2() {
+        jTextField_Arquivo.setText(musica.getCaminho());
         try {
             jTextField_Titulo.setText(mp3File.getID3v2Tag().getSongTitle());
             jTextField_Interp.setText(mp3File.getID3v2Tag().getLeadArtist());
@@ -80,16 +90,17 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
             jTextField_Comentario.setText(mp3File.getID3v2Tag().getSongComment());
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
+            setDados();
         }
     }
 
     private void setMp3File() {
         try {
-            if (!mp3File.hasID3v1Tag()) {
-                precisaCriar();
-                return;
-            }
             try {
+                if (!mp3File.hasID3v1Tag()) {
+                    precisaCriar();
+                    return;
+                }
 //                TagOptionSingleton.getInstance().setDefaultSaveMode(TagConstant.MP3_FILE_SAVE_OVERWRITE);
                 mp3File.getID3v1Tag().setTitle(jTextField_Titulo.getText());
                 mp3File.getID3v1Tag().setArtist(jTextField_Interp.getText());
@@ -102,6 +113,10 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
             }
 
             try {
+                if (!mp3File.hasID3v2Tag()) {
+                    precisaCriarV2();
+                    return;
+                }
                 mp3File.getID3v2Tag().setSongTitle(jTextField_Titulo.getText());
                 mp3File.getID3v2Tag().setLeadArtist(jTextField_Interp.getText());
                 mp3File.getID3v2Tag().setAlbumTitle(jTextField_Album.getText());
@@ -131,7 +146,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         id.setSongTitle(jTextField_Titulo.getText());
         id.setAlbumTitle(jTextField_Album.getText());
         id.setLeadArtist(jTextField_Interp.getText());
-        // id.setSongGenre((String)(jComboBoxGenero.getSelectedItem()));
+//         id.setSongGenre((String)(jComboBoxGenero.getSelectedItem()));
         id.setYearReleased(jTextField_ano.getText());
         id.setSongComment(jTextField_Comentario.getText());
         mp3File.setID3v1Tag(id);
@@ -145,28 +160,52 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
             Logger.getLogger(JMP3Propriedades.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    private void precisaCriarV2() {
+        //  if (mp3File.hasID3v1Tag()) {
+        ID3v2_4 id = new ID3v2_4();
+        id.setSongTitle(jTextField_Titulo.getText());
+        id.setAlbumTitle(jTextField_Album.getText());
+        id.setLeadArtist(jTextField_Interp.getText());
+         id.setSongGenre((String)(jComboBoxGenero.getSelectedItem()));
+        id.setYearReleased(jTextField_ano.getText());
+        id.setSongComment(jTextField_Comentario.getText());
+        mp3File.setID3v2Tag(id);
+        alterarMusica();
+        try {
+            mp3File.save(TagConstant.MP3_FILE_SAVE_APPEND);
+            // }
+        } catch (IOException ex) {
+            Logger.getLogger(JMP3Propriedades.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TagException ex) {
+            Logger.getLogger(JMP3Propriedades.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     private void alterarMusica() {
         try {
-            MusicaS novaMusica = MusicaGerencia.getMusica(mp3File, new File(mp3File.getMp3file().getAbsolutePath().replace(mp3File.getMp3file().getName(), "")));
+            novaMusica = MusicaGerencia.getMusica(mp3File, new File(mp3File.getMp3file().getAbsolutePath()));
             // Remove as referências da música antiga...
-            if (!novaMusica.equals(musica)) {
-                musica.getAlbum().removeMusica(musica);
-                if (musica.getAlbum().getMusicas().isEmpty()) {
-                    musica.getAlbum().getAutor().removeAlbum(musica.getAlbum());
-                    if (musica.getAlbum().getAutor().getAlbuns().isEmpty()) {
-                        PortaCDs.removerAutor(musica.getAlbum().getAutor());
-                    }
-                    musica.getAlbum().setAutor(null);
+            musica.getAlbum().removeMusica(musica);
+            if (musica.getAlbum().getMusicas().isEmpty()) {
+                musica.getAlbum().getAutor().removeAlbum(musica.getAlbum());
+                if (musica.getAlbum().getAutor().getAlbuns().isEmpty()) {
+                    PortaCDs.removerAutor(musica.getAlbum().getAutor());
                 }
-                musica.setAlbum(null);
+                musica.getAlbum().setAutor(null);
             }
+            musica.setAlbum(null);
+            musica = null;
+            dispose();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro ao Salvar Propriedades.");
             ex.printStackTrace(System.err);
         }
     }
 
+    public MusicaS getNovaMusica() {
+        return novaMusica;
+    }
+    
     private void startEvents() {
         jButton1.addActionListener(this);
         jButton2.addActionListener(this);
@@ -182,6 +221,27 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         }
     }
 
+     @Override
+    public ArrayList<String> pesquisar(Object source, String texto) {
+        if (source == jTextField_Interp) {
+            ArrayList<AutorS> listarAutores = PortaCDs.listarAutores(texto);
+            ArrayList<String> lista = new ArrayList<String>(listarAutores.size());
+            for (AutorS autorS : listarAutores) {
+                lista.add(autorS.getNome());
+            }
+            return lista;
+        } else if(source == jTextField_Album){
+            ArrayList<AlbumS> listarAutores = PortaCDs.listarAlbuns(texto);
+            ArrayList<String> lista = new ArrayList<String>(listarAutores.size());
+            for (AlbumS albumS : listarAutores) {
+                lista.add(albumS.getNome());
+            }
+            return lista;
+        }else{
+            return null;
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -196,18 +256,21 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTextField_Arquivo = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jTextField_Titulo = new javax.swing.JTextField();
         jPanel9 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField_Interp = new javax.swing.JTextField();
+        jTextField_Interp = new com.utils.textfield.JCrepzTextField();
         jPanel10 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField_Album = new javax.swing.JTextField();
+        jTextField_Album = new com.utils.textfield.JCrepzTextField();
         jPanel11 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jComboBoxGenero = new javax.swing.JComboBox();
+        jLabel_Icone = new javax.swing.JLabel();
         jPanel12 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jTextField_ano = new javax.swing.JTextField();
@@ -241,6 +304,10 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
 
         jPanel13.add(jPanel4);
 
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
+        jPanel8.setLayout(new javax.swing.BoxLayout(jPanel8, javax.swing.BoxLayout.Y_AXIS));
+
         jPanel7.setLayout(new java.awt.BorderLayout());
 
         jLabel3.setForeground(javax.swing.UIManager.getDefaults().getColor("Label.foreground"));
@@ -251,7 +318,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jTextField_Titulo.setPreferredSize(new java.awt.Dimension(300, 27));
         jPanel7.add(jTextField_Titulo, java.awt.BorderLayout.CENTER);
 
-        jPanel13.add(jPanel7);
+        jPanel8.add(jPanel7);
 
         jPanel9.setLayout(new javax.swing.BoxLayout(jPanel9, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -260,10 +327,10 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jLabel5.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel9.add(jLabel5);
 
-        jTextField_Interp.setPreferredSize(new java.awt.Dimension(300, 27));
+        jTextField_Interp.setText("jCrepzTextField1");
         jPanel9.add(jTextField_Interp);
 
-        jPanel13.add(jPanel9);
+        jPanel8.add(jPanel9);
 
         jPanel10.setLayout(new javax.swing.BoxLayout(jPanel10, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -272,10 +339,10 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jLabel6.setPreferredSize(new java.awt.Dimension(90, 14));
         jPanel10.add(jLabel6);
 
-        jTextField_Album.setPreferredSize(new java.awt.Dimension(300, 27));
+        jTextField_Album.setText("jCrepzTextField1");
         jPanel10.add(jTextField_Album);
 
-        jPanel13.add(jPanel10);
+        jPanel8.add(jPanel10);
 
         jPanel11.setLayout(new javax.swing.BoxLayout(jPanel11, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -287,7 +354,16 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         jComboBoxGenero.setPreferredSize(new java.awt.Dimension(150, 25));
         jPanel11.add(jComboBoxGenero);
 
-        jPanel13.add(jPanel11);
+        jPanel8.add(jPanel11);
+
+        jPanel3.add(jPanel8, java.awt.BorderLayout.CENTER);
+
+        jLabel_Icone.setText("Icone");
+        jLabel_Icone.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jLabel_Icone.setPreferredSize(new java.awt.Dimension(100, 13));
+        jPanel3.add(jLabel_Icone, java.awt.BorderLayout.WEST);
+
+        jPanel13.add(jPanel3);
 
         jPanel12.setLayout(new javax.swing.BoxLayout(jPanel12, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -348,6 +424,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
         setSize(new java.awt.Dimension(598, 333));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -359,6 +436,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabel_Icone;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -366,15 +444,17 @@ public class JMP3Propriedades extends javax.swing.JDialog implements ActionListe
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JTextField jTextField_Album;
+    private com.utils.textfield.JCrepzTextField jTextField_Album;
     private javax.swing.JTextField jTextField_Arquivo;
     private javax.swing.JTextField jTextField_Comentario;
-    private javax.swing.JTextField jTextField_Interp;
+    private com.utils.textfield.JCrepzTextField jTextField_Interp;
     private javax.swing.JTextField jTextField_Titulo;
     private javax.swing.JTextField jTextField_ano;
     // End of variables declaration//GEN-END:variables

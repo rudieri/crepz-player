@@ -135,7 +135,6 @@ public class JTrocarImagem extends javax.swing.JDialog implements Runnable, Acti
                 int column) {
 
             if (value instanceof ImageIcon) {
-                // certifique-se da existencia da imagem "icon.gif" antes de executar
 
                 if (isSelected) {
                     setBackground(Color.BLACK);

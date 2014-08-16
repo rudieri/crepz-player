@@ -1,10 +1,16 @@
 package com.hotkey.linux;
 
 import com.config.Configuracoes;
+import com.main.Carregador;
 import com.main.GerenciadorTelas;
 import com.musica.Musiquera;
 import com.playlist.JPlayList;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -40,7 +46,7 @@ public class Ouvinte implements Runnable {
     }
 
     private void initSocket() {
-        new Thread(this).start();
+        new Thread(this, "Ouvinte - Comandos").start();
     }
 
     @Override
@@ -100,6 +106,9 @@ public class Ouvinte implements Runnable {
                             musiquera.tocarPausar();
                             break;
                         case PING:
+                            break;
+                        case TO_FRONT:
+                            Carregador.getMe().getWindowPrincipal().toFront();
                             break;
 
                         default:
