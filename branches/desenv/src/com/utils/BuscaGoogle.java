@@ -16,7 +16,7 @@ import java.util.List;
 /**
  *
  * @author manchini
- * branch
+ * alteração no trunk
  */
 public class BuscaGoogle {
 
