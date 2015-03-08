@@ -58,6 +58,7 @@ public class Configuracoes {
     public static final Configuracao<String> MIXER = new Configuracao<String>("");
     public static final Configuracao<String> FILE_BD_MUSICAS = new Configuracao<String>(ComandosSO.getLocalCrepzPath() + "/etc/musicas.csf");
     public static final Configuracao<String> FILE_BD_PLAYLISTS = new Configuracao<String>(ComandosSO.getLocalCrepz() + "/etc/playlists.csf");
+    public static final Configuracao<String> FILE_BD_MUSICAS_PERDIDAS = new Configuracao<String>(ComandosSO.getLocalCrepzPath() + "/etc/musicas_perdidas.csf");
     private static final String ARQUIVO = ComandosSO.getLocalCrepzPath()+"/etc/crepz.conf";
     
     static {

@@ -67,6 +67,7 @@ public class JSelecionaCondicao extends javax.swing.JPanel implements ActionList
         final JDialog jDialog = new JDialog((JFrame) null, true);
         jDialog.getRootPane().setLayout(new BoxLayout(jDialog.getRootPane(), BoxLayout.Y_AXIS));
         final JCondicao jCondicao = new JCondicao();
+        jCondicao.setCondicao(condicao);
         jDialog.getRootPane().add(jCondicao);
         JPanel jPanelBts = new JPanel();
         jPanelBts.setLayout(new BoxLayout(jPanelBts, BoxLayout.X_AXIS));

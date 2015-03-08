@@ -9,15 +9,19 @@ package teste;
  * @author rudieri
  */
 public class Teste {
-    public static int VAR_PUBLIC;
-    protected static int VAR_PROTECTED;
-    private static int VAR_PRIVATE;
     
-    public static void main(String[] args) {
-        Exception ex = new Exception();
-        NullPointerException nex = new NullPointerException();
-        System.out.println(ex instanceof NullPointerException);
-        System.out.println(nex instanceof Exception);
-        nex = (NullPointerException) ex;
+    public static void main(String[] args) throws InterruptedException {
+        Thread.sleep(200);
+        long time = System.currentTimeMillis();
+        for (long i = 0; i < 10000000000l; i++) {
+            //"abra".equals("");//4677
+//            "abra".equals("");
+//            "cacaa".equals("");
+//            "caca".equals("");
+//            "cacaaa".equals("");
+//            "cacaar".equals("");
+        }
+        System.out.println("Tempo: " + (System.currentTimeMillis() - time));
+        
     }
 }

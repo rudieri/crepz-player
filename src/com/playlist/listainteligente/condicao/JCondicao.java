@@ -1,22 +1,27 @@
 package com.playlist.listainteligente.condicao;
 
 import com.musica.MusicaS;
+import com.musica.album.AlbumS;
+import com.musica.autor.AutorS;
 import com.playlist.listainteligente.condicao.operadores.OperadorComparativo;
 import com.playlist.listainteligente.condicao.operadores.OperadorLogico;
+import com.serial.PortaCDs;
 import com.utils.campo.Campo;
 import com.utils.model.comboboxmodel.ComboBoxModelEditavel;
+import com.utils.textfield.CrepzBuscador;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import javax.swing.JDialog;
 
 /**
  *
  * @author rudieri
  */
-public class JCondicao extends javax.swing.JPanel implements ItemListener {
+public class JCondicao extends javax.swing.JPanel implements ItemListener, CrepzBuscador {
 
     private static final String ESCOLHA_UM_OPERADOR = "Escolha um operador";
     private static final String ESCOLHA_UM_CAMPO = "Escolha um campo";
@@ -50,6 +55,7 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
 
         Field[] campos = MusicaS.class.getDeclaredFields();
         carregarCampos(campos, "");
+        jTextField_Valor2.setCrepzBuscador(this);
     }
 
     private void carregarCampos(Field[] campos, String classeBase) {
@@ -128,6 +134,35 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
         }
     }
 
+    @Override
+    public ArrayList<String> pesquisar(Object source, String texto) {
+        Campo campoSelecionado = (Campo) jComboBox_Valor1.getSelectedItem();
+        if (campoSelecionado == null) {
+            return new ArrayList<String>(0);
+        }
+        
+        if (campoSelecionado.getCaminhoCampo().equals("album.autor.nome")) {
+            ArrayList<AutorS> listarAutores = PortaCDs.listarAutores(texto);
+            ArrayList<String> lista = new ArrayList<String>(listarAutores.size());
+            for (AutorS autorS : listarAutores) {
+                lista.add(autorS.getNome());
+            }
+            return lista;
+        } else if(campoSelecionado.getClasse() == AlbumS.class){
+            ArrayList<AlbumS> listarAutores = PortaCDs.listarAlbuns(texto);
+            ArrayList<String> lista = new ArrayList<String>(listarAutores.size());
+            for (AlbumS albumS : listarAutores) {
+                lista.add(albumS.getNome());
+            }
+            return lista;
+        }else{
+            return null;
+        }
+        
+    }
+    
+    
+
     public static void main(String[] args) {
         JDialog jDialog = new JDialog((JDialog) null, true);
         jDialog.add(new JCondicao());
@@ -158,7 +193,7 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
         jPanel_Comparativa = new javax.swing.JPanel();
         jComboBox_Valor1 = new javax.swing.JComboBox();
         jComboBox_OperadorComparativo = new javax.swing.JComboBox();
-        jTextField_Valor2 = new javax.swing.JTextField();
+        jTextField_Valor2 = new com.utils.textfield.JCrepzTextField();
         jPanel_Logica = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jSelecionaCondicao1 = new com.playlist.listainteligente.condicao.JSelecionaCondicao();
@@ -198,6 +233,8 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
         jPanel_Comparativa.add(jComboBox_Valor1);
 
         jPanel_Comparativa.add(jComboBox_OperadorComparativo);
+
+        jTextField_Valor2.setText("jCrepzTextField1");
         jPanel_Comparativa.add(jTextField_Valor2);
 
         jPanel1.add(jPanel_Comparativa, "card2");
@@ -250,6 +287,7 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
             jPanel_Comparativa.setVisible(false);
         }
     }//GEN-LAST:event_jRadioButton_TipoCondicaoLogicaItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox jComboBox_OperadorComparativo;
@@ -268,6 +306,6 @@ public class JCondicao extends javax.swing.JPanel implements ItemListener {
     private javax.swing.JRadioButton jRadioButton_TipocondicaoComparativa;
     private com.playlist.listainteligente.condicao.JSelecionaCondicao jSelecionaCondicao1;
     private com.playlist.listainteligente.condicao.JSelecionaCondicao jSelecionaCondicao2;
-    private javax.swing.JTextField jTextField_Valor2;
+    private com.utils.textfield.JCrepzTextField jTextField_Valor2;
     // End of variables declaration//GEN-END:variables
 }

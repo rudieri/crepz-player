@@ -71,51 +71,43 @@ public class MusicaGerencia {
         getMaxDirComum(file);
         //getID3v2Tag
         MusicaS musica = null;
+        String mp3Autor;
+        String mp3Album;
+        String mp3Genero;
+        String mp3Musica;
         if (mp3.hasID3v2Tag()) {
-            AutorS autor = PortaCDs.getAutor(mp3.getID3v2Tag().getLeadArtist());
-            AlbumS album = autor.getAlbum(mp3.getID3v2Tag().getAlbumTitle());
-//            if (file.getAbsolutePath().equals(maxDirComum.getAbsolutePath())) {
-//                autor.setCaminho(file.getParentFile().getAbsolutePath());
-//                album.setNomeDiretorio(null);
-//            } else {
-//                autor.setCaminho(file.getParentFile().getParentFile().getAbsolutePath());
-//                album.setNomeDiretorio(file.getParent());
-//            }
-            if (album.getImg() == null) {
-                album.setImg(getImagemDir(file.getParentFile()));
-            }
-            album.setGenero(mp3.getID3v2Tag().getSongGenre());
-
-            musica = album.getMusica(mp3.getID3v2Tag().getSongTitle());
-            musica.setNomeArquivo(file.getAbsolutePath());
-
-            if (musica.getAlbum().getNome() == null) {
-                musica.getAlbum().setNome(mp3.getID3v1Tag().getAlbumTitle());
-            }
-            if (musica.getNome() == null || musica.getNome().isEmpty()) {
-                musica.setNome(file.getName());
-            }
+            mp3Autor = mp3.getID3v2Tag().getLeadArtist();
+            mp3Album = mp3.getID3v2Tag().getAlbumTitle();
+            mp3Genero = mp3.getID3v2Tag().getSongGenre();
+             mp3Musica = mp3.getID3v2Tag().getSongTitle();
         } else if (mp3.hasID3v1Tag()) {
-            AutorS autor = PortaCDs.getAutor(mp3.getID3v1Tag().getLeadArtist());
-
-//            if (file.getAbsolutePath().equals(maxDirComum.getAbsolutePath())) {
-//                autor.setCaminho(file.getParentFile().getAbsolutePath());
-//            } else {
-//                autor.setCaminho(file.getParentFile().getParentFile().getAbsolutePath());
-//            }
-
-            AlbumS album = autor.getAlbum(mp3.getID3v1Tag().getAlbumTitle());
+            mp3Autor = mp3.getID3v1Tag().getLeadArtist();
+            mp3Album = mp3.getID3v1Tag().getAlbumTitle();
+            mp3Genero = mp3.getID3v1Tag().getSongGenre();
+            mp3Musica = mp3.getID3v1Tag().getSongTitle();
+        } else if (mp3.hasLyrics3Tag()){
+            mp3Autor = mp3.getLyrics3Tag().getLeadArtist();
+            mp3Album = mp3.getLyrics3Tag().getAlbumTitle();
+            mp3Genero = mp3.getLyrics3Tag().getSongGenre();
+            mp3Musica = mp3.getLyrics3Tag().getSongTitle();
+        } else {
+            mp3Autor = "";
+            mp3Album = "";
+            mp3Genero = "";
+            mp3Musica = "";
+        }
+        AutorS autor = PortaCDs.getAutor(mp3Autor);
+        AlbumS album = autor.getAlbum(mp3Album);
 //            album.setNomeDiretorio(file.getParent());
-            if (album.getImg() != null) {
-                album.setImg(getImagemDir(file.getParentFile()));
-            }
-            album.setGenero(mp3.getID3v1Tag().getSongGenre());
-            musica = album.getMusica(mp3.getID3v1Tag().getSongTitle());
-            musica.setNomeArquivo(file.getAbsolutePath());
+        if (album.getImg() == null) {
+            album.setImg(getImagemDir(file.getParentFile()));
+        }
+        album.setGenero(mp3Genero);
+        musica = album.getMusica(mp3Musica);
+        musica.setNomeArquivo(file.getAbsolutePath());
 
-            if (musica.getNome() == null || musica.getNome().isEmpty()) {
-                musica.setNome(file.getName());
-            }
+        if (musica.getNome() == null || musica.getNome().isEmpty()) {
+            musica.setNome(file.getName());
         }
 
         return musica;

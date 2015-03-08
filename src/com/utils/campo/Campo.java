@@ -32,6 +32,10 @@ public class Campo implements Serializable{
         createField(classe, caminhoCampo);
     }
 
+    public Class getClasse() {
+        return classe;
+    }
+
     public boolean isByte() {
         return getField().getType() == byte.class || getField().getType() == Byte.class;
 
