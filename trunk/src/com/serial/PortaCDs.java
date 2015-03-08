@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 public class PortaCDs {
 
     private static final ArrayList<AutorS> autores;// = new HashMap<String, AutorS>();
+    private static final ArrayList<MusicaS> musicasPerdidas;// = new HashMap<String, AutorS>();
     private static final ArrayList<PlaylistI> playlists;// = new HashMap<String, PlaylistI>();
     // Musicas: 903,4 Kb
     // Musicas2: 821,7 Kb
@@ -37,8 +38,10 @@ public class PortaCDs {
     static {
         Object autoresAux = null;
         Object playListAux = null;
+        Object autoresMusicasPerdidasAux = null;
         try {
             autoresAux = abrir(new File(Configuracoes.FILE_BD_MUSICAS.getValor()));
+            autoresMusicasPerdidasAux = abrir(new File(Configuracoes.FILE_BD_MUSICAS_PERDIDAS.getValor()));
             playListAux = abrir(new File(Configuracoes.FILE_BD_PLAYLISTS.getValor()));
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -50,6 +53,14 @@ public class PortaCDs {
             autores.addAll(((Map<? extends String, ? extends AutorS>) autoresAux).values());
         } else {
             autores = (ArrayList<AutorS>) autoresAux;
+        }
+        if (autoresMusicasPerdidasAux == null) {
+            musicasPerdidas = new ArrayList<MusicaS>();
+        } else if (autoresMusicasPerdidasAux instanceof HashMap) {
+            musicasPerdidas = new ArrayList<MusicaS>();
+            musicasPerdidas.addAll(((Map<? extends String, ? extends MusicaS>) autoresMusicasPerdidasAux).values());
+        } else {
+            musicasPerdidas = (ArrayList<MusicaS>) autoresMusicasPerdidasAux;
         }
         if (playListAux == null) {
             playlists = new ArrayList<PlaylistI>();
@@ -68,7 +79,33 @@ public class PortaCDs {
 
     public static void salvarMusicas() {
         try {
+            boolean musicaPerdidaModificada = false;
+            for (int i = autores.size() - 1; i >= 0; i--) {
+                AutorS autorS = autores.get(i);
+                for (int j = autorS.getAlbuns().size() - 1; j >= 0; j--) {
+                    AlbumS albumS = autorS.getAlbuns().get(j);
+                    for (int k = albumS.getMusicas().size() - 1; k >= 0; k--) {
+                        MusicaS musicaS = albumS.getMusicas().get(k);
+                        if (musicaS.isPerdida()) {
+                            if (!musicasPerdidas.contains(musicaS)) {
+                                musicasPerdidas.add(musicaS);
+                            }
+                            albumS.getMusicas().remove(k);
+                            musicaPerdidaModificada = true;
+                        }
+                    }
+                    if (albumS.getMusicas().isEmpty()) {
+                        autorS.getAlbuns().remove(j);
+                    }
+                }
+                if (autorS.getAlbuns().isEmpty()) {
+                    autores.remove(i);
+                }
+            }
             persistir(autores, new File(Configuracoes.FILE_BD_MUSICAS.getValor()));
+            if (musicaPerdidaModificada) {
+                persistir(musicasPerdidas, new File(Configuracoes.FILE_BD_MUSICAS_PERDIDAS.getValor()));
+            }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Erro ao salvar listas de reprodução.");
             ex.printStackTrace(System.err);

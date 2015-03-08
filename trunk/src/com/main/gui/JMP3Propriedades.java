@@ -82,6 +82,7 @@ public class JMP3Propriedades extends javax.swing.JDialog implements CrepzBuscad
     private void setDadosv2() {
         jTextField_Arquivo.setText(musica.getCaminho());
         try {
+            
             jTextField_Titulo.setText(mp3File.getID3v2Tag().getSongTitle());
             jTextField_Interp.setText(mp3File.getID3v2Tag().getLeadArtist());
             jTextField_Album.setText(mp3File.getID3v2Tag().getAlbumTitle());//(.getText());

@@ -107,7 +107,10 @@
                     </Property>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="jTextField_Valor2">
+                <Component class="com.utils.textfield.JCrepzTextField" name="jTextField_Valor2">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="jCrepzTextField1"/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>
