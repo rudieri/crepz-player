@@ -7,6 +7,7 @@ import com.musica.album.AlbumS;
 import com.musica.autor.AutorS;
 import com.playlist.PlaylistI;
 import com.utils.StringComparable;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -131,9 +132,22 @@ public class PortaCDs {
     }
 
     private static Object abrir(File arquivo) throws FileNotFoundException, IOException, ClassNotFoundException {
-        FileInputStream fis = new FileInputStream(arquivo);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        return ois.readObject();
+        if (!arquivo.exists()) {
+            File pasta = arquivo.getParentFile();
+            if (!pasta.exists()) {
+                pasta.mkdirs();
+            }
+            arquivo.createNewFile();
+            return null;
+        }
+        try {
+            FileInputStream fis = new FileInputStream(arquivo);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            return ois.readObject();
+
+        } catch (EOFException ex) {
+            return null;
+        }
     }
 
     public static AutorS getAutor(String nome) {
@@ -246,13 +260,13 @@ public class PortaCDs {
         return playlist;
     }
 
-    public static boolean  removerPlaylist(PlaylistI playlist) {
+    public static boolean removerPlaylist(PlaylistI playlist) {
         return playlists.remove(playlist);
     }
 
     public static ArrayList<PlaylistI> listarPlayLists(String text) {
         ArrayList<PlaylistI> lista = new ArrayList<PlaylistI>();
-        for (PlaylistI playlistI : lista) {
+        for (PlaylistI playlistI : playlists) {
             String nome = playlistI.getNome();
             if (nome.contains(text)) {
                 lista.add(playlistI);
@@ -263,7 +277,7 @@ public class PortaCDs {
     }
 
     public static Long getMaxDtModArquivo(String nomeArq, boolean ehDiretorio) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new File(nomeArq).lastModified();
     }
 
     private PortaCDs() {
@@ -273,7 +287,7 @@ public class PortaCDs {
 
         public static <E extends StringComparable> E buscar(ArrayList<E> lista, String nome) {
             for (E e : lista) {
-                if (e.compareTo(nome)==0) {
+                if (e.compareTo(nome) == 0) {
                     return e;
                 }
             }
