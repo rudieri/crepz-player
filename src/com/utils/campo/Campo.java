@@ -1,6 +1,6 @@
 package com.utils.campo;
 
-import com.utils.model.tablemodel.ObjetoTabela;
+import com.utils.CrepzInfo;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.logging.Level;
@@ -12,17 +12,17 @@ import java.util.logging.Logger;
  */
 public class Campo implements Serializable{
     private static final long serialVersionUID = 2L;
-
     private transient Field field;
-    private Class classe;
-    private String caminhoCampo;
+    private final Class classe;
+    private final String caminhoCampo;
 
     public static boolean contemAnotacaoNecessaria(Field field1) {
-        NomeCampo annotation = field1.getAnnotation(NomeCampo.class);
-        return annotation != null;
+        CrepzInfo annotation = field1.getAnnotation(CrepzInfo.class);
+        return annotation != null && !annotation.nome().isEmpty();
     }
     public static boolean contemFilhos(Field field){
-        return field.getAnnotation(ObjetoTabela.class) != null;
+        CrepzInfo annotation = field.getAnnotation(CrepzInfo.class);
+        return annotation != null && annotation.temFilhos();
     }
 
 
@@ -107,7 +107,7 @@ public class Campo implements Serializable{
     @Override
     public String toString() {
         Field f = getField();
-        NomeCampo annotation = f.getAnnotation(NomeCampo.class);
-        return annotation == null ? f.getName() : annotation.nome();
+        CrepzInfo annotation = f.getAnnotation(CrepzInfo.class);
+        return annotation == null || annotation.nome().isEmpty() ? f.getName() : annotation.nome();
     }
 }

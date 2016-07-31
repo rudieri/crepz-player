@@ -1,10 +1,9 @@
 package com.musica;
 
 import com.musica.album.AlbumS;
+import com.utils.CrepzInfo;
 import com.utils.StringComparable;
-import com.utils.campo.NomeCampo;
 import com.utils.model.tablemodel.Filtravel;
-import com.utils.model.tablemodel.ObjetoTabela;
 import java.io.Serializable;
 
 /**
@@ -15,25 +14,22 @@ public class MusicaS implements Serializable, Filtravel, Comparable<MusicaS>, St
 
     private static final long serialVersionUID = 2L;
     private transient static final char ESPACO = ' ';
-    @ObjetoTabela()
-    @NomeCampo(nome = "Nome")
+    @CrepzInfo(nome = "Nome")
     private String nome;
-    @ObjetoTabela(temFilhos = true)
+    @CrepzInfo(nome = "", temFilhos = true)
     private AlbumS album;
-    @ObjetoTabela()
-    @NomeCampo(nome = "Tempo")
+    @CrepzInfo(nome = "Tempo")
     private Tempo tempo;
-    @ObjetoTabela()
-    @NomeCampo(nome = "Nº Reproduções")
+    @CrepzInfo(nome = "Nº Reproduções")
     private short numeroReproducoes = 0;
-    @NomeCampo(nome = "Caminho do Arquivo")
+    @CrepzInfo(nome = "Caminho do Arquivo", mostrarNaTabela = false)
     private String nomeArquivo;
     private long dtModArquivo;
     private byte number;
     /**
      * Caso o arquivo da música não seja encontrado.
      */
-    @NomeCampo(nome = "Música Perdida")
+    @CrepzInfo(nome = "Música Perdida", mostrarNaTabela = false)
     private boolean perdida = false;
 
     /**

@@ -4,9 +4,8 @@ import com.musica.MusicaGerencia;
 import com.musica.MusicaS;
 import com.musica.autor.AutorS;
 import com.serial.PortaCDs;
+import com.utils.CrepzInfo;
 import com.utils.StringComparable;
-import com.utils.campo.NomeCampo;
-import com.utils.model.tablemodel.ObjetoTabela;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -18,15 +17,13 @@ public class AlbumS implements Serializable, Comparable<AlbumS>, StringComparabl
 
     private static final long serialVersionUID = 2L;
 
-    @ObjetoTabela()
-    @NomeCampo(nome = "Album")
+    @CrepzInfo(nome = "Album")
     private String nome;
-    @ObjetoTabela()
-    @NomeCampo(nome = "Genero")
+    @CrepzInfo(nome = "Genero")
     private String genero;
     private final ArrayList<MusicaS> musicas;
     private String img;
-    @ObjetoTabela(temFilhos = true)
+    @CrepzInfo(temFilhos = true)
     private AutorS autor;
 
     public AlbumS() {

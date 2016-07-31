@@ -4,6 +4,7 @@
  */
 package com.utils.model.tablemodel;
 
+import com.utils.CrepzInfo;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import javax.swing.event.TableModelEvent;
@@ -54,8 +55,8 @@ public class ObjectTableModel<E extends Filtravel> implements TableModel {
     private void inicializaColunas(ArrayList<ColunaTabela> colunas, Field[] campos, ArrayList<Field> caminho) {
         for (Field campo : campos) {
             campo.setAccessible(true);
-            ObjetoTabela annotation = campo.getAnnotation(ObjetoTabela.class);
-            if (annotation != null && annotation.visivel()) {
+            CrepzInfo annotation = campo.getAnnotation(CrepzInfo.class);
+            if (annotation != null && annotation.mostrarNaTabela()) {
                 if (annotation.temFilhos()) {
                     Class<?> tipoCampoFilho = campo.getType();
                     caminho.add(campo);

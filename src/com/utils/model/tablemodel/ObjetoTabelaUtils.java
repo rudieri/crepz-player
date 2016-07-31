@@ -4,7 +4,7 @@
  */
 package com.utils.model.tablemodel;
 
-import com.utils.campo.NomeCampo;
+import com.utils.CrepzInfo;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -35,10 +35,9 @@ public class ObjetoTabelaUtils {
             Field[] campos = alvo.getClass().getDeclaredFields();
             int i = 0;
 //            while (i < coluna) {
-            for (int j = 0; j < campos.length; j++) {
-                Field campo = campos[j];
-                ObjetoTabela anotacao = campo.getAnnotation(ObjetoTabela.class);
-                if (anotacao != null && anotacao.visivel()) {
+            for (Field campo : campos) {
+                CrepzInfo anotacao = campo.getAnnotation(CrepzInfo.class);
+                if (anotacao != null && anotacao.mostrarNaTabela()) {
                     if (i == coluna) {
                         try {
                             campo.setAccessible(true);
@@ -57,10 +56,9 @@ public class ObjetoTabelaUtils {
     }
 
     public static String getNomeColuna(Class alvo, Field coluna) {
-        ObjetoTabela anotacao = coluna.getAnnotation(ObjetoTabela.class);
-        if (anotacao != null && anotacao.visivel()) {
-            NomeCampo nomeCampo = coluna.getAnnotation(NomeCampo.class);
-            return nomeCampo == null ? coluna.getName() : nomeCampo.nome();
+        CrepzInfo anotacao = coluna.getAnnotation(CrepzInfo.class);
+        if (anotacao != null && anotacao.mostrarNaTabela()) {
+            return anotacao.nome().isEmpty() ? coluna.getName() : anotacao.nome();
         }
         return "";
 
@@ -72,13 +70,11 @@ public class ObjetoTabelaUtils {
             Field[] campos = alvo.getDeclaredFields();
             int i = 0;
 //            while (i < coluna) {
-            for (int j = 0; j < campos.length; j++) {
-                Field campo = campos[j];
-                ObjetoTabela anotacao = campo.getAnnotation(ObjetoTabela.class);
-                if (anotacao != null && anotacao.visivel() && i == coluna) {
+            for (Field campo : campos) {
+                CrepzInfo anotacao = campo.getAnnotation(CrepzInfo.class);
+                if (anotacao != null && anotacao.mostrarNaTabela() && i == coluna) {
                     try {
-                        NomeCampo nomeCampo = campo.getAnnotation(NomeCampo.class);
-                        return nomeCampo == null ? campo.getName() : nomeCampo.nome();
+                        return anotacao.nome().isEmpty() ? campo.getName() : anotacao.nome();
                     } catch (IllegalArgumentException ex) {
                         Logger.getLogger(ObjetoTabelaUtils.class.getName()).log(Level.SEVERE, null, ex);
                     }
