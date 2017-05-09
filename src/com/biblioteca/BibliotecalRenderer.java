@@ -10,7 +10,7 @@ public class BibliotecalRenderer implements TableCellRenderer {
 
     // Atributos que definem as cores...
    
-    private JCapa jCapa = new JCapa();
+    private final JCapa jCapa = new JCapa();
 
     /**
      * M�todo construtor.
